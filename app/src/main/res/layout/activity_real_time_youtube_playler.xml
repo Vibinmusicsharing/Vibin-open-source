@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <TextView
+        android:id="@+id/now_play_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="3"
+        android:text="Now playing"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_15sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.533"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/youtube_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="marquee"
+        android:layoutDirection="rtl"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:maxLines="2"
+        android:singleLine="true"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="@dimen/_12sdp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/now_play_tv" />
+
+    <RelativeLayout
+        android:id="@+id/player_holder"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_200sdp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:layout_marginRight="@dimen/_10sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.533"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/youtube_title">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/img_cardview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/gph_transparent"
+            android:elevation="@dimen/_20sdp"
+            android:visibility="invisible"
+            app:cardCornerRadius="@dimen/_10sdp"
+            tools:ignore="MissingConstraints">
+
+            <ImageView
+                android:id="@+id/imageRsplayer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:elevation="@dimen/_15sdp"
+                android:scaleType="centerCrop" />
+
+        </androidx.cardview.widget.CardView>
+
+        <com.google.android.youtube.player.YouTubePlayerView
+            android:id="@+id/myYoutube"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_220sdp"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/listview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:background="@color/white"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/controls_hldr"
+        app:layout_constraintTop_toBottomOf="@+id/player_holder">
+
+        <TextView
+            android:id="@+id/listeners_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:text="Listeners"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_15sdp" />
+
+        <ProgressBar
+            android:id="@+id/progressbarViewCollab"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_below="@+id/listeners_tv"
+            android:layout_toLeftOf="@+id/add_collab_img"
+            android:indeterminateBehavior="repeat"
+            android:indeterminateDuration="10"
+            android:indeterminateOnly="true"
+            android:progressBackgroundTint="#208afa"
+            android:progressBackgroundTintMode="multiply"
+            android:visibility="visible" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/view_collaborations"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_100sdp"
+            android:layout_below="@+id/progressbarViewCollab"
+            android:layout_margin="5dp"
+            android:layout_toLeftOf="@+id/add_collab_img" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/playlist_rv"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_100sdp"
+            android:layout_below="@+id/view_collaborations"
+            android:layout_margin="5dp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/controls_hldr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <RelativeLayout
+            android:id="@+id/seekview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp">
+
+            <TextView
+                android:id="@+id/playerCurrentTimeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="7dp"
+                android:visibility="gone"
+                android:text="00:00"
+                android:textColor="@color/colorPrimaryDark" />
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/_1sdp"
+                android:layout_toLeftOf="@+id/playerTotalTimeText"
+                android:layout_toRightOf="@+id/playerCurrentTimeText"
+                android:progressTint="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/playerTotalTimeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="7dp"
+                android:text="00:00"
+                android:visibility="gone"
+                android:textColor="@color/colorPrimaryDark" />
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="73dp"
+                android:layout_height="73dp"
+                android:layout_below="@+id/seekBar"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:layout_marginEnd="8dp"
+
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/ic_baseline_pause_24"
+                android:gravity="center_horizontal"
+                android:textColor="@android:color/white" />
+
+            <ImageView
+                android:id="@+id/fastforward"
+                android:layout_width="46dp"
+                android:layout_height="31dp"
+                android:layout_below="@+id/seekBar"
+                android:layout_alignTop="@+id/button2"
+                android:layout_alignBottom="@+id/button2"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_toRightOf="@+id/button2"
+                app:srcCompat="@drawable/ic_baseline_skip_next_24" />
+
+            <ImageView
+                android:id="@+id/fastrewind"
+                android:layout_width="45dp"
+                android:layout_height="29dp"
+                android:layout_below="@+id/seekBar"
+                android:layout_alignTop="@+id/button2"
+                android:layout_alignBottom="@+id/button2"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_toLeftOf="@+id/button2"
+                app:srcCompat="@drawable/ic_baseline_skip_previous_24" />
+
+
+        </RelativeLayout>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/seekview"
+            android:layout_margin="@dimen/_10sdp"
+            app:cardCornerRadius="@dimen/_15sdp">
+
+            <com.shorincity.vibin.music_sharing.ripples.RippleButton
+                android:id="@+id/live_streaming_btn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_30sdp"
+
+                android:background="#26C34F"
+                android:drawableTint="@color/white"
+                android:elevation="@dimen/_5sdp"
+                android:fontFamily="@font/tinos_regular"
+                android:paddingLeft="@dimen/_10sdp"
+                android:text="@string/end_sharing"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:rv_centered="true"
+                app:rv_holdBgInPressing="true"
+                app:rv_pressBgType="circleFitMax" />
+
+
+        </androidx.cardview.widget.CardView>
+
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

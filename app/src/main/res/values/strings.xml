@@ -1,0 +1,227 @@
+<resources>
+    <string name="app_name">Vibin</string>
+    <string name="title_activity_youtube">youtube</string>
+    <string name="title_home">Home</string>
+    <string name="title_playlist">Playlist</string>
+    <string name="title_search">Search</string>
+    <string name="title_notification">Notification</string>
+    <string name="title_user">User</string>
+
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_spotify">spotify</string>
+
+    <string name="title_activity_youtube_playlist">youtube_playlist</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string name="title_activity_demo">Spotify Android SDK Demo</string>
+    <string name="login_button_label">Login</string>
+    <string name="logout_button_label">Logout</string>
+
+
+    <string name="play_mono_track_button_label">Play mono track</string>
+    <string name="play_48khz_track_button_label">Play 48kHz track</string>
+
+    <string name="pause_button_label_toggle">Pause/Resume</string>
+    <string name="skip_next_button_label">Next</string>
+    <string name="skip_prev_button_label">Previous</string>
+    <string name="toggle_shuffle_button_toggle">Toggle shuffle</string>
+    <string name="toggle_repeat_button_label_toggle">Toggle repeat</string>
+    <string name="seek_button_label">Seek</string>
+    <string name="queue_button_label">Queue a song</string>
+    <string name="song_queued_toast">Song queued!</string>
+    <string name="high_bitrate_button_label">320kbps</string>
+    <string name="normal_bitrate_button_label">160kbps</string>
+    <string name="low_bitrate_button_label">96kbps</string>
+    <string name="no_metadata">no metadata</string>
+
+    <string name="back"><![CDATA[<]]></string>
+    <string name="rewind"><![CDATA[<<]]></string>
+    <string name="forward"><![CDATA[>>]]></string>
+    <string name="pause">||</string>
+
+    <!-- Navigation Drawer Fields-->
+    <string name="nav_yt">YouTube</string>
+    <string name="nav_spot">Spotify</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_logout">Log-Out</string>
+    <string name="navigation_drawer_open">Drawer Open</string>
+    <string name="navigation_drawer_close">Drawer Closed</string>
+
+    <!-- Login SignUp -->
+    <string name="signin_with_google">Google Sign In</string>
+    <string name="sign_in_with_email">Log In</string>
+    <string name="create_new_acc">Sign Up</string>
+    <string name="select_preferred_platform">Choose your Vibe</string>
+    <string name="hint_username">Username (Min 6 Characters)</string>
+    <string name="continu">Continue</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+
+    <!-- Welcome -->
+    <string name="welcome_str">WELCOME TO</string>
+
+    <!-- common -->
+    <string name="loading">loading...</string>
+    <string name="title_activity_channels_playlist">ChannelsPlaylistActivity</string>
+
+    <!-- Additional Screen -->
+    <string name="pref_platform">Preferred Platform :</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="youtube">Youtube</string>
+    <string name="spotify">Spotify</string>
+    <string name="dob">DOB :</string>
+    <string name="you_are">You are :</string>
+    <string name="submit">Submit</string>
+
+    <string name="additional_screen_title">Please fill additional information. It will help us to provide you your best interest. </string>
+
+    <!-- Error Messages -->
+
+    <string name="error_age_choose">Please select your DOB!</string>
+    <string name="error_gender_choose">Please choose your Gender!</string>
+    <string name="error_platform_choose">Please choose your Preferred Platform!</string>
+
+    <!-- Sign Up -->
+    <string name="signup_second_screen_title">Knock Knock!</string>
+    <string name="signup_whose_this">Whose this?</string>
+    <string name="signup_third_screen_title">I am a...</string>
+    <string name="signup_fourth_screen_title">Just</string>
+    <string name="signup_a_number">A number!</string>
+    <string name="signup_gender">Gender?</string>
+
+    <string name="next">Next</string>
+    <string name="woman">Woman</string>
+    <string name="man">Man</string>
+
+    <!-- User Profile -->
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="recently_played">Recently Played</string>
+    <string name="view_more">View More</string>
+    <string name="my_profile">My profile</string>
+    <string name="about_us">About us</string>
+    <string name="share_app">Share App</string>
+    <string name="push_notification">Push Notification</string>
+    <string name="privacy_policy">Privacy &amp; Policy</string>
+    <string name="flag_report">Report Us</string>
+    <string name="logout">Logout</string>
+    <string name="likes">Likes</string>
+    <string name="like">Like</string>
+    <string name="unlike">Unlike</string>
+    <string name="collaborator">Collaborator</string>
+    <string name="collaborate">Collaborate</string>
+    <string name="playlist">Playlist</string>
+    <string name="no_playlist_found">No Playlist Found</string>
+    <string name="no_fav_found">No Favourites Found</string>
+    <string name="no_recent_found">No Recent Songs Found</string>
+    <string name="download">Downloads</string>
+    <string name="favourites">Favourites</string>
+    <string name="version">Version&#160;</string>
+    <string name="user_search_hint">Enter name to collaborate with</string>
+    <string name="forgot_pass"><u>Forgot Password?</u></string>
+    <!-- Most Popular -->
+    <string name="most_popular">Most Popular</string>
+    <string name="charts">Charts</string>
+    <string name="artist">English Artists</string>
+    <string name="artist_hindi">Hindi Artists</string>
+    <string name="panjabi_artist">Punjabi Artists</string>
+    <string name="gener">Genre</string>
+    <string name="bollywood">Bollywood</string>
+    <string name="others">Others</string>
+    <string name="country">Country</string>
+    <string name="uk">UK</string>
+    <string name="us">US</string>
+    <string name="panjabi_hits">Punjabi Hits</string>
+    <string name="UK_US">UK US</string>
+    <string name="tokyo">Tokyo</string>
+    <string name="canada">Canada</string>
+    <string name="japan">Japan</string>
+    <string name="australia">Australia</string>
+    <string name="gender_empty">please select Gender!!!</string>
+    <string name="avatar_empty">please select Avatar!!!</string>
+    <!-- Spotify -->
+    <string name="spotify_premium_error">Spotify Error!</string>
+    <!--
+    <string name="spotify_premium_error_msg">Sorry, Your account is not premium, Please continue with YouTube</string>
+-->
+    <string name="spotify_premium_error_msg">Spotify Premium lets you play any track, ad-free and with better audio quality. Go to spotify.com/premium to try it for free.</string>
+    <string name="spotify_acc_error_msg">Please continue with YouTube</string>
+    <string name="continue_with_youtube">Continue with YOUTUBE</string>
+    <string name="cancel">Cancel</string>
+    <string name="new_releases">New Releases</string>
+    <string name="category">Category</string>
+    <string name="featured_playlist">Featured Playlist</string>
+    <string name="artists">Artists</string>
+    <string name="aired_on">Aired on:&#160;</string>
+
+    <!-- Error Messages -->
+    <string name="error_on_user_exist">User Name already exist</string>
+    <string name="error_on_email_exist">Email-Id already exist</string>
+    <string name="error_pass_regex_not_match">Case Sensitive: 8-20 characters, at least 1 uppercase, 1 lowercase, 1 number, 1 special character</string>
+
+    <!-- Playlist Details -->
+    <string name="live_sharing">Live Sharing</string>
+    <string name="end_sharing">End Live Sharing</string>
+    <string name="scan">Scan</string>
+    <string name="default_notification_channel_id">fcm_default_channel</string>
+
+    <!-- Notifications -->
+    <string name="unread">Unread</string>
+    <string name="read">Read</string>
+    <string name="earlier">Earlier</string>
+    <string name="mark_as_read">MARK AS READ</string>
+    <string name="notification">Notification</string>
+    <string name="delete_session">Delete Session</string>
+
+    <!-- Splash Screen -->
+    <string name="vibin">VIBIN</string>
+
+    <!-- Terms and Conditions Screen -->
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="accept">Accept</string>
+    <string name="reject">Reject</string>
+    <string name="deny">Deny</string>
+    <string name="closeAppConfirmationMsg">Are You Sure You Want To Exit Application?</string>
+    <string name="avatar">Avatar</string>
+    <string name="app_slogan">Be the Vibe</string>
+
+
+
+    <!-- Floating Screen -->
+
+    <string name="svg_play">M8,5v14l11,-7z</string>
+    <string name="svg_pause">M6,19h4V5H6v14zm8,-14v14h4V5h-4z</string>
+    <string name="dialog_get_permission">Permit to Draw over other apps</string>
+    <string name="string_get_permission">Allow this app to draw over other apps. This permission allows an app to display on the top of other apps you\'re using.</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="repeat_type">REPEAT_TYPE</string>
+    <string name="no_of_repeats">NO_OF_REPEATS</string>
+    <string name="player_type">PLAYER_TYPE</string>
+    <string name="init">INITIALIZED</string>
+    <string name="title_activity_fullscreen_web_player">FullscreenWebPlayer</string>
+    <string name="svg_arrow_up">M413.1,327.3l-1.8-2.1l-136-156.5c-4.6-5.3-11.5-8.6-19.2-8.6c-7.7,0-14.6,3.4-19.2,8.6L101,324.9l-2.3,2.6 \tC97,330,96,333,96,336.2c0,8.7,7.4,15.8,16.6,15.8v0h286.8v0c9.2,0,16.6-7.1,16.6-15.8C416,332.9,414.9,329.8,413.1,327.3z</string>
+    <string name="FileName">SHAREDPREFERENCE_KEYFILE</string>
+    <string name="action_search">search</string>
+    <string name="search_hint">Search YouTube</string>
+    <string name="videoQuality">VIDEO_QUALITY</string>
+    <string name="finishOnEnd">FINISH_ON_END</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="count">COUNT</string>
+
+
+    <string name="label_play">Play</string>
+    <string name="label_play_pause">Play and pause toggle</string>
+    <string name="label_pause">Pause</string>
+    <string name="label_previous">Previous track</string>
+    <string name="label_next">Next track</string>
+
+</resources>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <RelativeLayout
+        android:layout_width="@dimen/_250sdp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_rounded_bg_in_white"
+        android:layout_centerInParent="true"
+        android:paddingLeft="@dimen/_10sdp"
+        android:paddingRight="@dimen/_10sdp"
+        android:paddingBottom="@dimen/_15sdp">
+
+        <ImageButton
+            android:id="@+id/cancel_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:layout_alignParentRight="true"
+            android:tint="@color/nav_black"
+            android:paddingTop="@dimen/_minus15sdp"
+            android:background="@android:color/transparent"
+            android:layout_marginTop="@dimen/_5sdp"/>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/_20sdp"
+            android:text="@string/spotify_premium_error"
+            android:textSize="@dimen/_15sdp"
+            android:textColor="@color/nav_black"
+            android:gravity="center"
+            />
+
+        <TextView
+            android:id="@+id/message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="@string/spotify_premium_error_msg"
+            android:textSize="@dimen/_12sdp"
+            android:textColor="@color/nav_black"
+            android:gravity="center"
+            android:autoLink="all"
+            android:linksClickable="true"
+            android:textColorLink="@color/spot_green"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/message"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:gravity="center">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/cancel"
+                android:background="@android:color/transparent"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textAllCaps="false"
+                android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/continue_btn"
+                android:layout_width="@dimen/_150sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:text="@string/continue_with_youtube"
+                android:background="@drawable/youtube_btn_bg"
+                android:textColor="@color/nav_white"
+                android:textAllCaps="false"/>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

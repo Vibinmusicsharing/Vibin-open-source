@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:layoutDirection="ltr">
+
+    <!-- Title should be shown here -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_40sdp"
+            android:gravity="center_horizontal"
+            android:text="@string/nav_settings"
+            android:textSize="@dimen/_15sdp"
+            android:textColor="@android:color/black"/>
+
+        <ListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"             android:divider="@null">
+        </ListView>
+
+        <TextView
+            android:id="@+id/menu_item_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:textSize="@dimen/_12sdp"
+            android:text="@string/pref_platform"
+            android:textColor="@android:color/black"
+            android:layoutDirection="ltr"
+            android:gravity="center_vertical"/>
+
+
+        <RadioGroup
+            android:id="@+id/rg_platform"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layoutDirection="ltr"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp">
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/rb_youtube"
+                android:layout_width="match_parent"
+                android:textSize="@dimen/_13sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:textColor="@color/black"
+                android:drawablePadding="@dimen/_3sdp"
+                android:layoutDirection="rtl"
+                android:drawableEnd="@drawable/profile_youtube_logo1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                style="@style/Widget.AppCompat.CompoundButton.RadioButton"/>
+
+
+
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/rb_spotify"
+                android:layout_width="match_parent"
+                android:layoutDirection="rtl"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:textSize="@dimen/_13sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:drawablePadding="@dimen/_7sdp"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/profile_spotify_logo2"
+                android:layout_marginStart="@dimen/_5sdp"
+                 />
+
+        </RadioGroup>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_vertical"
+        android:layoutDirection="ltr">
+
+        <Button
+            android:id="@+id/btn_flag"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_45sdp"
+            android:gravity="center"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:textSize="@dimen/_12sdp"
+            android:text="@string/flag_report"
+            android:background="@null"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textAllCaps="true"
+            android:paddingLeft="0dp"/>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btn_logout"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_45sdp"
+                android:gravity="center"
+                android:textSize="@dimen/_12sdp"
+                android:text="@string/logout"
+                android:textColor="@android:color/black"
+                android:textAllCaps="true"
+                android:background="@null"
+                />
+            <TextView
+                android:id="@+id/tv_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_10sdp" />
+        </RelativeLayout>
+
+
+
+        <!--
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_45sdp"
+                android:gravity="center_vertical"
+                android:layoutDirection="ltr"
+                android:background="@color/color11">
+
+                <ImageView
+                    android:id="@+id/iv_log_out"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="16dp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_logout"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_45sdp"
+                    android:gravity="center"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:textSize="@dimen/_12sdp"
+                    android:text="@string/logout"
+                    android:textColor="@android:color/white"
+                    android:textAllCaps="true"/>
+            </LinearLayout>-->
+
+    </LinearLayout>
+</RelativeLayout>

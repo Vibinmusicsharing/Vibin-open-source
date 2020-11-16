@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    app:layout_goneMarginLeft="8dp"
+    tools:layout_editor_absoluteX="8dp"
+    tools:layout_editor_absoluteY="2dp"
+    android:padding="@dimen/_6sdp">
+
+
+
+    <RelativeLayout
+        android:id="@+id/img_cv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dimen_5dp">
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageViewaddtoplaylist"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/musicplayericon" />
+        </androidx.cardview.widget.CardView>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textViewtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:padding="@dimen/_5sdp"
+        android:layout_alignTop="@+id/img_cv"
+        android:layout_toRightOf="@+id/img_cv"
+        android:layout_alignBottom="@+id/img_cv"
+        android:maxLines="2"
+        android:ellipsize="end" />
+
+    <ImageView
+        android:id="@+id/iv_song_type"
+        android:layout_width="@dimen/_15sdp"
+        android:layout_height="@dimen/_15sdp"
+        android:layout_marginLeft="@dimen/_5sdp"
+        android:layout_alignBottom="@+id/img_cv"
+        android:layout_alignLeft="@+id/textViewtitle" />
+
+
+</RelativeLayout>

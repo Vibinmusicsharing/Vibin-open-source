@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/dialog_playlistname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="playlist name"
+        android:inputType="textPersonName"
+        />
+
+    <EditText
+        android:id="@+id/dialog_playlist_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dialog_playlistname"
+        android:gravity="top"
+        android:hint="Description"
+        android:inputType="text"
+        android:singleLine="false"
+        android:lines="2"
+        android:maxLines="5"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/giphy_search_hldr"
+        android:layout_below="@+id/dialog_playlist_desc">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/dialog_playlist_gif"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:drawableStart="@drawable/ic_search"
+            android:layout_toLeftOf="@+id/selected_gif_iv"
+            app:queryHint="Search GIPHY"
+            android:inputType="textPersonName"
+            android:theme="@style/SearchViewTheme" />
+
+        <com.giphy.sdk.ui.views.GifView
+            android:id="@+id/selected_gif_iv"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentEnd="true"
+            android:visibility="gone"/>
+    </RelativeLayout>
+
+
+
+
+    <com.giphy.sdk.ui.views.GiphyGridView
+        android:id="@+id/gifsGridView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_200sdp"
+        android:layout_below="@+id/giphy_search_hldr"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_centerHorizontal="true"
+        app:gphDirection="horizontal"
+        app:gphSpanCount="2"
+        app:gphCellPadding="12dp"
+        app:gphShowCheckeredBackground="false" />
+
+    <EditText
+        android:id="@+id/dialog_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="password"
+        android:visibility="visible"
+        android:layout_below="@+id/gifsGridView"
+        android:inputType="textPassword" />
+
+    <TextView
+        android:id="@+id/privatepublic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dialog_password"
+        android:layout_alignStart="@+id/privatepublic"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="6dp"
+        android:text="public"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:ignore="NotSibling" />
+
+    <Switch
+        android:id="@+id/toggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dialog_password"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="85dp"
+        android:layout_marginTop="5dp" />
+
+</RelativeLayout>

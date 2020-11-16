@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/appBackground">
+
+
+    <ProgressBar
+        android:id="@+id/progressBar_cyclic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/dimen_10dp">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/liLayBottom"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <!-- TextView To Set Content of Terms_and_Conditions -->
+            <TextView
+                android:id="@+id/tvTermsAndConditions"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="@color/constant_black"
+                android:textSize="@dimen/appTextSize"
+                android:fontFamily="@font/tinos_regular"/>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <LinearLayout
+            android:id="@+id/liLayBottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:background="@color/appBackground"
+            android:orientation="horizontal">
+
+            <com.shorincity.vibin.music_sharing.ripples.RippleButton
+                android:id="@+id/bDeny"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_weight="1"
+                android:background="@drawable/common_btn_bg_white"
+                android:text="@string/deny"
+                android:textColor="@color/colorPrimary"
+                android:visibility="visible"
+                app:rv_centered="true"
+                app:rv_holdBgInPressing="true"
+                app:rv_pressBgType="circleFitMax"
+                app:rv_rippleColor="@color/colorPrimaryDark"
+                android:fontFamily="@font/tinos_regular"/>
+
+            <com.shorincity.vibin.music_sharing.ripples.RippleButton
+                android:id="@+id/bAccept"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:text="@string/accept"
+                android:textColor="@color/white"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:background="@drawable/common_btn_bg_color"
+                app:rv_centered="true"
+                app:rv_holdBgInPressing="true"
+                app:rv_pressBgType="circleFitMax"
+                android:visibility="visible"
+                android:fontFamily="@font/tinos_regular"
+               />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

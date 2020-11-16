@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item>
+        <shape android:shape="rectangle" android:padding="10dp" >
+            <solid
+                android:color="#32ffffff"
+                />
+
+            <corners
+                android:radius="@dimen/_10sdp"
+                />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/music_placeholder_icon">
+    </item>
+</layer-list>
