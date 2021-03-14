@@ -139,17 +139,17 @@
 
             <com.shorincity.vibin.music_sharing.ripples.RippleButton
                 android:id="@+id/btnlogin_login"
-                android:layout_width="300dp"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="@dimen/dimen_10dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                android:background="@drawable/common_btn_rounded_color"
+                android:background="@drawable/common_btn_bg_no_border"
                 android:text="@string/sign_in"
                 android:textAllCaps="false"
-                android:textColor="#FFF"
+                android:textColor="@color/black"
                 android:textSize="18sp"
                 android:fontFamily="@font/tinos_regular"/>
 
@@ -197,15 +197,14 @@
 </LinearLayout>
             <com.shorincity.vibin.music_sharing.ripples.RippleButton
                 android:id="@+id/google_sign_up_btn"
-                android:layout_width="wrap_content"
+                android:padding="5dp"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/_10sdp"
-                android:paddingRight="@dimen/_10sdp"
                 android:textAllCaps="false"
                 android:background="@drawable/common_btn_bg_no_border"
                 android:drawableLeft="@drawable/google_icon"
                 android:text="@string/signin_with_google"
-                android:textColor="@color/btnBackground"
+                android:textColor="@color/black"
                 android:elevation="@dimen/_5sdp"
                 android:visibility="visible"
                 android:drawablePadding="@dimen/dimen_5dp"
@@ -215,23 +214,21 @@
 
         </LinearLayout>
 
-        <Button
+        <com.shorincity.vibin.music_sharing.ripples.RippleButton
             android:id="@+id/btnjoin_login"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/common_btn_rounded_white"
+            android:background="@drawable/common_btn_rounded_purple"
             android:text="@string/sign_up"
             android:fontFamily="@font/tinos_regular"
             android:textAllCaps="false"
-            android:textColor="#000000"
+            android:textColor="#fff"
             android:textSize="18sp"
-            android:paddingStart="@dimen/dimen_50dp"
-            android:paddingEnd="@dimen/dimen_50dp"
-            android:layout_marginBottom="70dp"
-            android:layout_marginEnd="-30dp"
+            android:layout_marginBottom="40dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginStart="30dp"
             android:layout_alignParentBottom="true"
-            android:gravity="center"
-            android:layout_alignParentEnd="true" />
+            android:gravity="center" />
 
         <!--<LinearLayout
             android:layout_width="match_parent"

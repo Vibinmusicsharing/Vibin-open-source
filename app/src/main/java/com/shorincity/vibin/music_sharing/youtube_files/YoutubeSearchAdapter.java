@@ -1,5 +1,6 @@
 package com.shorincity.vibin.music_sharing.youtube_files;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,7 @@ public class YoutubeSearchAdapter extends ArrayAdapter<Item> {
         ImageView imghinh;
 
     }
+    @SuppressLint("InflateParams")
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

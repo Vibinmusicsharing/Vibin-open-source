@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.UI.spotify;
+import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.activity.LoginSignUpActivity;
 import com.shorincity.vibin.music_sharing.activity.SplashActivity;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
@@ -76,7 +76,7 @@ public class SplashFragment extends Fragment {
             public void run() {
                 if (SharedPrefManager.getInstance(mContext).getSharedPrefBoolean
                         (AppConstants.INTENT_SESSION_KEY)) {
-                    intent = new Intent(mContext, spotify.class);
+                    intent = new Intent(mContext, youtube.class);
 
                 } else {
                     intent = new Intent(mContext, LoginSignUpActivity.class);

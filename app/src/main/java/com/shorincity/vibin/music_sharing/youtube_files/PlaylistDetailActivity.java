@@ -57,7 +57,7 @@ import com.shorincity.vibin.music_sharing.ripples.RippleButton;
 import com.shorincity.vibin.music_sharing.ripples.listener.OnRippleCompleteListener;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
-import com.shorincity.vibin.music_sharing.spotify_files.SpotifySongsPlayerActivity;
+
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
@@ -486,12 +486,6 @@ private Button play_btn;
                     intent.putExtra("thumbnail", playlist.get(position).getImage());
                     intent.putExtra("videoId", playlist.get(position).getTrackId());
                     startActivity(intent);
-                } else {
-                    Intent a = new Intent(PlaylistDetailActivity.this, SpotifySongsPlayerActivity.class);
-                    a.putExtra("uri", playlist.get(position).getTrackId());
-                    a.putExtra("image", playlist.get(position).getImage());
-                    a.putExtra("title", playlist.get(position).getName());
-                    startActivity(a);
                 }
             }
         });

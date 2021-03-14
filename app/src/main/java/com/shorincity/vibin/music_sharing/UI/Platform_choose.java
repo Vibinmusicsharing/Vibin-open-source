@@ -19,6 +19,7 @@ public class Platform_choose extends AppCompatActivity {
         final Button youtube = findViewById(R.id.youtube);
         final Button spotify = findViewById(R.id.spotify);
         final Button offline = findViewById(R.id.buttonlogout);
+
         youtube.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -27,12 +28,6 @@ public class Platform_choose extends AppCompatActivity {
             }
         });
 
-        spotify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(Platform_choose.this, com.shorincity.vibin.music_sharing.UI.spotify.class));
-            }
-        });
 
         offline.setOnClickListener(new View.OnClickListener() {
             @Override

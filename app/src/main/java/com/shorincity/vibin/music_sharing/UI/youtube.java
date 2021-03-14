@@ -54,8 +54,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 // Youtube Main Screen
-public class youtube extends AppCompatActivity implements
-        SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
+public class youtube extends AppCompatActivity implements SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
     FrameLayout mMainFrame;
 
     PublicPlaylistFragment publicPlaylistFragment;

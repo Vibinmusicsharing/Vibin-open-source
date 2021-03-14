@@ -1,8 +1,6 @@
 package com.shorincity.vibin.music_sharing.fragment;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -17,7 +15,6 @@ import android.widget.Toast;
 
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.UI.spotify;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.activity.LoginSignUpActivity;
 import com.shorincity.vibin.music_sharing.activity.PrivacyPolicyActivity;
@@ -73,14 +70,6 @@ public class MenuFragment extends ListFragment implements MenuListAdapter.Switch
                         if (!getActivity().getClass().getName().equalsIgnoreCase(youtube.class.getName())) {
                             // setting YOUTUBE as preferred platform
                             callUpdatePlatformAPI(AppConstants.YOUTUBE);
-                            ((AppCompatRadioButton) view.findViewById(R.id.rb_spotify)).setEnabled(false);
-                        }
-                        break;
-                    case R.id.rb_spotify:
-
-                        if (!getActivity().getClass().getName().equalsIgnoreCase(spotify.class.getName())) {
-                            // setting SPOTIFY as preferred platform
-                            callUpdatePlatformAPI(AppConstants.SPOTIFY);
                             ((AppCompatRadioButton) view.findViewById(R.id.rb_spotify)).setEnabled(false);
                         }
                         break;
@@ -203,9 +192,6 @@ public class MenuFragment extends ListFragment implements MenuListAdapter.Switch
             SharedPrefManager.getInstance(getActivity()).setSharedPrefString(AppConstants.INTENT_USER_PREFERRED_PLATFORM, AppConstants.YOUTUBE);
 
             gotoYoutubeHome();
-        } else if (preferPlatform.equalsIgnoreCase(AppConstants.SPOTIFY) /*&& !getActivity().getClass().getName().equalsIgnoreCase(spotify.class.getName())*/) {
-            SharedPrefManager.getInstance(getActivity()).setSharedPrefString(AppConstants.INTENT_USER_PREFERRED_PLATFORM, AppConstants.SPOTIFY);
-            gotoSpotifyHome();
         }
     }
 
@@ -215,11 +201,6 @@ public class MenuFragment extends ListFragment implements MenuListAdapter.Switch
         getActivity().finish();
     }
 
-    private void gotoSpotifyHome() {
-        Intent k = new Intent(getActivity(), spotify.class);
-        startActivity(k.putExtra(AppConstants.INTENT_UPDATE_PLATFORM, AppConstants.SPOTIFY));
-        getActivity().finish();
-    }
 
 
     public void postLogout() {

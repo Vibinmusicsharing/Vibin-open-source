@@ -103,16 +103,16 @@
         android:orientation="vertical"
         android:layout_alignParentBottom="true"
         android:gravity="bottom"
-        android:background="@drawable/bottom_curv_small">
+        >
 
     <Button
         android:id="@+id/btn_next"
-        android:layout_width="wrap_content"
+        android:layout_width="260dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/common_btn_rounded_white"
+        android:background="@drawable/common_btn_rounded_purple"
         android:text="@string/next"
         android:textAllCaps="false"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:paddingStart="@dimen/dimen_50dp"
         android:paddingEnd="@dimen/dimen_50dp"
         android:textSize="18sp"

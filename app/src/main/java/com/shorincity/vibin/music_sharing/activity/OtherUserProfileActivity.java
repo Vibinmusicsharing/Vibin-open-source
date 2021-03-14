@@ -40,7 +40,6 @@ import com.shorincity.vibin.music_sharing.ripples.RippleButton;
 import com.shorincity.vibin.music_sharing.ripples.listener.OnRippleCompleteListener;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
-import com.shorincity.vibin.music_sharing.spotify_files.SpotifySongsPlayerActivity;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
@@ -151,12 +150,6 @@ public class OtherUserProfileActivity extends AppCompatActivity implements View.
                     intent.putExtra("thumbnail", likedSongList.get(position).getSongThumbnail());
                     intent.putExtra("videoId", likedSongList.get(position).getSongId());
                     startActivity(intent);
-                } else {
-                    Intent a = new Intent(OtherUserProfileActivity.this, SpotifySongsPlayerActivity.class);
-                    a.putExtra("uri", likedSongList.get(position).getSongUri());
-                    a.putExtra("image", likedSongList.get(position).getSongThumbnail());
-                    a.putExtra("title", likedSongList.get(position).getSongName());
-                    startActivity(a);
                 }
             }
         });

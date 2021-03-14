@@ -12,7 +12,6 @@ import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.custom.RoundedImageView;
-import com.shorincity.vibin.music_sharing.UI.spotify;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.activity.AllRecntSongsActivity;
 import com.shorincity.vibin.music_sharing.adapters.LikedSongsAdapter;
@@ -23,7 +22,7 @@ import com.shorincity.vibin.music_sharing.model.RecentSongModel;
 import com.shorincity.vibin.music_sharing.model.UserProfileModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
-import com.shorincity.vibin.music_sharing.spotify_files.SpotifySongsPlayerActivity;
+
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.CustomSlidePanLayout;
 import com.shorincity.vibin.music_sharing.utils.Logging;
@@ -118,12 +117,6 @@ public class UserProfileFragment extends Fragment {
                     intent.putExtra("thumbnail",recentSongList.get(position).getSongThumbnail());
                     intent.putExtra("videoId",recentSongList.get(position).getSongId());
                     startActivity(intent);
-                } else {
-                    Intent a=new Intent(getActivity(), SpotifySongsPlayerActivity.class);
-                    a.putExtra("uri",recentSongList.get(position).getSongUri());
-                    a.putExtra("image",recentSongList.get(position).getSongThumbnail());
-                    a.putExtra("title",recentSongList.get(position).getSongName());
-                    startActivity(a);
                 }
             }
         });
@@ -148,12 +141,6 @@ public class UserProfileFragment extends Fragment {
                     intent.putExtra("thumbnail",likedSongList.get(position).getSongThumbnail());
                     intent.putExtra("videoId",likedSongList.get(position).getSongId());
                     startActivity(intent);
-                } else {
-                    Intent a=new Intent(getActivity(), SpotifySongsPlayerActivity.class);
-                    a.putExtra("uri",likedSongList.get(position).getSongUri());
-                    a.putExtra("image",likedSongList.get(position).getSongThumbnail());
-                    a.putExtra("title",likedSongList.get(position).getSongName());
-                    startActivity(a);
                 }
             }
         });
@@ -265,8 +252,6 @@ public class UserProfileFragment extends Fragment {
         try {
             if(slidePanLayout == null && getActivity() instanceof youtube) {
                 slidePanLayout = ((youtube)getActivity()).mSlidingLayout;
-            } else if( slidePanLayout == null && getActivity() instanceof spotify) {
-                slidePanLayout = ((spotify)getActivity()).mSlidingLayout;
             }
         } catch (NullPointerException e) {
             e.printStackTrace();

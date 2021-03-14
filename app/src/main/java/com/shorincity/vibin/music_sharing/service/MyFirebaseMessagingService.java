@@ -31,7 +31,6 @@ import android.util.Log;
 
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.UI.spotify;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -167,12 +166,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Intent intent;
 
         String platform = SharedPrefManager.getInstance(this).getSharedPrefString(AppConstants.INTENT_USER_PREFERRED_PLATFORM);
-
-        if (!TextUtils.isEmpty(platform) && platform.equalsIgnoreCase(AppConstants.SPOTIFY)) {
-            intent = new Intent(this, spotify.class);
-        } else {
-            intent = new Intent(this, youtube.class);
-        }
+        intent = new Intent(this, youtube.class);
 
         intent.putExtra(AppConstants.INTENT_COMING_FROM,"NOTIFICATION");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

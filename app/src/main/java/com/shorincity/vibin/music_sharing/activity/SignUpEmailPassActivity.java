@@ -25,7 +25,6 @@ import android.widget.Toast;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.LoginAct;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.UI.spotify;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.fragment.ErrorDailogFragment;
 import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
@@ -62,14 +61,14 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
 
     private Context mContext;
     Animation frombottom, fromtop;
-    Button btnLogin_signup;
+    RippleButton btnLogin_signup;
     private RippleButton joinBtn;
     TextView textView2;
     EditText emailSignUpEdt, password_signup, password_confirm;
     ProgressBar loading;
 
-    private String fullName = "", signUpMethod, email, googlePass;
-    private String password;
+    private String fullName = "", signUpMethod = "", email, googlePass;
+    private String password = "";
     private boolean isEmailVerified;
     private ProgressBar validatorProgress;
     private RippleButton google_sign_up_btn;
@@ -83,14 +82,16 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup_email_pass);
+
         mContext = SignUpEmailPassActivity.this;
+
 
         statusBarColorChange();
         // Calling to find Activity's child view here
         inItViews();
 
         // get Intent Data
-        getIntentData();
+        //getIntentData();
 
         inItListener();
     }
@@ -119,7 +120,7 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
 
         loading = (ProgressBar) findViewById(R.id.loading_signup);
         joinBtn = findViewById(R.id.btn_submit);
-        btnLogin_signup = (Button) findViewById(R.id.btnLogin_signup);
+        btnLogin_signup =  findViewById(R.id.btnLogin_signup);
 
         textView2 = (TextView) findViewById(R.id.textView2);
 
@@ -159,9 +160,18 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
         emailSignUpEdt.addTextChangedListener(new SignUpEmailPassActivity.EditTextWatch(this, emailSignUpEdt));
         password_signup.addTextChangedListener(new SignUpEmailPassActivity.EditTextWatch(this, password_signup));
 
-        btnLogin_signup.setOnClickListener(new View.OnClickListener() {
+//        btnLogin_signup.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(SignUpEmailPassActivity.this, LoginAct.class);
+//                startActivity(intent);
+//                finish();
+//            }
+//        });
+
+        btnLogin_signup.setOnRippleCompleteListener(new OnRippleCompleteListener() {
             @Override
-            public void onClick(View v) {
+            public void onComplete(View v) {
                 Intent intent = new Intent(SignUpEmailPassActivity.this, LoginAct.class);
                 startActivity(intent);
                 finish();
@@ -251,14 +261,22 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
             try {
                 String personName = acct.getDisplayName();
                 String personPhotoUrl = acct.getPhotoUrl() != null ? acct.getPhotoUrl().toString() : "";
-                String email = acct.getEmail();
+                String Email = acct.getEmail();
+                String [] pass = personName.split("\\s");
 
-                Logging.d("TEST", "Name: " + personName + ", email: " + email + ", Image: " + personPhotoUrl);
 
-                if (!TextUtils.isEmpty(personName) && !TextUtils.isEmpty(email)) {
+                Logging.d("TEST", "Name: " + personName + ", email: " + Email + ", Image: " + personPhotoUrl);
+
+                if (!TextUtils.isEmpty(personName) && !TextUtils.isEmpty(Email)) {
                     googleSignOut();
 
-                    postLogin(personName, email);
+                    fullName = personName;
+                    email = Email;
+                    signUpMethod = AppConstants.SIGNUP_BY_Google;
+                    password = pass[0]+"123@";
+
+                    gotoNextActivity();
+                    //postLogin(email, personName);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -296,15 +314,10 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
                             SharedPrefManager.getInstance(SignUpEmailPassActivity.this).setSharedPrefString(AppConstants.INTENT_USER_NAME, response.body().getUsername());
                             SharedPrefManager.getInstance(SignUpEmailPassActivity.this).setSharedPrefString(AppConstants.INTENT_FULL_NAME, response.body().getFullname());
 
-                            if (response.body().getPreferredPlatform().equalsIgnoreCase(AppConstants.SPOTIFY)) {
-                                Intent intent = new Intent(SignUpEmailPassActivity.this, spotify.class);
-                                startActivity(intent);
-                                finishAffinity();
-                            } else {
-                                Intent k = new Intent(SignUpEmailPassActivity.this, youtube.class);
-                                startActivity(k);
-                                finishAffinity();
-                            }
+                            Intent k = new Intent(SignUpEmailPassActivity.this, youtube.class);
+                            startActivity(k);
+                            finishAffinity();
+
                         } else if (!response.body().getUserLoggedIn() && response.body().getStatus().equalsIgnoreCase("change_login_type")) {
 
                             showErrorDialog(response.body().getMessage());
@@ -467,8 +480,13 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
 
     private void gotoNextActivity() {
 
-        if (password_signup.getVisibility() == View.VISIBLE)
-            password = password_signup.getText().toString().trim();
+        if (password_signup.getVisibility() == View.VISIBLE){
+            if (password.equals("")){
+                password = password_signup.getText().toString().trim();
+                signUpMethod = AppConstants.SIGNUP_BY_APP;
+            }
+        }
+
 
         startActivity(new Intent(this, SignUpUserNameActivity.class)
                 .putExtra(AppConstants.INTENT_FULL_NAME, fullName)
@@ -586,6 +604,9 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
                                 isEmailVerified = true;
                                 emailSignUpEdt.setError(null);
                                 emailSignUpEdt.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.check_mark_small, 0);
+                                password_signup.setEnabled(true);
+                                password_confirm.setEnabled(true);
+
                             }
                         }
 

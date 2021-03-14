@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.shorincity.vibin.music_sharing.model.UserSearchModel;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.UI.spotify;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.activity.OtherUserProfileActivity;
 import com.shorincity.vibin.music_sharing.adapters.UserSearchAdapter;
@@ -97,14 +96,6 @@ public class UserSearchFragment extends Fragment {
                     return true;
                 }
             });
-        } else if (getActivity() instanceof spotify) {
-            ((spotify) getActivity()).mSlidingLayout.setSlidingEnable(false);
-            ((spotify) getActivity()).mSlidingLayout.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    return true;
-                }
-            });
         }
     }
 
@@ -115,8 +106,6 @@ public class UserSearchFragment extends Fragment {
         searchEdt.setText("");
         if (getActivity() instanceof youtube) {
             ((youtube) getActivity()).mSlidingLayout.closePane();
-        } else if (getActivity() instanceof spotify) {
-            ((spotify) getActivity()).mSlidingLayout.closePane();
         }
 
     }

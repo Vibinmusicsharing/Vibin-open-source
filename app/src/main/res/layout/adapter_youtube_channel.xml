@@ -24,12 +24,12 @@
             android:layout_width="@dimen/_130sdp"
             android:layout_height="wrap_content">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <ImageView
                 android:id="@+id/item_img"
                 android:layout_width="@dimen/_130sdp"
                 android:layout_height="150dp"
                 android:background="@drawable/music_placeholder"
-                android:scaleType="centerCrop"
+                android:scaleType="fitXY"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

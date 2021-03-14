@@ -59,8 +59,9 @@ public class YoutubeChannelAdapter extends RecyclerView.Adapter<YoutubeChannelAd
 
     @Override
     public void onBindViewHolder(@NonNull ExampleViewHolder holder, int position) {
+
         YoutubeTrendingModel.Item currentItem = list.get(position);
-        String imageUrl = currentItem.getSnippet().getThumbnails().getDefault().getUrl();
+        String imageUrl = currentItem.getSnippet().getThumbnails().getMedium().getUrl();
         String name = currentItem.getSnippet().getTitle();
 
         holder.mTextViewTitle.setText(currentItem.getSnippet().getChannelTitle());

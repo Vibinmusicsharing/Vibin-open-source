@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -27,6 +28,7 @@ import com.shorincity.vibin.music_sharing.activity.SignUpEmailPassActivity;
 import com.shorincity.vibin.music_sharing.activity.WebviewActivity;
 import com.shorincity.vibin.music_sharing.fragment.ErrorDailogFragment;
 import com.shorincity.vibin.music_sharing.ripples.RippleButton;
+import com.shorincity.vibin.music_sharing.ripples.listener.OnRippleCompleteListener;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
@@ -50,17 +52,18 @@ public class LoginAct extends AppCompatActivity implements GoogleApiClient.OnCon
 
     Context mContext;
     Animation frombottom, fromtop;
-    RippleButton btnLogin_login;
+    RippleButton btnLogin_login,btnjoin_login;
     TextView textView1;
     EditText password_login, email_login;
     ProgressBar loading;
-    TextView text, btnForgotPass, btnjoin_login;
+    TextView text, btnForgotPass ;
     RippleButton google_sign_up_btn;
     private int RESULT_CODE_GOOGLE = 100;
     private static final int RC_GOOGLE_SIGN_IN = 007;
     private GoogleApiClient mGoogleApiClient;
     private GoogleSignInOptions gso;
     private ProgressDialog mProgressDialog;
+    String signUpMethod="";
 
 
     @SuppressLint("WrongViewCast")
@@ -79,7 +82,7 @@ public class LoginAct extends AppCompatActivity implements GoogleApiClient.OnCon
         google_sign_up_btn = findViewById(R.id.google_sign_up_btn);
 
         loading = (ProgressBar) findViewById(R.id.loading_login);
-        btnjoin_login = (TextView) findViewById(R.id.btnjoin_login);
+        btnjoin_login =  findViewById(R.id.btnjoin_login);
         btnLogin_login = (RippleButton) findViewById(R.id.btnlogin_login);
         //btnLogin_login.setOnRippleCompleteListener(onRippleCompleteListener);
 
@@ -98,9 +101,19 @@ public class LoginAct extends AppCompatActivity implements GoogleApiClient.OnCon
         //password_login.startAnimation(fromtop);
         // text.startAnimation(frombottom);
         // btnForgotPass.startAnimation(frombottom);
-        btnjoin_login.setOnClickListener(new View.OnClickListener() {
+//        btnjoin_login.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(LoginAct.this, SignUpEmailPassActivity.class);
+//                intent.putExtra(AppConstants.INTENT_SIGN_UP_METHOD, AppConstants.SIGNUP_BY_APP);
+//                startActivity(intent);
+//                finish();
+//            }
+//        });
+
+        btnjoin_login.setOnRippleCompleteListener(new OnRippleCompleteListener() {
             @Override
-            public void onClick(View v) {
+            public void onComplete(View v) {
                 Intent intent = new Intent(LoginAct.this, SignUpEmailPassActivity.class);
                 intent.putExtra(AppConstants.INTENT_SIGN_UP_METHOD, AppConstants.SIGNUP_BY_APP);
                 startActivity(intent);
@@ -205,7 +218,7 @@ public class LoginAct extends AppCompatActivity implements GoogleApiClient.OnCon
 
         } else {
             loading.setVisibility(View.VISIBLE);
-
+            signUpMethod = AppConstants.SIGNUP_BY_APP;
             postLogin(email, password);
         }
 
@@ -216,17 +229,20 @@ public class LoginAct extends AppCompatActivity implements GoogleApiClient.OnCon
         loading.setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getData();
 
-        Call<AdditionalSignUpModel> callback = dataAPI.login(AppConstants.LOGIN_SIGNUP_HEADER, email, password, AppConstants.SIGNUP_BY_APP);
+        Call<AdditionalSignUpModel> callback = dataAPI.login(AppConstants.LOGIN_SIGNUP_HEADER, email, password, signUpMethod);
         callback.enqueue(new Callback<AdditionalSignUpModel>() {
             @Override
             public void onResponse(Call<AdditionalSignUpModel> call, retrofit2.Response<AdditionalSignUpModel> response) {
                 loading.setVisibility(View.INVISIBLE);
+
+                Log.d("resp", String.valueOf(response));
 
                 if (response != null && response.body() != null) {
 
                     if ((response.body().getStatus().equalsIgnoreCase("error") || response.body().getStatus().equalsIgnoreCase("failed"))
                             && !TextUtils.isEmpty(response.body().getMessage())) {
                         Toast.makeText(LoginAct.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(LoginAct.this, "Password is Incorrect", Toast.LENGTH_SHORT).show();
                     } else {
                         if (response.body().getUserLoggedIn()) {
 
@@ -238,15 +254,11 @@ public class LoginAct extends AppCompatActivity implements GoogleApiClient.OnCon
                             SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_NAME, response.body().getUsername());
                             SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_FULL_NAME, response.body().getFullname());
 
-                            if (response.body().getPreferredPlatform().equalsIgnoreCase(AppConstants.SPOTIFY)) {
-                                Intent intent = new Intent(LoginAct.this, spotify.class);
-                                startActivity(intent);
-                                finishAffinity();
-                            } else {
-                                Intent k = new Intent(LoginAct.this, youtube.class);
-                                startActivity(k);
-                                finishAffinity();
-                            }
+
+                            Intent k = new Intent(LoginAct.this, youtube.class);
+                            startActivity(k);
+                            finishAffinity();
+
                         } else if (!response.body().getUserLoggedIn() && response.body().getStatus().equalsIgnoreCase("change_login_type")) {
 
                             showErrorDialog(response.body().getMessage());
@@ -348,13 +360,16 @@ public class LoginAct extends AppCompatActivity implements GoogleApiClient.OnCon
                 String personName = acct.getDisplayName();
                 String personPhotoUrl = acct.getPhotoUrl() != null ? acct.getPhotoUrl().toString() : "";
                 String email = acct.getEmail();
+                String [] pass = personName.split("\\s");
+                String password = pass[0]+"123@";
+                signUpMethod = AppConstants.SIGNUP_BY_Google;
 
                 Logging.d("TEST", "Name: " + personName + ", email: " + email + ", Image: " + personPhotoUrl);
 
                 if (!TextUtils.isEmpty(personName) && !TextUtils.isEmpty(email)) {
                     googleSignOut();
 
-                    postLogin(personName, email);
+                    postLogin(email, password);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

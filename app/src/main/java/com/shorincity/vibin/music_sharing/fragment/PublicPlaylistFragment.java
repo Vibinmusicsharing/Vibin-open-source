@@ -37,7 +37,6 @@ import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistLikeModel;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.UI.spotify;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.adapters.UserPlaylistAdapter;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
@@ -365,14 +364,6 @@ public class PublicPlaylistFragment extends Fragment {
                     return true;
                 }
             });
-        } else if(getActivity() instanceof spotify) {
-            ((spotify)getActivity()).mSlidingLayout.setSlidingEnable(false);
-            ((spotify)getActivity()).mSlidingLayout.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    return true;
-                }
-            });
         }
     }
 
@@ -384,8 +375,6 @@ public class PublicPlaylistFragment extends Fragment {
 
         if(getActivity() instanceof youtube) {
             ((youtube) getActivity()).mSlidingLayout.closePane();
-        } else if(getActivity() instanceof spotify) {
-            ((spotify) getActivity()).mSlidingLayout.closePane();
         }
     }
 

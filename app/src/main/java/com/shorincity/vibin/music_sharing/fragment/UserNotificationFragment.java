@@ -16,14 +16,12 @@ import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.GetNotifications;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.UI.spotify;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.adapters.NotificationsAdapter;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -112,14 +110,6 @@ public class UserNotificationFragment extends Fragment {
                     return true;
                 }
             });
-        } else if(getActivity() instanceof spotify) {
-            ((spotify)getActivity()).mSlidingLayout.setSlidingEnable(false);
-            ((spotify)getActivity()).mSlidingLayout.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    return true;
-                }
-            });
         }
     }
 
@@ -130,8 +120,6 @@ public class UserNotificationFragment extends Fragment {
         // It must to call to close setting navigation from Notification.
         if(getActivity() instanceof youtube) {
             ((youtube) getActivity()).mSlidingLayout.closePane();
-        } else if(getActivity() instanceof spotify) {
-            ((spotify) getActivity()).mSlidingLayout.closePane();
         }
 
         // By calling in resume, API will always refresh whenever user will come in notification

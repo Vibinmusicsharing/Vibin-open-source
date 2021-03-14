@@ -25,7 +25,6 @@ import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.LoginAct;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.UI.spotify;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.ripples.RippleButton;
 import com.shorincity.vibin.music_sharing.ripples.listener.OnRippleCompleteListener;
@@ -69,16 +68,9 @@ public class LoginSignUpActivity extends AppCompatActivity implements View.OnCli
 
             // If user is already login then going to their selected platform directly.
             String platform = SharedPrefManager.getInstance(this).getSharedPrefString(AppConstants.INTENT_USER_PREFERRED_PLATFORM);
-
-            if (!TextUtils.isEmpty(platform) && platform.equalsIgnoreCase(AppConstants.SPOTIFY)) {
-                Intent intent = new Intent(LoginSignUpActivity.this, spotify.class);
-                startActivity(intent);
-                finishAffinity();
-            } else {
-                Intent intent = new Intent(LoginSignUpActivity.this, youtube.class);
-                startActivity(intent);
-                finishAffinity();
-            }
+            Intent intent = new Intent(LoginSignUpActivity.this, youtube.class);
+            startActivity(intent);
+            finishAffinity();
         }
 
         // If user is not login then Screen view will appear.
@@ -209,7 +201,7 @@ public class LoginSignUpActivity extends AppCompatActivity implements View.OnCli
                 if (!TextUtils.isEmpty(personName) && !TextUtils.isEmpty(email)) {
                     googleSignOut();
 
-                    postLogin(personName, email, acct.getId());
+                    postLogin(personName, email, "");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -315,15 +307,10 @@ public class LoginSignUpActivity extends AppCompatActivity implements View.OnCli
                         SharedPrefManager.getInstance(LoginSignUpActivity.this).setSharedPrefString(AppConstants.INTENT_USER_NAME, response.body().getUsername());
                         SharedPrefManager.getInstance(LoginSignUpActivity.this).setSharedPrefString(AppConstants.INTENT_FULL_NAME, response.body().getFullname());
 
-                        if (response.body().getPreferredPlatform().equalsIgnoreCase(AppConstants.SPOTIFY)) {
-                            Intent intent = new Intent(LoginSignUpActivity.this, spotify.class);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            Intent k = new Intent(LoginSignUpActivity.this, youtube.class);
-                            startActivity(k);
-                            finish();
-                        }
+                        Intent k = new Intent(LoginSignUpActivity.this, youtube.class);
+                        startActivity(k);
+                        finish();
+
                     } else {
                         startActivity(new Intent(LoginSignUpActivity.this, SignUpEmailPassActivity.class).putExtra(AppConstants.INTENT_FULL_NAME, fullname).putExtra(AppConstants.INTENT_EMAIL, email).putExtra(AppConstants.INTENT_PASSWORD, password).putExtra(AppConstants.INTENT_SIGN_UP_METHOD, AppConstants.SIGNUP_BY_Google));
 
@@ -362,7 +349,7 @@ public class LoginSignUpActivity extends AppCompatActivity implements View.OnCli
 
         // finally change the color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(ContextCompat.getColor(this,R.color.white));
+            window.setStatusBarColor(ContextCompat.getColor(this,R.color.colorPrimaryDark));
         }
     }
 

@@ -203,7 +203,7 @@ public class YoutubeSearchFragment extends Fragment {
     public void Docdulieu(String tukhoa) {
         progressBar.setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getYoutubeData();
-        Call<ModelData> callback = dataAPI.getResurt("snippet", tukhoa, "50", "track%20Cartist", AppConstants.YOUTUBE_KEY);
+        Call<ModelData> callback = dataAPI.getResurt("snippet", tukhoa, "50", "video", AppConstants.YOUTUBE_KEY);
         callback.enqueue(new Callback<ModelData>() {
             @Override
             public void onResponse(Call<ModelData> call, Response<ModelData> response) {

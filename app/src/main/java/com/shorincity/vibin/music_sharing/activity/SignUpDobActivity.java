@@ -1,10 +1,12 @@
 package com.shorincity.vibin.music_sharing.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -13,27 +15,41 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.UI.youtube;
+import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
+import com.shorincity.vibin.music_sharing.model.SignUpResponse;
 import com.shorincity.vibin.music_sharing.ripples.RippleButton;
 import com.shorincity.vibin.music_sharing.ripples.listener.OnRippleCompleteListener;
+import com.shorincity.vibin.music_sharing.service.DataAPI;
+import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class SignUpDobActivity extends AppCompatActivity implements View.OnClickListener {
 
     boolean isLeepYearSelected = false;
-    private String genderStr;
+    private String genderStr,dobStr;
     private String mAvatarLink;
     private int userId;
     private Spinner monthSpinner, daySpinner, yearSpinner;
@@ -44,6 +60,10 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
     private String selectedMonthInTwoDigit, selectedDayInTwoDigit;
     private int MIN_YEAR_LIMIT = 90;
 
+    private Call<SignUpResponse> signUpCallback;
+    private Call<AdditionalSignUpModel> registerCallback;
+    private String preferredPlatform;
+    private int userIdStr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -341,7 +361,12 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_next:
-                gotoNextActivity();
+               // gotoNextActivity();
+                if(!((signUpCallback != null && signUpCallback.isExecuted())
+                        || (registerCallback != null && registerCallback.isExecuted()))) {
+                    preferredPlatform = AppConstants.YOUTUBE;
+                    registerUser();
+                }
                 break;
         }
     }
@@ -364,6 +389,134 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
         if (TextUtils.isEmpty(selectedYear) || TextUtils.isEmpty(selectedMonth) || TextUtils.isEmpty(selectedDay))
             Utility.setViewEnable(nextBtn, false);
         else Utility.setViewEnable(nextBtn, true);
+
+    }
+    public void registerUser() {
+        String dob = selectedDayInTwoDigit + "/" + selectedMonthInTwoDigit + "/" + selectedYear;
+        // storing all the info in bundle travelled by previous screen
+        Bundle bundle = getIntent().getBundleExtra(AppConstants.INTENT_USER_DATA_BUNDLE);
+        String emailStr = bundle.getString(AppConstants.INTENT_EMAIL);
+        String passStr = bundle.getString(AppConstants.INTENT_PASSWORD);
+        String userNameStr = bundle.getString(AppConstants.INTENT_USER_NAME);
+        String fullNameStr = bundle.getString(AppConstants.INTENT_FULL_NAME);
+        String signUpMethodStr = bundle.getString(AppConstants.INTENT_SIGN_UP_METHOD);
+        genderStr = bundle.getString(AppConstants.INTENT_GENDER);
+        dobStr = dob;
+        mAvatarLink= bundle.getString(AppConstants.INTENT_GENDER_AVATAR_LINK);
+
+        Logging.d("SUDP bundle 11:"+bundle.toString());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        String timeOfRegistration = dateFormat.format(date);
+
+        callSignUpAPI(emailStr,
+                passStr,
+                userNameStr,
+                fullNameStr,
+                signUpMethodStr,
+                timeOfRegistration,
+                "True");
+    }
+
+    public void callSignUpAPI(String email,
+                              String password,
+                              String username,
+                              String fullname,
+                              String typeOfRegistration,
+                              String timeOfRegistration,
+                              String  pushNotifications) {
+
+//        if (preferredPlatform.equalsIgnoreCase(AppConstants.SPOTIFY)) {
+//            spotifyBtn.startAnimation();
+//        } else {
+//            youtubeBtn.startAnimation();
+//        }
+        final ProgressDialog showMe = new ProgressDialog(SignUpDobActivity.this);
+        showMe.setMessage("Please wait");
+        showMe.setCancelable(true);
+        showMe.setCanceledOnTouchOutside(false);
+        showMe.show();
+
+        DataAPI dataAPI = RetrofitAPI.getData();
+
+        // Logging.dLong("SUP mAvatarLink:"+mAvatarLink);
+        signUpCallback = dataAPI.postSignUpFields(AppConstants.LOGIN_SIGNUP_HEADER,email,password,username,fullname,typeOfRegistration,timeOfRegistration,pushNotifications,mAvatarLink);
+
+
+        signUpCallback.enqueue(new Callback<SignUpResponse>() {
+            @Override
+            public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
+                if (response != null && response.body() != null
+                        && response.body().getUserCreated().equalsIgnoreCase("true")) {
+                    Logging.dLong("SignUp res:"+new Gson().toJson(response.body()));
+                    userIdStr = response.body().getUserId();
+
+                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_AVATAR_LINK,mAvatarLink);
+                    postAdditionalFields(userIdStr,genderStr,preferredPlatform,dobStr);
+                } else {
+                    showMe.dismiss();
+                    //resetButtonState();
+                    Toast.makeText(SignUpDobActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<SignUpResponse> call, Throwable t) {
+                Logging.dLong("SignUp res:"+ Log.getStackTraceString(t));
+                showMe.dismiss();
+               // resetButtonState();
+                Toast.makeText(SignUpDobActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+    public void postAdditionalFields(final int userId, String sex, final String platfrom, String dob) {
+        DataAPI dataAPI = RetrofitAPI.getData();
+
+        registerCallback = dataAPI.postAdditionalFields(AppConstants.LOGIN_SIGNUP_HEADER,userId,sex,platfrom,dob);
+        registerCallback.enqueue(new Callback<AdditionalSignUpModel>() {
+            @Override
+            public void onResponse(Call<AdditionalSignUpModel> call, Response<AdditionalSignUpModel> response) {
+                if (response != null && response.body() != null
+                        && !TextUtils.isEmpty(response.body().getStatus())
+                        && response.body().getStatus().equalsIgnoreCase("success")) {
+
+
+                    // Storing Users' info in preferences for further use
+                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefBoolean(AppConstants.INTENT_IS_USER_LOGGEDIN,true); // response.body().getUserLoggedIn()
+                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefInt(AppConstants.INTENT_USER_ID,response.body().getUserId());
+                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_USER_TOKEN,response.body().getToken());
+                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_USER_API_TOKEN,response.body().getApiToken());
+                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_USER_PREFERRED_PLATFORM,response.body().getPreferredPlatform());
+                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_USER_NAME,response.body().getUsername());
+                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_FULL_NAME,response.body().getFullname());
+
+                    Intent k = new Intent(SignUpDobActivity.this, youtube.class);
+                    k.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(k);
+                    finishAffinity();
+
+//                    if (platfrom.equalsIgnoreCase(AppConstants.SPOTIFY)) {
+//                        Intent intent = new Intent(SignUpDobActivity.this, spotify.class);
+//                        startActivity(intent);
+//                        finishAffinity();
+//                    } else {
+//                        Intent k = new Intent(SignUpDobActivity.this, youtube.class);
+//                        startActivity(k);
+//                        finishAffinity();
+//                    }
+                } else {
+
+                    //resetButtonState();
+                    Toast.makeText(SignUpDobActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<AdditionalSignUpModel> call, Throwable t) {
+                Toast.makeText(SignUpDobActivity.this,"Error: " +t.getMessage(),Toast.LENGTH_LONG).show();
+               // resetButtonState();
+            }
+        });
 
     }
 }

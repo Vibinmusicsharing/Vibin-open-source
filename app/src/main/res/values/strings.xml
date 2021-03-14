@@ -96,7 +96,7 @@
     <string name="signup_third_screen_title">I am a...</string>
     <string name="signup_fourth_screen_title">Just</string>
     <string name="signup_a_number">A number!</string>
-    <string name="signup_gender">Gender?</string>
+    <string name="signup_gender">Gender</string>
 
     <string name="next">Next</string>
     <string name="woman">Woman</string>

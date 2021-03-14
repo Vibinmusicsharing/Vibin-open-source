@@ -91,10 +91,7 @@ public class Platform_choose_activity extends AppCompatActivity implements Navig
                 Intent h = new Intent(Platform_choose_activity.this, youtube.class);
                 startActivity(h);
                 break;
-            case R.id.spotify_platform:
-                Intent k = new Intent(Platform_choose_activity.this, spotify.class);
-                startActivity(k);
-                break;
+
             case R.id.settings_nav:
                 Toast.makeText(this, "You clicked on Settings", Toast.LENGTH_SHORT).show();
                 break;

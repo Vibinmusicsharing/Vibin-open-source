@@ -62,6 +62,7 @@ public class SignUpGenderActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup_gender);
         mContext = SignUpGenderActivity.this;
+
         statusBarColorChange();
         getIntentData();
 
@@ -91,9 +92,9 @@ public class SignUpGenderActivity extends AppCompatActivity implements View.OnCl
         mFeMaleList = new ArrayList<>();
         mOtherList = new ArrayList<>();
 
-        callGenderAPI(AppConstants.MALE);
-        callGenderAPI(AppConstants.FEMALE);
-        callGenderAPI(AppConstants.OTHER);
+//        callGenderAPI(AppConstants.MALE);
+//        callGenderAPI(AppConstants.FEMALE);
+//        callGenderAPI(AppConstants.OTHER);
     }
 
 
@@ -179,6 +180,7 @@ public class SignUpGenderActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.rl_user_male:
+
                 mCurrentGenderSelected = MALE;
                 setViewEnable(nextBtn, true);
 

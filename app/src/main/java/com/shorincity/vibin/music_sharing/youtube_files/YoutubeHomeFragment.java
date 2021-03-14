@@ -323,10 +323,10 @@ public class YoutubeHomeFragment extends Fragment {
                 YoutubeTrendingModel.Item currentItem = youtubeIndianTrendingList.get(position);
                 String idvideo = currentItem.getId();
                 String title = currentItem.getSnippet().getTitle();
-                String thumbnail = currentItem.getSnippet().getThumbnails().getHigh().getUrl();
+                String thumbnail = currentItem.getSnippet().getThumbnails().getMedium().getUrl();
                 Intent intent = new Intent(getActivity(), ChannelsPlaylistActivity.class);
                 intent.putExtra(AppConstants.INTENT_YOUTUBE_CHANNEL_ID, currentItem.getSnippet().getChannelId());
-                intent.putExtra(AppConstants.INTENT_YOUTUBE_CHANNEL_BANNER_URL, currentItem.getSnippet().getThumbnails().getHigh().getUrl());
+                intent.putExtra(AppConstants.INTENT_YOUTUBE_CHANNEL_BANNER_URL, currentItem.getSnippet().getThumbnails().getMedium().getUrl());
                 intent.putExtra("title", title);
                 intent.putExtra("thumbnail", thumbnail);
                 intent.putExtra("videoId", idvideo);
@@ -399,10 +399,10 @@ public class YoutubeHomeFragment extends Fragment {
                 YoutubeTrendingModel.Item currentItem = youtubeIndianTrendingList.get(position);
                 String idvideo = currentItem.getId();
                 String title = currentItem.getSnippet().getTitle();
-                String thumbnail = currentItem.getSnippet().getThumbnails().getHigh().getUrl();
+                String thumbnail = currentItem.getSnippet().getThumbnails().getMedium().getUrl();
                 Intent intent = new Intent(getActivity(), ChannelsPlaylistActivity.class);
                 intent.putExtra(AppConstants.INTENT_YOUTUBE_CHANNEL_ID, currentItem.getSnippet().getChannelId());
-                intent.putExtra(AppConstants.INTENT_YOUTUBE_CHANNEL_BANNER_URL, currentItem.getSnippet().getThumbnails().getHigh().getUrl());
+                intent.putExtra(AppConstants.INTENT_YOUTUBE_CHANNEL_BANNER_URL, currentItem.getSnippet().getThumbnails().getMedium().getUrl());
                 intent.putExtra("title", title);
                 intent.putExtra("thumbnail", thumbnail);
                 intent.putExtra("videoId", idvideo);
@@ -566,6 +566,7 @@ public class YoutubeHomeFragment extends Fragment {
             @Override
             public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
                 progressBar.setVisibility(View.GONE);
+
                 if (response != null && response.body() != null) {
                     Log.i("YOUTUBE_TRENDING RESULT", response.toString());
 

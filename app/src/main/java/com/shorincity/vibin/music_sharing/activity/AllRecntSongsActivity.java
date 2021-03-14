@@ -19,7 +19,7 @@ import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.adapters.RecentPlayedAdapter;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
-import com.shorincity.vibin.music_sharing.spotify_files.SpotifySongsPlayerActivity;
+
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.youtube_files.PlayYoutubeVideoActivity;
 
@@ -82,12 +82,6 @@ public class AllRecntSongsActivity extends AppCompatActivity {
                     intent.putExtra("thumbnail",recentSongList.get(position).getSongThumbnail());
                     intent.putExtra("videoId",recentSongList.get(position).getSongId());
                     startActivity(intent);
-                } else {
-                    Intent a=new Intent(AllRecntSongsActivity.this, SpotifySongsPlayerActivity.class);
-                    a.putExtra("uri",recentSongList.get(position).getSongUri());
-                    a.putExtra("image",recentSongList.get(position).getSongThumbnail());
-                    a.putExtra("title",recentSongList.get(position).getSongName());
-                    startActivity(a);
                 }
             }
         });

@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.UI.spotify;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
 import com.shorincity.vibin.music_sharing.model.SignUpResponse;
@@ -210,18 +209,10 @@ public class SignUpPreferPlatformActivity extends AppCompatActivity implements V
                     SharedPrefManager.getInstance(SignUpPreferPlatformActivity.this).setSharedPrefString(AppConstants.INTENT_USER_NAME,response.body().getUsername());
                     SharedPrefManager.getInstance(SignUpPreferPlatformActivity.this).setSharedPrefString(AppConstants.INTENT_FULL_NAME,response.body().getFullname());
 
+                    Intent k = new Intent(SignUpPreferPlatformActivity.this, youtube.class);
+                    startActivity(k);
+                    finishAffinity();
 
-
-
-                    if (platfrom.equalsIgnoreCase(AppConstants.SPOTIFY)) {
-                        Intent intent = new Intent(SignUpPreferPlatformActivity.this, spotify.class);
-                        startActivity(intent);
-                        finishAffinity();
-                    } else {
-                        Intent k = new Intent(SignUpPreferPlatformActivity.this, youtube.class);
-                        startActivity(k);
-                        finishAffinity();
-                    }
                 } else {
                     resetButtonState();
                     Toast.makeText(SignUpPreferPlatformActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();

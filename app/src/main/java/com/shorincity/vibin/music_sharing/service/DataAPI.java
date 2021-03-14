@@ -15,15 +15,6 @@ import com.shorincity.vibin.music_sharing.model.RecentSongModel;
 import com.shorincity.vibin.music_sharing.model.SignUpResponse;
 import com.shorincity.vibin.music_sharing.model.SignUpUserNameCheckModel;
 import com.shorincity.vibin.music_sharing.model.SongLikeModel;
-import com.shorincity.vibin.music_sharing.model.SotifyMeResponse;
-import com.shorincity.vibin.music_sharing.model.SpotfySeveralArtistModel;
-import com.shorincity.vibin.music_sharing.model.SpotifyAlbumsDetailModel;
-import com.shorincity.vibin.music_sharing.model.SpotifyAlbumsTrackModel;
-import com.shorincity.vibin.music_sharing.model.SpotifyArtistModel;
-import com.shorincity.vibin.music_sharing.model.SpotifyCategoryModel;
-import com.shorincity.vibin.music_sharing.model.SpotifyFeaturedPlaylistModel;
-import com.shorincity.vibin.music_sharing.model.SpotifyNewReleaseModel;
-import com.shorincity.vibin.music_sharing.model.SpotifyPlaylistTracksModel;
 import com.shorincity.vibin.music_sharing.model.TermsAndConditionsModel;
 import com.shorincity.vibin.music_sharing.model.UpdateLikeStatusModel;
 import com.shorincity.vibin.music_sharing.model.UpdateNotificationModel;
@@ -249,46 +240,7 @@ public interface DataAPI {
                                                 @Field("liked_to_user") int customerId,
                                                 @Field("current_like_status") String likeStatus);
 
-    // SPOTIFY API
 
-    // checking on Home
-    @GET("me")
-    Call<SotifyMeResponse> getSpotifyMe(@Header ("Authorization") String token);
-
-    @GET("artists/{id}/albums")
-    Call<SpotifyArtistModel> getSpotifyArtistData(@Header ("Authorization") String token,
-                                                  @Path("id") String artistId);
-
-    // Calling on Spotify Home
-    @GET("artists")
-    Call<SpotfySeveralArtistModel> getSpotifySaveralArtist(@Header ("Authorization") String token,
-                                                           @Query("ids") String artistId);
-
-    @GET("browse/new-releases?country=IN&limit=10&offset=5")
-    Call<SpotifyNewReleaseModel> getSpotifyNewReleases(@Header ("Authorization") String token);
-
-    @GET("browse/featured-playlists?country=IN&locale=in_IN&limit=10&offset=5")
-    Call<SpotifyFeaturedPlaylistModel> getSpotifyFeaturedPlaylist(@Header ("Authorization") String token);
-
-    @GET("browse/categories?country=IN&locale=in_IN&limit=10&offset=5")
-    Call<SpotifyCategoryModel> getSpotifyCategory(@Header ("Authorization") String token);
-
-
-    @GET("playlists/{id}/tracks?limit=20")
-    Call<SpotifyPlaylistTracksModel> getSpotifyPlaylistsTracks(@Header ("Authorization") String token,
-                                                           @Path("id") String albumId);
-
-    @GET("albums/{id}/tracks?market=IN&limit=10&offset=5")
-    Call<SpotifyAlbumsTrackModel> getSpotifyAlbumTracks(@Header ("Authorization") String token,
-                                                       @Path("id") String albumId);
-
-    @GET("https://api.spotify.com/v1/albums/{id}?market=IN")
-    Call<SpotifyAlbumsDetailModel> getSpotifyAlbumDetail(@Header ("Authorization") String token,
-                                                         @Path("id") String albumId);
-
-    @GET("browse/categories/{category_id}/playlists?country=IN&locale=in_IN&limit=10&offset=5")
-    Call<SpotifyFeaturedPlaylistModel> getSpotifyCategoryPlaylist(@Header ("Authorization") String token,
-                                                                  @Path("category_id") String categoryId);
 
     @FormUrlEncoded
     @POST("/playlist/get_youtube_home_playlists/")
