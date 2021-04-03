@@ -11,6 +11,7 @@
     app:umanoPanelHeight="268dp"
     app:umanoParallaxOffset="100dp"
     app:umanoOverlay="false"
+
     app:umanoShadowHeight="4dp"
     android:layoutDirection="rtl"
     android:background="#ff0000">

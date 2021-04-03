@@ -1,9 +1,12 @@
 package com.shorincity.vibin.music_sharing.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class PlaylistDetailModel {
+public class PlaylistDetailModel implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -26,6 +29,42 @@ public class PlaylistDetailModel {
     @SerializedName("playlist")
     @Expose
     private Integer playlist;
+
+    public PlaylistDetailModel(String name, String image, String trackId) {
+        this.name = name;
+        this.image = image;
+        this.trackId = trackId;
+    }
+
+     PlaylistDetailModel(Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readInt();
+        }
+        type = in.readString();
+        trackId = in.readString();
+        name = in.readString();
+        image = in.readString();
+        songDuration = in.readString();
+        if (in.readByte() == 0) {
+            playlist = null;
+        } else {
+            playlist = in.readInt();
+        }
+    }
+
+    public static final Creator<PlaylistDetailModel> CREATOR = new Creator<PlaylistDetailModel>() {
+        @Override
+        public PlaylistDetailModel createFromParcel(Parcel in) {
+            return new PlaylistDetailModel(in);
+        }
+
+        @Override
+        public PlaylistDetailModel[] newArray(int size) {
+            return new PlaylistDetailModel[size];
+        }
+    };
 
     public Integer getId() {
         return id;
@@ -83,4 +122,29 @@ public class PlaylistDetailModel {
         this.playlist = playlist;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        if (id == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(id);
+        }
+        parcel.writeString(type);
+        parcel.writeString(trackId);
+        parcel.writeString(name);
+        parcel.writeString(image);
+        parcel.writeString(songDuration);
+        if (playlist == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(playlist);
+        }
+    }
 }

@@ -6,6 +6,7 @@ import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Binder;
@@ -23,12 +24,14 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
@@ -48,10 +51,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.adapters.AddToPlaylistAdapter;
+import com.shorincity.vibin.music_sharing.adapters.PlayListDetailsAdapter;
 import com.shorincity.vibin.music_sharing.adapters.Playlist;
 import com.shorincity.vibin.music_sharing.adapters.PlaylistRecyclerView;
+import com.shorincity.vibin.music_sharing.adapters.YoutubeArtistChannelAdapter;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.AddSongLogModel;
+import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.SongLikeModel;
 import com.shorincity.vibin.music_sharing.ripples.RippleButton;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
@@ -84,8 +90,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -95,24 +104,31 @@ import com.google.android.youtube.player.YouTubePlayer;
 
 // Youtube Player
 
-public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener, View.OnClickListener {
+public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements PlayListDetailsAdapter.ItemListener, YouTubePlayer.OnInitializedListener, View.OnClickListener {
     private static String TAG = PlayYoutubeVideoActivity.class.getName();
     int REQUEST_VIDEO = 123;
     YouTubePlayerView youTubePlayerView;
     int lengthms = 270000;
     private Context mContext;
+    int position = 0;
     String createnewplaylist = AppConstants.BASE_URL + "playlist/create_new_playlist/";
     private MyPlayerStateChangeListener playerStateChangeListener;
     private MyPlaybackEventListener playbackEventListener;
-
+    TextView titlemain;
     private YouTubePlayer mYouTubePlayer;
     Handler handler;
     Runnable my;
+    boolean isFromRewind = false, isFromNext = false;
     boolean isKillMe = false;
+    ArrayList<PlaylistDetailModel> playlist;
     boolean seekusedbyuser = false;
     SeekBar mSeekBar;
     Button addToPlayList;
-
+    PlayListDetailsAdapter playListDetailsAdapter;
+    BottomSheetBehavior behavior;
+    BottomSheetDialog bottomSheetDialog;
+    LinearLayout bottom_sheet;
+    RecyclerView recyclerView_bottom;
     RecyclerView youtubePlayListRecyclerView;
     PlaylistRecyclerView adapter;
     ArrayList<Playlist> playlistList;
@@ -124,7 +140,6 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
     String videoId, songURI, playId;
     ImageView heartIv, forward, rewind, shuffle, repeatone;
     Boolean isAddSongLogRecorded = false;
-    LikeButton heartLikeButton;
     AndroidLikeButton likeButton;
 
     ProgressBar progressBar;
@@ -133,6 +148,8 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
     TextView playerCurrentDurationTv, playerTotalDurationTv;
     Button Play_Pause;
     TextView tvCreateNewPlaylist;
+    boolean isSuffleOn = false;
+    boolean isRepeatOn = false;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -141,14 +158,29 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
         setContentView(R.layout.activity_playvideo);
         mContext = PlayYoutubeVideoActivity.this;
         Logging.d("PlayYoutubeVideoActivity");
+        playlist = new ArrayList<>();
         getIntentData();
         statusBarColorChange();
         // finding views
+
+
         initViews();
 
+        isSuffleOn = SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefBoolean(AppConstants.IS_SUFFLEON);
+        isRepeatOn = SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefBoolean(AppConstants.IS_REPEATON);
+        if (isSuffleOn) {
+            shuffle.setColorFilter(mContext.getResources().getColor(R.color.yt_red));
+            SharedPrefManager.getInstance(getApplicationContext()).setSharedPrefBoolean(AppConstants.IS_REPEATON, false);
+            isRepeatOn = false;
+        } else if (isRepeatOn) {
+            repeatone.setImageTintList(mContext.getResources().getColorStateList(R.color.yt_red));
+            SharedPrefManager.getInstance(getApplicationContext()).setSharedPrefBoolean(AppConstants.IS_SUFFLEON, false);
+            isSuffleOn = false;
+        }
         // calling to get Sings Like Status
         callGetSongLikeStatusAPI(userId, videoId);
 
+        setBottomSheetForPlaylist();
         // setting buttons listeners
         inItListeners();
 
@@ -191,6 +223,76 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
         //seekbar.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
         //seekbar.getThumb().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
 
+        rewind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isSuffleOn) {
+                    suffleSongChange();
+                } else if (isRepeatOn) {
+                    repeatOneSongChange();
+                } else {
+                    previousSongChange();
+                    if (position > 0)
+                        position = position - 1;
+                }
+
+            }
+        });
+        forward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isSuffleOn) {
+                    suffleSongChange();
+                } else if (isRepeatOn) {
+                    repeatOneSongChange();
+                } else {
+                    nextSongChange();
+                    if (position < playlist.size() - 1)
+                        position = position + 1;
+                }
+
+            }
+        });
+        shuffle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isSuffleOn) {
+                    SharedPrefManager.getInstance(getApplicationContext()).setSharedPrefBoolean(AppConstants.IS_SUFFLEON, false);
+                    isSuffleOn = false;
+                    shuffle.setColorFilter(Color.parseColor("#5D14F8"));
+                    Toast.makeText(getApplicationContext(), "Suffle Off", +2000).show();
+                } else {
+                    SharedPrefManager.getInstance(getApplicationContext()).setSharedPrefBoolean(AppConstants.IS_SUFFLEON, true);
+                    isSuffleOn = true;
+                    shuffle.setColorFilter(Color.parseColor("#E20A0A"));
+                    repeatone.setImageTintList(mContext.getResources().getColorStateList(R.color.toolbarColor));
+                    Toast.makeText(getApplicationContext(), "Suffle On", +2000).show();
+                    SharedPrefManager.getInstance(getApplicationContext()).setSharedPrefBoolean(AppConstants.IS_REPEATON, false);
+                    isRepeatOn = false;
+
+                }
+            }
+        });
+        repeatone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isRepeatOn) {
+                    SharedPrefManager.getInstance(getApplicationContext()).setSharedPrefBoolean(AppConstants.IS_REPEATON, false);
+                    isRepeatOn = false;
+                    repeatone.setImageTintList(mContext.getResources().getColorStateList(R.color.toolbarColor));
+                    Toast.makeText(getApplicationContext(), "Repeat Off", +2000).show();
+                } else {
+                    SharedPrefManager.getInstance(getApplicationContext()).setSharedPrefBoolean(AppConstants.IS_REPEATON, true);
+                    isRepeatOn = true;
+                    shuffle.setColorFilter(Color.parseColor("#5D14F8"));
+                    repeatone.setImageTintList(mContext.getResources().getColorStateList(R.color.yt_red));
+                    Toast.makeText(getApplicationContext(), "Repeat On", +2000).show();
+                    SharedPrefManager.getInstance(getApplicationContext()).setSharedPrefBoolean(AppConstants.IS_SUFFLEON, false);
+                    isSuffleOn = false;
+
+                }
+            }
+        });
         Play_Pause = (Button) findViewById(R.id.button2);
         Play_Pause.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -226,7 +328,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
                 int duration = mYouTubePlayer.getCurrentTimeMillis();
                 Log.d("TEST : ", "Running-->" + isServiceRunning(PlayerService.class));
                 if (isServiceRunning(PlayerService.class)) {
-                    PlayerService.startVid(videoId, playId, title, thumbnail, description);
+                    PlayerService.startVid(videoId, playId, title, thumbnail, description, playlist, position);
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !canDrawOverlays(PlayYoutubeVideoActivity.this)) {
                         Log.d("TEST : ", "ACTION_MANAGE_OVERLAY_PERMISSION");
@@ -249,10 +351,181 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
         });
 
     }
+
+    @Override
+    public void onItemClick(PlaylistDetailModel item) {
+        plaSongFromBottomSheet(item);
+        behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+    }
+
+    private void plaSongFromBottomSheet(PlaylistDetailModel item) {
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(my);
+        }
+        isKillMe = false;
+        if (mYouTubePlayer != null) {
+            mYouTubePlayer.release();
+            mYouTubePlayer = null;
+        }
+        for (int i = 0; i < playlist.size(); i++) {
+            if (item.getTrackId().equalsIgnoreCase(playlist.get(i).getTrackId())) {
+                position = i;
+            }
+        }
+        title = item.getName();
+        description = "";
+        thumbnail = item.getImage();
+        videoId = item.getTrackId();
+        songURI = "https://www.youtube.com/watch?v=" + videoId;
+        youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
+        titlemain.setText(title);
+        titlemain.setSelected(true);
+        playerCurrentDurationTv.setText("00:00");
+        isAddSongLogRecorded = false;
+        seekusedbyuser = false;
+        processSeekBar();
+        playerStateChangeListener = new MyPlayerStateChangeListener();
+        playbackEventListener = new MyPlaybackEventListener();
+        callGetSongLikeStatusAPI(userId, videoId);
+    }
+
+    private void setBottomSheetForPlaylist() {
+        View bottomSheet = findViewById(R.id.bottom_sheet_detail);
+        behavior = BottomSheetBehavior.from(bottomSheet);
+        behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    recyclerView_bottom.smoothScrollToPosition(0);
+                }
+
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+
+        recyclerView_bottom = (RecyclerView) findViewById(R.id.recyclerView_bottom);
+        recyclerView_bottom.setHasFixedSize(true);
+        recyclerView_bottom.setLayoutManager(new LinearLayoutManager(this));
+        ArrayList<PlaylistDetailModel> tempplaylist = new ArrayList();
+//        tempplaylist.addAll(playlist);
+//        Collections.reverse(tempplaylist);
+        playListDetailsAdapter = new PlayListDetailsAdapter(getApplicationContext(), playlist, this);
+        recyclerView_bottom.setAdapter(playListDetailsAdapter);
+    }
+
+    public void repeatOneSongChange() {
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(my);
+        }
+        isKillMe = false;
+        if (mYouTubePlayer != null) {
+            mYouTubePlayer.release();
+            mYouTubePlayer = null;
+        }
+
+        title = playlist.get(position).getName();
+        description = "";
+        thumbnail = playlist.get(position).getImage();
+        videoId = playlist.get(position).getTrackId();
+        songURI = "https://www.youtube.com/watch?v=" + videoId;
+        youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
+        titlemain.setText(title);
+        titlemain.setSelected(true);
+        playerCurrentDurationTv.setText("00:00");
+        isAddSongLogRecorded = false;
+        seekusedbyuser = false;
+        processSeekBar();
+        playerStateChangeListener = new MyPlayerStateChangeListener();
+        playbackEventListener = new MyPlaybackEventListener();
+        callGetSongLikeStatusAPI(userId, videoId);
+    }
+
+    private void suffleSongChange() {
+        Random random = new Random();
+        int randPos = random.nextInt(playlist.size() - 1);
+        Log.d("yash", "suffleSongChange: " + randPos);
+        if (randPos == position) {
+            randPos = random.nextInt(playlist.size() - 1);
+            suffleSongChange();
+        } else if (randPos != position) {
+            position = randPos;
+            if (handler != null) {
+                handler.removeCallbacksAndMessages(my);
+            }
+            isKillMe = false;
+            if (mYouTubePlayer != null) {
+                mYouTubePlayer.release();
+                mYouTubePlayer = null;
+            }
+            title = playlist.get(randPos).getName();
+            description = "";
+            thumbnail = playlist.get(randPos).getImage();
+            videoId = playlist.get(randPos).getTrackId();
+            songURI = "https://www.youtube.com/watch?v=" + videoId;
+            titlemain.setText(title);
+            titlemain.setSelected(true);
+            playerCurrentDurationTv.setText("00:00");
+            youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
+            isAddSongLogRecorded = false;
+            seekusedbyuser = false;
+            processSeekBar();
+            playerStateChangeListener = new MyPlayerStateChangeListener();
+            playbackEventListener = new MyPlaybackEventListener();
+            callGetSongLikeStatusAPI(userId, videoId);
+        }
+
+    }
+
+    private void previousSongChange() {
+        if (playlist.get(position).getTrackId().equalsIgnoreCase(videoId)) {
+            if (position != 0) {
+                if (handler != null) {
+                    handler.removeCallbacksAndMessages(my);
+                }
+                isKillMe = false;
+                if (mYouTubePlayer != null) {
+                    mYouTubePlayer.release();
+                    mYouTubePlayer = null;
+                }
+                title = playlist.get(position - 1).getName();
+                description = "";
+                thumbnail = playlist.get(position - 1).getImage();
+                videoId = playlist.get(position - 1).getTrackId();
+                songURI = "https://www.youtube.com/watch?v=" + videoId;
+                titlemain.setText(title);
+                titlemain.setSelected(true);
+                playerCurrentDurationTv.setText("00:00");
+                youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
+                isAddSongLogRecorded = false;
+                seekusedbyuser = false;
+                processSeekBar();
+                playerStateChangeListener = new MyPlayerStateChangeListener();
+                playbackEventListener = new MyPlaybackEventListener();
+                callGetSongLikeStatusAPI(userId, videoId);
+            } else {
+
+                Toast.makeText(getApplicationContext(), "This is First Song Of Playlist", +2000).show();
+            }
+        }
+    }
+
+
     private void processSeekBar() {
-        if(handler!=null){
+//        if (isFromNext) {
+//            playListDetailsAdapter.setTextViewColor(position + 1);
+//        }else if(isFromRewind ) {
+//            playListDetailsAdapter.setTextViewColor(position - 1);
+//        }else {
+//            playListDetailsAdapter.setTextViewColor(position);
+//        }
+        if (handler != null) {
             handler.removeCallbacks(my);
-            handler= null;
+            handler = null;
         }
         handler = new Handler();
         my = new Runnable() {
@@ -267,6 +540,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
                     handler.postDelayed(this, 1000);
 
                     if (mYouTubePlayer != null) {
+
                         lengthms = mYouTubePlayer.getDurationMillis();
                         float current = mYouTubePlayer.getCurrentTimeMillis();
                         float wowInt = ((current / lengthms) * 100);
@@ -274,8 +548,10 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
                             mSeekBar.setProgress((int) wowInt);
 
                             // displaying current duration when song starts to play
-                            if (mYouTubePlayer.isPlaying() && (int) wowInt > 0)
+                            if (mYouTubePlayer.isPlaying() && (int) wowInt > 0) {
                                 playerCurrentDurationTv.setText(Utility.convertDuration(Long.valueOf(mYouTubePlayer.getCurrentTimeMillis())));
+                            }
+
                         }
                     }
                 }
@@ -283,6 +559,69 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
         };
         handler.postDelayed(my, 2000);
     }
+
+    private void automaticNextSong() {
+        if (position != playlist.size() - 1) {
+            if (handler != null) {
+                handler.removeCallbacksAndMessages(my);
+            }
+            isKillMe = false;
+            if (mYouTubePlayer != null) {
+                mYouTubePlayer.release();
+                mYouTubePlayer = null;
+            }
+            title = playlist.get(position + 1).getName();
+            description = "";
+            thumbnail = playlist.get(position + 1).getImage();
+            videoId = playlist.get(position + 1).getTrackId();
+            songURI = "https://www.youtube.com/watch?v=" + videoId;
+            titlemain.setText(title);
+            titlemain.setSelected(true);
+            playerCurrentDurationTv.setText("00:00");
+            youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
+            isAddSongLogRecorded = false;
+            seekusedbyuser = false;
+            processSeekBar();
+            playerStateChangeListener = new MyPlayerStateChangeListener();
+            playbackEventListener = new MyPlaybackEventListener();
+            callGetSongLikeStatusAPI(userId, videoId);
+        } else {
+            Toast.makeText(getApplicationContext(), "This is last Song Of Playlist", +2000).show();
+        }
+    }
+
+    public void nextSongChange() {
+        if (playlist.get(position).getTrackId().equalsIgnoreCase(videoId)) {
+            if (position != playlist.size() - 1) {
+                if (handler != null) {
+                    handler.removeCallbacksAndMessages(my);
+                }
+                isKillMe = false;
+                if (mYouTubePlayer != null) {
+                    mYouTubePlayer.release();
+                    mYouTubePlayer = null;
+                }
+                title = playlist.get(position + 1).getName();
+                description = "";
+                thumbnail = playlist.get(position + 1).getImage();
+                videoId = playlist.get(position + 1).getTrackId();
+                songURI = "https://www.youtube.com/watch?v=" + videoId;
+                titlemain.setText(title);
+                titlemain.setSelected(true);
+                playerCurrentDurationTv.setText("00:00");
+                youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
+                isAddSongLogRecorded = false;
+                seekusedbyuser = false;
+                processSeekBar();
+                playerStateChangeListener = new MyPlayerStateChangeListener();
+                playbackEventListener = new MyPlaybackEventListener();
+                callGetSongLikeStatusAPI(userId, videoId);
+            } else {
+                Toast.makeText(getApplicationContext(), "This is last Song Of Playlist", +2000).show();
+            }
+        }
+    }
+
 
     /**
      * Workaround for Android O
@@ -379,21 +718,40 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
         }
     }
 
+//    @Override
+//    public void onWindowFocusChanged(boolean hasFocus) {
+//        super.onWindowFocusChanged(hasFocus);
+//        if (mYouTubePlayer != null) {
+//            if (mYouTubePlayer.isPlaying()) {
+//                mYouTubePlayer.pause();
+//                Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
+//            } else {
+//                mYouTubePlayer.play();
+//                Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+//            }
+//
+//        }
+//    }
+
+
     //YouTubePlayerTracker mTracker = null;
     private void inItListeners() {
-        heartLikeButton.setOnClickListener(this);
-        likeButton.setOnClickListener(this);
+
         heartIv.setOnClickListener(this);
     }
 
     private void getIntentData() {
         userId = SharedPrefManager.getInstance(PlayYoutubeVideoActivity.this).getSharedPrefInt(AppConstants.INTENT_USER_ID);
-        playId = getIntent().getExtras().getString("playId");
-        title = getIntent().getExtras().getString("title");
-        description = getIntent().getExtras().getString("description");
-        thumbnail = getIntent().getExtras().getString("thumbnail");
-        videoId = getIntent().getExtras().getString("videoId");
+        Bundle bundle = getIntent().getBundleExtra("data");
+        playlist.addAll(bundle.getParcelableArrayList("playlist"));
+        position = bundle.getInt("position");
+        playId = bundle.getString("playId");
+        title = bundle.getString("title");
+        description = bundle.getString("description");
+        thumbnail = bundle.getString("thumbnail");
+        videoId = bundle.getString("videoId");
         songURI = "https://www.youtube.com/watch?v=" + videoId;
+
 
         //        Logging.d("userId-->"+userId);
         //        Logging.d("playId-->"+playId);
@@ -406,8 +764,8 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
     private void initViews() {
 
         youTubePlayerView = findViewById(R.id.myYoutube);
-        youTubePlayerView.initialize(YoutubeSearchActivity.API_KEY, this);
-        TextView titlemain = findViewById(R.id.youtube_title);
+
+        titlemain = findViewById(R.id.youtube_title);
 
         titlemain.setText(title);
         titlemain.setSelected(true);
@@ -420,33 +778,15 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
         rewind = findViewById(R.id.fastrewind);
         shuffle = findViewById(R.id.shuffle);
         repeatone = findViewById(R.id.repeatonce);
-        likeButton = findViewById(R.id.like_iv);
-        likeButton.setCircleColor(R.color.color1, R.color.color2);
-        likeButton.setCircleActive(true);
-        likeButton.setDotColor(R.color.color4, R.color.color5);
-        likeButton.setDotActive(true);
-
-        heartLikeButton = findViewById(R.id.heart_likebtn);
-        heartLikeButton.setIcon(IconType.Heart);
-        heartLikeButton.setAnimationScaleFactor(3);
-        heartLikeButton.setOnLikeListener(new OnLikeListener() {
-            @Override
-            public void liked(LikeButton likeButton) {
-
-            }
-
-            @Override
-            public void unLiked(LikeButton likeButton) {
-
-            }
-        });
+        youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
 
         // setting icons
         forward.setBackground(ContextCompat.getDrawable(this, R.drawable.ic_baseline_skip_next_24));
         rewind.setBackground(ContextCompat.getDrawable(this, R.drawable.ic_baseline_skip_previous_24));
         rewind.setImageTintList(mContext.getResources().getColorStateList(R.color.colorPrimaryDark));
-        shuffle.setBackground(ContextCompat.getDrawable(this, R.drawable.ic_shuffle_black_24dp));
-        repeatone.setBackground(ContextCompat.getDrawable(this, R.drawable.ic_add_blackwhite_24dp));
+        repeatone.setImageDrawable(mContext.getResources().getDrawable(R.drawable.repeatonce));
+        repeatone.setImageTintList(mContext.getResources().getColorStateList(R.color.toolbarColor));
+
 
     }
 
@@ -456,7 +796,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
         final View dialog = LayoutInflater.from(this).inflate(R.layout.dialog_add_to_playlist, null, false);
 */
 
-        BottomSheetDialog bottomSheet= new BottomSheetDialog(this);
+        BottomSheetDialog bottomSheet = new BottomSheetDialog(this);
         View bottom_sheet = getLayoutInflater().inflate(R.layout.dialog_add_to_playlist_bottom, null);
         bottomSheet.setContentView(bottom_sheet);
         BottomSheetBehavior mBehavior = BottomSheetBehavior.from((View) bottom_sheet.getParent());
@@ -505,7 +845,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
         tvCreateNewPlaylist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    openDialog();
+                openDialog();
 
             }
         });
@@ -514,7 +854,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
     // dialog to add playlist
     private void openDialog() {
         final AlertDialog.Builder mb = new AlertDialog.Builder(PlayYoutubeVideoActivity.this);
-            final View dialog = LayoutInflater.from(mContext).inflate(R.layout.layout_dialog, null, false);
+        final View dialog = LayoutInflater.from(mContext).inflate(R.layout.layout_dialog, null, false);
         final EditText playlistName = dialog.findViewById(R.id.dialog_playlistname);
         final SearchView playlistGif = dialog.findViewById(R.id.dialog_playlist_gif);
         final GifView selectedGifIv = dialog.findViewById(R.id.selected_gif_iv);
@@ -529,16 +869,16 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
         giphyGridView.setCallback(new GPHGridCallback() {
             @Override
             public void contentDidUpdate(int i) {
-                Log.i("GifURL","Position "+i);
+                Log.i("GifURL", "Position " + i);
             }
 
             @Override
             public void didSelectMedia(@NotNull Media media) {
-                Log.i("GifURL","BitlyGifURL "+media.getBitlyGifUrl());
-                Log.i("GifURL","BitlyURL "+media.getBitlyUrl());
-                Log.i("GifURL","Content "+media.getContentUrl());
-                Log.i("GifURL","EmbededUrl "+media.getEmbedUrl());
-                Log.i("GifURL","SourceUrl "+media.getSourcePostUrl());
+                Log.i("GifURL", "BitlyGifURL " + media.getBitlyGifUrl());
+                Log.i("GifURL", "BitlyURL " + media.getBitlyUrl());
+                Log.i("GifURL", "Content " + media.getContentUrl());
+                Log.i("GifURL", "EmbededUrl " + media.getEmbedUrl());
+                Log.i("GifURL", "SourceUrl " + media.getSourcePostUrl());
 
                 selectedGifLink[0] = media.getEmbedUrl();
                 selectedGifIv.setVisibility(View.VISIBLE);
@@ -573,13 +913,13 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Boolean b;
-                if(isChecked){
+                if (isChecked) {
                     publicprivate.setText("Private");
                     PlaylistPassword.setEnabled(true);
                     PlaylistPassword.setAlpha(1.0f);
                     //PlaylistPassword.setVisibility(View.VISIBLE);
                     b = true;
-                }else{
+                } else {
                     b = false;
                     PlaylistPassword.setText("");
                     PlaylistPassword.setEnabled(false);
@@ -603,7 +943,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
                     public void onClick(DialogInterface dialog, int which) {
                         String playlistname = playlistName.getText().toString();
                         String password = PlaylistPassword.getText().toString();
-                        if(checking[0]) {
+                        if (checking[0]) {
                             if (TextUtils.isEmpty(playlistname)) {
                                 Toast.makeText(mContext, "please give playlist some name", Toast.LENGTH_SHORT).show();
                             } else if (TextUtils.isEmpty(selectedGifLink[0])) {
@@ -617,8 +957,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
                             } else {
                                 addTexts(playlistname, selectedGifLink[0], playlistDesc.getText().toString(), password, checking);
                             }
-                        }
-                        else{
+                        } else {
                             if (TextUtils.isEmpty(playlistname)) {
                                 Toast.makeText(mContext, "please give playlist some name", Toast.LENGTH_SHORT).show();
                             } else if (TextUtils.isEmpty(selectedGifLink[0])) {
@@ -627,8 +966,8 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
                                 Toast.makeText(mContext, "please choose a valid GIF", Toast.LENGTH_SHORT).show();
                             } else if (TextUtils.isEmpty(playlistDesc.getText())) {
                                 Toast.makeText(mContext, "please enter playlist's description", Toast.LENGTH_SHORT).show();
-                            } else{
-                                addTexts(playlistname, selectedGifLink[0],playlistDesc.getText().toString(),"",checking);
+                            } else {
+                                addTexts(playlistname, selectedGifLink[0], playlistDesc.getText().toString(), "", checking);
                             }
                         }
                     }
@@ -639,7 +978,8 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
     }
 
     //  add text to server
-    public void addTexts(final String playlistname, final String gifLink, final String description, final String password, final Boolean[] checking) {
+    public void addTexts(final String playlistname, final String gifLink,
+                         final String description, final String password, final Boolean[] checking) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, createnewplaylist, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -694,7 +1034,8 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
     }
 
     // add video to server
-    private void AddThisToPlaylist(final String videoId, final int id, final String title, final String thumbnail, String duration) {
+    private void AddThisToPlaylist(final String videoId, final int id, final String title,
+                                   final String thumbnail, String duration) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url2, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -802,10 +1143,12 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
     // youtube functions
 
     @Override
-    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer
+            youTubePlayer, boolean b) {
 
         isAddSongLogRecorded = false;
         this.mYouTubePlayer = youTubePlayer;
+
         //youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
         youTubePlayer.setPlayerStateChangeListener(playerStateChangeListener);
         youTubePlayer.setPlaybackEventListener(playbackEventListener);
@@ -815,13 +1158,14 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
         youTubePlayer.setOnFullscreenListener(new YouTubePlayer.OnFullscreenListener() {
             @Override
             public void onFullscreen(boolean isFullScreen) {
-                Logging.d("Youtube isFullScreen-->"+isFullScreen);
+                Logging.d("Youtube isFullScreen-->" + isFullScreen);
             }
         });
     }
 
     @Override
-    public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+    public void onInitializationFailure(YouTubePlayer.Provider
+                                                provider, YouTubeInitializationResult youTubeInitializationResult) {
         if (youTubeInitializationResult.isUserRecoverableError()) {
             youTubeInitializationResult.getErrorDialog(PlayYoutubeVideoActivity.this, REQUEST_VIDEO);
         } else {
@@ -832,7 +1176,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_VIDEO) {
-            youTubePlayerView.initialize(YoutubeSearchActivity.API_KEY, PlayYoutubeVideoActivity.this);
+            youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
 
         } else if (requestCode == OVERLAY_PERMISSION_REQ) {
             int duration = mYouTubePlayer.getCurrentTimeMillis();
@@ -863,21 +1207,6 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
                 else
                     putSongLikeAPI(userId, videoId, "False");
                 break;
-            case R.id.heart_likebtn:
-
-                if (!heartLikeButton.isLiked())
-                    heartLikeButton.setLiked(true);
-                else
-                    heartLikeButton.setLiked(false);
-                break;
-            case R.id.like_iv:
-                likeButton.setCurrentlyLiked(true);
-
-                /*if(!likeButton.isActivated())
-                    likeButton.setCurrentlyLiked(true);
-                else
-                    likeButton.setCurrentlyLiked(false);*/
-                break;
 
         }
 
@@ -904,7 +1233,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements You
             float wowInt = ((current / lengthms) * 100);
             mSeekBar.setProgress((int) wowInt);
             processSeekBar();
-Logging.d("wowInt-->"+wowInt);
+            Logging.d("wowInt-->" + wowInt);
             // displaying current duration when song starts to play
             if (mYouTubePlayer.isPlaying() && (int) wowInt > 0) {
                 playerCurrentDurationTv.setText(Utility.convertDuration(Long.valueOf(mYouTubePlayer.getCurrentTimeMillis())));
@@ -919,9 +1248,9 @@ Logging.d("wowInt-->"+wowInt);
         }
     }
 
-    private void stopFloatingService(){
+    private void stopFloatingService() {
         try {
-            if(isServiceRunning(PlayerService.class)){
+            if (isServiceRunning(PlayerService.class)) {
                 Intent i = new Intent(PlayYoutubeVideoActivity.this, PlayerService.class);
                 stopService(i);
             }
@@ -929,6 +1258,7 @@ Logging.d("wowInt-->"+wowInt);
             e.printStackTrace();
         }
     }
+
 
     private final class MyPlaybackEventListener implements YouTubePlayer.PlaybackEventListener {
 
@@ -963,21 +1293,12 @@ Logging.d("wowInt-->"+wowInt);
 
         @Override
         public void onStopped() {
-            // Called when playback stops for a reason other than being paused.
-            //            showMessage("Stopped");
-            Logging.d("onStopped video");
-            if (isFirstTimeStopped) {
-                isFirstTimeStopped = false;
-            } else {
-                if (mYouTubePlayer != null) {
-                    //                    lengthms = mYouTubePlayer.getDurationMillis();
-                    //                    mYouTubePlayer.seekToMillis(lengthms);
-                    //                    mYouTubePlayer.play();
-                    mYouTubePlayer.play();
-                    Logging.d("onResume --->" + lengthms);
-                }
+            if (mYouTubePlayer != null) {
+                mYouTubePlayer.play();
+                Logging.d("onResume --->" + lengthms);
             }
         }
+
 
         @Override
         public void onBuffering(boolean b) {
@@ -992,8 +1313,6 @@ Logging.d("wowInt-->"+wowInt);
             Logging.d("onSeekTo video");
         }
     }
-
-    private boolean isFirstTimeStopped = true;
 
     private final class MyPlayerStateChangeListener implements YouTubePlayer.PlayerStateChangeListener {
 
@@ -1023,6 +1342,17 @@ Logging.d("wowInt-->"+wowInt);
 
         @Override
         public void onVideoEnded() {
+            if (isRepeatOn) {
+                repeatOneSongChange();
+            } else if (isSuffleOn) {
+                suffleSongChange();
+            } else {
+                automaticNextSong();
+                if (position < playlist.size() - 1)
+                    position = position + 1;
+
+            }
+
             // Called when the video reaches its end.
         }
 
@@ -1038,7 +1368,7 @@ Logging.d("wowInt-->"+wowInt);
         super.onUserLeaveHint();
         if (handler != null)
             handler.removeCallbacks(my);
-       // isKillMe = true;
+        // isKillMe = true;
     }
 
     @Override
@@ -1063,10 +1393,11 @@ Logging.d("wowInt-->"+wowInt);
         if (handler != null) {
             handler.removeCallbacksAndMessages(my);
         }
-      //  isKillMe = true;
+        //  isKillMe = true;
     }
 
-    public void callAddSongLogAPI(int userId, String songType, String songName, String songId, String songURI, String songThumbnail, String detail, String duration) {
+    public void callAddSongLogAPI(int userId, String songType, String songName, String
+            songId, String songURI, String songThumbnail, String detail, String duration) {
 
         DataAPI dataAPI = RetrofitAPI.getData();
 
@@ -1106,11 +1437,9 @@ Logging.d("wowInt-->"+wowInt);
 
                     if (likeStatus.equalsIgnoreCase("True")) {
                         isLiked = true;
-                        heartLikeButton.setLiked(true);
                         heartIv.setImageResource(R.drawable.like);
                     } else {
                         isLiked = false;
-                        heartLikeButton.setLiked(false);
                         heartIv.setImageResource(R.drawable.ic_favorite_border_black_24dp);
                     }
                 }
@@ -1124,11 +1453,9 @@ Logging.d("wowInt-->"+wowInt);
 
         if (likeStatus.equalsIgnoreCase("True")) {
             isLiked = true;
-            heartLikeButton.setLiked(true);
             heartIv.setImageResource(R.drawable.like);
         } else {
             isLiked = false;
-            heartLikeButton.setLiked(false);
             heartIv.setImageResource(R.drawable.ic_favorite_border_black_24dp);
         }
     }
@@ -1155,19 +1482,16 @@ Logging.d("wowInt-->"+wowInt);
                     if (response.body().getLike()) {
                         isLiked = true;
                         heartIv.setImageResource(R.drawable.like);
-                        heartLikeButton.setLiked(true);
                         Log.i(TAG, "liked");
                     } else {
                         Log.i(TAG, "unliked");
                         isLiked = false;
                         heartIv.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                        heartLikeButton.setLiked(false);
                     }
 
                 } else {
                     isLiked = false;
                     heartIv.setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                    heartLikeButton.setLiked(false);
                 }
             }
 

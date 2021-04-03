@@ -7,18 +7,26 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
 
     <application
-        android:name="com.shorincity.vibin.music_sharing.VibinApplication"
+        android:name=".VibinApplication"
         android:allowBackup="false"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/vibin_app_logo"
         android:label="@string/app_name"
+        android:largeHeap="true"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@drawable/vibin_app_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
-        <activity android:name=".activity.TermsAndConditionsActivity"/>
+
+        <activity android:name=".activity.YoutubeViewMoreArtistActivity" />
+        <activity android:name=".activity.YoutubeUsersCollaboratedListingActivity" />
+        <activity android:name=".activity.YoutubeUsersLikeListingActivity" />
+        <activity android:name=".activity.TermsAndConditionsActivity" />
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -65,16 +73,13 @@
             android:windowSoftInputMode="adjustPan|adjustResize" />
         <activity
             android:name=".activity.SignUpGenderActivity"
-            android:screenOrientation="portrait"  >
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.SignUpDobActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.SignUpPreferPlatformActivity"
-            android:screenOrientation="portrait" >
-
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".activity.ChannelsPlaylistActivity"
             android:label="@string/title_activity_channels_playlist" />
@@ -131,7 +136,7 @@
         <activity android:name=".spotify_files.SpotifyPlayer" />
 
         <service
-            android:name="com.shorincity.vibin.music_sharing.service.MyFirebaseMessagingService"
+            android:name=".service.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -148,14 +153,10 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
 
-
         <service
-            android:name="com.shorincity.vibin.music_sharing.youtube_files.floating.PlayerService"
+            android:name=".youtube_files.floating.PlayerService"
             android:exported="true" />
-
-
-
-        <service android:name="com.shorincity.vibin.music_sharing.spotify_files.background_music.MediaPlayerService" >
+        <service android:name=".spotify_files.background_music.MediaPlayerService">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />
@@ -163,14 +164,12 @@
             </intent-filter>
         </service>
 
-        <receiver android:name="androidx.media.session.MediaButtonReceiver" >
+        <receiver android:name="androidx.media.session.MediaButtonReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-
-
-        <receiver android:name="com.shorincity.vibin.music_sharing.youtube_files.floating.AsyncTask.UserPresentBroadcastReceiver">
+        <receiver android:name=".youtube_files.floating.AsyncTask.UserPresentBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.SCREEN_ON" />
                 <action android:name="android.intent.action.SCREEN_OFF" />

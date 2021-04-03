@@ -52,10 +52,10 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     private Context mContext;
     private ArrayList<GetNotifications> list;
-    int playlistId, receiverID,senderID;
+    int playlistId, receiverID, senderID;
     private final ViewBinderHelper viewBinderHelper = new ViewBinderHelper();
 
-    public NotificationsAdapter(Context context, ArrayList<GetNotifications> exampleList){
+    public NotificationsAdapter(Context context, ArrayList<GetNotifications> exampleList) {
         mContext = context;
         list = exampleList;
     }
@@ -63,183 +63,31 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.item_notification_swipe,parent,false);
-
-        final ExampleViewHolder mViewHolder = new ExampleViewHolder(v);
-        v.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                customItemClickListener.onItemClick(v, mViewHolder.getPosition());
-            }
-        });
-
-        return mViewHolder;
+        View v = LayoutInflater.from(mContext).inflate(R.layout.item_notification_swipe, parent, false);
+        return new ExampleViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ExampleViewHolder holder, int position) {
         GetNotifications currentItem = list.get(position);
-
-
-
-        if (!TextUtils.isEmpty(currentItem.getIsAccepted()) && currentItem.getIsAccepted().equalsIgnoreCase(AppConstants.REGECTED)) {
-            holder.mainRl.setLayoutParams(new AbsListView.LayoutParams(-1, 1));
-            holder.mainRl.setVisibility(View.GONE);
-        } else {
-
-            String avatarUrl = currentItem.getAvatarLink();
-
-            if (!TextUtils.isEmpty(avatarUrl)) {
-                try {
-                    Glide.with(mContext).load(avatarUrl).into(holder.mImageView);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            holder.mainRl.setVisibility(View.VISIBLE);
-
-            // making first word click as it's an user name
-
-            String msgStr = currentItem.getMessage();
-            String arr[] = msgStr.split(" ", 2);
-
-            String firstWord = arr[0];
-
-            SpannableString ss = new SpannableString(msgStr);
-            ClickableSpan clickableSpan = new ClickableSpan() {
-                @Override
-                public void onClick(View textView) {
-                    mContext.startActivity(new Intent(mContext, OtherUserProfileActivity.class)
-                                    .putExtra(AppConstants.INTENT_SEARCHED_USER_ID, currentItem.getSender())
-                                    .putExtra(AppConstants.INTENT_SEARCHED_USER_NAME, firstWord)
-                            //.putExtra(AppConstants.INTENT_SEARCHED_FULL_NAME,usersList.get(position).getFullname())
-                    );
-                }
-            };
-            ss.setSpan(clickableSpan, 0, firstWord.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            ss.setSpan(new ForegroundColorSpan(Color.parseColor("#4698FF")), 0, firstWord.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-            holder.titleTv.setMovementMethod(LinkMovementMethod.getInstance());
-            holder.titleTv.setText(ss);
-
-            holder.notifyStatusTv.setVisibility(View.GONE);
-
-            if ((currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_REQUEST) || currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_INVITE) || currentItem.getType().equalsIgnoreCase(AppConstants.REAL_TIME_INVITE)
-                    || currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_REQUEST_RESPONDED)
-                    || currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_INVITE_RESPONDED))
-                    && currentItem.getIsAccepted().equalsIgnoreCase("PENDING")) {
-               // holder.acceptIgnoreHldr.setVisibility(View.VISIBLE);
-                holder.swipelayout.setLockDrag(false);
-            } else if (currentItem.getIsAccepted().equalsIgnoreCase("ACCEPTED")) {
-               // holder.acceptIgnoreHldr.setVisibility(View.GONE);
-                holder.swipelayout.setLockDrag(true);
-                holder.notifyStatusTv.setVisibility(View.VISIBLE);
-            } else {
-               // holder.acceptIgnoreHldr.setVisibility(View.GONE);
-                holder.swipelayout.setLockDrag(true);
-            }
-
-            if (currentItem.getReadStatus())
-                holder.mainCardView.setAlpha(1f);
-            else {
-                holder.mainCardView.setAlpha(0.5f);
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        callMarkAllNotificationReadAPI(holder.mainCardView, position);
-                    }
-                }, 1 * 1000);
-            }
-
-            holder.acceptBtn.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    holder.swipelayout.close(true);
-                    holder.swipelayout.setLockDrag(true);
-                    receiverID =  list.get(position).getSender();//Swap for notify
-                    playlistId = list.get(position).getPlaylist();
-                    senderID = list.get(position).getReceiver();//Swap for notify
-
-
-                    getCustomItemClickListener().onChildItemClick(v, position, AppConstants.ACCEPTED);
-
-                    if (list.get(position).getType().equals(AppConstants.COLLAB_REQUEST) ||
-                            list.get(position).getType().equals(AppConstants.COLLAB_INVITE)) {
-
-                        callAddCollaborateAPI(list.get(position), AppConstants.ACCEPTED,
-                                AppConstants.UPDATE);
-
-                    } else if (list.get(position).getType().equals(AppConstants.REAL_TIME_INVITE)||
-                            list.get(position).getType().equals(AppConstants.COLLAB_ACCEPTED)) {
-
-                        callUpdateCollabAPI(list.get(position), AppConstants.ACCEPTED, AppConstants.GET);
-                    }
-
-
-                    sendCollabAcceptedNotification(senderID,receiverID,playlistId);
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                          //  holder.acceptIgnoreHldr.setVisibility(View.GONE);
-                            //holder.swipelayout.setLockDrag(true);
-                            holder.swipelayout.close(true);
-                            holder.swipelayout.setLockDrag(true);
-                            holder.notifyStatusTv.setVisibility(View.VISIBLE);
-                        }
-                    }, 2000);
-                }
-            });
-
-            holder.ignoreBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    holder.swipelayout.close(true);
-                    holder.swipelayout.setLockDrag(true);
-                    getCustomItemClickListener().onChildItemClick(v, position, "IGNORED");
-
-                    callUpdateCollabAPI(list.get(position), AppConstants.REGECTED, AppConstants.UPDATE);
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                           // holder.acceptIgnoreHldr.setVisibility(View.GONE);
-                            holder.swipelayout.close(true);
-                            holder.swipelayout.setLockDrag(true);
-                            list.remove(position);
-                            notifyDataSetChanged();
-                        }
-                    }, 1000);
-
-                }
-            });
-        }
-
+        ((ExampleViewHolder) holder).setData(currentItem, position);
     }
 
 
-    private void sendCollabAcceptedNotification(int senderID,int receiverID, int playlistId) {
-
-//        @Header("Authorization") String token,
-//        @Field("sender") int senderId,
-//        @Field("receiver") int receiverId,
-//        @Field("playlist") int playlist,
-//        @Field("type") String type);
+    private void sendCollabAcceptedNotification(int senderID, int receiverID, int playlistId) {
 
         DataAPI dataAPI = RetrofitAPI.getData();
         String headerToken = AppConstants.TOKEN + SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
 
-        Logging.d("searchedUserId:"+receiverID+ " playlistId:"+playlistId +" userId:"+senderID);
+        Logging.d("searchedUserId:" + receiverID + " playlistId:" + playlistId + " userId:" + senderID);
 
-        Call<APIResponse> callback = dataAPI.sendNotification(headerToken, senderID,receiverID,
+        Call<APIResponse> callback = dataAPI.sendNotification(headerToken, senderID, receiverID,
                 playlistId, AppConstants.COLLAB_ACCEPTED);
         callback.enqueue(new Callback<APIResponse>() {
             @Override
             public void onResponse(Call<APIResponse> call, retrofit2.Response<APIResponse> response) {
                 //progressBar.setVisibility(View.GONE);
-                Logging.d("Send Noti response:"+response);
+                Logging.d("Send Noti response:" + response);
                 if (response != null && response.body() != null) {
 
 //                    if (response.body().getStatus().equalsIgnoreCase("success")) {
@@ -252,14 +100,14 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 //                        Toast.makeText(mContext,"Request couldn't be placed, Please try again later!",Toast.LENGTH_LONG).show();
 //                    }
                 } else {
-                    Logging.d("TEST","Something went wrong ");
+                    Logging.d("TEST", "Something went wrong ");
 
                 }
             }
 
             @Override
             public void onFailure(Call<APIResponse> call, Throwable t) {
-                Logging.d("TEST","Error : " + t.getMessage());
+                Logging.d("TEST", "Error : " + t.getMessage());
                 //Log.i("Error: " , "ADD NOTIFICATION "+t.getMessage());
             }
         });
@@ -271,8 +119,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     }
 
 
-
-    public class ExampleViewHolder extends RecyclerView.ViewHolder{
+    public class ExampleViewHolder extends RecyclerView.ViewHolder {
 
         public TextView titleTv, notifyStatusTv;
         public CardView mainRl;
@@ -286,13 +133,156 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             super(itemView);
             mainRl = itemView.findViewById(R.id.item_view);
             mainCardView = itemView.findViewById(R.id.main_view);
-            acceptIgnoreHldr = itemView.findViewById(R.id.accept_ignore_hldr);
             titleTv = itemView.findViewById(R.id.item_title);
             notifyStatusTv = itemView.findViewById(R.id.notify_status);
             acceptBtn = itemView.findViewById(R.id.accept_btn);
             ignoreBtn = itemView.findViewById(R.id.ignore_btn);
             mImageView = itemView.findViewById(R.id.avatar_image);
             swipelayout = itemView.findViewById(R.id.swipelayout);
+
+        }
+
+        public void setData(GetNotifications currentItem, int position) {
+            mainRl.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    customItemClickListener.onItemClick(view, position);
+                }
+            });
+            if (!TextUtils.isEmpty(currentItem.getIsAccepted()) && currentItem.getIsAccepted().equalsIgnoreCase(AppConstants.REGECTED)) {
+                mainRl.setLayoutParams(new AbsListView.LayoutParams(-1, 1));
+                mainRl.setVisibility(View.GONE);
+            } else {
+
+                String avatarUrl = currentItem.getAvatarLink();
+
+                if (!TextUtils.isEmpty(avatarUrl)) {
+                    try {
+                        Glide.with(mContext).load(avatarUrl).into(mImageView);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                mainRl.setVisibility(View.VISIBLE);
+
+                // making first word click as it's an user name
+
+                String msgStr = currentItem.getMessage();
+                String arr[] = msgStr.split(" ", 2);
+
+                String firstWord = arr[0];
+
+                SpannableString ss = new SpannableString(msgStr);
+                ClickableSpan clickableSpan = new ClickableSpan() {
+                    @Override
+                    public void onClick(View textView) {
+                        mContext.startActivity(new Intent(mContext, OtherUserProfileActivity.class)
+                                        .putExtra(AppConstants.INTENT_SEARCHED_USER_ID, currentItem.getSender())
+                                        .putExtra(AppConstants.INTENT_SEARCHED_USER_NAME, firstWord)
+                                //.putExtra(AppConstants.INTENT_SEARCHED_FULL_NAME,usersList.get(position).getFullname())
+                        );
+                    }
+                };
+                ss.setSpan(clickableSpan, 0, firstWord.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ss.setSpan(new ForegroundColorSpan(Color.parseColor("#4698FF")), 0, firstWord.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                titleTv.setMovementMethod(LinkMovementMethod.getInstance());
+                titleTv.setText(ss);
+
+                notifyStatusTv.setVisibility(View.GONE);
+
+                if ((currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_REQUEST) || currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_INVITE) || currentItem.getType().equalsIgnoreCase(AppConstants.REAL_TIME_INVITE)
+                        || currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_REQUEST_RESPONDED)
+                        || currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_INVITE_RESPONDED))
+                        && currentItem.getIsAccepted().equalsIgnoreCase("PENDING")) {
+                    // acceptIgnoreHldr.setVisibility(View.VISIBLE);
+                    swipelayout.setLockDrag(false);
+                } else if (currentItem.getIsAccepted().equalsIgnoreCase("ACCEPTED")) {
+                    // acceptIgnoreHldr.setVisibility(View.GONE);
+                    swipelayout.setLockDrag(true);
+                    notifyStatusTv.setVisibility(View.VISIBLE);
+                } else {
+                    // acceptIgnoreHldr.setVisibility(View.GONE);
+                    swipelayout.setLockDrag(true);
+                }
+
+                if (currentItem.getReadStatus())
+                    mainCardView.setAlpha(1f);
+                else {
+                    mainCardView.setAlpha(0.5f);
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            callMarkAllNotificationReadAPI(mainCardView, position);
+                        }
+                    }, 1 * 1000);
+                }
+
+                acceptBtn.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        swipelayout.close(true);
+                        swipelayout.setLockDrag(true);
+                        receiverID = list.get(position).getSender();//Swap for notify
+                        playlistId = list.get(position).getPlaylist();
+                        senderID = list.get(position).getReceiver();//Swap for notify
+
+
+                        getCustomItemClickListener().onChildItemClick(v, position, AppConstants.ACCEPTED);
+
+                        if (list.get(position).getType().equals(AppConstants.COLLAB_REQUEST) ||
+                                list.get(position).getType().equals(AppConstants.COLLAB_INVITE)) {
+
+                            callAddCollaborateAPI(list.get(position), AppConstants.ACCEPTED,
+                                    AppConstants.UPDATE);
+
+                        } else if (list.get(position).getType().equals(AppConstants.REAL_TIME_INVITE) ||
+                                list.get(position).getType().equals(AppConstants.COLLAB_ACCEPTED)) {
+
+                            callUpdateCollabAPI(list.get(position), AppConstants.ACCEPTED, AppConstants.GET);
+                        }
+
+
+                        sendCollabAcceptedNotification(senderID, receiverID, playlistId);
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                //  acceptIgnoreHldr.setVisibility(View.GONE);
+                                //swipelayout.setLockDrag(true);
+                                swipelayout.close(true);
+                                swipelayout.setLockDrag(true);
+                                notifyStatusTv.setVisibility(View.VISIBLE);
+                            }
+                        }, 2000);
+                    }
+                });
+
+                ignoreBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        swipelayout.close(true);
+                        swipelayout.setLockDrag(true);
+                        getCustomItemClickListener().onChildItemClick(v, position, "IGNORED");
+
+                        callUpdateCollabAPI(list.get(position), AppConstants.REGECTED, AppConstants.UPDATE);
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                // acceptIgnoreHldr.setVisibility(View.GONE);
+                                swipelayout.close(true);
+                                swipelayout.setLockDrag(true);
+                                list.remove(position);
+                                notifyDataSetChanged();
+                            }
+                        }, 1000);
+
+                    }
+                });
+            }
         }
     }
 
@@ -305,8 +295,10 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     }
 
     CustomItemClickListener customItemClickListener;
+
     public interface CustomItemClickListener {
         public void onItemClick(View v, int position);
+
         public void onChildItemClick(View v, int position, String viewName);
 
     }
@@ -316,7 +308,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         DataAPI dataAPI = RetrofitAPI.getData();
         String headerToken = AppConstants.TOKEN + SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
 
-        Call<APIResponse> callback = dataAPI.markNotificationRead(headerToken,  list.get(position).getId());
+        Call<APIResponse> callback = dataAPI.markNotificationRead(headerToken, list.get(position).getId());
         callback.enqueue(new Callback<APIResponse>() {
             @Override
             public void onResponse(Call<APIResponse> call, Response<APIResponse> response) {
@@ -328,7 +320,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                         //mainView.setBackgroundColor(ContextCompat.getColor(mContext,R.color.nav_white));
                         try {
                             mainView.setAlpha(1f);
-                            if(list!=null && !list.isEmpty()){
+                            if (list != null && !list.isEmpty()) {
                                 list.get(position).setReadStatus(true);
                             }
                         } catch (Exception e) {
@@ -343,7 +335,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
             @Override
             public void onFailure(Call<APIResponse> call, Throwable t) {
-                Log.i("Error: " , "ADD NOTIFICATION "+t.getMessage());
+                Log.i("Error: ", "ADD NOTIFICATION " + t.getMessage());
             }
         });
 
@@ -370,17 +362,16 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                         && response.body() != null) {
                     if (response.body().getStatus().equalsIgnoreCase("success")) {
                         callUpdateCollabAPI(getNotifications, status, type);
-                    }
-                    else if(response.body().getStatus().equalsIgnoreCase("failed") && !TextUtils.isEmpty(response.body().getMessage()))
-                        Toast.makeText(mContext,response.body().getMessage(), Toast.LENGTH_LONG).show();
+                    } else if (response.body().getStatus().equalsIgnoreCase("failed") && !TextUtils.isEmpty(response.body().getMessage()))
+                        Toast.makeText(mContext, response.body().getMessage(), Toast.LENGTH_LONG).show();
                     else
-                        Toast.makeText(mContext,"Something went wrong!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(mContext, "Something went wrong!", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<APIResponse> call, Throwable t) {
-                Toast.makeText(mContext,"Something went wrong!", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "Something went wrong!", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -411,15 +402,14 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                                     .putExtra(AppConstants.INTENT_USER_KEY, updateNotificationModel.getUserSessionKeys())
                                     .putExtra(AppConstants.INTENT_PLAYLIST_ID, updateNotificationModel.getPlaylistId()));
                         }
-                    }
-                    else
-                        Toast.makeText(mContext,"Something went wrong!", Toast.LENGTH_LONG).show();
+                    } else
+                        Toast.makeText(mContext, "Something went wrong!", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<UpdateNotificationModel> call, Throwable t) {
-                Toast.makeText(mContext,"Something went wrong!", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "Something went wrong!", Toast.LENGTH_LONG).show();
             }
         });
 

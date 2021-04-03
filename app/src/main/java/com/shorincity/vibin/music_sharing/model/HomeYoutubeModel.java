@@ -1,5 +1,8 @@
 package com.shorincity.vibin.music_sharing.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -27,6 +30,7 @@ public class HomeYoutubeModel {
     @Expose
     private List<YoutubeCustomModel> others = null;
 
+    @SerializedName("")
     public List<YoutubeCustomModel> getEnglishHits() {
         return englishHits;
     }
@@ -75,8 +79,13 @@ public class HomeYoutubeModel {
         this.others = others;
     }
 
-    public class YoutubeCustomModel implements Serializable {
-
+    public static class YoutubeCustomModel implements Serializable, Parcelable {
+        public YoutubeCustomModel(String genre, String language, String url, String thumbnail) {
+            this.genre = genre;
+            this.language = language;
+            this.url = url;
+            this.thumbnail = thumbnail;
+        }
         @SerializedName("genre")
         @Expose
         private String genre;
@@ -86,6 +95,25 @@ public class HomeYoutubeModel {
         @SerializedName("url")
         @Expose
         private String url;
+
+        protected YoutubeCustomModel(Parcel in) {
+            genre = in.readString();
+            language = in.readString();
+            url = in.readString();
+            thumbnail = in.readString();
+        }
+
+        public static final Creator<YoutubeCustomModel> CREATOR = new Creator<YoutubeCustomModel>() {
+            @Override
+            public YoutubeCustomModel createFromParcel(Parcel in) {
+                return new YoutubeCustomModel(in);
+            }
+
+            @Override
+            public YoutubeCustomModel[] newArray(int size) {
+                return new YoutubeCustomModel[size];
+            }
+        };
 
         public String getThumbnail() {
             return thumbnail;
@@ -123,6 +151,18 @@ public class HomeYoutubeModel {
             this.url = url;
         }
 
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+            parcel.writeString(genre);
+            parcel.writeString(language);
+            parcel.writeString(url);
+            parcel.writeString(thumbnail);
+        }
     }
 
 

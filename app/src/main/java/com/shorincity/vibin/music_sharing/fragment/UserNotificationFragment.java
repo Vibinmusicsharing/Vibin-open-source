@@ -54,14 +54,13 @@ public class UserNotificationFragment extends Fragment {
                 }
             });
 
-            setAdapter();
+
         }
 
         return  view;
     }
 
     private void setAdapter() {
-        unreadNotificationList = new ArrayList<>();
         unreadNotificationRv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         unreadNotificationsAdapter = new NotificationsAdapter(getActivity(), unreadNotificationList);
@@ -128,7 +127,8 @@ public class UserNotificationFragment extends Fragment {
 
     // API to get all the notifications
     private void callGetNotificationsAPI() {
-
+        unreadNotificationList = new ArrayList<>();
+        readNotificationList = new ArrayList<>();
         ((ProgressBar) view.findViewById(R.id.progressbar)).setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getData();
 
@@ -178,9 +178,7 @@ public class UserNotificationFragment extends Fragment {
                         view.findViewById(R.id.read_head_hldr).setVisibility(View.VISIBLE);
                         readNotificationRv.setVisibility(View.VISIBLE);
                     }
-
-                    unreadNotificationsAdapter.notifyDataSetChanged();
-                    readNotificationsAdapter.notifyDataSetChanged();
+                    setAdapter();
                 } else {
 
                 }
@@ -197,7 +195,8 @@ public class UserNotificationFragment extends Fragment {
 
     // API to mark all the notifications as read
     private void callMarkAllNotificationReadAPI() {
-
+        unreadNotificationList = new ArrayList<>();
+        readNotificationList = new ArrayList<>();
         DataAPI dataAPI = RetrofitAPI.getData();
         String headerToken = AppConstants.TOKEN + SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
         int userId = SharedPrefManager.getInstance(getActivity()).getSharedPrefInt(AppConstants.INTENT_USER_ID);
@@ -222,8 +221,7 @@ public class UserNotificationFragment extends Fragment {
                         view.findViewById(R.id.read_head_hldr).setVisibility(View.VISIBLE);
                         readNotificationRv.setVisibility(View.VISIBLE);
 
-                        unreadNotificationsAdapter.notifyDataSetChanged();
-                        readNotificationsAdapter.notifyDataSetChanged();
+                        setAdapter();
 
                     } else {
                         Logging.d("TEST","callMarkAllNotificationReadAPI onResponse else Called");

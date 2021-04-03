@@ -56,7 +56,7 @@ public class youtube_user extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        ((youtube)getActivity()).mSlidingLayout.setSlidingEnable(true);
+        ((youtube)getActivity()).mSlidingLayout.setSlidingEnable(false);
         ((youtube)getActivity()).mSlidingLayout.setSliderFadeColor(getActivity().getResources().getColor(android.R.color.transparent));
 
     }

@@ -24,12 +24,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/black_overlay"
-                app:cardCornerRadius="@dimen/_3sdp">
+                app:cardCornerRadius="@dimen/_2sdp">
 
                 <ImageView
                     android:id="@+id/item_img"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_100sdp"
+                    android:layout_height="@dimen/_110sdp"
                     android:scaleType="centerCrop"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

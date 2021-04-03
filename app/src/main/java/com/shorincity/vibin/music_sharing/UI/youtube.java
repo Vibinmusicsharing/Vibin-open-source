@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import android.text.TextUtils;
 import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,10 +18,12 @@ import android.widget.Toast;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.UpdatePreferPlatformModel;
 import com.shorincity.vibin.music_sharing.R;
@@ -32,6 +35,7 @@ import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.CustomSlidePanLayout;
 import com.shorincity.vibin.music_sharing.fragment.PublicPlaylistFragment;
+import com.shorincity.vibin.music_sharing.utils.MiniPlayer;
 import com.shorincity.vibin.music_sharing.youtube_files.YoutubeHomeFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -74,11 +78,11 @@ public class youtube extends AppCompatActivity implements SpotifyPlayer.Notifica
     String preferPlatformIntent;
     public CustomSlidePanLayout mSlidingLayout;
     private BottomNavigationView bottomNavigationView;
+    ConstraintLayout container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_youtube_2);
 
         // Updating FCM TOKEN here
@@ -90,13 +94,16 @@ public class youtube extends AppCompatActivity implements SpotifyPlayer.Notifica
 
         mSlidingLayout = (CustomSlidePanLayout) findViewById(R.id.sliding_pane_layout);
         mSlidingLayout.setSlidingEnable(false);
-        mMainFrame = (FrameLayout)findViewById(R.id.youtube_frame);
+
+
+        mMainFrame = (FrameLayout) findViewById(R.id.youtube_frame);
+        container = (ConstraintLayout) findViewById(R.id.container);
         publicPlaylistFragment = new PublicPlaylistFragment();
         youtubeHomeFragment = new YoutubeHomeFragment();
         userSearchFragment = new UserSearchFragment();
         userNotificationFragment = new UserNotificationFragment();
         userProfileFragment = new UserProfileFragment();
-
+        crashAnlyticslogUser();
         String comingFrom = getIntent() == null ? "" : getIntent().getStringExtra(AppConstants.INTENT_COMING_FROM);
 
         if (!TextUtils.isEmpty(comingFrom) && comingFrom.equals(AppConstants.NOTIFICATION)) {
@@ -138,23 +145,38 @@ public class youtube extends AppCompatActivity implements SpotifyPlayer.Notifica
         });
     }
 
+    private void crashAnlyticslogUser() {
+        // TODO: Use the current user's information
+        // You can call any combination of these three methods
+        if (SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID) != null) {
+            FirebaseCrashlytics.getInstance().setCustomKey(AppConstants.INTENT_USER_ID, SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID));
+        }
+        if (SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefString(AppConstants.INTENT_USER_NAME) != null) {
+            FirebaseCrashlytics.getInstance().setCustomKey(AppConstants.INTENT_USER_NAME, SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefString(AppConstants.INTENT_USER_NAME));
+        }
+        if (SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefString(AppConstants.INTENT_EMAIL) != null) {
+            FirebaseCrashlytics.getInstance().setCustomKey(AppConstants.INTENT_EMAIL, SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefString(AppConstants.INTENT_EMAIL));
+        }
+    }
+
     private void getIntentData() {
 
         preferPlatformIntent = getIntent().getStringExtra(AppConstants.INTENT_UPDATE_PLATFORM);
 
-        if(!TextUtils.isEmpty(preferPlatformIntent) &&
-            preferPlatformIntent.equalsIgnoreCase(AppConstants.YOUTUBE)) {
+        if (!TextUtils.isEmpty(preferPlatformIntent) &&
+                preferPlatformIntent.equalsIgnoreCase(AppConstants.YOUTUBE)) {
             callUpdatePlatformAPI();
         }
     }
 
     boolean isHomeLoaded;
+
     // reusing the same method to load the fragments and switching between them
-    public void setFragment(Fragment fragment){
+    public void setFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        if(!fragment.getClass().getName().equals(YoutubeHomeFragment.class.getName()))
+        if (!fragment.getClass().getName().equals(YoutubeHomeFragment.class.getName()))
             fragmentTransaction.addToBackStack(fragment.getClass().getName());
         fragmentTransaction.replace(R.id.youtube_frame, fragment, fragment.getClass().getName());
         fragmentTransaction.commitAllowingStateLoss();
@@ -167,15 +189,15 @@ public class youtube extends AppCompatActivity implements SpotifyPlayer.Notifica
 
                 Fragment f = fragmentManager.findFragmentById(R.id.youtube_frame);
 
-                if(f instanceof YoutubeHomeFragment)
+                if (f instanceof YoutubeHomeFragment)
                     bottomNavigationView.getMenu().getItem(0).setChecked(true);
-                else if(f instanceof PublicPlaylistFragment)
+                else if (f instanceof PublicPlaylistFragment)
                     bottomNavigationView.getMenu().getItem(1).setChecked(true);
-                else if(f instanceof UserSearchFragment)
+                else if (f instanceof UserSearchFragment)
                     bottomNavigationView.getMenu().getItem(2).setChecked(true);
-                else if(f instanceof UserNotificationFragment)
+                else if (f instanceof UserNotificationFragment)
                     bottomNavigationView.getMenu().getItem(3).setChecked(true);
-                else if(f instanceof UserProfileFragment)
+                else if (f instanceof UserProfileFragment)
                     bottomNavigationView.getMenu().getItem(4).setChecked(true);
             }
         });
@@ -265,17 +287,17 @@ public class youtube extends AppCompatActivity implements SpotifyPlayer.Notifica
         String token = AppConstants.TOKEN + SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
         int userId = SharedPrefManager.getInstance(youtube.this).getSharedPrefInt(AppConstants.INTENT_USER_ID);
 
-        Call<UpdatePreferPlatformModel> callback = dataAPI.callUpdatePreferredPlatform(token,userId,AppConstants.YOUTUBE);
+        Call<UpdatePreferPlatformModel> callback = dataAPI.callUpdatePreferredPlatform(token, userId, AppConstants.YOUTUBE);
         callback.enqueue(new Callback<UpdatePreferPlatformModel>() {
             @Override
             public void onResponse(Call<UpdatePreferPlatformModel> call, Response<UpdatePreferPlatformModel> response) {
                 //progressBar.setVisibility(View.GONE);
                 if (response != null && response.body() != null) {
 
-                    if(response.body().getUpdateStatus() == true) {
+                    if (response.body().getUpdateStatus() == true) {
 
                         if (response.body().getMessage().equalsIgnoreCase(AppConstants.STATUS_UPDATED)) {
-                            SharedPrefManager.getInstance(youtube.this).setSharedPrefString(AppConstants.INTENT_USER_PREFERRED_PLATFORM,AppConstants.YOUTUBE);
+                            SharedPrefManager.getInstance(youtube.this).setSharedPrefString(AppConstants.INTENT_USER_PREFERRED_PLATFORM, AppConstants.YOUTUBE);
                         }
 
                     } else {
@@ -285,9 +307,10 @@ public class youtube extends AppCompatActivity implements SpotifyPlayer.Notifica
                     Toast.makeText(youtube.this, "Something went wrong!", Toast.LENGTH_LONG).show();
                 }
             }
+
             @Override
             public void onFailure(Call<UpdatePreferPlatformModel> call, Throwable t) {
-                Toast.makeText(youtube.this,"Error: " +t.getMessage(),Toast.LENGTH_LONG).show();
+                Toast.makeText(youtube.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -295,9 +318,10 @@ public class youtube extends AppCompatActivity implements SpotifyPlayer.Notifica
 
     // API to post fcmToken to Vibin Server
     String fcmToken = "";
+
     private void callAddNotificationTokenAPI() {
 
-        if(SharedPrefManager.getInstance(youtube.this).getSharedPrefBoolean(AppConstants.INTENT_NOTIFICATION_TOKEN_UPDATED) == false) {
+        if (SharedPrefManager.getInstance(youtube.this).getSharedPrefBoolean(AppConstants.INTENT_NOTIFICATION_TOKEN_UPDATED) == false) {
 
             FirebaseInstanceId.getInstance().getInstanceId()
                     .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -309,7 +333,7 @@ public class youtube extends AppCompatActivity implements SpotifyPlayer.Notifica
 
                             // Get new Instance ID token
                             fcmToken = task.getResult().getToken();
-                            Log.i("FCM Token", ""+fcmToken);
+                            Log.i("FCM Token", "" + fcmToken);
 
                             DataAPI dataAPI = RetrofitAPI.getData();
                             String headerToken = AppConstants.TOKEN + SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
@@ -334,12 +358,12 @@ public class youtube extends AppCompatActivity implements SpotifyPlayer.Notifica
 
                                 @Override
                                 public void onFailure(Call<APIResponse> call, Throwable t) {
-                                    Log.i("Error: " , "ADD NOTIFICATION "+t.getMessage());
+                                    Log.i("Error: ", "ADD NOTIFICATION " + t.getMessage());
                                 }
                             });
 
                         }
-            });
+                    });
         }
 
     }
@@ -350,7 +374,7 @@ public class youtube extends AppCompatActivity implements SpotifyPlayer.Notifica
         String headerToken = AppConstants.TOKEN + SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
         int userId = SharedPrefManager.getInstance(youtube.this).getSharedPrefInt(AppConstants.INTENT_USER_ID);
 
-        Call<APIResponse> callback = dataAPI.getUnreadCount(headerToken,  userId);
+        Call<APIResponse> callback = dataAPI.getUnreadCount(headerToken, userId);
         callback.enqueue(new Callback<APIResponse>() {
             @Override
             public void onResponse(Call<APIResponse> call, Response<APIResponse> response) {
@@ -358,11 +382,11 @@ public class youtube extends AppCompatActivity implements SpotifyPlayer.Notifica
 
                     if (response.body().getStatus().equalsIgnoreCase("success")) {
 
-                        if(response.body().getCount() > 0) {
+                        if (response.body().getCount() > 0) {
                             // showing notification badge count
                             MenuItem itemCart = bottomNavigationView.getMenu().findItem(R.id.navigation_notification);
                             //LayerDrawable icon = (LayerDrawable) itemCart.getIcon();
-                            showBadge(youtube.this,bottomNavigationView,R.id.navigation_notification,String.valueOf(response.body().getCount()));
+                            showBadge(youtube.this, bottomNavigationView, R.id.navigation_notification, String.valueOf(response.body().getCount()));
                         }
 
                         SharedPrefManager.getInstance(youtube.this).setSharedPrefInt(AppConstants.INTENT_NOTIFICATION_UNREAD_COUNT, response.body().getCount());
@@ -377,7 +401,7 @@ public class youtube extends AppCompatActivity implements SpotifyPlayer.Notifica
 
             @Override
             public void onFailure(Call<APIResponse> call, Throwable t) {
-                Log.i("Error: " , "ADD NOTIFICATION "+t.getMessage());
+                Log.i("Error: ", "ADD NOTIFICATION " + t.getMessage());
             }
         });
 

@@ -39,12 +39,12 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Ex
     private ArrayList<UserSearchModel> list;
     private int playlistId;
 
-    public UserSearchAdapter(Context context, ArrayList<UserSearchModel> exampleList){
+    public UserSearchAdapter(Context context, ArrayList<UserSearchModel> exampleList) {
         mContext = context;
         list = exampleList;
     }
 
-    public UserSearchAdapter(Context context, ArrayList<UserSearchModel> exampleList, int playlistId){
+    public UserSearchAdapter(Context context, ArrayList<UserSearchModel> exampleList, int playlistId) {
         mContext = context;
         list = exampleList;
         this.playlistId = playlistId;
@@ -53,63 +53,14 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Ex
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.adapter_user_search,parent,false);
-
-        final ExampleViewHolder mViewHolder = new ExampleViewHolder(v);
-        v.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                customItemClickListener.onItemClick(v, mViewHolder.getAdapterPosition());
-            }
-        });
-
-
-
-        try {
-            if(mViewHolder.mainRl.getTag() == null ) {
-                mViewHolder.mainRl.setBackgroundResource(R.color.clr_tungsten);
-                mViewHolder.mainRl.setTag(i);
-            } else {
-                //holder.mainRl.setBackground(holder.mainRl.getBackground());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return mViewHolder;
+        View v = LayoutInflater.from(mContext).inflate(R.layout.adapter_user_search, parent, false);
+        return new ExampleViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ExampleViewHolder holder, int position) {
         UserSearchModel currentItem = list.get(position);
-
-        holder.mUsername.setText("@"+currentItem.getUsername());
-        holder.mFullname.setText(currentItem.getFullname());
-
-        if(mContext instanceof PlaylistDetailActivity)
-            holder.collabCv.setVisibility(View.VISIBLE);
-        else
-            holder.collabCv.setVisibility(View.GONE);
-
-        holder.addCollabBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                customItemClickListener.onItemClick(v, position);
-                Logging.d("TEST","Call ");
-                sendCollabRequestNotification(v, holder.addCollabStatusBtn,playlistId, list.get(position).getId(), AppConstants.COLLAB_INVITE);// collab _invite
-            }
-        });
-
-        String avatarUrl = currentItem.getAvatarLink();
-
-        if (!TextUtils.isEmpty(avatarUrl)) {
-            try {
-                Glide.with(mContext).load(avatarUrl).into(holder.mImageView);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }else{
-            holder.mImageView.setImageResource(R.drawable.default_img_black);
-        }
+        ((ExampleViewHolder) holder).setData(currentItem, position);
     }
 
     @Override
@@ -118,14 +69,15 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Ex
     }
 
 
-    public class ExampleViewHolder extends RecyclerView.ViewHolder{
+    public class ExampleViewHolder extends RecyclerView.ViewHolder {
 
         public TextView mUsername, mFullname;
-        public RelativeLayout mainRl;
+        public CardView card_likes;
         public CardView collabCv;
         public CircularProgressButton addCollabBtn;
         public Button addCollabStatusBtn;
         public RoundedImageView mImageView;
+
         public ExampleViewHolder(@NonNull View itemView) {
             super(itemView);
             //mImageView = itemView.findViewById(R.id.item_img);
@@ -135,6 +87,44 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Ex
             addCollabBtn = itemView.findViewById(R.id.add_collab_btn);
             addCollabStatusBtn = itemView.findViewById(R.id.add_collab_status);
             mImageView = itemView.findViewById(R.id.avatar_image);
+            card_likes = itemView.findViewById(R.id.card_likes);
+        }
+
+        public void setData(UserSearchModel currentItem, int position) {
+            mUsername.setText("@" + currentItem.getUsername());
+            mFullname.setText(currentItem.getFullname());
+
+            card_likes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    customItemClickListener.onItemClick(view, position);
+                }
+            });
+            if (mContext instanceof PlaylistDetailActivity)
+                collabCv.setVisibility(View.VISIBLE);
+            else
+                collabCv.setVisibility(View.GONE);
+
+            addCollabBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    customItemClickListener.onItemClick(v, position);
+                    Logging.d("TEST", "Call ");
+                    sendCollabRequestNotification(v, addCollabStatusBtn, playlistId, list.get(position).getId(), AppConstants.COLLAB_INVITE);// collab _invite
+                }
+            });
+
+            String avatarUrl = currentItem.getAvatarLink();
+
+            if (!TextUtils.isEmpty(avatarUrl)) {
+                try {
+                    Glide.with(mContext).load(avatarUrl).into(mImageView);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                mImageView.setImageResource(R.drawable.default_img_black);
+            }
         }
     }
 
@@ -147,6 +137,7 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Ex
     }
 
     CustomItemClickListener customItemClickListener;
+
     public interface CustomItemClickListener {
         public void onItemClick(View v, int position);
     }
@@ -154,20 +145,20 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Ex
 
     private void sendCollabRequestNotification(View view, Button addCollabButtonStatus, int playlistId, int searchedUserId, String notifyType) {
 
-        CircularProgressButton circularProgressButton = (CircularProgressButton)  view;
+        CircularProgressButton circularProgressButton = (CircularProgressButton) view;
         circularProgressButton.startAnimation();
 
         DataAPI dataAPI = RetrofitAPI.getData();
         String headerToken = AppConstants.TOKEN + SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
         int userId = SharedPrefManager.getInstance(mContext).getSharedPrefInt(AppConstants.INTENT_USER_ID);
 
-        Call<APIResponse> callback = dataAPI.sendNotification(headerToken, userId,searchedUserId, playlistId, notifyType);
+        Call<APIResponse> callback = dataAPI.sendNotification(headerToken, userId, searchedUserId, playlistId, notifyType);
         callback.enqueue(new Callback<APIResponse>() {
             @Override
             public void onResponse(Call<APIResponse> call, retrofit2.Response<APIResponse> response) {
                 circularProgressButton.revertAnimation();
                 circularProgressButton.setBackgroundResource(R.color.orange);
-                Logging.d("User Search res-->"+new Gson().toJson(response.body()));
+                Logging.d("User Search res-->" + new Gson().toJson(response.body()));
                 if (response != null && response.body() != null) {
 
                     if (response.body().getStatus().equalsIgnoreCase("success")) {
@@ -175,7 +166,7 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Ex
                         circularProgressButton.setVisibility(View.GONE);
                         addCollabButtonStatus.setVisibility(View.VISIBLE);
 
-                    } else if (response.body().getStatus().equalsIgnoreCase("failed")){
+                    } else if (response.body().getStatus().equalsIgnoreCase("failed")) {
                         Toast.makeText(mContext, response.body().getMessage(),
                                 Toast.LENGTH_LONG).show();
                     }

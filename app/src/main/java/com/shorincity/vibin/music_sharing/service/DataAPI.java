@@ -4,6 +4,7 @@ package com.shorincity.vibin.music_sharing.service;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.AddSongLogModel;
 import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
+import com.shorincity.vibin.music_sharing.model.CollabsList;
 import com.shorincity.vibin.music_sharing.model.GetNotifications;
 import com.shorincity.vibin.music_sharing.model.HomeYoutubeModel;
 import com.shorincity.vibin.music_sharing.model.LogoutModel;
@@ -19,6 +20,7 @@ import com.shorincity.vibin.music_sharing.model.TermsAndConditionsModel;
 import com.shorincity.vibin.music_sharing.model.UpdateLikeStatusModel;
 import com.shorincity.vibin.music_sharing.model.UpdateNotificationModel;
 import com.shorincity.vibin.music_sharing.model.UpdatePreferPlatformModel;
+import com.shorincity.vibin.music_sharing.model.UserLikeList;
 import com.shorincity.vibin.music_sharing.model.UserProfileModel;
 import com.shorincity.vibin.music_sharing.model.UserSearchModel;
 import com.shorincity.vibin.music_sharing.model.YoutubeChannelModel;
@@ -46,6 +48,8 @@ public interface DataAPI {
                               @Query("q") String q,
                               @Query("maxResults") String maxResults,
                               @Query("type") String type,
+                              @Query("videoCategoryId") String id,
+                              @Query("videoSyndicated") String vSyndicated,
                               @Query("key") String key);
 
     @GET("videos")
@@ -54,15 +58,16 @@ public interface DataAPI {
                                                     @Query("regionCode") String regionCode,
                                                     @Query("maxResults") String maxResults,
                                                     @Query("videoCategoryId") String videoCategory,
-                                                    @Query("key") String key);
+                                                    @Query("key") String key,
+                                                    @Query("pageToken") String pageToken);
 
     @GET("search")
     Call<ModelData> getYoutubeSearchList(@Query("part") String part,
-                                                    @Query("chart") String mostPopular,
-                                                    @Query("q") String q,
-                                                    @Query("maxResults") String maxResults,
-                                                    @Query("type") String type,
-                                                    @Query("key") String key);
+                                         @Query("chart") String mostPopular,
+                                         @Query("q") String q,
+                                         @Query("maxResults") String maxResults,
+                                         @Query("type") String type,
+                                         @Query("key") String key);
 
     //https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId={ChannelID}&key={API key} & maxResults=50
 //    @GET("playlists")
@@ -95,7 +100,7 @@ public interface DataAPI {
                                                           @Query("maxResults") String maxResults,
                                                           @Query("playlistId") String playlistId
 
-                                                          );
+    );
 
     @GET("guideCategories")
     Call<YoutubeGuideCategoryModel> getYoutubeGuideCategoryModel(@Query("part") String part,
@@ -112,9 +117,9 @@ public interface DataAPI {
     @FormUrlEncoded
     @POST("/user/login/")
     Call<AdditionalSignUpModel> login(@Header("Authorization") String loginSignUpHeader,
-                                     @Field("email") String email,
-                                     @Field("password") String password,
-                                     @Field("loginType") String loginType);
+                                      @Field("email") String email,
+                                      @Field("password") String password,
+                                      @Field("loginType") String loginType);
 
     @FormUrlEncoded
     @POST("/user/signup/additionals/")
@@ -175,8 +180,8 @@ public interface DataAPI {
     @FormUrlEncoded
     @POST("/playlist/put_song_like_status/")
     Call<AddSongLogModel> putSongLikeStatus(@Header("Authorization") String token,@Field("customer_id") int customer_id,
-                                          @Field("song_id") String song_id,
-                                          @Field("liked") String isLiked);
+                                            @Field("song_id") String song_id,
+                                            @Field("liked") String isLiked);
 
     @GET("/playlist/get_recent_all/")
     Call<ArrayList<RecentSongModel>> getRecentAllSong(@Header("Authorization") String token,@Query("search") int customer_id);
@@ -210,7 +215,7 @@ public interface DataAPI {
     @FormUrlEncoded
     @POST("/playlist/add_collab/")
     Call<APIResponse> addCollab(@Header("Authorization") String token,@Field("playlist_id") int playlistId,
-                                 @Field("customer") int customerId);
+                                @Field("customer") int customerId);
 
     @FormUrlEncoded
     @POST("/user/update_collab_notify_status/")
@@ -236,34 +241,34 @@ public interface DataAPI {
     @FormUrlEncoded
     @POST("/user/liked_disliked/userdata_update/")
     Call<UpdateLikeStatusModel> updateLikeUserProfile(@Header("Authorization") String token,
-                                                @Field("liked_by_user") int userId,
-                                                @Field("liked_to_user") int customerId,
-                                                @Field("current_like_status") String likeStatus);
+                                                      @Field("liked_by_user") int userId,
+                                                      @Field("liked_to_user") int customerId,
+                                                      @Field("current_like_status") String likeStatus);
 
 
 
     @FormUrlEncoded
     @POST("/playlist/get_youtube_home_playlists/")
     Call<HomeYoutubeModel> getYoutubePlaylistAtHome(@Header("Authorization") String token,
-                                                @Field("platform") String notifyToken);
+                                                    @Field("platform") String notifyToken);
 
     // RealTime Session API...............................................
     @FormUrlEncoded
     @POST("/user/add_realtime_info/")
     Call<APIResponse> addRealTimeInfo(@Header("Authorization") String token,
-                                           @Field("playlist_id") int playlistId,
-                                           @Field("admin_id") int adminId,
-                                           @Field("session_key") String sessionKey,
-                                           @Field("session_token") String sessionToken,
-                                           @Field("user_ids") String userIds,
-                                           @Field("user_session_keys") String userSessionKeys);
+                                      @Field("playlist_id") int playlistId,
+                                      @Field("admin_id") int adminId,
+                                      @Field("session_key") String sessionKey,
+                                      @Field("session_token") String sessionToken,
+                                      @Field("user_ids") String userIds,
+                                      @Field("user_session_keys") String userSessionKeys);
 
     // Notification API....................................................
     @FormUrlEncoded
     @POST("/user/add_notification_token/")
     Call<APIResponse> addNotificationToken(@Header("Authorization") String token,
-                                                      @Field("login_token") String loginToken,
-                                                      @Field("notify_token") String notifyToken);
+                                           @Field("login_token") String loginToken,
+                                           @Field("notify_token") String notifyToken);
 
     /*@FormUrlEncoded
     @POST("/user/send_notification/")
@@ -289,36 +294,36 @@ public interface DataAPI {
     @FormUrlEncoded
     @POST("/user/send_notification_song_update/")
     Call<APIResponse> sendNotificationSongUpdate(@Header("Authorization") String token,
-                                                     @Field("sender") int senderId,
-                                                     @Field("playlist") int playlist,
-                                                     @Field("type") String type);
+                                                 @Field("sender") int senderId,
+                                                 @Field("playlist") int playlist,
+                                                 @Field("type") String type);
 
 
     @FormUrlEncoded
     @POST("/user/send_notification_song_update/")
     Call<APIResponse> sendNotificationRealTimeUpdate(@Header("Authorization") String token,
-                                                 @Field("sender") int senderId,
-                                                 @Field("playlist") int playlist,
-                                                 @Field("type") String type);
+                                                     @Field("sender") int senderId,
+                                                     @Field("playlist") int playlist,
+                                                     @Field("type") String type);
 
     @FormUrlEncoded
     @POST("/user/mark_all_notification_read/")
     Call<APIResponse> markAllNotificationRead(@Header("Authorization") String token,
-                                       @Field("customer") int userId);
+                                              @Field("customer") int userId);
 
     @FormUrlEncoded
     @POST("/user/mark_notification_read/")
     Call<APIResponse> markNotificationRead(@Header("Authorization") String token,
-                                              @Field("notify_id") int notifyID);
+                                           @Field("notify_id") int notifyID);
 
     @FormUrlEncoded
     @POST("/user/get_unread_notification_count/")
     Call<APIResponse> getUnreadCount(@Header("Authorization") String token,
-                                       @Field("customer_id") int userId);
+                                     @Field("customer_id") int userId);
 
     @GET("/user/get_notifications/")
     Call<ArrayList<GetNotifications>> getNotifications(@Header("Authorization") String token,
-                                            @Query("search") int userId);
+                                                       @Query("search") int userId);
 
     @FormUrlEncoded
     @POST("/user/get_policies/")
@@ -330,4 +335,17 @@ public interface DataAPI {
     @POST("/user/get_avatars/")
     Call<AvatarDetails> getAvatars(@Header("Authorization") String token,
                                    @Field("gender") String gender);
+// Yash's DevelopMent
+
+
+    @FormUrlEncoded
+    @POST("/user/liked_disliked/get_profiles/")
+    Call<UserLikeList> getLikes_DisLikesListing(@Header("Authorization") String token,
+                                                @Field("token") String usertoken);
+
+    @FormUrlEncoded
+    @POST("/playlist/get_collaborators_profiles/")
+    Call<CollabsList> getCollabsListing(@Header("Authorization") String token,
+                                        @Field("token") String usertoken);
+
 }

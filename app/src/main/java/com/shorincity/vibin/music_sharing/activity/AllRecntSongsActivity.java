@@ -8,11 +8,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 
+import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.RecentSongModel;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
@@ -48,7 +51,7 @@ public class AllRecntSongsActivity extends AppCompatActivity {
         callGetRecentAllSongAPI(SharedPrefManager.getInstance(AllRecntSongsActivity.this).getSharedPrefInt(AppConstants.INTENT_USER_ID));
     }
 
-    private void statusBarColorChange(){
+    private void statusBarColorChange() {
         Window window = this.getWindow();
 
         // clear FLAG_TRANSLUCENT_STATUS flag:
@@ -59,14 +62,14 @@ public class AllRecntSongsActivity extends AppCompatActivity {
 
         // finally change the color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(ContextCompat.getColor(this,R.color.colorPrimaryDark));
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         }
     }
 
     private void setListAdapter() {
         recentSongList = new ArrayList<>();
 
-        recentSongRv.setLayoutManager(new LinearLayoutManager(AllRecntSongsActivity.this, LinearLayoutManager.VERTICAL,false));
+        recentSongRv.setLayoutManager(new LinearLayoutManager(AllRecntSongsActivity.this, LinearLayoutManager.VERTICAL, false));
         recentSongRv.setHasFixedSize(true);
 
         recentPlayedAdapter = new RecentPlayedAdapter(AllRecntSongsActivity.this, recentSongList);
@@ -74,15 +77,33 @@ public class AllRecntSongsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View v, int position) {
 
-                // conditions to check song type before going to play in player screen
-                if(recentSongList.get(position).getSongType().equalsIgnoreCase(AppConstants.YOUTUBE)) {
-                    Intent intent = new Intent(AllRecntSongsActivity.this, PlayYoutubeVideoActivity.class);
-                    intent.putExtra("title",recentSongList.get(position).getSongName());
-                    intent.putExtra("description",recentSongList.get(position).getSongDetails());
-                    intent.putExtra("thumbnail",recentSongList.get(position).getSongThumbnail());
-                    intent.putExtra("videoId",recentSongList.get(position).getSongId());
-                    startActivity(intent);
+                try {
+                    if (recentSongList.get(position).getSongType().equalsIgnoreCase(AppConstants.YOUTUBE)) {
+                        Intent intent = new Intent(AllRecntSongsActivity.this, PlayYoutubeVideoActivity.class);
+                        ArrayList<PlaylistDetailModel> playlist;
+                        playlist = new ArrayList<>();
+                        for (int i = 0; i < recentSongList.size(); i++) {
+                            playlist.add(new PlaylistDetailModel(
+                                    recentSongList.get(i).getSongName(),
+                                    recentSongList.get(i).getSongThumbnail(),
+                                    recentSongList.get(i).getSongId()
+                            ));
+                        }
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("position", position);
+                        bundle.putString("title", recentSongList.get(position).getSongName());
+                        bundle.putString("description", "");
+                        bundle.putString("thumbnail", recentSongList.get(position).getSongThumbnail());
+                        bundle.putString("videoId", recentSongList.get(position).getSongId());
+                        bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
+                        intent.putExtra("data", bundle);
+                        startActivity(intent);
+                    }
+                } catch (Exception e) {
+                    Log.d("yash", "onItemClick: " + e.getMessage());
                 }
+                // conditions to check song type before going to play in player screen
+
             }
         });
         recentSongRv.setAdapter(recentPlayedAdapter);
@@ -102,7 +123,7 @@ public class AllRecntSongsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ArrayList<RecentSongModel>> call, Response<ArrayList<RecentSongModel>> response) {
                 ((ProgressBar) findViewById(R.id.progressbar)).setVisibility(View.GONE);
-                if (response != null && response.body()!= null && response.body().size() > 0) {
+                if (response != null && response.body() != null && response.body().size() > 0) {
                     recentSongList.addAll(response.body());
                     recentPlayedAdapter.notifyDataSetChanged();
                 } else {
@@ -123,6 +144,6 @@ public class AllRecntSongsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         // Top to Bottom animation whenever user tap on back button
-        overridePendingTransition( R.anim.slide_out_bottom, R.anim.slide_in_bottom );
+        overridePendingTransition(R.anim.slide_out_bottom, R.anim.slide_in_bottom);
     }
 }

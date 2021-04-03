@@ -3,6 +3,7 @@ package com.shorincity.vibin.music_sharing.youtube_files;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -10,23 +11,28 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.shorincity.vibin.music_sharing.adapters.YoutubeOtherArtistAdapter;
 import com.shorincity.vibin.music_sharing.model.CountryModel;
 import com.shorincity.vibin.music_sharing.model.HomeYoutubeModel;
 import com.shorincity.vibin.music_sharing.model.YoutubeChannelModel;
-import com.shorincity.vibin.music_sharing.model.YoutubeGuideCategoryModel;
 import com.shorincity.vibin.music_sharing.model.YoutubeTrendingModel;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
@@ -47,6 +53,7 @@ import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -58,11 +65,11 @@ public class YoutubeHomeFragment extends Fragment {
     View view;
     Context mContext;
     EditText editTextsearch;
-    Button searchEditText;
+    ImageView searchEditText;
     ProgressBar progressBar;
     RecyclerView indianTrendingListRv, usTrendingListRv, ukTrendingListRv, channelListRv, tokyoListRv, canadaListRv, japanListRv, ausListRv, hindi_artists_rv;
     RecyclerView chartsRv, artistsRv, othersRv, bollywoodRv, panjabiRv, countryRv, generRv;
-
+    RelativeLayout relative_main;
     ArrayList<YoutubeTrendingModel.Item> youtubeIndianTrendingList;
     ArrayList<YoutubeTrendingModel.Item> youtubeUKTrendingList;
     ArrayList<YoutubeTrendingModel.Item> youtubeUSTrendingList;
@@ -72,6 +79,7 @@ public class YoutubeHomeFragment extends Fragment {
     ArrayList<YoutubeTrendingModel.Item> youtubeAusTrendingList;
     YoutubeChannelAdapter youtubeIndianTrendingAdapter, youtubeUSTrendingAdapter, youtubeUKTrendingAdapter, youtubeCanadaTrendingAdapter, youtubeJapanTrendingAdapter, youtubeAusTrendingAdapter;
     YoutubeArtistChannelAdapter youtubeChannelAdapter;
+    String popular_next_page_token = "";
 
 
     CountryAdapter countryAdapter;
@@ -80,17 +88,24 @@ public class YoutubeHomeFragment extends Fragment {
     YoutubeChartAdapter chartsAdapter;
     YoutubeArtistAdapter artistAdapter;
     YoutubeArtistAdapter artistHindiAdapter;
-    YoutubeArtistAdapter othersAdapter;
     YoutubeArtistAdapter panjabiAdapter;
+    YoutubeOtherArtistAdapter othersAdapter;
     YoutubeBollywoodAdapter bollywoodAdapter;
     YoutubeGenerAdapter generAdapter;
     ArrayList<HomeYoutubeModel.YoutubeCustomModel> chartList;
     ArrayList<HomeYoutubeModel.YoutubeCustomModel> artistList;
+    ArrayList<HomeYoutubeModel.YoutubeCustomModel> tempartistList;
     ArrayList<HomeYoutubeModel.YoutubeCustomModel> artistHindiList;
+    ArrayList<HomeYoutubeModel.YoutubeCustomModel> tempartistHindiList;
     ArrayList<HomeYoutubeModel.YoutubeCustomModel> othersList;
     ArrayList<HomeYoutubeModel.YoutubeCustomModel> panjabiList;
+    ArrayList<HomeYoutubeModel.YoutubeCustomModel> temppanjabiList;
     ArrayList<HomeYoutubeModel.YoutubeCustomModel> generList;
     ArrayList<HomeYoutubeModel.YoutubeCustomModel> bollywoodList;
+
+    Animation anim;
+    View view_search;
+
 
     public YoutubeHomeFragment() {
 
@@ -106,19 +121,29 @@ public class YoutubeHomeFragment extends Fragment {
             mContext = view.getContext();
 
             inItviews();
-
+//            MiniPlayer.addMiniPlayer(mContext,relative_main );
+            youtubeIndianTrendingList = new ArrayList<>();
+            youtubeUKTrendingList = new ArrayList<>();
+            youtubeUSTrendingList = new ArrayList<>();
+            youtubeAusTrendingList = new ArrayList<>();
+            youtubeCanadaTrendingList = new ArrayList<>();
+            youtubeCannelsList = new ArrayList<>();
+            youtubeJapanTrendingList = new ArrayList<>();
             editTextsearch = view.findViewById(R.id.edittextSearch);
-            searchEditText = view.findViewById(R.id.button);
+            searchEditText = view.findViewById(R.id.ic_magnify);
             editTextsearch.setOnEditorActionListener(editorActionListener);
             searchEditText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     String text = editTextsearch.getText().toString().trim();
                     if (!TextUtils.isEmpty(text)) {
-                        Intent intent = new Intent(mContext, YoutubeSearchActivity.class);
-                        intent.putExtra("search", text);
-                        startActivity(intent);
-                    }{
+                        YoutubeSearchFragment youtubeSearchFragment = new YoutubeSearchFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("search", text);
+                        youtubeSearchFragment.setArguments(bundle);
+
+                        replaceFragment(youtubeSearchFragment);
+                    }else {
                         Toast.makeText(mContext, "Field can't be empty", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -133,21 +158,44 @@ public class YoutubeHomeFragment extends Fragment {
                 }
             });
 
-            setTrendingAdapter();
 
-            callGetYoutubeMostPopularIndianListAPI();
+            setTrendingAdapter();
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+            indianTrendingListRv.setLayoutManager(linearLayoutManager);
+            indianTrendingListRv.setHasFixedSize(true);
+
+            callGetYoutubeMostPopularIndianListAPI(popular_next_page_token, "0");
 
             callGetYoutubeHomePlaylistAPI();
 
-            //callGetYoutubeMostPopularUKListAPI();
+            indianTrendingListRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+                }
 
-            //callGetYoutubeMostPopularUSListAPI();
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    int visibleItemCount = linearLayoutManager.getChildCount();
+                    int totalItemCount = linearLayoutManager.getItemCount();
+                    int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition > 0) {
+                        callGetYoutubeMostPopularIndianListAPI(popular_next_page_token, "1");
+                    }
 
-            //callGetYoutubeMostPopularCanadaListAPI();
+                }
+            });
 
-            //callGetYoutubeMostPopularJapanListAPI();
-
-            //callGetYoutubeMostPopularAusListAPI();
+//            callGetYoutubeMostPopularUKListAPI();
+//
+//            callGetYoutubeMostPopularUSListAPI();
+//
+//            callGetYoutubeMostPopularCanadaListAPI();
+//
+//            callGetYoutubeMostPopularJapanListAPI();
+//
+//            callGetYoutubeMostPopularAusListAPI();
         }
         return view;
     }
@@ -164,7 +212,7 @@ public class YoutubeHomeFragment extends Fragment {
             @Override
             public void onItemClick(View v, int position) {
                 Intent intent = new Intent(getActivity(), ChannelsPlaylistItemActivity.class);
-                intent.putExtra(AppConstants.INTENT_YOUTUBE_PLAYLIST_DATA, chartList.get(position));
+                intent.putExtra(AppConstants.INTENT_YOUTUBE_PLAYLIST_DATA, (Parcelable) chartList.get(position));
                 intent.putExtra("title", chartList.get(position).getGenre());
                 intent.putExtra("thumbnail", chartList.get(position).getThumbnail());
                 startActivity(intent);
@@ -175,18 +223,18 @@ public class YoutubeHomeFragment extends Fragment {
 
         // English Artist...................
         artistList = new ArrayList<>();
+        tempartistList = new ArrayList<>();
         artistsRv.setLayoutManager(new GridLayoutManager(getActivity(), 1, GridLayoutManager.HORIZONTAL, false));
         artistsRv.setHasFixedSize(true);
 
-        artistAdapter = new YoutubeArtistAdapter(getActivity(), artistList);
+        artistAdapter = new YoutubeArtistAdapter(getActivity(), tempartistList,artistList);
         artistAdapter.setCustomItemClickListener(new YoutubeArtistAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
-
                 Intent intent = new Intent(getActivity(), ChannelsPlaylistItemActivity.class);
-                intent.putExtra(AppConstants.INTENT_YOUTUBE_PLAYLIST_DATA, artistList.get(position));
-                intent.putExtra("title", artistList.get(position).getGenre());
-                intent.putExtra("thumbnail", artistList.get(position).getThumbnail());
+                intent.putExtra(AppConstants.INTENT_YOUTUBE_PLAYLIST_DATA, (Parcelable) tempartistList.get(position));
+                intent.putExtra("title", tempartistList.get(position).getGenre());
+                intent.putExtra("thumbnail", tempartistList.get(position).getThumbnail());
                 startActivity(intent);
             }
         });
@@ -194,18 +242,19 @@ public class YoutubeHomeFragment extends Fragment {
 
         // Hindi Artist...................
         artistHindiList = new ArrayList<>();
+        tempartistHindiList = new ArrayList<>();
         hindi_artists_rv.setLayoutManager(new GridLayoutManager(getActivity(), 1, GridLayoutManager.HORIZONTAL, false));
         hindi_artists_rv.setHasFixedSize(true);
 
-        artistHindiAdapter = new YoutubeArtistAdapter(getActivity(), artistHindiList);
+        artistHindiAdapter = new YoutubeArtistAdapter(getActivity(), tempartistHindiList,artistHindiList);
         artistHindiAdapter.setCustomItemClickListener(new YoutubeArtistAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
 
                 Intent intent = new Intent(getActivity(), ChannelsPlaylistItemActivity.class);
-                intent.putExtra(AppConstants.INTENT_YOUTUBE_PLAYLIST_DATA, artistHindiList.get(position));
-                intent.putExtra("title", artistHindiList.get(position).getGenre());
-                intent.putExtra("thumbnail", artistHindiList.get(position).getThumbnail());
+                intent.putExtra(AppConstants.INTENT_YOUTUBE_PLAYLIST_DATA, (Parcelable) tempartistHindiList.get(position));
+                intent.putExtra("title", tempartistHindiList.get(position).getGenre());
+                intent.putExtra("thumbnail", tempartistHindiList.get(position).getThumbnail());
                 startActivity(intent);
             }
         });
@@ -213,17 +262,18 @@ public class YoutubeHomeFragment extends Fragment {
 
         // Panjabi...................
         panjabiList = new ArrayList<>();
+        temppanjabiList = new ArrayList<>();
         panjabiRv.setLayoutManager(new GridLayoutManager(getActivity(), 1, GridLayoutManager.HORIZONTAL, false));
         panjabiRv.setHasFixedSize(true);
 
-        panjabiAdapter = new YoutubeArtistAdapter(getActivity(), panjabiList);
+        panjabiAdapter = new YoutubeArtistAdapter(getActivity(), temppanjabiList,panjabiList);
         panjabiAdapter.setCustomItemClickListener(new YoutubeArtistAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
                 Intent intent = new Intent(getActivity(), ChannelsPlaylistItemActivity.class);
-                intent.putExtra(AppConstants.INTENT_YOUTUBE_PLAYLIST_DATA, panjabiList.get(position));
-                intent.putExtra("title", panjabiList.get(position).getGenre());
-                intent.putExtra("thumbnail", panjabiList.get(position).getThumbnail());
+                intent.putExtra(AppConstants.INTENT_YOUTUBE_PLAYLIST_DATA, (Parcelable) temppanjabiList.get(position));
+                intent.putExtra("title", temppanjabiList.get(position).getGenre());
+                intent.putExtra("thumbnail", temppanjabiList.get(position).getThumbnail());
                 startActivity(intent);
             }
         });
@@ -240,7 +290,7 @@ public class YoutubeHomeFragment extends Fragment {
             @Override
             public void onItemClick(View v, int position) {
                 Intent intent = new Intent(getActivity(), ChannelsPlaylistItemActivity.class);
-                intent.putExtra(AppConstants.INTENT_YOUTUBE_PLAYLIST_DATA, generList.get(position));
+                intent.putExtra(AppConstants.INTENT_YOUTUBE_PLAYLIST_DATA, (Parcelable) generList.get(position));
                 intent.putExtra("title", generList.get(position).getGenre());
                 intent.putExtra("thumbnail", generList.get(position).getThumbnail());
 
@@ -260,7 +310,7 @@ public class YoutubeHomeFragment extends Fragment {
             @Override
             public void onItemClick(View v, int position) {
                 Intent intent = new Intent(getActivity(), ChannelsPlaylistItemActivity.class);
-                intent.putExtra(AppConstants.INTENT_YOUTUBE_PLAYLIST_DATA, bollywoodList.get(position));
+                intent.putExtra(AppConstants.INTENT_YOUTUBE_PLAYLIST_DATA, (Parcelable) bollywoodList.get(position));
                 intent.putExtra("title", bollywoodList.get(position).getGenre());
                 intent.putExtra("thumbnail", bollywoodList.get(position).getThumbnail());
                 startActivity(intent);
@@ -273,13 +323,13 @@ public class YoutubeHomeFragment extends Fragment {
         othersRv.setLayoutManager(new GridLayoutManager(getActivity(), 2, GridLayoutManager.HORIZONTAL, false));
         othersRv.setHasFixedSize(true);
 
-        othersAdapter = new YoutubeArtistAdapter(getActivity(), othersList);
-        othersAdapter.setCustomItemClickListener(new YoutubeArtistAdapter.CustomItemClickListener() {
+        othersAdapter = new YoutubeOtherArtistAdapter(getActivity(), othersList);
+        othersAdapter.setCustomItemClickListener(new YoutubeOtherArtistAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
 
                 Intent intent = new Intent(getActivity(), ChannelsPlaylistItemActivity.class);
-                intent.putExtra(AppConstants.INTENT_YOUTUBE_PLAYLIST_DATA, othersList.get(position));
+                intent.putExtra(AppConstants.INTENT_YOUTUBE_PLAYLIST_DATA, (Parcelable) othersList.get(position));
                 intent.putExtra("title", othersList.get(position).getGenre());
                 intent.putExtra("thumbnail", othersList.get(position).getThumbnail());
                 startActivity(intent);
@@ -312,10 +362,6 @@ public class YoutubeHomeFragment extends Fragment {
         countryRv.setAdapter(countryAdapter);
 
 
-        youtubeIndianTrendingList = new ArrayList<>();
-        indianTrendingListRv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        indianTrendingListRv.setHasFixedSize(true);
-
         youtubeIndianTrendingAdapter = new YoutubeChannelAdapter(getActivity(), youtubeIndianTrendingList);
         youtubeIndianTrendingAdapter.setCustomItemClickListener(new YoutubeChannelAdapter.CustomItemClickListener() {
             @Override
@@ -337,7 +383,6 @@ public class YoutubeHomeFragment extends Fragment {
         indianTrendingListRv.setAdapter(youtubeIndianTrendingAdapter);
 
 
-        youtubeUSTrendingList = new ArrayList<>();
         usTrendingListRv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         usTrendingListRv.setHasFixedSize(true);
 
@@ -362,7 +407,6 @@ public class YoutubeHomeFragment extends Fragment {
         usTrendingListRv.setAdapter(youtubeUSTrendingAdapter);
 
 
-        youtubeUKTrendingList = new ArrayList<>();
         ukTrendingListRv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         ukTrendingListRv.setHasFixedSize(true);
 
@@ -385,32 +429,6 @@ public class YoutubeHomeFragment extends Fragment {
             }
         });
         ukTrendingListRv.setAdapter(youtubeUKTrendingAdapter);
-
-
-        // indian trending
-        youtubeIndianTrendingList = new ArrayList<>();
-        indianTrendingListRv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        indianTrendingListRv.setHasFixedSize(true);
-
-        youtubeIndianTrendingAdapter = new YoutubeChannelAdapter(getActivity(), youtubeIndianTrendingList);
-        youtubeIndianTrendingAdapter.setCustomItemClickListener(new YoutubeChannelAdapter.CustomItemClickListener() {
-            @Override
-            public void onItemClick(View v, int position) {
-                YoutubeTrendingModel.Item currentItem = youtubeIndianTrendingList.get(position);
-                String idvideo = currentItem.getId();
-                String title = currentItem.getSnippet().getTitle();
-                String thumbnail = currentItem.getSnippet().getThumbnails().getMedium().getUrl();
-                Intent intent = new Intent(getActivity(), ChannelsPlaylistActivity.class);
-                intent.putExtra(AppConstants.INTENT_YOUTUBE_CHANNEL_ID, currentItem.getSnippet().getChannelId());
-                intent.putExtra(AppConstants.INTENT_YOUTUBE_CHANNEL_BANNER_URL, currentItem.getSnippet().getThumbnails().getMedium().getUrl());
-                intent.putExtra("title", title);
-                intent.putExtra("thumbnail", thumbnail);
-                intent.putExtra("videoId", idvideo);
-                intent.putExtra(AppConstants.INTENT_YOUTUBE_CHANNEL_DATA, currentItem);
-                startActivity(intent);
-            }
-        });
-        indianTrendingListRv.setAdapter(youtubeIndianTrendingAdapter);
 
 
         youtubeCannelsList = new ArrayList<>();
@@ -518,6 +536,7 @@ public class YoutubeHomeFragment extends Fragment {
     private void inItviews() {
         progressBar = view.findViewById(R.id.progressbar);
         indianTrendingListRv = view.findViewById(R.id.most_popular_rv);
+//        relative_main = view.findViewById(R.id.relative_main);
         usTrendingListRv = view.findViewById(R.id.us_most_popular_rv);
         ukTrendingListRv = view.findViewById(R.id.uk_most_popular_rv);
         tokyoListRv = view.findViewById(R.id.tokyo_most_popular_rv);
@@ -533,6 +552,9 @@ public class YoutubeHomeFragment extends Fragment {
         bollywoodRv = view.findViewById(R.id.bollywood_rv);
         panjabiRv = view.findViewById(R.id.panjabi_rv);
         countryRv = view.findViewById(R.id.country_rv);
+
+        anim = AnimationUtils.loadAnimation(getContext(), R.anim.scale_animation);
+        view_search = (View) view.findViewById(R.id.second_view);
     }
 
     private TextView.OnEditorActionListener editorActionListener = new TextView.OnEditorActionListener() {
@@ -548,7 +570,7 @@ public class YoutubeHomeFragment extends Fragment {
                         youtubeSearchFragment.setArguments(bundle);
 
                         replaceFragment(youtubeSearchFragment);
-                    }else {
+                    } else {
                         Toast.makeText(mContext, "", Toast.LENGTH_SHORT).show();
                     }
             }
@@ -557,19 +579,20 @@ public class YoutubeHomeFragment extends Fragment {
     };
 
     // parse data from youtube api to list view
-    public void callGetYoutubeMostPopularIndianListAPI() {
-        progressBar.setVisibility(View.VISIBLE);
+    public void callGetYoutubeMostPopularIndianListAPI(String popularNextPageToken, String isShowProgress) {
+        if (!isShowProgress.equalsIgnoreCase("1")) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
         DataAPI dataAPI = RetrofitAPI.getYoutubeData();
 
-        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "IN", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "IN", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs", popularNextPageToken);
         callback.enqueue(new Callback<YoutubeTrendingModel>() {
             @Override
             public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
                 progressBar.setVisibility(View.GONE);
-
                 if (response != null && response.body() != null) {
                     Log.i("YOUTUBE_TRENDING RESULT", response.toString());
-
+                    popular_next_page_token = response.body().getNextPageToken();
                     if (response.body().getItems() != null
                             && response.body().getItems().size() > 0) {
                         youtubeIndianTrendingList.addAll(response.body().getItems());
@@ -608,6 +631,7 @@ public class YoutubeHomeFragment extends Fragment {
 
                     homeYoutubeModel = (HomeYoutubeModel) response.body();
 
+
                     if (homeYoutubeModel != null) {
 
                         if (homeYoutubeModel.getCharts() != null
@@ -623,14 +647,38 @@ public class YoutubeHomeFragment extends Fragment {
 
 
                             for (int i = 0; i < homeYoutubeModel.getArtists().size(); i++) {
-                                if (homeYoutubeModel.getArtists().get(i).getLanguage().equalsIgnoreCase("punjabi"))
+                                if (homeYoutubeModel.getArtists().get(i).getLanguage().equalsIgnoreCase("punjabi")) {
                                     panjabiList.add(homeYoutubeModel.getArtists().get(i));
-                                else if (homeYoutubeModel.getArtists().get(i).getLanguage().equalsIgnoreCase("English")) {
+                                } else if (homeYoutubeModel.getArtists().get(i).getLanguage().equalsIgnoreCase("English")) {
                                     artistList.add(homeYoutubeModel.getArtists().get(i));
-                                }else{
+                                } else {
                                     artistHindiList.add(homeYoutubeModel.getArtists().get(i));
                                 }
                             }
+
+
+                            if (artistList.size() > 10) {
+                                tempartistList.addAll(artistList.subList(0, 10));
+                                tempartistList.add(new HomeYoutubeModel.YoutubeCustomModel("", getActivity().getResources().getString(R.string.artist), "", ""));
+                            } else {
+                                tempartistList.addAll(artistList);
+                            }
+
+                            if (panjabiList.size() > 10) {
+                                temppanjabiList.addAll(panjabiList.subList(0, 10));
+                                temppanjabiList.add(new HomeYoutubeModel.YoutubeCustomModel("", getActivity().getResources().getString(R.string.panjabi_artist), "", ""));
+                            } else {
+                                temppanjabiList.addAll(panjabiList);
+                            }
+
+                            if (artistHindiList.size() > 10) {
+                                tempartistHindiList.addAll(artistHindiList.subList(0, 10));
+                                tempartistHindiList.add(new HomeYoutubeModel.YoutubeCustomModel("", getActivity().getResources().getString(R.string.artist_hindi), "", ""));
+                            } else {
+                                tempartistHindiList.addAll(artistHindiList);
+                            }
+
+
                             artistAdapter.notifyDataSetChanged();
                             artistHindiAdapter.notifyDataSetChanged();
                             panjabiAdapter.notifyDataSetChanged();
@@ -678,212 +726,212 @@ public class YoutubeHomeFragment extends Fragment {
     }
 
 
-    public void callGetYoutubeMostPopularUSListAPI() {
-        progressBar.setVisibility(View.VISIBLE);
-        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
+//    public void callGetYoutubeMostPopularUSListAPI() {
+//        progressBar.setVisibility(View.VISIBLE);
+//        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
+//
+//        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "US", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+//        callback.enqueue(new Callback<YoutubeTrendingModel>() {
+//            @Override
+//            public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
+//                progressBar.setVisibility(View.GONE);
+//                if (response != null && response.body() != null) {
+//                    Log.i("YOUTUBE_TRENDING RESULT", response.toString());
+//
+//                    if (response.body().getItems() != null
+//                            && response.body().getItems().size() > 0) {
+//                        youtubeUSTrendingList.addAll(response.body().getItems());
+//                        youtubeUSTrendingAdapter.notifyDataSetChanged();
+//                    } else {
+//                        Toast.makeText(getActivity(), "Result Not Found: ", Toast.LENGTH_LONG).show();
+//                    }
+//                } else {
+//                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
+//                progressBar.setVisibility(View.GONE);
+//                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+//            }
+//        });
+//    }
+//
+//    public void callGetYoutubeMostPopularUKListAPI() {
+//        progressBar.setVisibility(View.VISIBLE);
+//        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
+//
+//        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "GB", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+//        callback.enqueue(new Callback<YoutubeTrendingModel>() {
+//            @Override
+//            public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
+//                progressBar.setVisibility(View.GONE);
+//                if (response != null && response.body() != null) {
+//                    Log.i("YOUTUBE_TRENDING RESULT", response.toString());
+//
+//                    if (response.body().getItems() != null
+//                            && response.body().getItems().size() > 0) {
+//                        youtubeUKTrendingList.addAll(response.body().getItems());
+//                        youtubeUKTrendingAdapter.notifyDataSetChanged();
+//                    } else {
+//                        Toast.makeText(getActivity(), "Result Not Found: ", Toast.LENGTH_LONG).show();
+//                    }
+//                } else {
+//                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
+//                progressBar.setVisibility(View.GONE);
+//                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+//            }
+//        });
+//    }
+//
+//    public void callGetYoutubeMostPopularCanadaListAPI() {
+//        progressBar.setVisibility(View.VISIBLE);
+//        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
+//
+//        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "CA", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+//        callback.enqueue(new Callback<YoutubeTrendingModel>() {
+//            @Override
+//            public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
+//                progressBar.setVisibility(View.GONE);
+//                if (response != null && response.body() != null) {
+//                    Log.i("YOUTUBE_TRENDING RESULT", response.toString());
+//
+//                    if (response.body().getItems() != null
+//                            && response.body().getItems().size() > 0) {
+//                        youtubeCanadaTrendingList.addAll(response.body().getItems());
+//                        youtubeCanadaTrendingAdapter.notifyDataSetChanged();
+//                    } else {
+//                        Toast.makeText(getActivity(), "Result Not Found: ", Toast.LENGTH_LONG).show();
+//                    }
+//                } else {
+//                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
+//                progressBar.setVisibility(View.GONE);
+//                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+//            }
+//        });
+//    }
+//
+//    public void callGetYoutubeMostPopularJapanListAPI() {
+//        progressBar.setVisibility(View.VISIBLE);
+//        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
+//
+//        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "JP", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+//        callback.enqueue(new Callback<YoutubeTrendingModel>() {
+//            @Override
+//            public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
+//                progressBar.setVisibility(View.GONE);
+//                if (response != null && response.body() != null) {
+//                    Log.i("YOUTUBE_TRENDING RESULT", response.toString());
+//
+//                    if (response.body().getItems() != null
+//                            && response.body().getItems().size() > 0) {
+//                        youtubeJapanTrendingList.addAll(response.body().getItems());
+//                        youtubeJapanTrendingAdapter.notifyDataSetChanged();
+//                    } else {
+//                        Toast.makeText(getActivity(), "Result Not Found: ", Toast.LENGTH_LONG).show();
+//                    }
+//                } else {
+//                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
+//                progressBar.setVisibility(View.GONE);
+//                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+//            }
+//        });
+//    }
+//
+//    public void callGetYoutubeMostPopularAusListAPI() {
+//        progressBar.setVisibility(View.VISIBLE);
+//        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
+//
+//        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "AU", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+//        callback.enqueue(new Callback<YoutubeTrendingModel>() {
+//            @Override
+//            public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
+//                progressBar.setVisibility(View.GONE);
+//                if (response != null && response.body() != null) {
+//                    Log.i("YOUTUBE_TRENDING RESULT", response.toString());
+//
+//                    if (response.body().getItems() != null
+//                            && response.body().getItems().size() > 0) {
+//                        youtubeAusTrendingList.addAll(response.body().getItems());
+//                        youtubeAusTrendingAdapter.notifyDataSetChanged();
+//                    } else {
+//                        Toast.makeText(getActivity(), "Result Not Found: ", Toast.LENGTH_LONG).show();
+//                    }
+//                } else {
+//                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
+//                progressBar.setVisibility(View.GONE);
+//                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+//            }
+//        });
+//    }
 
-        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "US", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
-        callback.enqueue(new Callback<YoutubeTrendingModel>() {
-            @Override
-            public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
-                progressBar.setVisibility(View.GONE);
-                if (response != null && response.body() != null) {
-                    Log.i("YOUTUBE_TRENDING RESULT", response.toString());
 
-                    if (response.body().getItems() != null
-                            && response.body().getItems().size() > 0) {
-                        youtubeUSTrendingList.addAll(response.body().getItems());
-                        youtubeUSTrendingAdapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(getActivity(), "Result Not Found: ", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    public void callGetYoutubeMostPopularUKListAPI() {
-        progressBar.setVisibility(View.VISIBLE);
-        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
-
-        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "GB", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
-        callback.enqueue(new Callback<YoutubeTrendingModel>() {
-            @Override
-            public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
-                progressBar.setVisibility(View.GONE);
-                if (response != null && response.body() != null) {
-                    Log.i("YOUTUBE_TRENDING RESULT", response.toString());
-
-                    if (response.body().getItems() != null
-                            && response.body().getItems().size() > 0) {
-                        youtubeUKTrendingList.addAll(response.body().getItems());
-                        youtubeUKTrendingAdapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(getActivity(), "Result Not Found: ", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    public void callGetYoutubeMostPopularCanadaListAPI() {
-        progressBar.setVisibility(View.VISIBLE);
-        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
-
-        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "CA", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
-        callback.enqueue(new Callback<YoutubeTrendingModel>() {
-            @Override
-            public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
-                progressBar.setVisibility(View.GONE);
-                if (response != null && response.body() != null) {
-                    Log.i("YOUTUBE_TRENDING RESULT", response.toString());
-
-                    if (response.body().getItems() != null
-                            && response.body().getItems().size() > 0) {
-                        youtubeCanadaTrendingList.addAll(response.body().getItems());
-                        youtubeCanadaTrendingAdapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(getActivity(), "Result Not Found: ", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    public void callGetYoutubeMostPopularJapanListAPI() {
-        progressBar.setVisibility(View.VISIBLE);
-        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
-
-        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "JP", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
-        callback.enqueue(new Callback<YoutubeTrendingModel>() {
-            @Override
-            public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
-                progressBar.setVisibility(View.GONE);
-                if (response != null && response.body() != null) {
-                    Log.i("YOUTUBE_TRENDING RESULT", response.toString());
-
-                    if (response.body().getItems() != null
-                            && response.body().getItems().size() > 0) {
-                        youtubeJapanTrendingList.addAll(response.body().getItems());
-                        youtubeJapanTrendingAdapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(getActivity(), "Result Not Found: ", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    public void callGetYoutubeMostPopularAusListAPI() {
-        progressBar.setVisibility(View.VISIBLE);
-        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
-
-        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "AU", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
-        callback.enqueue(new Callback<YoutubeTrendingModel>() {
-            @Override
-            public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
-                progressBar.setVisibility(View.GONE);
-                if (response != null && response.body() != null) {
-                    Log.i("YOUTUBE_TRENDING RESULT", response.toString());
-
-                    if (response.body().getItems() != null
-                            && response.body().getItems().size() > 0) {
-                        youtubeAusTrendingList.addAll(response.body().getItems());
-                        youtubeAusTrendingAdapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(getActivity(), "Result Not Found: ", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-
-    public void callGetGuideCategoryAPI() {
-        progressBar.setVisibility(View.VISIBLE);
-        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
-
-        Call<YoutubeGuideCategoryModel> callback = dataAPI.getYoutubeGuideCategoryModel("snippet", "IN", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
-        callback.enqueue(new Callback<YoutubeGuideCategoryModel>() {
-            @Override
-            public void onResponse(Call<YoutubeGuideCategoryModel> call, Response<YoutubeGuideCategoryModel> response) {
-                progressBar.setVisibility(View.GONE);
-                if (response != null && response.body() != null) {
-                    Log.i("YOUTUBE_TRENDING RESULT", response.toString());
-
-                    if (response.body().getItems() != null
-                            && response.body().getItems().size() > 0) {
-
-                        YoutubeGuideCategoryModel youtubeGuideCategoryModel = response.body();
-                        String musicCategoryId = "";
-
-                        ArrayList<YoutubeGuideCategoryModel.Item> categoryList = new ArrayList<>();
-                        categoryList.addAll(youtubeGuideCategoryModel.getItems());
-
-                        for (int i = 0; i < categoryList.size(); i++) {
-                            if (categoryList.get(i).getSnippet().getTitle().toLowerCase().equals("music")) {
-                                musicCategoryId = categoryList.get(i).getId();
-                                break;
-                            }
-                        }
-
-                        if (!TextUtils.isEmpty(musicCategoryId))
-                            callGetYoutubeChannelsAPI(musicCategoryId);
-                    } else {
-                        Toast.makeText(getActivity(), "Result Not Found: ", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<YoutubeGuideCategoryModel> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
+//    public void callGetGuideCategoryAPI() {
+//        progressBar.setVisibility(View.VISIBLE);
+//        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
+//
+//        Call<YoutubeGuideCategoryModel> callback = dataAPI.getYoutubeGuideCategoryModel("snippet", "IN", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+//        callback.enqueue(new Callback<YoutubeGuideCategoryModel>() {
+//            @Override
+//            public void onResponse(Call<YoutubeGuideCategoryModel> call, Response<YoutubeGuideCategoryModel> response) {
+//                progressBar.setVisibility(View.GONE);
+//                if (response != null && response.body() != null) {
+//                    Log.i("YOUTUBE_TRENDING RESULT", response.toString());
+//
+//                    if (response.body().getItems() != null
+//                            && response.body().getItems().size() > 0) {
+//
+//                        YoutubeGuideCategoryModel youtubeGuideCategoryModel = response.body();
+//                        String musicCategoryId = "";
+//
+//                        ArrayList<YoutubeGuideCategoryModel.Item> categoryList = new ArrayList<>();
+//                        categoryList.addAll(youtubeGuideCategoryModel.getItems());
+//
+//                        for (int i = 0; i < categoryList.size(); i++) {
+//                            if (categoryList.get(i).getSnippet().getTitle().toLowerCase().equals("music")) {
+//                                musicCategoryId = categoryList.get(i).getId();
+//                                break;
+//                            }
+//                        }
+//
+//                        if (!TextUtils.isEmpty(musicCategoryId))
+//                            callGetYoutubeChannelsAPI(musicCategoryId);
+//                    } else {
+//                        Toast.makeText(getActivity(), "Result Not Found: ", Toast.LENGTH_LONG).show();
+//                    }
+//                } else {
+//                    Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<YoutubeGuideCategoryModel> call, Throwable t) {
+//                progressBar.setVisibility(View.GONE);
+//                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+//            }
+//        });
+//    }
 
     public void callGetYoutubeChannelsAPI(String categoryId) {
         progressBar.setVisibility(View.VISIBLE);

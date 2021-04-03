@@ -3,9 +3,11 @@ package com.shorincity.vibin.music_sharing.youtube_files;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.os.Parcelable;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 
 import com.shorincity.vibin.music_sharing.model.ModelData;
 import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.model.Item;
@@ -46,6 +49,7 @@ public class YoutubeSearchActivity extends AppCompatActivity {
     ProgressBar progressBar;
 
     TextView searchsomething;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +60,7 @@ public class YoutubeSearchActivity extends AppCompatActivity {
         Anhxa();
         searchsomething = findViewById(R.id.searchidy);
         String text = getIntent().getExtras().getString("search");
-        if(!text.equals("")) {
+        if (!text.equals("")) {
 
             edtsearch.setText(text);
             listView.setVisibility(View.GONE);
@@ -65,7 +69,7 @@ public class YoutubeSearchActivity extends AppCompatActivity {
             Docdulieu(tukhoa);
         }
 
-        if(edtsearch.getText().toString().isEmpty()){
+        if (edtsearch.getText().toString().isEmpty()) {
             searchsomething.setVisibility(View.VISIBLE);
         }
 
@@ -83,21 +87,35 @@ public class YoutubeSearchActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(YoutubeSearchActivity.this, PlayYoutubeVideoActivity.class);
-                 idvideo = mangitem.get(position).getId().getVideoId();
-                 Item currentItem = mangitem.get(position);
-                 title = currentItem.getSnippet().getTitle();
-                 thumbnail = currentItem.getSnippet().getThumbnails().getMedium().getUrl();
-                 intent.putExtra("title",title);
-                 intent.putExtra("thumbnail",thumbnail);
-                 intent.putExtra("videoId",idvideo);
-                 startActivity(intent);
+                try {
+                    Intent intent = new Intent(YoutubeSearchActivity.this, PlayYoutubeVideoActivity.class);
+                    ArrayList<PlaylistDetailModel> playlist;
+                    playlist = new ArrayList<>();
+                    for (int i = 0; i < mangitem.size(); i++) {
+                        playlist.add(new PlaylistDetailModel(
+                                mangitem.get(i).getSnippet().getTitle(),
+                                mangitem.get(i).getSnippet().getThumbnails().getMedium().getUrl(),
+                                mangitem.get(i).getId().getVideoId()
+                        ));
+                    }
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("position", position);
+                    bundle.putString("title", mangitem.get(position).getSnippet().getTitle());
+                    bundle.putString("description", "");
+                    bundle.putString("thumbnail", mangitem.get(position).getSnippet().getThumbnails().getMedium().getUrl());
+                    bundle.putString("videoId", mangitem.get(position).getId().getVideoId());
+                    bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
+                    intent.putExtra("data", bundle);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
     }
 
-    private void statusBarColorChange(){
+    private void statusBarColorChange() {
         Window window = this.getWindow();
 
         // clear FLAG_TRANSLUCENT_STATUS flag:
@@ -108,7 +126,7 @@ public class YoutubeSearchActivity extends AppCompatActivity {
 
         // finally change the color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(ContextCompat.getColor(this,R.color.white));
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.white));
         }
     }
 
@@ -116,26 +134,26 @@ public class YoutubeSearchActivity extends AppCompatActivity {
     public void Docdulieu(String tukhoa) {
         progressBar.setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getYoutubeData();
-        Call<ModelData> callback = dataAPI.getResurt("snippet", tukhoa, "50", "video", AppConstants.YOUTUBE_KEY);
+        Call<ModelData> callback = dataAPI.getResurt("snippet", tukhoa, "50", "video","10","true", AppConstants.YOUTUBE_KEY);
         callback.enqueue(new Callback<ModelData>() {
             @Override
             public void onResponse(Call<ModelData> call, Response<ModelData> response) {
                 ModelData modelData = response.body();
                 mangitem = (ArrayList<Item>) response.body().getItems();
-                if(mangitem.size() == 0){
+                if (mangitem.size() == 0) {
                     progressBar.setVisibility(View.GONE);
                     noresults.setVisibility(View.VISIBLE);
-                }
-                else {
+                } else {
                     noresults.setVisibility(View.GONE);
                     youtubeSearchAdapter = new YoutubeSearchAdapter(YoutubeSearchActivity.this, android.R.layout.simple_list_item_1, mangitem);
                     progressBar.setVisibility(View.GONE);
                     listView.setAdapter(youtubeSearchAdapter);
                     listView.setVisibility(View.VISIBLE);
-                    listView.scrollTo(0,0);
+                    listView.scrollTo(0, 0);
                     listView.smoothScrollToPosition(0);
                 }
             }
+
             @Override
             public void onFailure(Call<ModelData> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
@@ -154,14 +172,14 @@ public class YoutubeSearchActivity extends AppCompatActivity {
     private TextView.OnEditorActionListener editorActionListener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            switch (actionId){
+            switch (actionId) {
                 case EditorInfo.IME_ACTION_SEARCH:
 
-                    if(edtsearch.getText().toString().isEmpty()){
+                    if (edtsearch.getText().toString().isEmpty()) {
                         listView.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
                         searchsomething.setVisibility(View.VISIBLE);
-                    }else {
+                    } else {
                         noresults.setVisibility(View.GONE);
                         searchsomething.setVisibility(View.GONE);
                         listView.setVisibility(View.GONE);

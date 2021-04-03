@@ -1,6 +1,7 @@
 <resources>
 
 
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@android:color/white</item>
@@ -9,13 +10,11 @@
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>
 
-    <style name="AppBottomSheetDialogTheme"
-        parent="Theme.Design.Light.BottomSheetDialog">
+    <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
 
-    <style name="AppModalStyle"
-        parent="Widget.Design.BottomSheet.Modal">
+    <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/bkgnd_bottom_sheet</item>
     </style>
 
@@ -46,13 +45,14 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="colorControlNormal">@color/white</item>
     </style>
 
     <style name="SearchViewTheme" parent="Widget.AppCompat.Light.SearchView">
         <item name="android:maxWidth">10000dp</item>
-<!--
-        <item name="android:textColorHint">@color/light_gray</item>
--->
+        <!--
+                <item name="android:textColorHint">@color/light_gray</item>
+        -->
         <item name="android:textColor">@color/black</item>
     </style>
 
@@ -64,6 +64,7 @@
     <style name="ToolbarBackArrow" parent="AppTheme">
         <item name="android:textColorSecondary">@color/constant_white</item>
     </style>
+
     <style name="ToolbarTextStyle" parent="TextAppearance.AppCompat.Headline">
         <item name="android:textSize">@dimen/appTextSize</item>
         <item name="android:textColor">@color/constant_white</item>
@@ -105,6 +106,7 @@
     <style name="AppTheme.RoundedCornerMaterialButton" parent="Widget.AppCompat.Button.Colored">
         <item name="android:background">@drawable/rounded_shape</item>
     </style>
+
     <style name="Animation">
         <item name="android:windowEnterAnimation">@android:anim/slide_in_left</item>
         <item name="android:windowExitAnimation">@android:anim/slide_out_right</item>

@@ -157,8 +157,8 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
         });*/
 
 
-        emailSignUpEdt.addTextChangedListener(new SignUpEmailPassActivity.EditTextWatch(this, emailSignUpEdt));
-        password_signup.addTextChangedListener(new SignUpEmailPassActivity.EditTextWatch(this, password_signup));
+        emailSignUpEdt.addTextChangedListener(new EditTextWatch(this, emailSignUpEdt));
+        password_signup.addTextChangedListener(new EditTextWatch(this, password_signup));
 
 //        btnLogin_signup.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -295,7 +295,7 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
         Call<AdditionalSignUpModel> callback = dataAPI.login(AppConstants.LOGIN_SIGNUP_HEADER, email, password, AppConstants.SIGNUP_BY_APP);
         callback.enqueue(new Callback<AdditionalSignUpModel>() {
             @Override
-            public void onResponse(Call<AdditionalSignUpModel> call, retrofit2.Response<AdditionalSignUpModel> response) {
+            public void onResponse(Call<AdditionalSignUpModel> call, Response<AdditionalSignUpModel> response) {
                 loading.setVisibility(View.INVISIBLE);
 
                 if (response != null && response.body() != null) {

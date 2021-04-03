@@ -7,7 +7,7 @@
     android:layout_gravity="center"
     android:background="@android:color/white"
     android:fillViewport="true"
-    tools:context=".music_sharing.activity.SignUpEmailPassActivity">
+    tools:context=".activity.SignUpEmailPassActivity">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -102,7 +102,6 @@
                 app:passwordToggleTint="@color/appHintClr">
 
                 <EditText
-                    android:enabled="false"
                     android:id="@+id/confirm_password"
                     android:layout_width="310dp"
                     android:layout_height="58dp"
@@ -111,6 +110,7 @@
                     android:layout_marginEnd="8dp"
                     android:drawableEnd="@drawable/ic_pass_visibility"
                     android:drawableTint="@color/appHintClr"
+                    android:enabled="false"
                     android:fontFamily="@font/tinos_regular"
                     android:hint="Confirm Password"
                     android:inputType="textPassword"
@@ -123,7 +123,6 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <EditText
-                android:enabled="false"
                 android:id="@+id/password_signup"
                 android:layout_width="310dp"
                 android:layout_height="58dp"
@@ -132,6 +131,7 @@
                 android:layout_marginEnd="8dp"
                 android:drawableEnd="@drawable/ic_pass"
                 android:drawableTint="@color/appHintClr"
+                android:enabled="false"
                 android:fontFamily="@font/tinos_regular"
                 android:hint="@string/password"
                 android:inputType="textPassword"
@@ -204,22 +204,23 @@
 
                 <com.shorincity.vibin.music_sharing.ripples.RippleButton
                     android:id="@+id/google_sign_up_btn"
-                    android:padding="5dp"
                     android:layout_width="160dp"
                     android:layout_height="wrap_content"
-                    android:textAllCaps="false"
+                    android:layout_margin="@dimen/dimen_5dp"
                     android:background="@drawable/common_btn_bg_no_border"
                     android:drawableLeft="@drawable/google_icon"
-                    android:text="@string/signin_with_google"
-                    android:textColor="@color/black"
-                    android:elevation="@dimen/_5sdp"
-                    android:visibility="visible"
                     android:drawablePadding="@dimen/dimen_5dp"
-                    android:layout_margin="@dimen/dimen_5dp" />
+                    android:elevation="@dimen/_5sdp"
+                    android:padding="5dp"
+                    android:text="@string/signin_with_google"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
+                    android:visibility="visible" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
+
             android:id="@+id/textviewtext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -228,7 +229,7 @@
             android:fontFamily="@font/tinos_regular"
             android:text="Already have an account? Click Below !"
             android:textColor="@color/black"
-            android:textSize="17sp"
+            android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/liBottom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -236,7 +237,7 @@
         <LinearLayout
             android:id="@+id/liBottom"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_80sdp"
+            android:layout_height="@dimen/_60sdp"
             android:gravity="bottom"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -245,20 +246,20 @@
 
 
             <com.shorincity.vibin.music_sharing.ripples.RippleButton
-                android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true"
                 android:id="@+id/btnLogin_signup"
-                android:layout_width="wrap_content"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
                 android:layout_gravity="bottom|center"
                 android:layout_marginBottom="@dimen/dimen_20dp"
-                android:background="@drawable/common_btn_rounded_white"
+                android:background="@drawable/common_btn_rounded_purple"
                 android:fontFamily="@font/tinos_regular"
                 android:paddingStart="@dimen/dimen_50dp"
                 android:paddingEnd="@dimen/dimen_50dp"
                 android:text="Sign In"
                 android:textAllCaps="false"
-                android:textColor="#000000"
+                android:textColor="#fff"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -266,7 +267,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:rv_centered="true"
                 app:rv_holdBgInPressing="true"
-                app:rv_pressBgType="circleFitMax"/>
+                app:rv_pressBgType="circleFitMax" />
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

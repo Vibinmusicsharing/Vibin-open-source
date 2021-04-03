@@ -61,7 +61,14 @@ public class YoutubeSearchAdapter extends RecyclerView.Adapter<YoutubeSearchAdap
         Item currentItem = list.get(position);
         String imageUrl = currentItem.getSnippet().getThumbnails().getMedium().getUrl();
 
-        holder.mTextViewTitle.setText(currentItem.getSnippet().getTitle());
+        //holder.mTextViewTitle.setText(currentItem.getSnippet().getTitle());
+
+        if (currentItem.getSnippet().getTitle().contains("&#39;")){
+            String str = currentItem.getSnippet().getTitle().replaceAll("&#39;"," ");
+            holder.mTextViewTitle.setText(str);
+        }else {
+            holder.mTextViewTitle.setText(currentItem.getSnippet().getTitle());
+        }
 
         Glide.with(mContext).load(imageUrl).into(holder.mImageView);
 

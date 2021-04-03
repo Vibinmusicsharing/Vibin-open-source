@@ -2,6 +2,7 @@ package com.shorincity.vibin.music_sharing.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.adapters.YoutubArtistPlayListAdapter;
 import com.shorincity.vibin.music_sharing.model.HomeYoutubeModel;
+import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.YoutubePlaylistItemModel;
 import com.shorincity.vibin.music_sharing.model.YoutubeTrendingModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
@@ -25,6 +27,7 @@ import com.shorincity.vibin.music_sharing.youtube_files.PlayYoutubeVideoActivity
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -134,18 +137,41 @@ public class ChannelsPlaylistItemActivity extends AppCompatActivity {
             youtubeListAdapter.setCustomItemClickListener(new YoutubArtistPlayListAdapter.CustomItemClickListener() {
                 @Override
                 public void onItemClick(View v, int position) {
-                    YoutubePlaylistItemModel.Snippet snippet = playlistItemModel.getItems().get(position).getSnippet();
-                    // going to play youtube video
-                    Intent intent = new Intent(ChannelsPlaylistItemActivity.this, PlayYoutubeVideoActivity.class);
-                    intent.putExtra("title", snippet.getTitle());
-                    intent.putExtra("playId", playlistId);
-                    intent.putExtra("description", snippet.getDescription());
-                    intent.putExtra("thumbnail", snippet.getThumbnails().getHigh().getUrl());
-                    String splitrl[] = snippet.getThumbnails().getHigh().getUrl().split("/");
-                    String idvideo = splitrl[splitrl.length - 2];
-                    intent.putExtra("videoId", idvideo);
-                    startActivity(intent);
-
+                    try {
+                        Intent intent = new Intent(ChannelsPlaylistItemActivity.this, PlayYoutubeVideoActivity.class);
+                        ArrayList<PlaylistDetailModel> playlist;
+                        playlist = new ArrayList<>();
+                        for (int i = 0; i < playlistItemModel.getItems().size(); i++) {
+                            if (playlistItemModel.getItems().get(i).getSnippet().getThumbnails().getHigh() != null) {
+                                playlist.add(new PlaylistDetailModel(
+                                        playlistItemModel.getItems().get(i).getSnippet().getTitle(),
+                                        playlistItemModel.getItems().get(i).getSnippet().getThumbnails().getHigh().getUrl(),
+                                        playlistItemModel.getItems().get(i).getSnippet().getResourceId().getVideoId()
+                                ));
+                            } else {
+                                playlist.add(new PlaylistDetailModel(
+                                        playlistItemModel.getItems().get(i).getSnippet().getTitle(),
+                                        playlistItemModel.getItems().get(0).getSnippet().getThumbnails().getHigh().getUrl(),
+                                        playlistItemModel.getItems().get(i).getSnippet().getResourceId().getVideoId()
+                                ));
+                            }
+                        }
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("position", position);
+                        bundle.putString("title", playlistItemModel.getItems().get(position).getSnippet().getTitle());
+                        bundle.putString("description", playlistItemModel.getItems().get(position).getSnippet().getDescription());
+                        if (playlistItemModel.getItems().get(26).getSnippet().getThumbnails().getHigh() != null) {
+                            bundle.putString("thumbnail", playlistItemModel.getItems().get(position).getSnippet().getThumbnails().getHigh().getUrl());
+                        } else {
+                            bundle.putString("thumbnail", playlistItemModel.getItems().get(0).getSnippet().getThumbnails().getHigh().getUrl());
+                        }
+                        bundle.putString("videoId", playlistItemModel.getItems().get(position).getSnippet().getResourceId().getVideoId());
+                        bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
+                        intent.putExtra("data", bundle);
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             channelPlayListRv.setAdapter(youtubeListAdapter);
@@ -178,7 +204,7 @@ public class ChannelsPlaylistItemActivity extends AppCompatActivity {
                         playlistItemModel = response.body();
 
                         YoutubePlaylistItemModel.Snippet snippet = playlistItemModel.getItems().get(0).getSnippet();
-
+                        Collections.reverse(playlistItemModel.getItems());
                         if (!TextUtils.isEmpty(snippet.getChannelTitle()))
                             //channelTitleTv.setText(snippet.getChannelTitle());
 

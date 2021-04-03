@@ -15,7 +15,8 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
-
+    <string name="user_likes">Users Like Listing</string>
+    <string name="user_collabarator">Collaborator Listing</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
@@ -193,7 +194,6 @@
     <string name="closeAppConfirmationMsg">Are You Sure You Want To Exit Application?</string>
     <string name="avatar">Avatar</string>
     <string name="app_slogan">Be the Vibe</string>
-
 
 
     <!-- Floating Screen -->

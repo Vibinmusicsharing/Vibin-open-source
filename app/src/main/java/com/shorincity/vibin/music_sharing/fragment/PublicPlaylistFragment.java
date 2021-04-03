@@ -88,10 +88,7 @@ public class PublicPlaylistFragment extends Fragment {
         if(view == null) {
             view = inflater.inflate(R.layout.fragment_youtube_playlist, container, false);
             context = view.getContext();
-
-            // Giphy Configuration
             Giphy.INSTANCE.configure(getActivity(), AppConstants.GIPHY_API_KEY, true);
-
             edittext = view.findViewById(R.id.edittextSearch);
             edittext.setOnEditorActionListener(editorActionListener);
             progressBar = view.findViewById(R.id.progressbar);

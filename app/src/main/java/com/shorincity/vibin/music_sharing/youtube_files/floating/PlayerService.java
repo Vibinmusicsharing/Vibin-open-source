@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
@@ -38,6 +39,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.youtube_files.PlayYoutubeVideoActivity;
 import com.shorincity.vibin.music_sharing.youtube_files.floating.AsyncTask.CircularImageView;
@@ -54,6 +56,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -81,7 +84,9 @@ public class PlayerService extends Service implements View.OnClickListener {
     static String TITLE = "";
     static String THUMBNAIL = "";
     static String DESCRIPTION = "";
-   public static int SONG_DURATION=0;
+    static ArrayList<PlaylistDetailModel> playlist = new ArrayList<>();
+    static int position;
+    public static int SONG_DURATION = 0;
 
     static boolean isVideoPlaying = true;
     boolean visible = true;
@@ -186,7 +191,7 @@ public class PlayerService extends Service implements View.OnClickListener {
     }
 
 
-    private  void homeClicked(){
+    private void homeClicked() {
 //
 //
 //        Intent i = new Intent();
@@ -194,14 +199,22 @@ public class PlayerService extends Service implements View.OnClickListener {
 //        i.addCategory(Intent.CATEGORY_HOME);
 //        startActivity(i);
 
-        Intent intent = new Intent(mContext, PlayYoutubeVideoActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra("title", VID_ID);
-     intent.putExtra("playId", PLIST_ID);
-      intent.putExtra("description", DESCRIPTION);
-        intent.putExtra("thumbnail", THUMBNAIL);
-      intent.putExtra("videoId", VID_ID);
-        startActivity(intent);
+        try {
+            Intent intent = new Intent(mContext, PlayYoutubeVideoActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            Bundle bundle = new Bundle();
+            bundle.putInt("position", position);
+            bundle.putString("title", VID_ID);
+            bundle.putString("playId",PLIST_ID);
+            bundle.putString("description",DESCRIPTION);
+            bundle.putString("thumbnail", THUMBNAIL);
+            bundle.putString("videoId", VID_ID);
+            bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
+            intent.putExtra("data", bundle);
+            startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -252,16 +265,19 @@ public class PlayerService extends Service implements View.OnClickListener {
         }
         registerBro();
     }
+
     UserPresentBroadcastReceiver userPresentBroadcastReceiver;
-    private void registerBro(){
+
+    private void registerBro() {
         userPresentBroadcastReceiver = new UserPresentBroadcastReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_USER_PRESENT);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(userPresentBroadcastReceiver, filter);
     }
-    private void unRegisterBro(){
-        if(userPresentBroadcastReceiver!=null){
+
+    private void unRegisterBro() {
+        if (userPresentBroadcastReceiver != null) {
             unregisterReceiver(userPresentBroadcastReceiver);
             userPresentBroadcastReceiver = null;
         }
@@ -295,7 +311,7 @@ public class PlayerService extends Service implements View.OnClickListener {
                     }
                 } else {
                     Log.i("TEST", "Trying to Pause Video");
-                     webPlayer.loadScript(JavaScript.pauseVideoScript());
+                    webPlayer.loadScript(JavaScript.pauseVideoScript());
                 }
             } else {
                 Log.i("TEST", "Trying to Play Video");
@@ -303,7 +319,7 @@ public class PlayerService extends Service implements View.OnClickListener {
             }
         } else if (intent.getAction().equals(Constants.ACTION.NEXT_ACTION)) {
             Log.d("TEST", "Trying to Play Next");
-            SONG_DURATION=0;
+            SONG_DURATION = 0;
             if (Constants.linkType == 0) {
                 webPlayer.loadScript(JavaScript.seekToZero());
             } else {
@@ -312,7 +328,7 @@ public class PlayerService extends Service implements View.OnClickListener {
             }
         } else if (intent.getAction().equals(Constants.ACTION.PREV_ACTION)) {
             Log.d("TEST", "Trying to Play Previous");
-            SONG_DURATION=0;
+            SONG_DURATION = 0;
             if (Constants.linkType == 0) {
                 webPlayer.loadScript(JavaScript.seekToZero());
             } else {
@@ -371,12 +387,14 @@ public class PlayerService extends Service implements View.OnClickListener {
         }
     }
 
-    public static void startVid(String vId, String pId, String title, String thumbnail, String desc) {
+    public static void startVid(String vId, String pId, String title, String thumbnail, String desc, ArrayList<PlaylistDetailModel> playlist, int position) {
         PlayerService.VID_ID = vId;
         PlayerService.PLIST_ID = pId;
         PlayerService.TITLE = title;
         PlayerService.THUMBNAIL = thumbnail;
         PlayerService.DESCRIPTION = desc;
+        PlayerService.playlist = playlist;
+        PlayerService.position = position;
 
 
         if (pId == null) {
@@ -394,16 +412,16 @@ public class PlayerService extends Service implements View.OnClickListener {
     private void doThis(Intent intent) {
 
         Bundle b = intent.getExtras();
-int duration=0;
+        int duration = 0;
         if (b != null) {
             PlayerService.VID_ID = b.getString("VID_ID");
             PlayerService.PLIST_ID = b.getString("PLAYLIST_ID");
-            duration= (b.getInt("SONG_DURATION",0)) ;
+            duration = (b.getInt("SONG_DURATION", 0));
         }
-        Logging.d("PlayerService.duration--->"+duration);
-        PlayerService.SONG_DURATION =duration/1000
+        Logging.d("PlayerService.duration--->" + duration);
+        PlayerService.SONG_DURATION = duration / 1000
         ;
-        Logging.d("PlayerService.SONG_DURATION--->"+PlayerService.SONG_DURATION);
+        Logging.d("PlayerService.SONG_DURATION--->" + PlayerService.SONG_DURATION);
         //Notification
         viewBig = new RemoteViews(this.getPackageName(), R.layout.notification_large);
 
@@ -676,7 +694,7 @@ int duration=0;
                                 if (visible) {
                                     //Continue with the drag and don't update head params
                                     updateHead = true;
-                                   // hidePlayer();
+                                    // hidePlayer();
                                 }
                                 params.y = newY;
                             } else {
@@ -782,6 +800,7 @@ int duration=0;
     public static void addStateChangeListener() {
         webPlayer.loadScript(JavaScript.onPlayerStateChangeListener());
     }
+
     public static void seekToPosition() {
         webPlayer.loadScript(JavaScript.seekToPosition(PlayerService.SONG_DURATION));
     }

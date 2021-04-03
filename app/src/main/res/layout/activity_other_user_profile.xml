@@ -12,7 +12,7 @@
     app:umanoPanelHeight="268dp"
     app:umanoParallaxOffset="100dp"
     app:umanoShadowHeight="4dp"
-    tools:context=".youtube_files.youtube_user">
+    tools:context=".activity.OtherUserProfileActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/user_profile_appbar"
@@ -156,8 +156,6 @@
                         android:layout_height="@dimen/_70sdp"
                         android:layout_centerHorizontal="true"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/default_img"
-
                         app:riv_corner_radius="@dimen/_35sdp" />
                 </RelativeLayout>
 

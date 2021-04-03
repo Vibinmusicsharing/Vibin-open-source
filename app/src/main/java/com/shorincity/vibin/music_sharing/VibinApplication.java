@@ -7,5 +7,8 @@ public class VibinApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+
+
     }
+
 }

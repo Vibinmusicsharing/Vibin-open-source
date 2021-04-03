@@ -50,6 +50,8 @@ public class AppConstants {
     public static final String INTENT_NOTIFICATION_TOKEN_UPDATED = "intentNotificationTokenUpdated";
     public static final String INTENT_USER_TOKEN = "intentUserToken";
     public static final String INTENT_USER_API_TOKEN = "intentUserAPIToken";
+    public static final String IS_SUFFLEON = "isSuffleOn";
+    public static final String IS_REPEATON = "isRepeatOn";
     public static final String INTENT_IS_USER_LOGGEDIN = "intentIsUserLoggedIn";
     public static final String INTENT_UPDATE_PLATFORM = "intentUpdatePlatform";
     public static final String INTENT_USER_DATA_BUNDLE = "intentUserDataBundle";

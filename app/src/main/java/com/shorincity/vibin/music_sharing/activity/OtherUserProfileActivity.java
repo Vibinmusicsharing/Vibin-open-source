@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ import com.shorincity.vibin.music_sharing.adapters.Playlist;
 import com.shorincity.vibin.music_sharing.adapters.RecentPlayedAdapter;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
+import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.RecentSongModel;
 import com.shorincity.vibin.music_sharing.model.UpdateLikeStatusModel;
 import com.shorincity.vibin.music_sharing.model.UserProfileModel;
@@ -143,13 +145,30 @@ public class OtherUserProfileActivity extends AppCompatActivity implements View.
             @Override
             public void onItemClick(View v, int position) {
 
-                if (likedSongList.get(position).getSongType().equalsIgnoreCase(AppConstants.YOUTUBE)) {
-                    Intent intent = new Intent(OtherUserProfileActivity.this, PlayYoutubeVideoActivity.class);
-                    intent.putExtra("title", likedSongList.get(position).getSongName());
-                    intent.putExtra("description", likedSongList.get(position).getSongDetails());
-                    intent.putExtra("thumbnail", likedSongList.get(position).getSongThumbnail());
-                    intent.putExtra("videoId", likedSongList.get(position).getSongId());
-                    startActivity(intent);
+                try {
+                    if (likedSongList.get(position).getSongType().equalsIgnoreCase(AppConstants.YOUTUBE)) {
+                        Intent intent = new Intent(OtherUserProfileActivity.this, PlayYoutubeVideoActivity.class);
+                        ArrayList<PlaylistDetailModel> playlist;
+                        playlist = new ArrayList<>();
+                        for (int i = 0; i < likedSongList.size(); i++) {
+                            playlist.add(new PlaylistDetailModel(
+                                    likedSongList.get(i).getSongName(),
+                                    likedSongList.get(i).getSongThumbnail(),
+                                    likedSongList.get(i).getSongId()
+                            ));
+                        }
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("position", position);
+                        bundle.putString("title", likedSongList.get(position).getSongName());
+                        bundle.putString("description", "");
+                        bundle.putString("thumbnail", likedSongList.get(position).getSongThumbnail());
+                        bundle.putString("videoId", likedSongList.get(position).getSongId());
+                        bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
+                        intent.putExtra("data", bundle);
+                        startActivity(intent);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });

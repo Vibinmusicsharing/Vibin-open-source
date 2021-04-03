@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -33,7 +34,7 @@ public class YoutubeCountryActivity extends AppCompatActivity {
     YoutubeChannelAdapter youtubeUSTrendingAdapter;
     RecyclerView usTrendingListRv;
     ProgressBar progressBar;
-
+    String popular_next_page_token = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,10 +45,29 @@ public class YoutubeCountryActivity extends AppCompatActivity {
 
         inItViews();
 
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2, LinearLayoutManager.VERTICAL, false);
+        usTrendingListRv.setLayoutManager(gridLayoutManager);
         setListAdapter();
 
-        callGetYoutubeMostPopularUKListAPI(countryCode);
+        callGetYoutubeMostPopularUKListAPI(countryCode, popular_next_page_token, "0");
+        usTrendingListRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
 
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int visibleItemCount = gridLayoutManager.getChildCount();
+                int totalItemCount = gridLayoutManager.getItemCount();
+                int firstVisibleItemPosition = gridLayoutManager.findFirstVisibleItemPosition();
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition > 0) {
+                    callGetYoutubeMostPopularUKListAPI(countryCode, popular_next_page_token, "1");
+                }
+
+            }
+        });
     }
 
     private void inItViews() {
@@ -58,7 +78,7 @@ public class YoutubeCountryActivity extends AppCompatActivity {
     private void setListAdapter() {
 
         youtubeUSTrendingList = new ArrayList<>();
-        usTrendingListRv.setLayoutManager(new GridLayoutManager(this,2, LinearLayoutManager.VERTICAL,false));
+
         usTrendingListRv.setHasFixedSize(true);
 
         youtubeUSTrendingAdapter = new YoutubeChannelAdapter(this, youtubeUSTrendingList);
@@ -70,11 +90,11 @@ public class YoutubeCountryActivity extends AppCompatActivity {
                 String title = currentItem.getSnippet().getTitle();
                 String thumbnail = currentItem.getSnippet().getThumbnails().getHigh().getUrl();
                 Intent intent = new Intent(YoutubeCountryActivity.this, ChannelsPlaylistActivity.class);
-                intent.putExtra(AppConstants.INTENT_YOUTUBE_CHANNEL_ID,currentItem.getSnippet().getChannelId());
-                intent.putExtra(AppConstants.INTENT_YOUTUBE_CHANNEL_BANNER_URL,currentItem.getSnippet().getThumbnails().getHigh().getUrl());
-                intent.putExtra("title",title);
-                intent.putExtra("thumbnail",thumbnail);
-                intent.putExtra("videoId",idvideo);
+                intent.putExtra(AppConstants.INTENT_YOUTUBE_CHANNEL_ID, currentItem.getSnippet().getChannelId());
+                intent.putExtra(AppConstants.INTENT_YOUTUBE_CHANNEL_BANNER_URL, currentItem.getSnippet().getThumbnails().getHigh().getUrl());
+                intent.putExtra("title", title);
+                intent.putExtra("thumbnail", thumbnail);
+                intent.putExtra("videoId", idvideo);
                 intent.putExtra(AppConstants.INTENT_YOUTUBE_CHANNEL_DATA, currentItem);
                 startActivity(intent);
             }
@@ -82,20 +102,22 @@ public class YoutubeCountryActivity extends AppCompatActivity {
         usTrendingListRv.setAdapter(youtubeUSTrendingAdapter);
     }
 
-    public void callGetYoutubeMostPopularUKListAPI(String countryCode) {
-        progressBar.setVisibility(View.VISIBLE);
+    public void callGetYoutubeMostPopularUKListAPI(String countryCode, String popularnextpagetoken, String isShow) {
+        if (!isShow.equalsIgnoreCase("1")) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
         DataAPI dataAPI = RetrofitAPI.getYoutubeData();
 
-        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet","mostPopular",countryCode,"30","10","AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", countryCode, "30", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs", popularnextpagetoken);
         callback.enqueue(new Callback<YoutubeTrendingModel>() {
             @Override
             public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
                 progressBar.setVisibility(View.GONE);
                 if (response != null && response.body() != null) {
                     Log.i("YOUTUBE_TRENDING RESULT", response.toString());
-
-                    if(response.body().getItems() != null
-                            && response.body().getItems().size() > 0 ) {
+                    popular_next_page_token = response.body().getNextPageToken();
+                    if (response.body().getItems() != null
+                            && response.body().getItems().size() > 0) {
                         youtubeUSTrendingList.addAll(response.body().getItems());
                         youtubeUSTrendingAdapter.notifyDataSetChanged();
                     } else {
@@ -103,6 +125,7 @@ public class YoutubeCountryActivity extends AppCompatActivity {
                 } else {
                 }
             }
+
             @Override
             public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);

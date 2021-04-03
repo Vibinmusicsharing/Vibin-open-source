@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.database.MatrixCursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
@@ -78,6 +79,8 @@ import org.json.JSONObject;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -104,7 +107,7 @@ public class PlaylistDetailActivity extends AppCompatActivity {
     public GifView gifView;
     public ImageView likeBtn, pauseGifBtn;
     public TextView mTextViewTitle, descTxt, likeCountTxt, durationTv;
-private Button play_btn;
+    private Button play_btn;
     private SimpleCursorAdapter mAdapter;
     int testNum = 0;
     RealTimeModel realTimeModel;
@@ -264,7 +267,6 @@ private Button play_btn;
     private void inItViews() {
 
 
-
         live_streaming_btn = findViewById(R.id.live_streaming_btn);
         gifView = findViewById(R.id.gif_iv);
         likeBtn = findViewById(R.id.like_btn);
@@ -402,21 +404,6 @@ private Button play_btn;
         callAddRealTimeInfo(sessionKey, token, userIds, userKeys, myRef, realTimeModel);
     }
 
-    // You must implements your logic to get data using OrmLite
-    private void populateAdapter(String query) {
-
-        if (songNameList == null || songNameList.size() == 0) {
-            return;
-        }
-
-        final MatrixCursor c = new MatrixCursor(new String[]{BaseColumns._ID, "songName"});
-        for (int i = 0; i < songNameList.size(); i++) {
-            if (songNameList.get(i).toLowerCase().contains(query.toLowerCase()))
-                c.addRow(new Object[]{i, songNameList.get(i)});
-        }
-        mAdapter.changeCursor(c);
-    }
-
 
     private void setViews() {
 
@@ -479,13 +466,21 @@ private Button play_btn;
             @Override
             public void onItemClick(View v, int position) {
 
-                if (playlist.get(position).getType().equalsIgnoreCase(AppConstants.YOUTUBE)) {
-                    Intent intent = new Intent(PlaylistDetailActivity.this, PlayYoutubeVideoActivity.class);
-                    intent.putExtra("title", playlist.get(position).getName());
-                    intent.putExtra("description", "");
-                    intent.putExtra("thumbnail", playlist.get(position).getImage());
-                    intent.putExtra("videoId", playlist.get(position).getTrackId());
-                    startActivity(intent);
+                try {
+                    if (playlist.get(position).getType().equalsIgnoreCase(AppConstants.YOUTUBE)) {
+                        Intent intent = new Intent(PlaylistDetailActivity.this, PlayYoutubeVideoActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("position", position);
+                        bundle.putString("title", playlist.get(position).getName());
+                        bundle.putString("description", "");
+                        bundle.putString("thumbnail", playlist.get(position).getImage());
+                        bundle.putString("videoId", playlist.get(position).getTrackId());
+                        bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
+                        intent.putExtra("data", bundle);
+                        startActivity(intent);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -498,7 +493,7 @@ private Button play_btn;
             @Override
             public void onResponse(String response) {
                 try {
-                   // Logging.d("Avatar response-->"+response);
+                    // Logging.d("Avatar response-->"+response);
                     viewcollabList.clear();
                     JSONArray jsonArray = new JSONArray(response);
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -509,7 +504,7 @@ private Button play_btn;
                         String fullname = jsonObject.getString("fullname");
                         String avatar_link = jsonObject.getString("avatar_link");
 
-                        ViewCollab viewCollab=new ViewCollab();
+                        ViewCollab viewCollab = new ViewCollab();
                         viewCollab.setAvatarLink(avatar_link);
                         viewCollab.setEmail(email);
                         viewCollab.setFullname(fullname);
@@ -567,6 +562,7 @@ private Button play_btn;
                 if (response != null && response.body() != null && response.body().size() > 0) {
                     playlistRv.setVisibility(View.VISIBLE);
                     playlist.addAll(response.body());
+                    Collections.reverse(playlist);
                     publicPlaylistItemAdapter.notifyDataSetChanged();
 
                     songNameList = new ArrayList<>();
@@ -594,10 +590,9 @@ private Button play_btn;
     ProgressBar searchCallabProgess;
 
 
-
     private void openDailogSearchCollab() {
 
-        BottomSheetDialog bottomSheet= new BottomSheetDialog(this);
+        BottomSheetDialog bottomSheet = new BottomSheetDialog(this);
         View bottom_sheet = getLayoutInflater().inflate(R.layout.bottomsheet_user_search, null);
         bottomSheet.setContentView(bottom_sheet);
         BottomSheetBehavior mBehavior = BottomSheetBehavior.from((View) bottom_sheet.getParent());
@@ -608,10 +603,9 @@ private Button play_btn;
 //        sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
 
-
-       // final AlertDialog.Builder mb = new AlertDialog.Builder(this);
-       // final View view = LayoutInflater.from(this).inflate(R.layout.fragment_user_search, null, false);
-       // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        // final AlertDialog.Builder mb = new AlertDialog.Builder(this);
+        // final View view = LayoutInflater.from(this).inflate(R.layout.fragment_user_search, null, false);
+        // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
         userSearchRv = bottom_sheet.findViewById(R.id.user_search_rv);
         searchEdt = bottom_sheet.findViewById(R.id.edittextSearch);
@@ -637,7 +631,7 @@ private Button play_btn;
             public void onItemClick(View v, int position) {
 
                 if (v.getId() == R.id.add_collab_btn) {
-                    sendCollabRequestNotification(id, usersList.get(position).getId(),AppConstants.COLLAB_REQUEST);
+                    sendCollabRequestNotification(id, usersList.get(position).getId(), AppConstants.COLLAB_REQUEST);
                 } else {
                     startActivity(new Intent(PlaylistDetailActivity.this, OtherUserProfileActivity.class)
                             .putExtra(AppConstants.INTENT_SEARCHED_USER_ID, usersList.get(position).getId())
@@ -748,7 +742,7 @@ private Button play_btn;
         String headerToken = AppConstants.TOKEN + SharedPrefManager.getInstance(PlaylistDetailActivity.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
         int userId = SharedPrefManager.getInstance(PlaylistDetailActivity.this).getSharedPrefInt(AppConstants.INTENT_USER_ID);
 
-        Call<APIResponse> callback = dataAPI.sendNotification(headerToken, userId,searchedUserId, playlistId, notifyType);
+        Call<APIResponse> callback = dataAPI.sendNotification(headerToken, userId, searchedUserId, playlistId, notifyType);
         callback.enqueue(new Callback<APIResponse>() {
             @Override
             public void onResponse(Call<APIResponse> call, retrofit2.Response<APIResponse> response) {
@@ -768,7 +762,7 @@ private Button play_btn;
 
             @Override
             public void onFailure(Call<APIResponse> call, Throwable t) {
-                Log.i("Error: " , "ADD NOTIFICATION "+t.getMessage());
+                Log.i("Error: ", "ADD NOTIFICATION " + t.getMessage());
             }
         });
     }
@@ -868,7 +862,7 @@ private Button play_btn;
                 hideProgressDialog();
 
                 if (response != null && response.body() != null) {
-                    Logging.d("Add Info Res-->"+new Gson().toJson(response.body()));
+                    Logging.d("Add Info Res-->" + new Gson().toJson(response.body()));
 
                     if (response.body().getStatus().equalsIgnoreCase("success")) {
                         // Sending Notification to collaborators
@@ -876,7 +870,7 @@ private Button play_btn;
                     } else if (response.body().getStatus().equalsIgnoreCase("already_exist") && !TextUtils.isEmpty(response.body().getMessage())) {
                         callToDeleteSession(sessionKey);
 
-                       // showErrorDialog(response.body().getMessage(), sessionKey);
+                        // showErrorDialog(response.body().getMessage(), sessionKey);
                     } else
                         Toast.makeText(PlaylistDetailActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
                 } else {
@@ -926,9 +920,9 @@ private Button play_btn;
             @Override
             public void onResponse(Call<APIResponse> call, retrofit2.Response<APIResponse> response) {
                 if (response != null && response.body() != null) {
-                    Logging.d("DeleteSession Res-->"+new Gson().toJson(response.body()));
+                    Logging.d("DeleteSession Res-->" + new Gson().toJson(response.body()));
                     if (response.body().getStatus().equalsIgnoreCase("success")) {
-                         sendRealTimetNotification(id, AppConstants.REAL_TIME_INVITE, myRef, realTimeModel, sessionKey);
+                        sendRealTimetNotification(id, AppConstants.REAL_TIME_INVITE, myRef, realTimeModel, sessionKey);
 //                        try {
 //                            realTimeModel.getSessions().remove(sessionKey);
 //
@@ -950,7 +944,7 @@ private Button play_btn;
 //                        }
                         //processLiveSharing();
 
-                       // Toast.makeText(PlaylistDetailActivity.this, "Hurray! You con go with RealTime Player", Toast.LENGTH_LONG).show();
+                        // Toast.makeText(PlaylistDetailActivity.this, "Hurray! You con go with RealTime Player", Toast.LENGTH_LONG).show();
                     } else if (response.body().getStatus().equalsIgnoreCase("failed") && !TextUtils.isEmpty(response.body().getMessage()))
                         Log.i(TAG, "Session Ending Failed");
                     else

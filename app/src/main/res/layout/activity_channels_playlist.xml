@@ -1,22 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/sliding_main"
     android:layout_gravity="bottom"
     android:gravity="bottom"
-    app:umanoPanelHeight="@dimen/_400sdp"
-    app:umanoClipPanel="true"
-    app:umanoParallaxOffset="10dp"
-    app:umanoScrollableView="@+id/dragview"
-    app:umanoDragView="@+id/dragview"
-    app:umanoOverlay="true"
-    app:umanoShadowHeight="@dimen/_20sdp"
-
     android:background="@color/colorPrimaryDark">
 
     <LinearLayout
+        android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_150sdp"
         android:paddingBottom="@dimen/_15sdp"
@@ -27,8 +21,8 @@
 
         <ImageView
             android:id="@+id/channel_image"
-            android:layout_width="300dp"
-            android:layout_height="@dimen/_90sdp"
+            android:layout_width="250dp"
+            android:layout_height="@dimen/_105sdp"
             android:layout_marginTop="@dimen/_20sdp"
             android:layout_marginBottom="@dimen/_10sdp"
             android:layout_marginStart="@dimen/_20sdp"
@@ -121,6 +115,7 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:layout_below="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center|bottom"
@@ -131,6 +126,7 @@
         android:background="@drawable/drawable_top_rounded_black_bg">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:layout_margin="8dp"
             android:id="@+id/channel_playlist_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -140,8 +136,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:paddingLeft="@dimen/_10sdp"
-                    android:paddingRight="@dimen/_10sdp" />
+            android:paddingRight="@dimen/_10sdp" />
 
     </RelativeLayout>
 
-</com.sothree.slidinguppanel.SlidingUpPanelLayout>
+</RelativeLayout>

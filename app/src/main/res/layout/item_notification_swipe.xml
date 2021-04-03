@@ -69,7 +69,6 @@
                     android:layout_height="@dimen/_40sdp"
                     android:layout_centerVertical="true"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/default_img_black"
                     app:riv_corner_radius="@dimen/_35sdp"
                     app:riv_mutate_background="true" />
 

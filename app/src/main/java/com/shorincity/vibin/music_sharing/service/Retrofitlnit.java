@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -17,21 +18,28 @@ import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import timber.log.Timber;
+
 // youtube initializing retrofit
 public class Retrofitlnit {
-    private  static Retrofit retrofit =null;
-    public static Retrofit getclient(String base_url){
-        OkHttpClient okHttpClient =new OkHttpClient.Builder()
-                .readTimeout(9000, TimeUnit.MILLISECONDS)
-                .connectTimeout(9000, TimeUnit.MILLISECONDS)
+    private static Retrofit retrofit = null;
 
+    public static Retrofit getclient(String base_url) {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+// set your desired log level
+        logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(logging)
+                .readTimeout(9000, TimeUnit.MILLISECONDS)
+                .connectTimeout(15000, TimeUnit.MILLISECONDS)
                 .writeTimeout(10000, TimeUnit.MILLISECONDS)
                 .retryOnConnectionFailure(true)
                 .protocols(Arrays.asList(Protocol.HTTP_1_1))
                 .build();
-        Gson gson = new GsonBuilder().setLenient().create() ;
+        Gson gson = new GsonBuilder().setLenient().create();
         retrofit = new Retrofit.Builder()
                 .baseUrl(base_url)
                 .client(okHttpClient)

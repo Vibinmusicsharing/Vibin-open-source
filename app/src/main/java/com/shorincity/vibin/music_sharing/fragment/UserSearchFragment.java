@@ -61,7 +61,7 @@ public class UserSearchFragment extends Fragment {
             searchEdt = view.findViewById(R.id.edittextSearch);
 
             //searchEdt.setOnEditorActionListener(editorActionListener);
-            setAdapter();
+//            setAdapter();
             textChangeLister();
         }
 
@@ -69,7 +69,7 @@ public class UserSearchFragment extends Fragment {
     }
 
     private void setAdapter() {
-        usersList = new ArrayList<>();
+
         userSearchRv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         userSearchAdapter = new UserSearchAdapter(getActivity(), usersList);
@@ -122,17 +122,15 @@ public class UserSearchFragment extends Fragment {
 //                if(usersList!=null){
 //                    usersList.clear();
 //                }
-                String searchText = searchEdt.getText().toString();
-                if (!TextUtils.isEmpty(searchText) && searchText.length()>=2) {
-                    callUserSearchAPI(searchText);
-                } else {
-                    userSearchAdapter.notifyDataSetChanged();
-                }
+
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-
+                String searchText = searchEdt.getText().toString();
+                if (!TextUtils.isEmpty(searchText) && searchText.length() >= 2) {
+                    callUserSearchAPI(searchText);
+                }
             }
         });
     }
@@ -157,7 +155,6 @@ public class UserSearchFragment extends Fragment {
     };
 
     private void callUserSearchAPI(String searchQuery) {
-
         ((ProgressBar) view.findViewById(R.id.progressbar)).setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getData();
 
@@ -168,12 +165,16 @@ public class UserSearchFragment extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<UserSearchModel>> call, Response<ArrayList<UserSearchModel>> response) {
                 ((ProgressBar) view.findViewById(R.id.progressbar)).setVisibility(View.GONE);
-              //  usersList.clear();
+                usersList = new ArrayList<>();
                 if (response != null && response.body() != null && response.body().size() > 0) {
                     Logging.d("TEST", "callUserSearchAPI Called-->" + new Gson().toJson(response.body()));
-                    placeholerIv.setVisibility(View.GONE);
-                    usersList.addAll(0,response.body());
-                    userSearchAdapter.notifyDataSetChanged();
+                    usersList.addAll(0, response.body());
+                    if (usersList.size() > 0) {
+                        placeholerIv.setVisibility(View.GONE);
+                        setAdapter();
+                    } else {
+                        placeholerIv.setVisibility(View.GONE);
+                    }
                 } else {
                     Logging.d("TEST", "callUserSearchAPI else Called");
                     placeholerIv.setVisibility(View.VISIBLE);

@@ -2,13 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="@dimen/_130sdp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_5sdp"
         app:cardCornerRadius="@dimen/_10sdp">
@@ -31,8 +31,8 @@
                 <ImageView
                     android:id="@+id/item_img"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_100sdp"
-                    android:scaleType="centerCrop"
+                    android:layout_height="@dimen/_120sdp"
+                    android:scaleType="fitXY"
                     android:src="@drawable/music_placeholder" />
 
                 <TextView
