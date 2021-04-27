@@ -138,9 +138,15 @@ public class ChannelsPlaylistItemActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(View v, int position) {
                     try {
-                        Intent intent = new Intent(ChannelsPlaylistItemActivity.this, PlayYoutubeVideoActivity.class);
                         ArrayList<PlaylistDetailModel> playlist;
                         playlist = new ArrayList<>();
+                        String defaultThumbnail = "";
+                        for (int i = 0; i < playlistItemModel.getItems().size(); i++) {
+                            if (playlistItemModel.getItems().get(i).getSnippet().getThumbnails().getHigh() != null) {
+                                defaultThumbnail = playlistItemModel.getItems().get(i).getSnippet().getThumbnails().getHigh().getUrl();
+                                break;
+                            }
+                        }
                         for (int i = 0; i < playlistItemModel.getItems().size(); i++) {
                             if (playlistItemModel.getItems().get(i).getSnippet().getThumbnails().getHigh() != null) {
                                 playlist.add(new PlaylistDetailModel(
@@ -151,7 +157,7 @@ public class ChannelsPlaylistItemActivity extends AppCompatActivity {
                             } else {
                                 playlist.add(new PlaylistDetailModel(
                                         playlistItemModel.getItems().get(i).getSnippet().getTitle(),
-                                        playlistItemModel.getItems().get(0).getSnippet().getThumbnails().getHigh().getUrl(),
+                                        defaultThumbnail,
                                         playlistItemModel.getItems().get(i).getSnippet().getResourceId().getVideoId()
                                 ));
                             }
@@ -160,13 +166,14 @@ public class ChannelsPlaylistItemActivity extends AppCompatActivity {
                         bundle.putInt("position", position);
                         bundle.putString("title", playlistItemModel.getItems().get(position).getSnippet().getTitle());
                         bundle.putString("description", playlistItemModel.getItems().get(position).getSnippet().getDescription());
-                        if (playlistItemModel.getItems().get(26).getSnippet().getThumbnails().getHigh() != null) {
+                        if (playlistItemModel.getItems().get(position).getSnippet().getThumbnails().getHigh() != null) {
                             bundle.putString("thumbnail", playlistItemModel.getItems().get(position).getSnippet().getThumbnails().getHigh().getUrl());
                         } else {
-                            bundle.putString("thumbnail", playlistItemModel.getItems().get(0).getSnippet().getThumbnails().getHigh().getUrl());
+                            bundle.putString("thumbnail", defaultThumbnail);
                         }
                         bundle.putString("videoId", playlistItemModel.getItems().get(position).getSnippet().getResourceId().getVideoId());
                         bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
+                        Intent intent = new Intent(ChannelsPlaylistItemActivity.this, PlayYoutubeVideoActivity.class);
                         intent.putExtra("data", bundle);
                         startActivity(intent);
                     } catch (Exception e) {

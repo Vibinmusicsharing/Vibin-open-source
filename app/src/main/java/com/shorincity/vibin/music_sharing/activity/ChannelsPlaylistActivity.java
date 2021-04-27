@@ -111,48 +111,58 @@ public class ChannelsPlaylistActivity extends AppCompatActivity {
         youtubeListAdapter.setCustomItemClickListener(new YoutubeTrendingAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
-
-                Intent intent = new Intent(ChannelsPlaylistActivity.this, PlayYoutubeVideoActivity.class);
-                ArrayList<PlaylistDetailModel> playlist;
-                playlist = new ArrayList<>();
-                for (int i = 0; i < youtubeChannelPLayList.size(); i++) {
-                    if (youtubeChannelPLayList.get(i).getSnippet().getThumbnails().getHigh() != null) {
-                        String splitrl[] = youtubeChannelPLayList.get(i).getSnippet().getThumbnails().getHigh().getUrl().split("/");
-                        String idvideo = splitrl[splitrl.length - 2];
-                        playlist.add(new PlaylistDetailModel(
-                                youtubeChannelPLayList.get(i).getSnippet().getTitle(),
-                                youtubeChannelPLayList.get(i).getSnippet().getThumbnails().getHigh().getUrl(),
-                                idvideo
-                        ));
-                    } else {
-                        String splitrl[] = youtubeChannelPLayList.get(0).getSnippet().getThumbnails().getHigh().getUrl().split("/");
-                        String idvideo = splitrl[splitrl.length - 2];
-                        playlist.add(new PlaylistDetailModel(
-                                youtubeChannelPLayList.get(i).getSnippet().getTitle(),
-                                youtubeChannelPLayList.get(0).getSnippet().getThumbnails().getHigh().getUrl(),
-                                idvideo
-                        ));
+                try {
+                    ArrayList<PlaylistDetailModel> playlist;
+                    playlist = new ArrayList<>();
+                    String defaultThumbnail = "";
+                    for (int i = 0; i < youtubeChannelPLayList.size(); i++) {
+                        if (youtubeChannelPLayList.get(i).getSnippet().getThumbnails().getHigh() != null) {
+                            defaultThumbnail = youtubeChannelPLayList.get(i).getSnippet().getThumbnails().getHigh().getUrl();
+                            break;
+                        }
                     }
-                }
-                Bundle bundle = new Bundle();
-                bundle.putInt("position", position);
-                bundle.putString("title", youtubeChannelPLayList.get(position).getSnippet().getTitle());
-                bundle.putString("description", youtubeChannelPLayList.get(position).getSnippet().getDescription());
-                if (youtubeChannelPLayList.get(position).getSnippet().getThumbnails().getHigh() != null) {
-                    bundle.putString("thumbnail", youtubeChannelPLayList.get(position).getSnippet().getThumbnails().getHigh().getUrl());
-                    String splitrl[] = youtubeChannelPLayList.get(position).getSnippet().getThumbnails().getHigh().getUrl().split("/");
-                    String idvideo = splitrl[splitrl.length - 2];
-                    bundle.putString("videoId", idvideo);
-                }else {
-                    bundle.putString("thumbnail", youtubeChannelPLayList.get(0).getSnippet().getThumbnails().getHigh().getUrl());
-                    String splitrl[] = youtubeChannelPLayList.get(0).getSnippet().getThumbnails().getHigh().getUrl().split("/");
-                    String idvideo = splitrl[splitrl.length - 2];
-                    bundle.putString("videoId", idvideo);
-                }
+                    for (int i = 0; i < youtubeChannelPLayList.size(); i++) {
+                        if (youtubeChannelPLayList.get(i).getSnippet().getThumbnails().getHigh() != null) {
+                            String splitrl[] = youtubeChannelPLayList.get(i).getSnippet().getThumbnails().getHigh().getUrl().split("/");
+                            String idvideo = splitrl[splitrl.length - 2];
+                            playlist.add(new PlaylistDetailModel(
+                                    youtubeChannelPLayList.get(i).getSnippet().getTitle(),
+                                    youtubeChannelPLayList.get(i).getSnippet().getThumbnails().getHigh().getUrl(),
+                                    idvideo
+                            ));
+                        } else {
+                            String splitrl[] =defaultThumbnail.split("/");
+                            String idvideo = splitrl[splitrl.length - 2];
+                            playlist.add(new PlaylistDetailModel(
+                                    youtubeChannelPLayList.get(i).getSnippet().getTitle(),
+                                    defaultThumbnail,
+                                    idvideo
+                            ));
+                        }
+                    }
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("position", position);
+                    bundle.putString("title", youtubeChannelPLayList.get(position).getSnippet().getTitle());
+                    bundle.putString("description", youtubeChannelPLayList.get(position).getSnippet().getDescription());
+                    if (youtubeChannelPLayList.get(position).getSnippet().getThumbnails().getHigh() != null) {
+                        bundle.putString("thumbnail", youtubeChannelPLayList.get(position).getSnippet().getThumbnails().getHigh().getUrl());
+                        String splitrl[] = youtubeChannelPLayList.get(position).getSnippet().getThumbnails().getHigh().getUrl().split("/");
+                        String idvideo = splitrl[splitrl.length - 2];
+                        bundle.putString("videoId", idvideo);
+                    } else {
+                        bundle.putString("thumbnail", defaultThumbnail);
+                        String splitrl[] = defaultThumbnail.split("/");
+                        String idvideo = splitrl[splitrl.length - 2];
+                        bundle.putString("videoId", idvideo);
+                    }
 
-                bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
-                intent.putExtra("data", bundle);
-                startActivity(intent);
+                    bundle.putSerializable("playlist", playlist);
+                    Intent intent = new Intent(ChannelsPlaylistActivity.this, PlayYoutubeVideoActivity.class);
+                    intent.putExtra("data", bundle);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             }
         });
