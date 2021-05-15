@@ -10,6 +10,7 @@ import com.shorincity.vibin.music_sharing.model.HomeYoutubeModel;
 import com.shorincity.vibin.music_sharing.model.LogoutModel;
 import com.shorincity.vibin.music_sharing.model.ModelData;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
+import com.shorincity.vibin.music_sharing.model.PlayListDeleteModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistLikeModel;
 import com.shorincity.vibin.music_sharing.model.RecentSongModel;
@@ -92,8 +93,6 @@ public interface DataAPI {
 //                                                          @Query("key") String key);
 
 
-
-
     @GET("playlistItems")
     Call<YoutubePlaylistItemModel> getYoutubePlayListItem(@Query("part") String part,
                                                           @Query("key") String key,
@@ -128,6 +127,7 @@ public interface DataAPI {
                                                      @Field("sex") String sex,
                                                      @Field("preferredPlatform") String platform,
                                                      @Field("dobUser") String dobUser);
+
     @FormUrlEncoded
     @POST("/user/logout/")
     Call<LogoutModel> logout(@Header("Authorization") String apiToken,
@@ -163,7 +163,7 @@ public interface DataAPI {
 
     @FormUrlEncoded
     @POST("/playlist/add_song_log/")
-    Call<AddSongLogModel> addSongLogAPI(@Header("Authorization") String token,@Field("customer_id") int customer_id,
+    Call<AddSongLogModel> addSongLogAPI(@Header("Authorization") String token, @Field("customer_id") int customer_id,
                                         @Field("song_type") String song_type,
                                         @Field("song_name") String song_name,
                                         @Field("song_id") String song_id,
@@ -174,35 +174,35 @@ public interface DataAPI {
 
     @FormUrlEncoded
     @POST("/playlist/get_song_like_status/")
-    Call<SongLikeModel> getSongLikeStatus(@Header("Authorization") String token,@Field("customer_id") int customer_id,
+    Call<SongLikeModel> getSongLikeStatus(@Header("Authorization") String token, @Field("customer_id") int customer_id,
                                           @Field("song_id") String song_id);
 
     @FormUrlEncoded
     @POST("/playlist/put_song_like_status/")
-    Call<AddSongLogModel> putSongLikeStatus(@Header("Authorization") String token,@Field("customer_id") int customer_id,
+    Call<AddSongLogModel> putSongLikeStatus(@Header("Authorization") String token, @Field("customer_id") int customer_id,
                                             @Field("song_id") String song_id,
                                             @Field("liked") String isLiked);
 
     @GET("/playlist/get_recent_all/")
-    Call<ArrayList<RecentSongModel>> getRecentAllSong(@Header("Authorization") String token,@Query("search") int customer_id);
+    Call<ArrayList<RecentSongModel>> getRecentAllSong(@Header("Authorization") String token, @Query("search") int customer_id);
 
     @GET("/playlist/get_recent_songs/")
-    Call<ArrayList<RecentSongModel>> getRecentSongs(@Header("Authorization") String token,@Query("search") int customer_id);
+    Call<ArrayList<RecentSongModel>> getRecentSongs(@Header("Authorization") String token, @Query("search") int customer_id);
 
     @GET("/playlist/liked_songs_list/")
-    Call<ArrayList<RecentSongModel>> getLikedSongs(@Header("Authorization") String token,@Query("search") int customer_id);
+    Call<ArrayList<RecentSongModel>> getLikedSongs(@Header("Authorization") String token, @Query("search") int customer_id);
 
     @FormUrlEncoded
     @POST("/playlist/my_playlists/")
-    Call<ArrayList<MyPlaylistModel>> getMyPlaylist(@Header("Authorization") String token,@Field("token") String token1);
+    Call<ArrayList<MyPlaylistModel>> getMyPlaylist(@Header("Authorization") String token, @Field("token") String token1);
 
     @FormUrlEncoded
     @POST("/playlist/search_playlist/")
-    Call<ArrayList<MyPlaylistModel>> getSearchedPlaylist(@Header("Authorization") String token,@Field("token") String token1,@Field("search_term") String searchedTerm);
+    Call<ArrayList<MyPlaylistModel>> getSearchedPlaylist(@Header("Authorization") String token, @Field("token") String token1, @Field("search_term") String searchedTerm);
 
     @FormUrlEncoded
     @POST("/playlist/get_public_playlists/")
-    Call<ArrayList<MyPlaylistModel>> getPublicPlaylist(@Header("Authorization") String token,@Field("customer_id") int userId);
+    Call<ArrayList<MyPlaylistModel>> getPublicPlaylist(@Header("Authorization") String token, @Field("customer_id") int userId);
 
     @FormUrlEncoded
     @POST("/playlist/playlist_detail/")
@@ -214,7 +214,7 @@ public interface DataAPI {
 
     @FormUrlEncoded
     @POST("/playlist/add_collab/")
-    Call<APIResponse> addCollab(@Header("Authorization") String token,@Field("playlist_id") int playlistId,
+    Call<APIResponse> addCollab(@Header("Authorization") String token, @Field("playlist_id") int playlistId,
                                 @Field("customer") int customerId);
 
     @FormUrlEncoded
@@ -230,12 +230,12 @@ public interface DataAPI {
 
     @FormUrlEncoded
     @POST("/user/delete_realtime_info/")
-    Call<APIResponse> deleteRealTimeSession(@Header("Authorization") String token,@Field("session_key") String sessionKey);
+    Call<APIResponse> deleteRealTimeSession(@Header("Authorization") String token, @Field("session_key") String sessionKey);
 
 
     @FormUrlEncoded
     @POST("/user/liked_disliked/userdata_get/")
-    Call<UserProfileModel> getUserProfile(@Header("Authorization") String token,@Field("user_profile") int userId,
+    Call<UserProfileModel> getUserProfile(@Header("Authorization") String token, @Field("user_profile") int userId,
                                           @Field("checking_profile") int customerId);
 
     @FormUrlEncoded
@@ -244,7 +244,6 @@ public interface DataAPI {
                                                       @Field("liked_by_user") int userId,
                                                       @Field("liked_to_user") int customerId,
                                                       @Field("current_like_status") String likeStatus);
-
 
 
     @FormUrlEncoded
@@ -347,5 +346,21 @@ public interface DataAPI {
     @POST("/playlist/get_collaborators_profiles/")
     Call<CollabsList> getCollabsListing(@Header("Authorization") String token,
                                         @Field("token") String usertoken);
+
+
+    @FormUrlEncoded
+    @POST("/playlist/delete_playlist/")
+    Call<PlayListDeleteModel> getDeletePlaylist(
+            @Header("Authorization") String token, @Field("token") String usertoken,
+            @Field("playlist") int playlist);
+
+    @FormUrlEncoded
+    @POST("/playlist/edit_playlist/")
+    Call<PlayListDeleteModel> getEditPlaylist(
+            @Header("Authorization") String token, @Field("token") String usertoken,
+            @Field("playlist") int playlist,
+            @Field("songs_list") String songs_list,
+            @Field("collabs_list") String collabs_list);
+
 
 }

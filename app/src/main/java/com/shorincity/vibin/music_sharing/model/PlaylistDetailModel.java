@@ -11,24 +11,63 @@ public class PlaylistDetailModel implements Parcelable {
     @SerializedName("id")
     @Expose
     private Integer id;
+
     @SerializedName("type")
     @Expose
     private String type;
+
     @SerializedName("track_id")
     @Expose
     private String trackId;
+
     @SerializedName("name")
     @Expose
     private String name;
+
     @SerializedName("image")
     @Expose
     private String image;
+
     @SerializedName("song_duration")
     @Expose
     private String songDuration;
+
     @SerializedName("playlist")
     @Expose
     private Integer playlist;
+
+
+    @SerializedName("added_by")
+    @Expose
+    private Integer added_by;
+
+    boolean isSelected = false;
+
+    boolean isEditable = false;
+
+    public Integer getAdded_by() {
+        return added_by;
+    }
+
+    public void setAdded_by(Integer added_by) {
+        this.added_by = added_by;
+    }
+
+    public boolean isEditable() {
+        return isEditable;
+    }
+
+    public void setEditable(boolean editable) {
+        isEditable = editable;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
 
     public PlaylistDetailModel(String name, String image, String trackId) {
         this.name = name;
@@ -36,7 +75,7 @@ public class PlaylistDetailModel implements Parcelable {
         this.trackId = trackId;
     }
 
-     PlaylistDetailModel(Parcel in) {
+    PlaylistDetailModel(Parcel in) {
         if (in.readByte() == 0) {
             id = null;
         } else {
@@ -51,6 +90,11 @@ public class PlaylistDetailModel implements Parcelable {
             playlist = null;
         } else {
             playlist = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            added_by = null;
+        } else {
+            added_by = in.readInt();
         }
     }
 
@@ -145,6 +189,12 @@ public class PlaylistDetailModel implements Parcelable {
         } else {
             parcel.writeByte((byte) 1);
             parcel.writeInt(playlist);
+        }
+        if (added_by == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(added_by);
         }
     }
 }

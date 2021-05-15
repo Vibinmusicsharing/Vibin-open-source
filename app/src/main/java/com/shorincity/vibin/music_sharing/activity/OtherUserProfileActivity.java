@@ -188,6 +188,7 @@ public class OtherUserProfileActivity extends AppCompatActivity implements View.
                 Intent intent = new Intent(OtherUserProfileActivity.this, PlaylistDetailActivity.class);
                 int id = myPlaylists.get(position).getId();
                 intent.putExtra("id", id);
+                intent.putExtra("adminname", myPlaylists.get(position).getAdminName());
                 intent.putExtra(AppConstants.INTENT_PLAYLIST, myPlaylists.get(position));
                 startActivity(intent);
             }

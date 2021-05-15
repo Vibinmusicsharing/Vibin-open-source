@@ -1,5 +1,7 @@
 package com.shorincity.vibin.music_sharing.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -82,7 +84,7 @@ import retrofit2.Callback;
 // RealTime Player
 public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener, View.OnClickListener {
     private static String TAG = RealTimePlayer.class.getName();
-    String view_collab = AppConstants.BASE_URL+"playlist/view_collab/";
+    String view_collab = AppConstants.BASE_URL + "playlist/view_collab/";
 
     RealTimeModel realTimeModel;
 
@@ -93,9 +95,9 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
     YouTubePlayerView youTubePlayerView;
     ImageView spotifyPlayerView;
     TextView titlemain;
+    boolean isEndSessionFromAdmin = false;
 
-
-    int lengthms=270000;
+    int lengthms = 270000;
     long spotifyLengthms;
 
     private RealTimePlayer.MyPlayerStateChangeListener playerStateChangeListener;
@@ -108,14 +110,14 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
     Handler handler1;
     Runnable runnable;
     boolean killMe = false;
-    boolean seekusedbyuser=false;
+    boolean seekusedbyuser = false;
     SeekBar seekbar;
 
-    String title =  "";
+    String title = "";
 
     int userId;
 
-    ImageView forward,rewind,shuffle,repeatone;
+    ImageView forward, rewind, shuffle, repeatone;
     Boolean isAddSongLogRecorded = false;
 
     // Songs List
@@ -228,31 +230,30 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
         }
     }
 
-    private boolean isPlayerPlaying()
-    {
+    private boolean isPlayerPlaying() {
         boolean isPlaying = false;
 
-        if(playedSongType.equalsIgnoreCase(AppConstants.YOUTUBE))
-            isPlaying = player !=null ? player.isPlaying():false;
-        else if(playedSongType.equalsIgnoreCase(AppConstants.SPOTIFY))
-            isPlaying = spotifyPlayer != null ? spotifyPlayer.getPlaybackState().isPlaying:false;
+        if (playedSongType.equalsIgnoreCase(AppConstants.YOUTUBE))
+            isPlaying = player != null ? player.isPlaying() : false;
+        else if (playedSongType.equalsIgnoreCase(AppConstants.SPOTIFY))
+            isPlaying = spotifyPlayer != null ? spotifyPlayer.getPlaybackState().isPlaying : false;
 
         return isPlaying;
     }
 
-    private void setPlayerView(int songPosition){
+    private void setPlayerView(int songPosition) {
 
         if (playlist == null || playlist.size() == 0)
             return;
 
         titlemain.setText(playlist.get(songPosition).getName());
-        Logging.d("SPOTIFY Sharing-->"+new Gson().toJson(playlist));
-        if(playlist.get(songPosition).getType().equalsIgnoreCase(AppConstants.YOUTUBE)) {
-Logging.d("YOUTUBE Sharing");
+        Logging.d("SPOTIFY Sharing-->" + new Gson().toJson(playlist));
+        if (playlist.get(songPosition).getType().equalsIgnoreCase(AppConstants.YOUTUBE)) {
+            Logging.d("YOUTUBE Sharing");
             findViewById(R.id.img_cardview).setVisibility(View.INVISIBLE);
             youTubePlayerView.setVisibility(View.VISIBLE);
 
-        } else if(playlist.get(songPosition).getType().equalsIgnoreCase(AppConstants.SPOTIFY)) {
+        } else if (playlist.get(songPosition).getType().equalsIgnoreCase(AppConstants.SPOTIFY)) {
             Logging.d("SPOTIFY Sharing");
             youTubePlayerView.setVisibility(View.INVISIBLE);
             findViewById(R.id.img_cardview).setVisibility(View.VISIBLE);
@@ -264,9 +265,11 @@ Logging.d("YOUTUBE Sharing");
     }
 
     String sessionKey, userKey;
+    int admin_id;
+
     private void getIntentData() {
         userId = SharedPrefManager.getInstance(RealTimePlayer.this).getSharedPrefInt(AppConstants.INTENT_USER_ID);
-
+        admin_id = getIntent().getExtras().getInt("admin_id");
         playlistId = getIntent().getExtras().getInt(AppConstants.INTENT_PLAYLIST_ID);
         sessionKey = getIntent().getExtras().getString(AppConstants.INTENT_SESSION_KEY);
         userKey = getIntent().getExtras().getString(AppConstants.INTENT_USER_KEY);
@@ -302,14 +305,14 @@ Logging.d("YOUTUBE Sharing");
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                Log.i(TAG,"running");
+                Log.i(TAG, "running");
 
-                if(killMe)
+                if (killMe)
                     return;
 
                 handler1.postDelayed(this, 1000);
 
-                if( playedSongType.equalsIgnoreCase(AppConstants.YOUTUBE ) && player != null) {
+                if (playedSongType.equalsIgnoreCase(AppConstants.YOUTUBE) && player != null) {
                     lengthms = player.getDurationMillis();
                     float current = player.getCurrentTimeMillis();
                     float wowInt = ((current / lengthms) * 100);
@@ -317,9 +320,9 @@ Logging.d("YOUTUBE Sharing");
                         seekbar.setProgress((int) wowInt);
                     }
 
-                } else if( playedSongType.equalsIgnoreCase(AppConstants.SPOTIFY) && spotifyPlayer != null) {
+                } else if (playedSongType.equalsIgnoreCase(AppConstants.SPOTIFY) && spotifyPlayer != null) {
 
-                    if(spotifyPlayer.getMetadata() != null && spotifyPlayer.getMetadata().currentTrack != null) {
+                    if (spotifyPlayer.getMetadata() != null && spotifyPlayer.getMetadata().currentTrack != null) {
                         spotifyLengthms = spotifyPlayer.getMetadata().currentTrack.durationMs;
                         float wow = spotifyPlayer.getPlaybackState().positionMs;
                         float wowInt = ((wow / spotifyLengthms) * 100);
@@ -331,63 +334,63 @@ Logging.d("YOUTUBE Sharing");
             }
         };
 
-        handler1.postDelayed(runnable,1000);
+        handler1.postDelayed(runnable, 1000);
 
         playerStateChangeListener = new RealTimePlayer.MyPlayerStateChangeListener();
         playbackEventListener = new RealTimePlayer.MyPlaybackEventListener();
 
 
-        seekbar =(SeekBar) findViewById(R.id.seekBar);
+        seekbar = (SeekBar) findViewById(R.id.seekBar);
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
                 //if (isPlayerPlaying()) {
-                    int to = 0;
-                    try {
-                        Log.i("Length: ","Seek: "+progress);
+                int to = 0;
+                try {
+                    Log.i("Length: ", "Seek: " + progress);
 
-                        if( playedSongType.equalsIgnoreCase(AppConstants.YOUTUBE ) && player != null) {
+                    if (playedSongType.equalsIgnoreCase(AppConstants.YOUTUBE) && player != null) {
 
-                            lengthms = player.getDurationMillis();
-                            to= (int) (lengthms*progress/100);
+                        lengthms = player.getDurationMillis();
+                        to = (int) (lengthms * progress / 100);
 
-                        } else if( playedSongType.equalsIgnoreCase(AppConstants.SPOTIFY) && spotifyPlayer != null) {
+                    } else if (playedSongType.equalsIgnoreCase(AppConstants.SPOTIFY) && spotifyPlayer != null) {
 
-                            spotifyLengthms = spotifyPlayer.getMetadata().currentTrack.durationMs;
+                        spotifyLengthms = spotifyPlayer.getMetadata().currentTrack.durationMs;
 
-                            to = (int) (spotifyLengthms * progress / 100);
-                        }
-                        //realTimeModel.getSessions().get(AppConstants.SESSION_CHILD+"1").setStart_in(to);
-                        realTimeModel.getSessions().get(sessionKey).setStart_in(to);
-                        myRef.setValue(realTimeModel);
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        to = (int) (spotifyLengthms * progress / 100);
                     }
+                    //realTimeModel.getSessions().get(AppConstants.SESSION_CHILD+"1").setStart_in(to);
+                    realTimeModel.getSessions().get(sessionKey).setStart_in(to);
+                    myRef.setValue(realTimeModel);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 //}
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                seekusedbyuser=true;
+                seekusedbyuser = true;
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                seekusedbyuser=false;
+                seekusedbyuser = false;
 
                 int to = 0;
                 try {
-                    if( playedSongType.equalsIgnoreCase(AppConstants.YOUTUBE ) && player != null) {
+                    if (playedSongType.equalsIgnoreCase(AppConstants.YOUTUBE) && player != null) {
 
                         int progress = seekBar.getProgress();
                         lengthms = player.getDurationMillis();
-                        float current=player.getCurrentTimeMillis();
-                        to = (int) (lengthms*progress/100);
+                        float current = player.getCurrentTimeMillis();
+                        to = (int) (lengthms * progress / 100);
 
-                    } else if( playedSongType.equalsIgnoreCase(AppConstants.SPOTIFY) && spotifyPlayer != null) {
+                    } else if (playedSongType.equalsIgnoreCase(AppConstants.SPOTIFY) && spotifyPlayer != null) {
 
                         int progress = seekBar.getProgress();
                         spotifyLengthms = spotifyPlayer.getMetadata().currentTrack.durationMs;
@@ -404,27 +407,26 @@ Logging.d("YOUTUBE Sharing");
                 }
             }
         });
-     //   seekbar.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
-     //   seekbar.getThumb().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        //   seekbar.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        //   seekbar.getThumb().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
 
-        Play_Pause =(Button) findViewById(R.id.button2);
+        Play_Pause = (Button) findViewById(R.id.button2);
         Play_Pause.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
 
-                if (isPlayerPlaying())
-                {
+                if (isPlayerPlaying()) {
                     int to = 0;
                     try {
-                        if( playedSongType.equalsIgnoreCase(AppConstants.YOUTUBE ) && player != null) {
+                        if (playedSongType.equalsIgnoreCase(AppConstants.YOUTUBE) && player != null) {
 
                             int progress = seekbar.getProgress();
                             lengthms = player.getDurationMillis();
-                            float current=player.getCurrentTimeMillis();
-                            to = (int) (lengthms*progress/100);
+                            float current = player.getCurrentTimeMillis();
+                            to = (int) (lengthms * progress / 100);
 
-                        } else if( playedSongType.equalsIgnoreCase(AppConstants.SPOTIFY) && spotifyPlayer != null) {
+                        } else if (playedSongType.equalsIgnoreCase(AppConstants.SPOTIFY) && spotifyPlayer != null) {
 
                             int progress = seekbar.getProgress();
                             spotifyLengthms = spotifyPlayer.getMetadata().currentTrack.durationMs;
@@ -444,8 +446,7 @@ Logging.d("YOUTUBE Sharing");
                     myRef.setValue(realTimeModel);
                     Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
 
-                }
-                else {
+                } else {
                     //realTimeModel.getSessions().get(AppConstants.SESSION_CHILD+"1").setStatus(AppConstants.START);
                     realTimeModel.getSessions().get(sessionKey).setStatus(AppConstants.START);
                     myRef.setValue(realTimeModel);
@@ -463,6 +464,7 @@ Logging.d("YOUTUBE Sharing");
         });
 
     }
+
     private void statusBarColorChange() {
         Window window = this.getWindow();
 
@@ -477,11 +479,46 @@ Logging.d("YOUTUBE Sharing");
             window.setStatusBarColor(ContextCompat.getColor(this, R.color.white));
         }
     }
+
     FirebaseDatabase database;
     DatabaseReference myRef;
 
-    private void initialiseRealTimeDB()
-    {
+    public void alertDialogShow(String message, boolean bothButton,boolean isFromAdmin) {
+
+        AlertDialog alertDialog = new AlertDialog.Builder(RealTimePlayer.this).create();
+        alertDialog.setTitle(getResources().getString(R.string.app_name));
+        alertDialog.setMessage(message);
+        if (bothButton) {
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            if(isFromAdmin){
+                                callToDeleteSession(sessionKey);
+                            }else {
+                                finish();
+                            }
+                        }
+                    });
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+        } else {
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            finish();
+                        }
+                    });
+        }
+        alertDialog.show();
+    }
+
+    private void initialiseRealTimeDB() {
         database = FirebaseDatabase.getInstance();
 
         myRef = database.getReference(AppConstants.SESSION);
@@ -496,26 +533,27 @@ Logging.d("YOUTUBE Sharing");
                     HashMap<String, RealTimeSession> sessionHashMap = new HashMap<>();
                     HashMap<String, RealTimeUser> userHashMap = new HashMap<>();
 
-                    for(DataSnapshot ds : dataSnapshot.child("sessions").getChildren()) {
+                    for (DataSnapshot ds : dataSnapshot.child("sessions").getChildren()) {
                         RealTimeSession realTimeSession = ds.getValue(RealTimeSession.class);
-                        sessionHashMap.put(ds.getKey(),realTimeSession);
+                        sessionHashMap.put(ds.getKey(), realTimeSession);
                     }
 
-                    for(DataSnapshot ds : dataSnapshot.child("users").getChildren()) {
+                    for (DataSnapshot ds : dataSnapshot.child("users").getChildren()) {
                         RealTimeUser realTimeUser = ds.getValue(RealTimeUser.class);
-                        userHashMap.put(ds.getKey(),realTimeUser);
+                        userHashMap.put(ds.getKey(), realTimeUser);
                     }
 
                     realTimeModel = new RealTimeModel();
                     realTimeModel.setSessions(sessionHashMap);
                     realTimeModel.setUsers(userHashMap);
 
-
+                    // admin end the session and call other users side
                     // If Session not exist, It means admin has done with session or it may deleted by him/her
-                    if(!realTimeModel.getSessions().containsKey(sessionKey)) {
+                    if (!realTimeModel.getSessions().containsKey(sessionKey)) {
                         if (!(isControlledByUser) && realTimeModel.getUsers().get(userKey).getSession_id().equalsIgnoreCase(sessionKey)) {
 
                             // removing collab entry from RealTime DB
+
                             realTimeModel.getUsers().remove(userKey);
                             myRef.setValue(realTimeModel);
                             try {
@@ -526,10 +564,9 @@ Logging.d("YOUTUBE Sharing");
                             } catch (NullPointerException e) {
                                 e.printStackTrace();
                             }
-                            finish();
+                            alertDialogShow("Live Session Is End From Admin", false,false);
                         }
-                    }
-                    else { // It will call while session exist
+                    } else { // It will call while session exist
 
                         RealTimeSession realTimeSession = sessionHashMap.get(sessionKey);
 
@@ -627,7 +664,8 @@ Logging.d("YOUTUBE Sharing");
                             } catch (NullPointerException e) {
                                 e.printStackTrace();
                             }
-                            finish();
+
+
                         }
                     }
 
@@ -649,11 +687,13 @@ Logging.d("YOUTUBE Sharing");
 
     private void inItListeners() {
     }
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onResume() {
         super.onResume();
     }
+
     private void initViews() {
         playerCurrentDurationTv = findViewById(R.id.playerCurrentTimeText);
         playerTotalDurationTv = findViewById(R.id.playerTotalTimeText);
@@ -661,7 +701,7 @@ Logging.d("YOUTUBE Sharing");
         spotifyPlayerView = findViewById(R.id.imageRsplayer);
         youTubePlayerView = findViewById(R.id.myYoutube);
         youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
-        titlemain  = findViewById(R.id.youtube_title);
+        titlemain = findViewById(R.id.youtube_title);
 
         titlemain.setText(title);
         titlemain.setSelected(true);
@@ -689,7 +729,7 @@ Logging.d("YOUTUBE Sharing");
         playlist = new ArrayList<>();
 
         playlistRv = findViewById(R.id.playlist_rv);
-        playlistRv.setLayoutManager(new LinearLayoutManager(RealTimePlayer.this, LinearLayoutManager.VERTICAL,false));
+        playlistRv.setLayoutManager(new LinearLayoutManager(RealTimePlayer.this, LinearLayoutManager.VERTICAL, false));
         playlistRv.setHasFixedSize(true);
 
         publicPlaylistItemAdapter = new PublicPlaylistItemAdapter(RealTimePlayer.this, playlist);
@@ -708,8 +748,8 @@ Logging.d("YOUTUBE Sharing");
         progressBarViewCollab = findViewById(R.id.progressbarViewCollab);
         progressBarViewCollab.setVisibility(View.VISIBLE);
         viewCollabRecyclerView.setHasFixedSize(true);
-        viewCollabRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-        ViewCollabAdapter = new ViewCollabAdapter(this,viewcollabList);
+        viewCollabRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        ViewCollabAdapter = new ViewCollabAdapter(this, viewcollabList);
         ViewCollabAdapter.setCustomItemClickListener(new com.shorincity.vibin.music_sharing.adapters.ViewCollabAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
@@ -734,19 +774,19 @@ Logging.d("YOUTUBE Sharing");
             @Override
             public void onResponse(Call<ArrayList<PlaylistDetailModel>> call, retrofit2.Response<ArrayList<PlaylistDetailModel>> response) {
                 playlist.clear();
-                if (response != null && response.body()!= null && response.body().size() > 0) {
+                if (response != null && response.body() != null && response.body().size() > 0) {
                     playlistRv.setVisibility(View.VISIBLE);
                     playlist.addAll(response.body());
                     publicPlaylistItemAdapter.notifyDataSetChanged();
 
-                    if(!isControlledByUser) {
+                    if (!isControlledByUser) {
                         Handler handler = new Handler();
 
                         Runnable runnable = new Runnable() {
                             @Override
                             public void run() {
                                 if (realTimeModel == null && realTimeModel.getUsers() == null)
-                                    handler.postDelayed(this,1000);
+                                    handler.postDelayed(this, 1000);
                                 else {
                                     realTimeModel.getUsers().get(userKey).setJoined_status(AppConstants.JOINED);
                                     myRef.setValue(realTimeModel);
@@ -754,7 +794,7 @@ Logging.d("YOUTUBE Sharing");
                             }
                         };
 
-                        handler.postDelayed(runnable,1000);
+                        handler.postDelayed(runnable, 1000);
                     }
 
                 } else {
@@ -772,11 +812,11 @@ Logging.d("YOUTUBE Sharing");
     private void parseCollaborations() {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, view_collab, new Response.Listener<String>() {
             @Override
-            public void onResponse(String response){
+            public void onResponse(String response) {
                 try {
                     viewcollabList.clear();
                     JSONArray jsonArray = new JSONArray(response);
-                    for(int i=0;i<jsonArray.length();i++){
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         int id = jsonObject.getInt("id");
                         String email = jsonObject.getString("email");
@@ -784,7 +824,7 @@ Logging.d("YOUTUBE Sharing");
                         String fullname = jsonObject.getString("fullname");
                         String avatar_link = jsonObject.getString("avatar_link");
 
-                        ViewCollab viewCollab=new ViewCollab();
+                        ViewCollab viewCollab = new ViewCollab();
                         viewCollab.setAvatarLink(avatar_link);
                         viewCollab.setEmail(email);
                         viewCollab.setFullname(fullname);
@@ -805,21 +845,20 @@ Logging.d("YOUTUBE Sharing");
             public void onErrorResponse(VolleyError error) {
 
             }
-        })
-        {
+        }) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 String token = SharedPrefManager.getInstance(RealTimePlayer.this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
 
-                params.put("token",token);
+                params.put("token", token);
                 params.put("playlist_id", String.valueOf(playlistId));
                 return params;
             }
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String>  params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<String, String>();
                 String token = AppConstants.TOKEN + SharedPrefManager.getInstance(RealTimePlayer.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
                 params.put("Authorization", token);
                 return params;
@@ -857,10 +896,10 @@ Logging.d("YOUTUBE Sharing");
     @Override
     public void onBackPressed() {
 
-        if(isControlledByUser) {
-            callToDeleteSession(sessionKey);
+        if (isControlledByUser) {
+            alertDialogShow("Are You Sure Want To Close Session", true,true);
         } else {
-            super.onBackPressed();
+            alertDialogShow("Are You Sure Want To Exit From Live Session", true,false);
         }
 
         // killing all the handlers
@@ -868,7 +907,7 @@ Logging.d("YOUTUBE Sharing");
         /*if (spotifyHandler != null)
             spotifyHandler.removeCallbacksAndMessages(spotifyRunnable);*/
 
-        if(spotifyPlayer != null && spotifyPlayer.getPlaybackState().isPlaying)
+        if (spotifyPlayer != null && spotifyPlayer.getPlaybackState().isPlaying)
             spotifyPlayer.pause(null);
     }
 
@@ -884,14 +923,14 @@ Logging.d("YOUTUBE Sharing");
 //                } else {
 //                    showMessage("Please wait for a while while session is going to prepare");
 //                }
-                callToDeleteSession(sessionKey);
+                alertDialogShow("Are You Sure Want To Close Session", true,true);
                 break;
 
             case R.id.fastforward:
 
                 int songPosition = realTimeModel.getSessions().get(sessionKey).getSongPosiionInList() + 1;
 
-                if(songPosition > -1 && songPosition < playlist.size()) {
+                if (songPosition > -1 && songPosition < playlist.size()) {
 
                     realTimeModel.getSessions().get(sessionKey).setSongID(playlist.get(songPosition).getTrackId());
                     realTimeModel.getSessions().get(sessionKey).setSongPosiionInList(songPosition);
@@ -907,7 +946,7 @@ Logging.d("YOUTUBE Sharing");
             case R.id.fastrewind:
                 int songPosition1 = realTimeModel.getSessions().get(sessionKey).getSongPosiionInList() - 1;
 
-                if(songPosition1 > -1 && songPosition1 < playlist.size()) {
+                if (songPosition1 > -1 && songPosition1 < playlist.size()) {
 
                     realTimeModel.getSessions().get(sessionKey).setSongID(playlist.get(songPosition1).getTrackId());
                     realTimeModel.getSessions().get(sessionKey).setSongPosiionInList(songPosition1);
@@ -989,7 +1028,7 @@ Logging.d("YOUTUBE Sharing");
 
             int songPosition = realTimeModel.getSessions().get(sessionKey).getSongPosiionInList() + 1;
 
-            if(songPosition < playlist.size()) {
+            if (songPosition < playlist.size()) {
 
 
                 // Preparing RealTime DB for the next Song by their track, position in list
@@ -1023,28 +1062,28 @@ Logging.d("YOUTUBE Sharing");
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(handler1 != null)
+        if (handler1 != null)
             handler1.removeCallbacks(runnable);
         /*if (spotifyHandler != null)
             spotifyHandler.removeCallbacksAndMessages(spotifyRunnable);*/
 
-        if (spotifyPlayer!=null && spotifyPlayer.getPlaybackState().isPlaying)
+        if (spotifyPlayer != null && spotifyPlayer.getPlaybackState().isPlaying)
             spotifyPlayer.pause(null);
 
-        killMe=true;
+        killMe = true;
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if(handler1 != null)
+        if (handler1 != null)
             handler1.removeCallbacks(runnable);
         /*if (spotifyHandler != null)
             spotifyHandler.removeCallbacksAndMessages(spotifyRunnable);*/
 
-        if (spotifyPlayer!=null && spotifyPlayer.getPlaybackState().isPlaying)
+        if (spotifyPlayer != null && spotifyPlayer.getPlaybackState().isPlaying)
             spotifyPlayer.pause(null);
-        killMe=true;
+        killMe = true;
     }
 
     // Session Deleting : It will call whenever admin wants to go back
@@ -1063,14 +1102,14 @@ Logging.d("YOUTUBE Sharing");
                     if (response.body().getStatus().equalsIgnoreCase("success")) {
                         Log.i(TAG, "Session Ended");
                         try {
+                            isEndSessionFromAdmin = true;
                             realTimeModel.getSessions().get(sessionKey).setStatus(AppConstants.ENDED);
                             myRef.setValue(realTimeModel);
                             finish();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }
-                    else if(response.body().getStatus().equalsIgnoreCase("failed") && !TextUtils.isEmpty(response.body().getMessage()))
+                    } else if (response.body().getStatus().equalsIgnoreCase("failed") && !TextUtils.isEmpty(response.body().getMessage()))
                         Log.i(TAG, "Session Ending Failed");
                     else
                         Log.i(TAG, "Session Ending Error");
@@ -1079,7 +1118,7 @@ Logging.d("YOUTUBE Sharing");
 
             @Override
             public void onFailure(Call<APIResponse> call, Throwable t) {
-                Toast.makeText(RealTimePlayer.this,"Something went wrong!", Toast.LENGTH_LONG).show();
+                Toast.makeText(RealTimePlayer.this, "Something went wrong!", Toast.LENGTH_LONG).show();
             }
         });
 

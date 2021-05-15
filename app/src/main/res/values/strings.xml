@@ -223,5 +223,7 @@
     <string name="label_pause">Pause</string>
     <string name="label_previous">Previous track</string>
     <string name="label_next">Next track</string>
+    <string name="with_all_songs">with All Songs</string>
+    <string name="only_leave">Only Leave</string>
 
 </resources>

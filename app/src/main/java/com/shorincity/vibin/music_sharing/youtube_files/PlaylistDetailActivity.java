@@ -1,28 +1,46 @@
 package com.shorincity.vibin.music_sharing.youtube_files;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.cursoradapter.widget.SimpleCursorAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.database.MatrixCursor;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +58,7 @@ import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.adapters.ViewCollabAdapter;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
+import com.shorincity.vibin.music_sharing.model.PlayListDeleteModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistLikeModel;
 import com.shorincity.vibin.music_sharing.model.PublicPlaylistItemAdapter;
@@ -94,11 +113,14 @@ public class PlaylistDetailActivity extends AppCompatActivity {
 
     String view_collabUrl = AppConstants.BASE_URL + "playlist/view_collab/";
     int id;
+    PopupWindow popupWindow = null;
     ArrayList<ViewCollab> viewcollabList;
     com.shorincity.vibin.music_sharing.adapters.ViewCollabAdapter ViewCollabAdapter;
     RecyclerView viewCollabRecyclerView;
     ProgressBar progressBarViewCollab;
-
+    NestedScrollView sliding_main;
+    ImageView more_image;
+    CardView cardview_option;
     MyPlaylistModel myPlaylistModel;
     RecyclerView playlistRv;
     ArrayList<PlaylistDetailModel> playlist;
@@ -115,6 +137,17 @@ public class PlaylistDetailActivity extends AppCompatActivity {
 
     ProgressDialog mProgressDialog;
     RippleButton live_streaming_btn;
+    boolean isPressed = false;
+    int admin_id;
+    TextView txt_edit_playlist;
+    TextView txt_select_playlist;
+    TextView txt_Leave_playlist;
+    ArrayList<Integer> playlistId;
+    ArrayList<Integer> collabsId;
+    StringBuffer finalplaylistid;
+    StringBuffer finalcollabslistid;
+    PlaylistDetailActivity playlistDetailActivity;
+    BottomSheetDialog dialog;
 
     private void showProgressDialog() {
         if (mProgressDialog == null) {
@@ -134,12 +167,18 @@ public class PlaylistDetailActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist_detail);
-
+        finalcollabslistid = new StringBuffer();
+        finalplaylistid = new StringBuffer();
         id = getIntent().getExtras().getInt("id");
+        admin_id = getIntent().getExtras().getInt("admin_id");
+
+        playlistId = new ArrayList<>();
+        collabsId = new ArrayList<>();
         myPlaylistModel = (MyPlaylistModel) getIntent().getSerializableExtra(AppConstants.INTENT_PLAYLIST);
         inItViews();
 
@@ -149,6 +188,189 @@ public class PlaylistDetailActivity extends AppCompatActivity {
         inItListeners();
 
         setAdapter();
+
+        dialog = new BottomSheetDialog(PlaylistDetailActivity.this);
+        dialog.setContentView(R.layout.layout_bottom_dialog);
+
+
+        txt_edit_playlist = dialog.findViewById(R.id.txt_edit_playlist);
+        txt_select_playlist = dialog.findViewById(R.id.txt_select_playlist);
+        txt_Leave_playlist = dialog.findViewById(R.id.txt_Leave_playlist);
+        txt_select_playlist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                finalplaylistid = new StringBuffer();
+                finalcollabslistid = new StringBuffer();
+                isPressed = false;
+                if (txt_select_playlist.getText().toString().equalsIgnoreCase("Select")) {
+                    txt_select_playlist.setText("Clear");
+                    txt_edit_playlist.setVisibility(View.VISIBLE);
+                    for (int i = 0; i < playlist.size(); i++) {
+                        if (admin_id == SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID)) {
+                            playlist.get(i).setEditable(true);
+                            playlist.get(i).setSelected(false);
+                        } else if (playlist.get(i).getAdded_by().equals(SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID))) {
+                            playlist.get(i).setEditable(true);
+                            playlist.get(i).setSelected(false);
+                        }
+                    }
+                    publicPlaylistItemAdapter.notifyDataSetChanged();
+                    if (admin_id == SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID)) {
+                        for (int i = 0; i < viewcollabList.size(); i++) {
+                            viewcollabList.get(i).setEditable(true);
+                            viewcollabList.get(i).setSelected(false);
+                        }
+                        ViewCollabAdapter.notifyDataSetChanged();
+                    }
+                } else {
+                    txt_select_playlist.setText("Select");
+                    txt_edit_playlist.setVisibility(View.GONE);
+                    for (int i = 0; i < playlist.size(); i++) {
+                        playlist.get(i).setEditable(false);
+                    }
+                    publicPlaylistItemAdapter.notifyDataSetChanged();
+                    if (admin_id == SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID)) {
+                        for (int i = 0; i < viewcollabList.size(); i++) {
+                            viewcollabList.get(i).setEditable(false);
+                        }
+                        ViewCollabAdapter.notifyDataSetChanged();
+                    }
+                }
+
+            }
+        });
+
+        txt_edit_playlist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    dialog.dismiss();
+                    if (playlistId.size() > 0) {
+                        for (Integer id : playlistId) {
+                            finalplaylistid.append(id + ",");
+                        }
+                        finalplaylistid.deleteCharAt(finalplaylistid.length() - 1);
+                    }
+                    if (collabsId.size() > 0) {
+                        for (Integer id : collabsId) {
+                            finalcollabslistid.append(id + ",");
+                        }
+                        finalcollabslistid.deleteCharAt(finalcollabslistid.length() - 1);
+                    }
+                    if (finalplaylistid.length() > 0 || finalcollabslistid.length() > 0) {
+                        editPlayList(finalplaylistid, finalcollabslistid);
+                        dialog.dismiss();
+                    } else {
+                        if (admin_id == SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID)) {
+                            Toast.makeText(getApplicationContext(), "Please Select Playlist song or Collaborator which you want to delete", +2000).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Please Select Playlist song which you want to delete", +2000).show();
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        txt_Leave_playlist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                try {
+                    Dialog builder = new Dialog(PlaylistDetailActivity.this);
+                    builder.setContentView(R.layout.dialog_for_leave_collabs);
+                    builder.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                    builder.show();
+                    Button btn_Yes = builder.findViewById(R.id.btn_Yes);
+                    Button btn_No = builder.findViewById(R.id.btn_No);
+                    RadioButton radio_1 = builder.findViewById(R.id.radio_1);
+                    RadioButton radio_2 = builder.findViewById(R.id.radio_2);
+                    btn_No.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            builder.dismiss();
+                        }
+                    });
+                    btn_Yes.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (radio_1.isChecked()) {
+                                playlistId = new ArrayList<>();
+                                for (int i = 0; i < playlist.size(); i++) {
+                                    if (playlist.get(i).getAdded_by().equals(SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID))) {
+                                        playlistId.add(playlist.get(i).getId());
+                                    }
+                                }
+                                finalplaylistid = new StringBuffer();
+                                finalcollabslistid = new StringBuffer();
+                                if (playlistId.size() > 0) {
+                                    for (Integer id : playlistId) {
+                                        finalplaylistid.append(id + ",");
+                                    }
+                                    finalplaylistid.deleteCharAt(finalplaylistid.length() - 1);
+                                }
+                                finalcollabslistid.append(SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID));
+                                editPlayList(finalplaylistid, finalcollabslistid);
+                            } else if (radio_2.isChecked()) {
+                                finalcollabslistid = new StringBuffer();
+                                finalplaylistid = new StringBuffer();
+                                finalcollabslistid.append(SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID));
+                                editPlayList(finalplaylistid, finalcollabslistid);
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Please Check One Option", +2000).show();
+                            }
+                            builder.dismiss();
+                        }
+                    });
+                    builder.setCanceledOnTouchOutside(true);
+                    builder.setCancelable(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+        more_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.show();
+                if (!isPressed) {
+                    if (playlist.size() > 0) {
+                        if (admin_id == SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID)) {
+                            txt_select_playlist.setVisibility(View.VISIBLE);
+                        } else {
+                            if (txt_select_playlist.getText().toString().equalsIgnoreCase("Clear")) {
+                                txt_Leave_playlist.setVisibility(View.GONE);
+                            } else {
+                                txt_Leave_playlist.setVisibility(View.VISIBLE);
+                            }
+                            txt_select_playlist.setVisibility(View.GONE);
+                            for (PlaylistDetailModel playListDeleteModel : playlist) {
+                                if (playListDeleteModel.getAdded_by().equals(SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID))) {
+                                    txt_select_playlist.setVisibility(View.VISIBLE);
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        if (admin_id == SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID)) {
+                            if (viewcollabList.size() > 0) {
+                                txt_select_playlist.setVisibility(View.VISIBLE);
+                            } else {
+                                txt_select_playlist.setVisibility(View.GONE);
+                            }
+                        } else {
+                            txt_Leave_playlist.setVisibility(View.VISIBLE);
+                        }
+                    }
+                } else {
+                    dialog.dismiss();
+                }
+            }
+        });
 
         callPlaylistDetailAPI(String.valueOf(id));
 
@@ -173,6 +395,81 @@ public class PlaylistDetailActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void editPlayList(StringBuffer finalplaylistid, StringBuffer finalcollabslistid) {
+        DataAPI dataAPI = RetrofitAPI.getData();
+
+        String userToken = SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
+        String userTokenapi = AppConstants.TOKEN + SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+        Log.d(TAG, "editPlayList: " + userTokenapi);
+        Log.d("yash", "editPlayList: params" + userTokenapi + "\n" + userToken + "\n" + finalplaylistid + "\n" + finalcollabslistid + "\n" + id);
+        Call<PlayListDeleteModel> callback = dataAPI.getEditPlaylist(userTokenapi, userToken, id, finalplaylistid.toString(), finalcollabslistid.toString());
+//        J72EB5A5JM1K1QD6AIS6LG37
+        callback.enqueue(new Callback<PlayListDeleteModel>() {
+            @Override
+            public void onResponse(Call<PlayListDeleteModel> call, retrofit2.Response<PlayListDeleteModel> response) {
+                try {
+                    System.out.println(response.body());
+                    if (response.body().getStatus() != null) {
+                        if (response.body().getStatus().equalsIgnoreCase("success")) {
+                            Toast.makeText(getApplicationContext(), response.body().getMessage(), +2000).show();
+                            finish();
+                        } else {
+                            Toast.makeText(getApplicationContext(), response.body().getMessage(), +2000).show();
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Call<PlayListDeleteModel> call, Throwable t) {
+                System.out.println(t.getMessage());
+            }
+        });
+    }
+
+    public void selectedplaylistID(int ids, boolean selected) {
+        try {
+            if (selected) {
+                playlistId.add(ids);
+                Log.d("yash", "selectedplaylistID: " + selected + " Size" + playlistId.size());
+            } else {
+                for (int i = 0; i < playlistId.size(); i++) {
+                    if (playlistId.get(i).equals(ids)) {
+                        playlistId.remove(i);
+                        Log.d("yash", "removeplaylistID: " + selected + " Size" + playlistId.size());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void selectedcollabsID(int ids, boolean selected) {
+        try {
+            if (selected) {
+                collabsId.add(ids);
+                Log.d("yash", "selectedcollabsID: " + selected + " Size" + collabsId.size());
+            } else {
+                for (int i = 0; i < collabsId.size(); i++) {
+                    if (collabsId.get(i).equals(ids)) {
+                        collabsId.remove(i);
+                        Log.d("yash", "removecollabsID: " + selected + " Size" + collabsId.size());
+                    }
+                }
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void inItListeners() {
         pauseGifBtn.setOnClickListener(new View.OnClickListener() {
@@ -271,12 +568,14 @@ public class PlaylistDetailActivity extends AppCompatActivity {
         gifView = findViewById(R.id.gif_iv);
         likeBtn = findViewById(R.id.like_btn);
         pauseGifBtn = findViewById(R.id.pause_gif_btn);
+        more_image = findViewById(R.id.more_image);
         mTextViewTitle = findViewById(R.id.item_title);
         durationTv = findViewById(R.id.item_duration);
         mTextViewTitle = findViewById(R.id.item_title);
         likeCountTxt = findViewById(R.id.like_count_txt);
         descTxt = findViewById(R.id.item_desc);
         play_btn = findViewById(R.id.play_btn);
+        sliding_main = findViewById(R.id.sliding_main);
 
 
         viewcollabList = new ArrayList<>();
@@ -294,6 +593,13 @@ public class PlaylistDetailActivity extends AppCompatActivity {
             }
         });
 
+
+        sliding_main.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+
+            }
+        });
         viewCollabRecyclerView.setAdapter(ViewCollabAdapter);
 
         parseCollaborations();
@@ -512,6 +818,16 @@ public class PlaylistDetailActivity extends AppCompatActivity {
                         viewCollab.setId(id);
 
                         viewcollabList.add(viewCollab);
+                        if (viewcollabList.size() > 0) {
+                            more_image.setVisibility(View.VISIBLE);
+                        } else {
+                            if (admin_id != SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID)) {
+                                more_image.setVisibility(View.VISIBLE);
+                            } else {
+                                more_image.setVisibility(View.GONE);
+                            }
+
+                        }
                         ViewCollabAdapter.notifyDataSetChanged();
                     }
                     progressBarViewCollab.setVisibility(View.GONE);
@@ -553,15 +869,25 @@ public class PlaylistDetailActivity extends AppCompatActivity {
         DataAPI dataAPI = RetrofitAPI.getData();
 
         String token = AppConstants.TOKEN + SharedPrefManager.getInstance(PlaylistDetailActivity.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-
         Call<ArrayList<PlaylistDetailModel>> callback = dataAPI.getPublicPlaylistDetail(token, SharedPrefManager.getInstance(PlaylistDetailActivity.this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN), playlistId);
         callback.enqueue(new Callback<ArrayList<PlaylistDetailModel>>() {
             @Override
             public void onResponse(Call<ArrayList<PlaylistDetailModel>> call, retrofit2.Response<ArrayList<PlaylistDetailModel>> response) {
                 playlist.clear();
                 if (response != null && response.body() != null && response.body().size() > 0) {
+
                     playlistRv.setVisibility(View.VISIBLE);
                     playlist.addAll(response.body());
+                    if (playlist.size() > 0) {
+                        more_image.setVisibility(View.VISIBLE);
+                    } else {
+                        if (admin_id != SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID)) {
+                            more_image.setVisibility(View.VISIBLE);
+                        } else {
+                            more_image.setVisibility(View.GONE);
+                        }
+
+                    }
                     Collections.reverse(playlist);
                     publicPlaylistItemAdapter.notifyDataSetChanged();
 
@@ -570,13 +896,19 @@ public class PlaylistDetailActivity extends AppCompatActivity {
                         songNameList.add(playlist.get(i).getName());
 
                 } else {
+                    if (admin_id != SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID)) {
+                        more_image.setVisibility(View.VISIBLE);
+                    } else {
+                        more_image.setVisibility(View.GONE);
+                    }
                     playlistRv.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onFailure(Call<ArrayList<PlaylistDetailModel>> call, Throwable t) {
-
+                more_image.setVisibility(View.GONE);
+                Log.d(TAG, "onFailure: " + t.getMessage());
             }
         });
     }
@@ -788,7 +1120,7 @@ public class PlaylistDetailActivity extends AppCompatActivity {
                             public void onSuccess(Void aVoid) {
                                 Toast.makeText(PlaylistDetailActivity.this, "Success", Toast.LENGTH_LONG).show();
                                 //startActivity(new Intent(PlaylistDetailActivity.this, RealTimeYoutubePlayler.class)
-                                startActivity(new Intent(PlaylistDetailActivity.this, RealTimePlayer.class).putExtra(AppConstants.INTENT_SESSION_KEY, sessionKey).putExtra(AppConstants.INTENT_USER_KEY, "").putExtra(AppConstants.INTENT_PLAYLIST_ID, id));
+                                startActivity(new Intent(PlaylistDetailActivity.this, RealTimePlayer.class).putExtra(AppConstants.INTENT_SESSION_KEY, sessionKey).putExtra(AppConstants.INTENT_USER_KEY, "").putExtra(AppConstants.INTENT_PLAYLIST_ID, id).putExtra("admin_id", admin_id));
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override

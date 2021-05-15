@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_cornerradius"
+    android:padding="@dimen/dimen_10dp"
+    android:elevation="@dimen/dimen_10dp"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:weightSum="10"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/txt_select_playlist"
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="@dimen/dimen_5dp"
+            android:padding="@dimen/dimen_10dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/background_more_button"
+            android:visibility="gone"
+            android:text="Select"
+            android:textColor="@color/black"></TextView>
+
+        <TextView
+            android:id="@+id/txt_edit_playlist"
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="@dimen/dimen_5dp"
+            android:visibility="gone"
+            android:padding="@dimen/dimen_10dp"
+            android:text="Edit"
+            android:background="@drawable/background_more_button"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/black"></TextView>
+        <TextView
+            android:id="@+id/txt_Leave_playlist"
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="@dimen/dimen_5dp"
+            android:visibility="gone"
+            android:padding="@dimen/dimen_10dp"
+            android:background="@drawable/background_more_button"
+            android:text="Leave"
+            android:textColor="@color/black"></TextView>
+    </LinearLayout>
+</RelativeLayout>

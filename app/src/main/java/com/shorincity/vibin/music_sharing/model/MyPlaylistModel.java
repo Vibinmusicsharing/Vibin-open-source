@@ -41,6 +41,17 @@ public class MyPlaylistModel implements Serializable {
     @SerializedName("admin_avatar_link")
     @Expose
     private String avatarLink;
+    @SerializedName("admin_id")
+    @Expose
+    private int admin_id;
+
+    public int getAdmin_id() {
+        return admin_id;
+    }
+
+    public void setAdmin_id(int admin_id) {
+        this.admin_id = admin_id;
+    }
 
     public String getName() {
         return name;

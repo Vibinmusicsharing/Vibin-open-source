@@ -1,8 +1,10 @@
 package com.shorincity.vibin.music_sharing.fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,12 +22,14 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -61,17 +65,19 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 
 public class PublicPlaylistFragment extends Fragment {
 
     RequestQueue requestQueue;
-    String url = AppConstants.BASE_URL+"playlist/create_new_playlist/";
-    String url1= AppConstants.BASE_URL+"playlist/my_playlists/";
+    String url = AppConstants.BASE_URL + "playlist/create_new_playlist/";
+    String url1 = AppConstants.BASE_URL + "playlist/my_playlists/";
     View view;
     Context context;
     ProgressBar progressBar;
@@ -80,12 +86,22 @@ public class PublicPlaylistFragment extends Fragment {
     ArrayList<MyPlaylistModel> myPlaylists;
     RecyclerView playlistRv;
     EditText edittext;
-    public PublicPlaylistFragment() { }
+
+    public PublicPlaylistFragment() {
+    }
+
+    public BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            callMyPlaylistAPI(SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_TOKEN));
+        }
+    };
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if(view == null) {
+        if (view == null) {
             view = inflater.inflate(R.layout.fragment_youtube_playlist, container, false);
             context = view.getContext();
             Giphy.INSTANCE.configure(getActivity(), AppConstants.GIPHY_API_KEY, true);
@@ -97,21 +113,22 @@ public class PublicPlaylistFragment extends Fragment {
 
             FloatingActionButton floatingActionButton = view.findViewById(R.id.fab);
             FloatingActionButton search = view.findViewById(R.id.search);
-
+            getActivity().registerReceiver(broadcastReceiver, new IntentFilter("DeletePlaylist"));
             // set Playlist Adapter
             myPlaylists = new ArrayList<>();
             playlistRv = (RecyclerView) view.findViewById(R.id.rv_playlist);
             /*playlistRv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL,false));*/
             playlistRv.setLayoutManager(new GridLayoutManager(getActivity(), 2));
             playlistRv.setHasFixedSize(true);
-
-            myPlaylistAdapter = new UserPlaylistAdapter(getActivity(), myPlaylists);
+            PublicPlaylistFragment publicPlaylistFragment = new PublicPlaylistFragment();
+            myPlaylistAdapter = new UserPlaylistAdapter(getActivity(), myPlaylists, publicPlaylistFragment);
             myPlaylistAdapter.setCustomItemClickListener(new UserPlaylistAdapter.CustomItemClickListener() {
                 @Override
                 public void onItemClick(View v, int position) {
                     Intent intent = new Intent(context, PlaylistDetailActivity.class);
                     int id = myPlaylists.get(position).getId();
                     intent.putExtra("id", id);
+                    intent.putExtra("admin_id", myPlaylists.get(position).getAdmin_id());
                     intent.putExtra(AppConstants.INTENT_PLAYLIST, myPlaylists.get(position));
                     startActivity(intent);
                 }
@@ -149,6 +166,13 @@ public class PublicPlaylistFragment extends Fragment {
         return view;
     }
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unregisterReceiver(broadcastReceiver);
+    }
+
     // dialog to add playlist
     private void openCreatePlaylistDialog() {
         final AlertDialog.Builder mb = new AlertDialog.Builder(getActivity());
@@ -168,16 +192,16 @@ public class PublicPlaylistFragment extends Fragment {
         giphyGridView.setCallback(new GPHGridCallback() {
             @Override
             public void contentDidUpdate(int i) {
-                Log.i("GifURL","Position "+i);
+                Log.i("GifURL", "Position " + i);
             }
 
             @Override
             public void didSelectMedia(@NotNull Media media) {
-                Log.i("GifURL","BitlyGifURL "+media.getBitlyGifUrl());
-                Log.i("GifURL","BitlyURL "+media.getBitlyUrl());
-                Log.i("GifURL","Content "+media.getContentUrl());
-                Log.i("GifURL","EmbededUrl "+media.getEmbedUrl());
-                Log.i("GifURL","SourceUrl "+media.getSourcePostUrl());
+                Log.i("GifURL", "BitlyGifURL " + media.getBitlyGifUrl());
+                Log.i("GifURL", "BitlyURL " + media.getBitlyUrl());
+                Log.i("GifURL", "Content " + media.getContentUrl());
+                Log.i("GifURL", "EmbededUrl " + media.getEmbedUrl());
+                Log.i("GifURL", "SourceUrl " + media.getSourcePostUrl());
 
                 selectedGifLink[0] = media.getEmbedUrl();
                 selectedGifIv.setVisibility(View.VISIBLE);
@@ -212,13 +236,13 @@ public class PublicPlaylistFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Boolean b;
-                if(isChecked){
+                if (isChecked) {
                     publicprivate.setText("Private");
                     PlaylistPassword.setEnabled(true);
                     PlaylistPassword.setAlpha(1.0f);
                     //PlaylistPassword.setVisibility(View.VISIBLE);
                     b = true;
-                }else{
+                } else {
                     b = false;
                     PlaylistPassword.setText("");
                     PlaylistPassword.setEnabled(false);
@@ -242,7 +266,7 @@ public class PublicPlaylistFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         String playlistname = playlistName.getText().toString();
                         String password = PlaylistPassword.getText().toString();
-                        if(checking[0]) {
+                        if (checking[0]) {
                             if (TextUtils.isEmpty(playlistname)) {
                                 Toast.makeText(context, "please give playlist some name", Toast.LENGTH_SHORT).show();
                             } else if (TextUtils.isEmpty(selectedGifLink[0])) {
@@ -256,8 +280,7 @@ public class PublicPlaylistFragment extends Fragment {
                             } else {
                                 addTexts(playlistname, selectedGifLink[0], playlistDesc.getText().toString(), password, checking);
                             }
-                        }
-                        else{
+                        } else {
                             if (TextUtils.isEmpty(playlistname)) {
                                 Toast.makeText(context, "please give playlist some name", Toast.LENGTH_SHORT).show();
                             } else if (TextUtils.isEmpty(selectedGifLink[0])) {
@@ -266,8 +289,8 @@ public class PublicPlaylistFragment extends Fragment {
                                 Toast.makeText(context, "please choose a valid GIF", Toast.LENGTH_SHORT).show();
                             } else if (TextUtils.isEmpty(playlistDesc.getText())) {
                                 Toast.makeText(context, "please enter playlist's description", Toast.LENGTH_SHORT).show();
-                            } else{
-                                addTexts(playlistname, selectedGifLink[0],playlistDesc.getText().toString(),"",checking);
+                            } else {
+                                addTexts(playlistname, selectedGifLink[0], playlistDesc.getText().toString(), "", checking);
                             }
                         }
                     }
@@ -278,7 +301,7 @@ public class PublicPlaylistFragment extends Fragment {
     }
 
     //  add text to server
-    public void addTexts(final String playlistname, final String gifLink, final String description, final String password,final Boolean[] checking) {
+    public void addTexts(final String playlistname, final String gifLink, final String description, final String password, final Boolean[] checking) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -286,14 +309,14 @@ public class PublicPlaylistFragment extends Fragment {
                     JSONObject jsonObject = new JSONObject(response);
 
                     Boolean PlaylistCreated = jsonObject.getBoolean("Playlist Created");
-                    if(PlaylistCreated){
-                        Logging.d("TEST","addTexts PlaylistCreated Called");
+                    if (PlaylistCreated) {
+                        Logging.d("TEST", "addTexts PlaylistCreated Called");
                         Toast.makeText(context, "playlist created", Toast.LENGTH_SHORT).show();
                         callMyPlaylistAPI(SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_TOKEN));
                     }
 
                 } catch (JSONException e) {
-                    Logging.d("TEST","addTexts onErrorResponse JSONException Called");
+                    Logging.d("TEST", "addTexts onErrorResponse JSONException Called");
                     e.printStackTrace();
                     Toast.makeText(context, "you cannot create playlist of same name", Toast.LENGTH_SHORT).show();
                 }
@@ -301,31 +324,31 @@ public class PublicPlaylistFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Logging.d("TEST","addTexts onErrorResponse else Called");
+                Logging.d("TEST", "addTexts onErrorResponse else Called");
                 Toast.makeText(context, "this playlist already exists", Toast.LENGTH_SHORT).show();
             }
-        } ){
+        }) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 String token = SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
-                params.put("token",token);
+                params.put("token", token);
                 params.put("name", playlistname);
                 params.put("description", description);
                 params.put("gif_link", gifLink);
-                if(checking[0]){
-                    params.put("private","true");
+                if (checking[0]) {
+                    params.put("private", "true");
                     params.put("password", password);
-                }else{
-                    params.put("password","");
-                    params.put("private","false");
+                } else {
+                    params.put("password", "");
+                    params.put("private", "false");
                 }
                 return params;
             }
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String>  params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<String, String>();
                 String token = AppConstants.TOKEN + SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
                 params.put("Authorization", token);
                 return params;
@@ -338,11 +361,11 @@ public class PublicPlaylistFragment extends Fragment {
     private TextView.OnEditorActionListener editorActionListener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            switch (actionId){
+            switch (actionId) {
                 case EditorInfo.IME_ACTION_SEARCH:
                     String text = edittext.getText().toString();
-                    Intent intent = new Intent(context,Search.class);
-                    intent.putExtra("search",text);
+                    Intent intent = new Intent(context, Search.class);
+                    intent.putExtra("search", text);
                     startActivity(intent);
             }
             return false;
@@ -353,9 +376,9 @@ public class PublicPlaylistFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        if(getActivity() instanceof youtube) {
-            ((youtube)getActivity()).mSlidingLayout.setSlidingEnable(false);
-            ((youtube)getActivity()).mSlidingLayout.setOnTouchListener(new View.OnTouchListener() {
+        if (getActivity() instanceof youtube) {
+            ((youtube) getActivity()).mSlidingLayout.setSlidingEnable(false);
+            ((youtube) getActivity()).mSlidingLayout.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     return true;
@@ -364,18 +387,18 @@ public class PublicPlaylistFragment extends Fragment {
         }
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
-
         callMyPlaylistAPI(SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_TOKEN));
 
-        if(getActivity() instanceof youtube) {
+        if (getActivity() instanceof youtube) {
             ((youtube) getActivity()).mSlidingLayout.closePane();
         }
     }
 
-    private void callMyPlaylistAPI(String userToken) {
+    public void callMyPlaylistAPI(String userToken) {
         textView.setVisibility(View.GONE);
         progressBar.setVisibility(view.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getData();
@@ -386,19 +409,19 @@ public class PublicPlaylistFragment extends Fragment {
             public void onResponse(Call<ArrayList<MyPlaylistModel>> call, retrofit2.Response<ArrayList<MyPlaylistModel>> response) {
                 progressBar.setVisibility(View.GONE);
                 myPlaylists.clear();
-                if (response != null && response.body()!= null && response.body().size() > 0) {
+                if (response != null && response.body() != null && response.body().size() > 0) {
                     playlistRv.setVisibility(View.VISIBLE);
                     myPlaylists.addAll(response.body());
                     myPlaylistAdapter.notifyDataSetChanged();
-                    Logging.d("TEST","callMyPlaylistAPI Called");
+                    Logging.d("TEST", "callMyPlaylistAPI Called");
                 } else {
                     playlistRv.setVisibility(View.GONE);
-                    Logging.d("TEST","callMyPlaylistAPI Else Called");
+                    Logging.d("TEST", "callMyPlaylistAPI Else Called");
                 }
 
                 if (myPlaylists.size() == 0) {
                     textView.setVisibility(View.VISIBLE);
-                    Logging.d("TEST","callMyPlaylistAPI Size 0");
+                    Logging.d("TEST", "callMyPlaylistAPI Size 0");
                 } else {
                     textView.setVisibility(View.GONE);
                 }
@@ -407,7 +430,7 @@ public class PublicPlaylistFragment extends Fragment {
             @Override
             public void onFailure(Call<ArrayList<MyPlaylistModel>> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Logging.d("TEST","callMyPlaylistAPI onFailure Called");
+                Logging.d("TEST", "callMyPlaylistAPI onFailure Called");
             }
         });
     }
@@ -423,16 +446,16 @@ public class PublicPlaylistFragment extends Fragment {
         callback.enqueue(new Callback<PlaylistLikeModel>() {
             @Override
             public void onResponse(Call<PlaylistLikeModel> call, retrofit2.Response<PlaylistLikeModel> response) {
-                if (response != null && response.body()!= null && response.body().getStatus().equalsIgnoreCase("success")) {
-                    ImageView likeBtn = ((ImageView)view.findViewById(R.id.like_btn));
-                    if(response.body().getLikeCount() > 0) {
-                        Logging.d("TEST","putPublicPLaylistLike onResponse Called");
+                if (response != null && response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
+                    ImageView likeBtn = ((ImageView) view.findViewById(R.id.like_btn));
+                    if (response.body().getLikeCount() > 0) {
+                        Logging.d("TEST", "putPublicPLaylistLike onResponse Called");
                         likeBtn.setColorFilter(ContextCompat.getColor(getActivity(), R.color.gph_white));
 
                         myPlaylists.get(position).setLikes(myPlaylists.get(position).getLikes() + 1);
                         myPlaylistAdapter.notifyDataSetChanged();
                     } else {
-                        Logging.d("TEST","putPublicPLaylistLike onResponse else Called");
+                        Logging.d("TEST", "putPublicPLaylistLike onResponse else Called");
                         myPlaylists.get(position).setLikes(myPlaylists.get(position).getLikes() - 1);
                         likeBtn.setColorFilter(ContextCompat.getColor(getActivity(), R.color.light_gray));
 
@@ -444,7 +467,7 @@ public class PublicPlaylistFragment extends Fragment {
 
             @Override
             public void onFailure(Call<PlaylistLikeModel> call, Throwable t) {
-                Logging.d("TEST","putPublicPLaylistLike onFailure Called");
+                Logging.d("TEST", "putPublicPLaylistLike onFailure Called");
             }
         });
     }

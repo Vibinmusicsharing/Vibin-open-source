@@ -36,24 +36,16 @@
 
         <TextView
             android:id="@+id/item_title_artist"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/_80sdp"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/item_img_card_view"
-            android:layout_alignRight="@+id/item_img_card_view"
-            android:layout_below="@+id/item_img_card_view"
             android:gravity="center"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:layout_marginLeft="@dimen/_3sdp"
-            android:layout_marginRight="@dimen/_3sdp"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:text=""
+            android:layout_below="@+id/item_img_card_view_artist"
             android:textColor="@android:color/black"
             android:textSize="@dimen/_10sdp"
-            android:textStyle="bold"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/imageViewaddtoplaylist"
-            app:layout_constraintTop_toTopOf="parent"
-            android:ellipsize="end"
+            android:textStyle="normal"
+            android:visibility="visible"
             android:maxLines="2" />
 
     </RelativeLayout>

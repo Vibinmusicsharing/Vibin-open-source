@@ -25,8 +25,30 @@ public class ViewCollab {
     @SerializedName("avatar_link")
     @Expose
     private String avatarLink;
+    boolean isSelected = false;
 
-//    public ViewCollab(int id, String email, String username, String fullname) {
+    boolean isEditable = false;
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public boolean isEditable() {
+        return isEditable;
+    }
+
+    public void setEditable(boolean editable) {
+        isEditable = editable;
+    }
+    //    public ViewCollab(int id, String email, String username, String fullname) {
 //        this.id = id;
 //        this.email = email;
 //        this.username = username;

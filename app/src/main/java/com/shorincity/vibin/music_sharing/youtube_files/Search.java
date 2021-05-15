@@ -86,14 +86,15 @@ public class Search extends AppCompatActivity {
         playlistRv = (RecyclerView) findViewById(R.id.rv_playlist);
         playlistRv.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
         playlistRv.setHasFixedSize(true);
-
-        myPlaylistAdapter = new UserPlaylistAdapter(Search.this, myPlaylists);
+        Search search = new Search();
+        myPlaylistAdapter = new UserPlaylistAdapter(Search.this, myPlaylists, search);
         myPlaylistAdapter.setCustomItemClickListener(new UserPlaylistAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
                 Intent intent = new Intent(Search.this, PlaylistDetailActivity.class);
                 int id = myPlaylists.get(position).getId();
                 intent.putExtra("id", id);
+                intent.putExtra("adminname", myPlaylists.get(position).getAdminName());
                 intent.putExtra(AppConstants.INTENT_PLAYLIST, myPlaylists.get(position));
                 startActivity(intent);
             }

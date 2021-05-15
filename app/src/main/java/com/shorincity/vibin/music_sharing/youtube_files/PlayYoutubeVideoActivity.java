@@ -316,7 +316,12 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
                 mYouTubePlayer.pause();
                 Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
                 String duration = mYouTubePlayer.getDurationMillis() > 0 ? String.valueOf(mYouTubePlayer.getDurationMillis()) : "";
-                dialog(duration);
+                if (duration.equalsIgnoreCase("")) {
+                    dialog("00:00:00");
+                } else {
+                    dialog(duration);
+
+                }
             }
         });
 

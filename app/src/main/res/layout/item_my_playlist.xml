@@ -16,6 +16,7 @@
         android:layout_marginRight="@dimen/_8sdp"
         app:cardCornerRadius="@dimen/_10sdp">
 
+
         <com.giphy.sdk.ui.views.GifView
             android:id="@+id/gif_iv"
             android:layout_width="match_parent"
@@ -26,7 +27,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            
+            <ImageView
+                android:id="@+id/img_more"
+                android:layout_width="@dimen/dimen_20dp"
+                android:layout_height="20dp"
+                android:tint="@color/white"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="3dp"
+                android:src="@drawable/more"></ImageView>
             <RelativeLayout
                 android:id="@+id/admin_detail_hldr"
                 android:layout_width="match_parent"
