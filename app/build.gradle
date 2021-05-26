@@ -1,5 +1,14 @@
 apply plugin: 'com.android.application'
 android {
+
+    signingConfigs {
+        config {
+            keyAlias 'vibin123'
+            keyPassword 'vibin123'
+            storeFile file('vibin_keystore.jks')
+            storePassword 'vibin123'
+        }
+    }
     compileSdkVersion 29
     buildToolsVersion '29.0.2'
     defaultConfig {
@@ -12,10 +21,21 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }
+    aaptOptions {
+        cruncherEnabled = false
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            shrinkResources true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     compileOptions {

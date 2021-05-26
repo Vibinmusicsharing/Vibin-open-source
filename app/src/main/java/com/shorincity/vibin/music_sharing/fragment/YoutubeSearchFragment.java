@@ -195,9 +195,9 @@ public class YoutubeSearchFragment extends Fragment {
     public void callgetYoutubeSearchListAPI(String query) {
         progressBar.setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getYoutubeData();
-        // videos?part=contentDetails&chart=mostPopular&regionCode=IN&maxResults=25&key=AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs
+        // videos?part=contentDetails&chart=mostPopular&regionCode=IN&maxResults=25&key=AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok
 
-        Call<ModelData> callback = dataAPI.getYoutubeSearchList("snippet", "mostPopular", query, "25", "track%20Cartist", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+        Call<ModelData> callback = dataAPI.getYoutubeSearchList("snippet", "mostPopular", query, "25", "track%20Cartist", "AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok");
         callback.enqueue(new Callback<ModelData>() {
             @Override
             public void onResponse(Call<ModelData> call, Response<ModelData> response) {

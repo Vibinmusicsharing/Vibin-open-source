@@ -585,7 +585,7 @@ public class YoutubeHomeFragment extends Fragment {
         }
         DataAPI dataAPI = RetrofitAPI.getYoutubeData();
 
-        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "IN", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs", popularNextPageToken);
+        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "IN", "25", "10", "AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok", popularNextPageToken);
         callback.enqueue(new Callback<YoutubeTrendingModel>() {
             @Override
             public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
@@ -730,7 +730,7 @@ public class YoutubeHomeFragment extends Fragment {
 //        progressBar.setVisibility(View.VISIBLE);
 //        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
 //
-//        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "US", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+//        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "US", "25", "10", "AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok");
 //        callback.enqueue(new Callback<YoutubeTrendingModel>() {
 //            @Override
 //            public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
@@ -762,7 +762,7 @@ public class YoutubeHomeFragment extends Fragment {
 //        progressBar.setVisibility(View.VISIBLE);
 //        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
 //
-//        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "GB", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+//        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "GB", "25", "10", "AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok");
 //        callback.enqueue(new Callback<YoutubeTrendingModel>() {
 //            @Override
 //            public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
@@ -794,7 +794,7 @@ public class YoutubeHomeFragment extends Fragment {
 //        progressBar.setVisibility(View.VISIBLE);
 //        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
 //
-//        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "CA", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+//        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "CA", "25", "10", "AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok");
 //        callback.enqueue(new Callback<YoutubeTrendingModel>() {
 //            @Override
 //            public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
@@ -826,7 +826,7 @@ public class YoutubeHomeFragment extends Fragment {
 //        progressBar.setVisibility(View.VISIBLE);
 //        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
 //
-//        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "JP", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+//        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "JP", "25", "10", "AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok");
 //        callback.enqueue(new Callback<YoutubeTrendingModel>() {
 //            @Override
 //            public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
@@ -858,7 +858,7 @@ public class YoutubeHomeFragment extends Fragment {
 //        progressBar.setVisibility(View.VISIBLE);
 //        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
 //
-//        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "AU", "25", "10", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+//        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeVideosList("snippet", "mostPopular", "AU", "25", "10", "AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok");
 //        callback.enqueue(new Callback<YoutubeTrendingModel>() {
 //            @Override
 //            public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
@@ -891,7 +891,7 @@ public class YoutubeHomeFragment extends Fragment {
 //        progressBar.setVisibility(View.VISIBLE);
 //        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
 //
-//        Call<YoutubeGuideCategoryModel> callback = dataAPI.getYoutubeGuideCategoryModel("snippet", "IN", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+//        Call<YoutubeGuideCategoryModel> callback = dataAPI.getYoutubeGuideCategoryModel("snippet", "IN", "AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok");
 //        callback.enqueue(new Callback<YoutubeGuideCategoryModel>() {
 //            @Override
 //            public void onResponse(Call<YoutubeGuideCategoryModel> call, Response<YoutubeGuideCategoryModel> response) {
@@ -937,7 +937,7 @@ public class YoutubeHomeFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getYoutubeData();
 
-        Call<YoutubeChannelModel> callback = dataAPI.getYoutubeChannelList("snippet", categoryId, "25", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+        Call<YoutubeChannelModel> callback = dataAPI.getYoutubeChannelList("snippet", categoryId, "25", "AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok");
         callback.enqueue(new Callback<YoutubeChannelModel>() {
             @Override
             public void onResponse(Call<YoutubeChannelModel> call, Response<YoutubeChannelModel> response) {

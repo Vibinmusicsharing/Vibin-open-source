@@ -14,6 +14,26 @@
 
 
 #Crashlytics
+-dontwarn com.google.**
+-keep class com.google.** { *; }
+
+-keep class org.apache.http.** { *; }
+-dontwarn org.apache.http.**
+
+-keep class android.os.Handler.** { *; }
+
+-keep class com.shorincity.vibin.music_sharing.model** { *; }
+
+-keepnames class * implements android.os.Parcelable {
+public static final ** CREATOR;}
+
+-dontwarn com.google.android.gms.**
+
+-ignorewarnings
+-keep class * {
+    public private *;
+}
+
 -keep class com.crashlytics.** { *; }
 -dontwarn com.crashlytics.**
 -keepattributes Exceptions, Signature, LineNumberTable

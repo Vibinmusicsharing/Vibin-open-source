@@ -194,11 +194,11 @@ public class ChannelsPlaylistItemActivity extends AppCompatActivity {
         Log.d("TEST", "playlistId: " + playlistId);
 
 
-        //        Call<YoutubePlaylistItemModel> callback = dataAPI.getYoutubePlayListItem("snippet","20",playlistId,videoId,"AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs");
+        //        Call<YoutubePlaylistItemModel> callback = dataAPI.getYoutubePlayListItem("snippet","20",playlistId,videoId,"AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok");
 
-        //https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&key=AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs&maxResults=50&playlistId=PLldRXoeaXPNm2wL1iy2fBMc55c1T8ZLhp
+        //https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&key=AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok&maxResults=50&playlistId=PLldRXoeaXPNm2wL1iy2fBMc55c1T8ZLhp
 
-        Call<YoutubePlaylistItemModel> callback = dataAPI.getYoutubePlayListItem("snippet", "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs", "50", playlistId);
+        Call<YoutubePlaylistItemModel> callback = dataAPI.getYoutubePlayListItem("snippet", "AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok", "50", playlistId);
         callback.enqueue(new Callback<YoutubePlaylistItemModel>() {
             @Override
             public void onResponse(Call<YoutubePlaylistItemModel> call, Response<YoutubePlaylistItemModel> response) {
@@ -252,7 +252,7 @@ public class ChannelsPlaylistItemActivity extends AppCompatActivity {
         ////https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId={ChannelID}&key={API key} & maxResults=50
 
 
-        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeChannelsPlayList("snippet", channelId, "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs", "50");
+        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeChannelsPlayList("snippet", channelId, "AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok", "50");
         callback.enqueue(new Callback<YoutubeTrendingModel>() {
             @Override
             public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {

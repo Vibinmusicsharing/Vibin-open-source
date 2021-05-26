@@ -54,7 +54,7 @@
     <string name="navigation_drawer_open">Drawer Open</string>
     <string name="navigation_drawer_close">Drawer Closed</string>
 
-    <!-- Login SignUp -->
+    <!-- Login SignUp -->y
     <string name="signin_with_google">Google Sign In</string>
     <string name="sign_in_with_email">Log In</string>
     <string name="create_new_acc">Sign Up</string>

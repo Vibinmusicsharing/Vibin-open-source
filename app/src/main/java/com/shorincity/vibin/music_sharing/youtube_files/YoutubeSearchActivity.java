@@ -36,7 +36,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class YoutubeSearchActivity extends AppCompatActivity {
-    public static String API_KEY = "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs";
+    public static String API_KEY = "AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok";
     EditText edtsearch;
     Button btnsearch;
     ListView listView;

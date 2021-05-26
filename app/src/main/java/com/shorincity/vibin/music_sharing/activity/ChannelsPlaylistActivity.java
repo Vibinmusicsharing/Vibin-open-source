@@ -175,7 +175,7 @@ public class ChannelsPlaylistActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getYoutubeData();
 
-        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeChannelsPlayList("snippet", channelId, "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs", "50");
+        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeChannelsPlayList("snippet", channelId, "AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok", "50");
         callback.enqueue(new Callback<YoutubeTrendingModel>() {
             @Override
             public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {

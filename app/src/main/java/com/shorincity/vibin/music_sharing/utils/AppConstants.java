@@ -23,7 +23,7 @@ public class AppConstants {
 
 
     // Youtube Keys
-    public static String YOUTUBE_KEY = "AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs";
+    public static String YOUTUBE_KEY = "AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok";
 
     // some static Keys
     public static final String KEY_PASSWORD = "password";
