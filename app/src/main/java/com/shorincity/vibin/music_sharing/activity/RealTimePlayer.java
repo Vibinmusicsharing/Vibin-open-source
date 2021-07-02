@@ -463,6 +463,7 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
                         }
                     } else { // It will call while session exist
 
+
                         RealTimeSession realTimeSession = sessionHashMap.get(sessionKey);
 
                         playedSongType = realTimeModel.getSessions().get(sessionKey).getSongType();
