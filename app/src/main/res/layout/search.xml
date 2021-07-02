@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="245dp"
+        android:layout_marginEnd="155dp"
+        android:layout_marginBottom="438dp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/linearlayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_110sdp"
+        android:layout_alignStart="@+id/linearlayout"
+        android:layout_alignEnd="@+id/linearlayout"
+        android:layout_marginEnd="0dp"
+        android:background="@drawable/ic_dashboard_wave"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="2dp"
+        tools:ignore="NotSibling">
+
+        <RelativeLayout
+            android:id="@+id/relLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="@dimen/dimen_20dp"
+            android:animationCache="true"
+            android:background="@drawable/search_view_background"
+            android:gravity="center"
+            android:padding="@dimen/dimen_10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/ic_magnify"
+                android:layout_width="30dp"
+                android:layout_height="23dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="@dimen/dimen_10dp"
+                android:layout_marginEnd="@dimen/dimen_15dp"
+                android:tint="@color/white"
+                app:srcCompat="@drawable/ic_search_white_24dp" />
+
+            <EditText
+                android:id="@+id/edittextSearch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/dimen_10dp"
+                android:layout_marginEnd="@dimen/dimen_10dp"
+                android:layout_toStartOf="@+id/ic_magnify"
+                android:background="@null"
+                android:fontFamily="@font/tinos_regular"
+                android:gravity="center_vertical"
+                android:hint="Search..."
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/appHintClr"
+                android:textSize="14sp" />
+
+        </RelativeLayout>
+
+
+        <Button
+            android:id="@+id/buttonSearch"
+            android:layout_width="90dp"
+            android:layout_height="44dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/button_search_youtube"
+            android:text="Search"
+            android:textColor="@android:color/white"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/searchidy"
+        android:layout_width="134dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="129dp"
+        android:layout_marginBottom="498dp"
+        android:text="search something"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:visibility="gone" />
+
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/linearlayout"
+        android:layout_marginTop="4dp"
+        android:padding="5dp"
+        android:visibility="gone">
+
+    </ListView>
+
+    <TextView
+        android:id="@+id/noResultsy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="140dp"
+        android:layout_marginBottom="498dp"
+        android:text="No Results Found"
+        android:textColor="#ffffff"
+        android:visibility="gone" />
+</RelativeLayout>

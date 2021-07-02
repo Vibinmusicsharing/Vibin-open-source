@@ -1,0 +1,4 @@
+# Project exclude paths
+/.gradle/
+/spotify-app-remote-release-0.7.0/build/
+/.idea

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@drawable/youtube_vibes"
+        android:width="@dimen/_75sdp"
+        android:height="@dimen/_15sdp"
+        android:left="@dimen/_60sdp"
+        android:right="@dimen/_60sdp">
+    </item>
+
+</layer-list>

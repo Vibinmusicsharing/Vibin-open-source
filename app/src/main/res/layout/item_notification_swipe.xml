@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/item_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:elevation="@dimen/_20sdp"
+    android:layout_marginTop="@dimen/_10sdp"
+    android:layout_marginStart="@dimen/_10sdp"
+    android:layout_marginEnd="@dimen/_10sdp">
+
+    <com.chauthai.swipereveallayout.SwipeRevealLayout
+        android:id="@+id/swipelayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:dragEdge="right"
+        app:mode="same_level">
+
+        <!--Swipe Layout-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/accept_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_50sdp"
+                android:background="@color/btnBackground"
+                android:gravity="center"
+                android:text="@string/accept"
+                android:drawableTop="@drawable/ic_baseline_check_24"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/ignore_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@color/color3"
+                android:gravity="center"
+                android:text="@string/reject"
+                android:drawableTop="@drawable/ic_close_white"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+        <!--Main Layout-->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/main_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="@dimen/_10sdp"
+            app:elevation="@dimen/_5sdp"
+            android:gravity="center_vertical"
+            app:cardCornerRadius="2dip">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <com.shorincity.vibin.music_sharing.UI.custom.RoundedImageView
+                    android:id="@+id/avatar_image"
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_centerVertical="true"
+                    android:scaleType="centerCrop"
+                    app:riv_corner_radius="@dimen/_35sdp"
+                    app:riv_mutate_background="true" />
+
+                <TextView
+                    android:id="@+id/item_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_toEndOf="@+id/avatar_image"
+                    android:gravity="center_vertical"
+                    android:text="@string/app_name"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/appTextSize" />
+
+                <TextView
+                    android:id="@+id/notify_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_below="@+id/item_title"
+                    android:layout_gravity="left"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_toEndOf="@+id/avatar_image"
+                    android:gravity="center_vertical"
+                    android:text="Accepted"
+                    android:textAllCaps="false"
+                    android:textColor="@color/spot_green"
+                    android:textSize="@dimen/_10sdp"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/arrow_icon"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="8dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    app:srcCompat="@drawable/ic_baseline_arrow_forward_ios_24"/>
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+    </com.chauthai.swipereveallayout.SwipeRevealLayout>
+</androidx.cardview.widget.CardView>

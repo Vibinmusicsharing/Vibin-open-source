@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "752342949073",
+    "firebase_url": "https://vibin-1578506480211.firebaseio.com",
+    "project_id": "vibin-1578506480211",
+    "storage_bucket": "vibin-1578506480211.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752342949073:android:8beb44aca11672ffeb79f0",
+        "android_client_info": {
+          "package_name": "com.shorincity.vibin.music_sharing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "752342949073-kqkghhl4dpkrbjun631hkb9t0e9btcd0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shorincity.vibin.music_sharing",
+            "certificate_hash": "c6f88d4c1078a81d1a8a321d24872102fd6f2aac"
+          }
+        },
+        {
+          "client_id": "752342949073-p0o2m44n5d2qt038b08k2gj3tct83ush.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shorincity.vibin.music_sharing",
+            "certificate_hash": "70a2190b520c7bbcc4d1d37699893f3435456e6f"
+          }
+        },
+        {
+          "client_id": "752342949073-h5itoaa6vp8bo75rqe71i9rqtl4ja52g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAL722FSAixQk5yL1iZRJ3icUgMZqsn9wU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "752342949073-2m9so0uolj15oor5t0u482gft7be7445.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

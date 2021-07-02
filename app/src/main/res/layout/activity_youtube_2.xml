@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.shorincity.vibin.music_sharing.utils.CustomSlidePanLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sliding_pane_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:background="#ff0000"
+    android:gravity="bottom"
+    android:layoutDirection="rtl"
+    app:umanoOverlay="false"
+    app:umanoPanelHeight="268dp"
+    app:umanoParallaxOffset="100dp"
+    app:umanoShadowHeight="4dp"
+    tools:context=".youtube_files.youtube_user">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <fragment
+            android:id="@+id/fragment_menu"
+            android:name="com.shorincity.vibin.music_sharing.fragment.MenuFragment"
+            android:layout_width="@dimen/_180sdp"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        tools:context=".music_sharing.UI.youtube">
+
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
+
+            <androidx.constraintlayout.motion.widget.MotionLayout
+                android:id="@+id/motionLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:layoutDirection="ltr"
+                app:layoutDescription="@xml/youtube_scene">
+
+                <com.google.android.material.bottomnavigation.BottomNavigationView
+                    android:id="@+id/nav_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    app:itemIconTint="@drawable/bottom_nav_colors"
+                    app:itemTextColor="@drawable/bottom_nav_colors"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:menu="@menu/bottom_nav_menu" />
+
+                <FrameLayout
+                    android:id="@+id/youtube_frame"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@android:color/white"
+                    app:layout_constraintBottom_toTopOf="@+id/bottomBarrier"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/bottomBarrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="top"
+                    app:constraint_referenced_ids="nav_view" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/miniPlayer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="54dp"
+                    android:background="@color/appHintClr"
+                    app:layout_constraintBottom_toTopOf="@+id/nav_view"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imgPlayerClose"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:background="@drawable/bg_mini_player_close"
+                    android:padding="@dimen/dimen_5dp"
+                    app:layout_constraintBottom_toTopOf="@id/imgMinimize"
+                    app:layout_constraintEnd_toStartOf="@id/myYoutube"
+                    app:layout_constraintTop_toTopOf="@id/myYoutube"
+                    app:srcCompat="@drawable/ic_close_24" />
+
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imgMinimize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:alpha="1"
+                    android:background="@drawable/bg_mini_player"
+                    android:padding="@dimen/dimen_5dp"
+                    app:layout_constraintBottom_toBottomOf="@id/myYoutube"
+                    app:layout_constraintEnd_toStartOf="@id/myYoutube"
+                    app:layout_constraintTop_toBottomOf="@id/imgPlayerClose"
+                    app:srcCompat="@drawable/ic_arrow_primary" />
+
+                <LinearLayout
+                    android:id="@+id/linear_header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/imgMinimize"
+                    app:layout_constraintTop_toBottomOf="@id/imgMinimize">
+
+                    <TextView
+                        android:id="@+id/now_play_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="3"
+                        android:text="Now playing"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_15sdp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+
+                <com.google.android.youtube.player.YouTubePlayerView
+                    android:id="@+id/myYoutube"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_180sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_25sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:background="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linear_header" />
+
+
+                <LinearLayout
+                    android:id="@+id/linear_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/myYoutube">
+
+                    <TextView
+                        android:id="@+id/youtube_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_3sdp"
+                        android:ellipsize="marquee"
+                        android:layoutDirection="rtl"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:maxLines="2"
+                        android:singleLine="true"
+                        android:textAlignment="center"
+                        android:textColor="#000000"
+                        android:textSize="@dimen/_18sdp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/youtube_desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_3sdp"
+                        android:ellipsize="end"
+                        android:maxLines="3"
+                        android:textAlignment="center"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_12sdp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_seekbar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="5dp"
+                    android:weightSum="12"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linear_desc">
+
+                    <TextView
+                        android:id="@+id/playerCurrentTimeText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:gravity="center"
+                        android:text="00:00"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                    <SeekBar
+                        android:id="@+id/seekBar"
+                        android:layout_width="0dp"
+                        android:layout_height="19dp"
+                        android:layout_weight="9" />
+
+                    <TextView
+                        android:id="@+id/playerTotalTimeText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:gravity="center"
+                        android:text="00:00"
+                        android:textColor="@color/colorPrimaryDark" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_controll"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_15dp"
+                    android:gravity="center"
+                    android:padding="@dimen/dimen_5dp"
+                    android:weightSum="12"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/linear_seekbar">
+
+                    <Button
+                        android:id="@+id/addToPlayList"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_weight="1.2"
+                        android:background="@drawable/playlist_for_music_player"
+                        android:backgroundTint="@color/colorPrimaryDark"
+                        android:gravity="center"
+                        android:visibility="visible" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/fastrewind"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/_35sdp"
+                        android:layout_gravity="center"
+                        android:layout_weight="2.5"
+                        app:srcCompat="@drawable/ic_baseline_skip_previous_24" />
+
+                    <Button
+                        android:id="@+id/button2"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/_45sdp"
+                        android:layout_weight="2.5"
+                        android:background="@drawable/ic_baseline_play_arrow_24"
+                        android:gravity="center" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/fastforward"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_gravity="center"
+                        android:layout_weight="2.5"
+                        app:srcCompat="@drawable/ic_baseline_skip_next_24" />
+
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/heart_iv"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1.2"
+                        app:srcCompat="@drawable/ic_favorite_border_black_24dp" />
+
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/linear_extra_controll"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/linear_controll">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/shuffle"
+                        android:layout_width="@dimen/_25sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_alignParentStart="true"
+                        android:src="@drawable/suffle"
+                        android:visibility="visible"
+                        app:tint="@color/toolbarColor" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/repeatonce"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_alignParentEnd="true"
+                        android:visibility="visible"
+                        app:srcCompat="@drawable/repeatonce"
+                        app:tint="@color/toolbarColor" />
+
+                </RelativeLayout>
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/playerGrp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/arrow_up"
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="12dp"
+                    android:text="test text"
+                    android:tint="@color/black"
+                    android:visibility="visible"
+                    app:drawableStartCompat="@drawable/ic_baseline_keyboard_arrow_up_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+            </androidx.constraintlayout.motion.widget.MotionLayout>
+
+            <LinearLayout
+                android:id="@+id/bottom_sheet_detail"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginLeft="@dimen/dimen_5dp"
+                android:layout_marginTop="@dimen/dimen_5dp"
+                android:layout_marginRight="@dimen/dimen_5dp"
+                android:background="@drawable/background_bottomsheet"
+                android:elevation="@dimen/_10sdp"
+                android:orientation="vertical"
+                app:behavior_hideable="true"
+                app:behavior_peekHeight="0dp"
+                app:layout_behavior="@string/bottom_sheet_behavior">
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/dimen_5dp" />
+
+            </LinearLayout>
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</com.shorincity.vibin.music_sharing.utils.CustomSlidePanLayout>

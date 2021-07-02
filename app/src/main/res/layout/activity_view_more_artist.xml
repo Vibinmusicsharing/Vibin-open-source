@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_80sdp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/ic_dashboard_wave">
+
+            <TextView
+                android:id="@+id/txt_artist_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/nav_white"
+                android:textSize="@dimen/_18sdp"
+                android:textStyle="bold"
+                android:layout_marginBottom="@dimen/dimen_30dp"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:id="@+id/progressbar"
+                android:indeterminateOnly="true"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:indeterminateDuration="10"
+                android:layout_below="@id/linearlayout"
+                android:indeterminateBehavior="repeat"
+                android:progressBackgroundTint="#208afa"
+                android:progressBackgroundTintMode="multiply"
+                android:minHeight="24dip"
+                android:maxHeight="24dip"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/artist_rv_perticular"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/dimen_10dp"
+                android:layout_marginEnd="@dimen/dimen_10dp"
+                android:layout_marginBottom="@dimen/dimen_10dp"
+                android:clipToPadding="false" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
