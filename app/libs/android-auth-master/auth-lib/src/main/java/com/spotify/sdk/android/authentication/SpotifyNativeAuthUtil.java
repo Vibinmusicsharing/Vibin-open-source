@@ -45,9 +45,9 @@ public class SpotifyNativeAuthUtil {
 
     /*
      * Constants below have their counterparts in Spotify app where
-     * they're used to parse messages received from SDK. 
+     * they're used to parse messages received from SDK.
      * If anything changes in the structure of those messages this version
-     * should be bumped and new protocol version should be implemented on the other side. 
+     * should be bumped and new protocol version should be implemented on the other side.
      */
     private static final int PROTOCOL_VERSION = 1;
 
@@ -172,7 +172,7 @@ public class SpotifyNativeAuthUtil {
     private static String sha1Hash(String toHash) {
         String hash = null;
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-1");
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] bytes = toHash.getBytes("UTF-8");
             digest.update(bytes, 0, bytes.length);
             bytes = digest.digest();

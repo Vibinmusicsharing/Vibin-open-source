@@ -10,8 +10,12 @@ import com.google.gson.annotations.SerializedName;
 
 public class TermsAndConditionsDetailsModel {
 
-    @SerializedName("type") @Expose private String type;
-    @SerializedName("data") @Expose private String data;
+    @SerializedName("type")
+    @Expose
+    private String type;
+    @SerializedName("data")
+    @Expose
+    private String data;
 
     public String getType() {
         return type;

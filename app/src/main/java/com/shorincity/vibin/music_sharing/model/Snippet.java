@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 // youtbe snippet class
 public class Snippet {
 
+    @SerializedName("title")
+    @Expose
     private String title;
     @SerializedName("thumbnails")
     @Expose

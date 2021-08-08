@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.shorincity.vibin.music_sharing.activity.AllRecntSongsActivity;
 import com.shorincity.vibin.music_sharing.model.UserSearchModel;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
@@ -79,9 +80,14 @@ public class UserSearchFragment extends MyBaseFragment {
             @Override
             public void onItemClick(View v, int position) {
                 if (position < usersList.size()) {
-                    OtherUserProfileFragment fragment = OtherUserProfileFragment.getInstance(usersList.get(position).getId(),
-                            0, usersList.get(position).getUsername(), usersList.get(position).getFullname());
-                    ((youtube) getActivity()).onLoadFragment(fragment);
+                    int userId = SharedPrefManager.getInstance(view.getContext()).getSharedPrefInt(AppConstants.INTENT_USER_ID);
+                    if (userId == usersList.get(position).getId()) {
+                        ((youtube) getActivity()).onLoadProfile();
+                    } else {
+                        OtherUserProfileFragment fragment = OtherUserProfileFragment.getInstance(usersList.get(position).getId(),
+                                0, usersList.get(position).getUsername(), usersList.get(position).getFullname());
+                        ((youtube) getActivity()).onLoadFragment(fragment);
+                    }
                 }
                 //startActivity(new Intent(getActivity(), OtherUserProfileActivity.class).putExtra(AppConstants.INTENT_SEARCHED_USER_ID, usersList.get(position).getId()).putExtra(AppConstants.INTENT_SEARCHED_USER_NAME, usersList.get(position).getUsername()).putExtra(AppConstants.INTENT_SEARCHED_FULL_NAME, usersList.get(position).getFullname()));
             }
@@ -166,7 +172,7 @@ public class UserSearchFragment extends MyBaseFragment {
                     if (!TextUtils.isEmpty(searchText)) {
                         callUserSearchAPI(searchText);
                     } else {
-                        Toast.makeText(getContext(), "Field can't be empty", Toast.LENGTH_LONG).show();
+                        Toast.makeText(view.getContext(), "Field can't be empty", Toast.LENGTH_LONG).show();
                     }
 
                     break;

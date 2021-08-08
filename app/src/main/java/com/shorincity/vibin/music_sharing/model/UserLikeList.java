@@ -1,11 +1,20 @@
 package com.shorincity.vibin.music_sharing.model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class UserLikeList implements Serializable {
+    @SerializedName("status")
+    @Expose
     String status;
+    @SerializedName("profile_likes_i_got")
+    @Expose
     ArrayList<GotLikes> profile_likes_i_got = new ArrayList<>();
+    @SerializedName("profiles_i_liked")
+    @Expose
     ArrayList<GotLikes> profile__i_liked = new ArrayList<>();
 
     public String getStatus() {
@@ -33,10 +42,20 @@ public class UserLikeList implements Serializable {
     }
 
     public class GotLikes implements Serializable {
+        @SerializedName("id")
+        @Expose
         String id;
+        @SerializedName("email")
+        @Expose
         String email;
+        @SerializedName("username")
+        @Expose
         String username;
+        @SerializedName("fullname")
+        @Expose
         String fullname;
+        @SerializedName("avatar_link")
+        @Expose
         String avatar_link;
 
         public String getId() {

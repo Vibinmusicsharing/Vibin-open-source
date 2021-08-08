@@ -22,8 +22,10 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 
@@ -75,7 +77,6 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'com.github.mohammadatif:Animatoo:master'
-    implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
 
     // This library handles authentication and authorization
@@ -127,7 +128,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:20.2.0'
     implementation 'androidx.work:work-runtime:2.0.1'
 
-    implementation 'com.google.android.material:material:1.4.0-rc01'
+    implementation 'com.google.android.material:material:1.4.0'
     //implementation 'com.google.android.material:material:1.0.0'
     // Swipe Layout
     implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'

@@ -87,7 +87,7 @@ public class YoutubeUsersLikeListingActivity extends AppCompatActivity {
     private void setupViewPager(ArrayList<UserLikeList.GotLikes> userLikeIGotLists, ArrayList<UserLikeList.GotLikes> userLikeILikedLists) {
         viewPager = (ViewPager) findViewById(R.id.viewPager_likes);
         tabLayout = (TabLayout) findViewById(R.id.tabs_likes);
-        String[] titles = {"User's Likes", "Liked"};
+        String[] titles = {"Likes Received", "Liked Profiles3d"};
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), titles, "1", userLikeIGotLists, userLikeILikedLists);
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);

@@ -3,7 +3,7 @@ package com.shorincity.vibin.music_sharing.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class GetNotifications {
+public class GetNotifications implements Comparable<GetNotifications> {
 
     @SerializedName("id")
     @Expose
@@ -115,5 +115,10 @@ public class GetNotifications {
 
     public void setAvatarLink(String avatarLink) {
         this.avatarLink = avatarLink;
+    }
+
+    @Override
+    public int compareTo(GetNotifications o) {
+        return getId().compareTo(o.getId());
     }
 }

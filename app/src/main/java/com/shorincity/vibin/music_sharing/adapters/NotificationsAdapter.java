@@ -215,7 +215,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 if (currentItem.getReadStatus())
                     mainCardView.setAlpha(1f);
                 else {
-                    mainCardView.setAlpha(0.5f);
+                    mainCardView.setAlpha(1f);
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -245,12 +245,12 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                                 list.get(position).getType().equals(AppConstants.COLLAB_INVITE)) {
 
                             callAddCollaborateAPI(list.get(position), AppConstants.ACCEPTED,
-                                    AppConstants.UPDATE);
+                                    AppConstants.UPDATE, position);
 
                         } else if (list.get(position).getType().equals(AppConstants.REAL_TIME_INVITE) ||
                                 list.get(position).getType().equals(AppConstants.COLLAB_ACCEPTED)) {
 
-                            callUpdateCollabAPI(list.get(position), AppConstants.ACCEPTED, AppConstants.GET);
+                            callUpdateCollabAPI(list.get(position), AppConstants.ACCEPTED, AppConstants.GET, position);
                         }
 
 
@@ -278,19 +278,19 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                         swipelayout.setLockDrag(true);
                         getCustomItemClickListener().onChildItemClick(v, position, "IGNORED");
 
-                        callUpdateCollabAPI(list.get(position), AppConstants.REGECTED, AppConstants.UPDATE);
+                        callUpdateCollabAPI(list.get(position), AppConstants.REGECTED, AppConstants.UPDATE, getAdapterPosition());
 
-                        new Handler().postDelayed(new Runnable() {
+                    /*    new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 // acceptIgnoreHldr.setVisibility(View.GONE);
                                 swipelayout.close(true);
                                 swipelayout.setLockDrag(true);
-                                list.remove(position);
-                                notifyDataSetChanged();
+//                                list.remove(position);
+//                                notifyDataSetChanged();
                             }
                         }, 1000);
-                        notifyItemChanged(position);
+                        notifyItemChanged(position);*/
 
                     }
                 });
@@ -357,7 +357,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     }
 
-    private void callAddCollaborateAPI(GetNotifications getNotifications, String status, String type) {
+    private void callAddCollaborateAPI(GetNotifications getNotifications, String status, String type, int position) {
 
         DataAPI dataAPI = RetrofitAPI.getData();
 
@@ -377,7 +377,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 if (response != null
                         && response.body() != null) {
                     if (response.body().getStatus().equalsIgnoreCase("success")) {
-                        callUpdateCollabAPI(getNotifications, status, type);
+                        callUpdateCollabAPI(getNotifications, status, type, position);
                     } else if (response.body().getStatus().equalsIgnoreCase("failed") && !TextUtils.isEmpty(response.body().getMessage())) {
                         customItemClickListener.showProgress(false);
                         Toast.makeText(mContext, response.body().getMessage(), Toast.LENGTH_LONG).show();
@@ -397,7 +397,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     }
 
-    private void callUpdateCollabAPI(GetNotifications getNotifications, String status, String type) {
+
+    private void callUpdateCollabAPI(GetNotifications getNotifications, String status, String type, int position) {
 
         DataAPI dataAPI = RetrofitAPI.getData();
 
@@ -413,14 +414,22 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 if (response != null
                         && response.body() != null) {
                     if (response.body().getStatus().equalsIgnoreCase("success")) {
-                        if (status.equals(AppConstants.ACCEPTED) && getNotifications.getType().equals(AppConstants.REAL_TIME_INVITE)) {
 
+                        if (status.equals(AppConstants.ACCEPTED) && getNotifications.getType().equals(AppConstants.REAL_TIME_INVITE)) {
+                            getNotifications.setIsAccepted(AppConstants.ACCEPTED);
+                            notifyItemChanged(position);
                             UpdateNotificationModel updateNotificationModel = response.body();
                             mContext.startActivity(new Intent(mContext, RealTimePlayer.class)
                                     .putExtra(AppConstants.INTENT_COMING_FROM, AppConstants.NOTIFICATION)
                                     .putExtra(AppConstants.INTENT_SESSION_KEY, updateNotificationModel.getSessionKey())
                                     .putExtra(AppConstants.INTENT_USER_KEY, updateNotificationModel.getUserSessionKeys())
                                     .putExtra(AppConstants.INTENT_PLAYLIST_ID, updateNotificationModel.getPlaylistId()));
+                        } else if (status.equalsIgnoreCase(AppConstants.ACCEPTED)) {
+                            getNotifications.setIsAccepted(AppConstants.ACCEPTED);
+                            notifyItemChanged(position);
+                        } else if (status.equalsIgnoreCase(AppConstants.REGECTED)) {
+                            list.remove(position);
+                            notifyItemRemoved(position);
                         }
                     } else
                         Toast.makeText(mContext, "Something went wrong!", Toast.LENGTH_LONG).show();
@@ -435,6 +444,5 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         });
 
     }
-
 }
 

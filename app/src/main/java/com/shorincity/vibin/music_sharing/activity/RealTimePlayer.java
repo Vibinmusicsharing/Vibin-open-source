@@ -3,8 +3,6 @@ package com.shorincity.vibin.music_sharing.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,7 +18,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,20 +32,20 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.gson.Gson;
+import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
 import com.shorincity.vibin.music_sharing.adapters.ViewCollabAdapter;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.PublicPlaylistItemAdapter;
-import com.shorincity.vibin.music_sharing.model.RealTimeModel;
-import com.shorincity.vibin.music_sharing.model.RealTimeSession;
-import com.shorincity.vibin.music_sharing.model.RealTimeUser;
+import com.shorincity.vibin.music_sharing.model.firebase.RealTimeModel;
+import com.shorincity.vibin.music_sharing.model.firebase.RealTimeSession;
+import com.shorincity.vibin.music_sharing.model.firebase.RealTimeUser;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.ripples.RippleButton;
-import com.shorincity.vibin.music_sharing.ripples.listener.OnRippleCompleteListener;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
@@ -60,15 +60,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.player.Config;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
-import com.spotify.sdk.android.player.Error;
-import com.spotify.sdk.android.player.Player;
-import com.spotify.sdk.android.player.PlayerEvent;
-import com.spotify.sdk.android.player.Spotify;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -83,7 +74,7 @@ import retrofit2.Callback;
 
 // RealTime Player
 public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener, View.OnClickListener {
-    private static String TAG = RealTimePlayer.class.getName();
+    private static final String TAG = RealTimePlayer.class.getName();
     String view_collab = AppConstants.BASE_URL + "playlist/view_collab/";
 
     RealTimeModel realTimeModel;
@@ -104,6 +95,9 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
     private RealTimePlayer.MyPlaybackEventListener playbackEventListener;
 
     private YouTubePlayer player;
+    private Handler handler;
+    private Runnable my;
+
    /* Handler handler;
     Runnable my;*/
 
@@ -150,6 +144,9 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
     Runnable spotifyRunnable;
     String playedSongType = "";
 
+    private BottomSheetBehavior behavior;
+    private AppCompatTextView arrow;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
@@ -164,7 +161,7 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
         boolean isPlaying = false;
 
         if (playedSongType.equalsIgnoreCase(AppConstants.YOUTUBE))
-            isPlaying = player != null ? player.isPlaying() : false;
+            isPlaying = player != null && player.isPlaying();
 
         return isPlaying;
     }
@@ -197,11 +194,8 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
 
         String comingFrom = getIntent() == null ? "" : getIntent().getStringExtra(AppConstants.INTENT_COMING_FROM);
 
-        if (!TextUtils.isEmpty(comingFrom)
-                && comingFrom.equals("NOTIFICATION")) {
-            isControlledByUser = false;
-        } else
-            isControlledByUser = true;
+        isControlledByUser = TextUtils.isEmpty(comingFrom)
+                || !comingFrom.equals("NOTIFICATION");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -222,7 +216,8 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
 
         inItListeners();
         statusBarColorChange();
-        Handler handler1 = new Handler();
+        processSeekBar();
+       /* Handler handler1 = new Handler();
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -245,13 +240,13 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
             }
         };
 
-        handler1.postDelayed(runnable, 1000);
+        handler1.postDelayed(runnable, 1000);*/
 
         playerStateChangeListener = new RealTimePlayer.MyPlayerStateChangeListener();
         playbackEventListener = new RealTimePlayer.MyPlaybackEventListener();
 
 
-        seekbar = (SeekBar) findViewById(R.id.seekBar);
+        seekbar = findViewById(R.id.seekBar);
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -264,14 +259,14 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
                     if (playedSongType.equalsIgnoreCase(AppConstants.YOUTUBE) && player != null) {
 
                         lengthms = player.getDurationMillis();
-                        to = (int) (lengthms * progress / 100);
+                        to = lengthms * progress / 100;
 
                     }
                     //realTimeModel.getSessions().get(AppConstants.SESSION_CHILD+"1").setStart_in(to);
-                    realTimeModel.getSessions().get(sessionKey).setStart_in(to);
+                    RealTimeSession session = realTimeModel.getSessions().get(sessionKey);
+                    if (session != null)
+                        session.setStart_in(to);
                     myRef.setValue(realTimeModel);
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -294,15 +289,13 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
                         int progress = seekBar.getProgress();
                         lengthms = player.getDurationMillis();
                         float current = player.getCurrentTimeMillis();
-                        to = (int) (lengthms * progress / 100);
+                        to = lengthms * progress / 100;
 
                     }
 
                     realTimeModel.getSessions().get(sessionKey).setElapsed_time(to);
                     realTimeModel.getSessions().get(sessionKey).setRead_elapsed(true);
                     myRef.setValue(realTimeModel);
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -311,7 +304,7 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
         //   seekbar.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
         //   seekbar.getThumb().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
 
-        Play_Pause = (Button) findViewById(R.id.button2);
+        Play_Pause = findViewById(R.id.button2);
         Play_Pause.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
@@ -325,39 +318,38 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
                             int progress = seekbar.getProgress();
                             lengthms = player.getDurationMillis();
                             float current = player.getCurrentTimeMillis();
-                            to = (int) (lengthms * progress / 100);
+                            to = lengthms * progress / 100;
 
                         }
 
-                        myRef.setValue(realTimeModel);
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
+//                        myRef.setValue(realTimeModel);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-                    realTimeModel.getSessions().get(sessionKey).setElapsed_time(to);
-                    realTimeModel.getSessions().get(sessionKey).setRead_elapsed(true);
-                    realTimeModel.getSessions().get(sessionKey).setStatus(AppConstants.PAUSE);
-                    myRef.setValue(realTimeModel);
-                    Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
+                    RealTimeSession session = realTimeModel.getSessions().get(sessionKey);
+                    if (session != null) {
+                        session.setElapsed_time(to);
+                        session.setRead_elapsed(true);
+                        session.setStatus(AppConstants.PAUSE);
+                        myRef.setValue(realTimeModel);
+                        Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
+                    }
 
                 } else {
                     //realTimeModel.getSessions().get(AppConstants.SESSION_CHILD+"1").setStatus(AppConstants.START);
-                    realTimeModel.getSessions().get(sessionKey).setStatus(AppConstants.START);
-                    myRef.setValue(realTimeModel);
-                    Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+                    RealTimeSession session = realTimeModel.getSessions().get(sessionKey);
+                    if (session != null) {
+                        session.setStatus(AppConstants.START);
+                        myRef.setValue(realTimeModel);
+                        Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+                    }
                 }
 
             }
         });
 
-        live_streaming_btn.setOnRippleCompleteListener(new OnRippleCompleteListener() {
-            @Override
-            public void onComplete(View v) {
-                onClick(v);
-            }
-        });
+        live_streaming_btn.setOnRippleCompleteListener(v -> onClick(v));
 
     }
 
@@ -442,6 +434,9 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
                     realTimeModel = new RealTimeModel();
                     realTimeModel.setSessions(sessionHashMap);
                     realTimeModel.setUsers(userHashMap);
+                    Log.i(TAG, "Session Ended:-" + sessionKey);
+//                    Log.i(TAG, "Session Ended:-" + realTimeModel.getUsers().get(userKey).getSession_id());
+
 
                     // admin end the session and call other users side
                     // If Session not exist, It means admin has done with session or it may deleted by him/her
@@ -534,10 +529,9 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
 
 
                         }
+                        processSeekBar();
                     }
 
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -559,9 +553,80 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
     @Override
     protected void onResume() {
         super.onResume();
+        killMe = false;
+        if (player != null && playerTotalDurationTv != null) {
+            try {
+                lengthms = player.getDurationMillis();
+                float current = player.getCurrentTimeMillis();
+                float wowInt = ((current / lengthms) * 100);
+                seekbar.setProgress((int) wowInt);
+                processSeekBar();
+                Logging.d("wowInt-->" + wowInt);
+                // displaying current duration when song starts to play
+                if ((player != null && player.isPlaying()) && (int) wowInt > 0) {
+                    playerCurrentDurationTv.setText(Utility.convertDuration(Long.valueOf(player.getCurrentTimeMillis())));
+                }
+                if (player != null) {
+                    if (player.isPlaying()) {
+                        RealTimeSession session = realTimeModel.getSessions().get(sessionKey);
+                        if (session != null) {
+                            session.setElapsed_time((int) (lengthms * seekbar.getProgress() / 100));
+                            session.setRead_elapsed(true);
+                            session.setStatus(AppConstants.PAUSE);
+                            myRef.setValue(realTimeModel);
+                        }
+                        player.pause();
+                        Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
+                    } else {
+                        RealTimeSession session = realTimeModel.getSessions().get(sessionKey);
+                        if (session != null) {
+                            session.setStatus(AppConstants.START);
+                            myRef.setValue(realTimeModel);
+                            Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+                        }
+                        player.play();
+                        Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void processSeekBar() {
+        if (handler != null) {
+            handler.removeCallbacks(my);
+            handler = null;
+        }
+        handler = new Handler();
+        my = new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 2 seconds
+                if (killMe)
+                    return;
+
+                handler.postDelayed(this, 1000);
+
+                if (playedSongType.equalsIgnoreCase(AppConstants.YOUTUBE) && player != null) {
+
+                    lengthms = player.getDurationMillis();
+                    float current = player.getCurrentTimeMillis();
+                    float wowInt = ((current / lengthms) * 100);
+                    if (seekusedbyuser == false) {
+                        seekbar.setProgress((int) wowInt);
+
+                    }
+                }
+            }
+        };
+        handler.postDelayed(my, 1000);
     }
 
     private void initViews() {
+        arrow = findViewById(R.id.arrow_up);
+
         playerCurrentDurationTv = findViewById(R.id.playerCurrentTimeText);
         playerTotalDurationTv = findViewById(R.id.playerTotalTimeText);
         live_streaming_btn = findViewById(R.id.live_streaming_btn);
@@ -590,6 +655,17 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
             live_streaming_btn.setVisibility(View.GONE);
         }
 
+        arrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (behavior != null)
+                    behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+                //arrow.setVisibility(View.GONE);
+            }
+        });
+
     }
 
     private void setAdapter() {
@@ -603,6 +679,13 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
         publicPlaylistItemAdapter.setCustomItemClickListener(new PublicPlaylistItemAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
+                if (isControlledByUser) {
+                    if (position > -1 && position < playlist.size()) {
+                        plaSongFromBottomSheet(position);
+                        if (behavior != null)
+                            behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    }
+                }
             }
 
             @Override
@@ -637,7 +720,67 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
         viewCollabRecyclerView.setAdapter(ViewCollabAdapter);
 
         parseCollaborations();
+        setBottomSheetForPlaylist();
     }
+
+    private void setBottomSheetForPlaylist() {
+        View bottomSheet = findViewById(R.id.bottom_sheet_detail);
+        behavior = BottomSheetBehavior.from(bottomSheet);
+        behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    if (playlistRv != null)
+                        playlistRv.smoothScrollToPosition(0);
+                }
+
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+        /*playlistRv = findViewById(R.id.playlist_rv);
+        playlistRv.setLayoutManager(new LinearLayoutManager(RealTimeYoutubePlayler.this, LinearLayoutManager.VERTICAL, false));
+        playlistRv.setHasFixedSize(true);
+
+        publicPlaylistItemAdapter = new PublicPlaylistItemAdapter(RealTimeYoutubePlayler.this, playlist);
+        publicPlaylistItemAdapter.setCustomItemClickListener(new PublicPlaylistItemAdapter.CustomItemClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+            }
+
+            @Override
+            public void onSelectedplaylistID(int ids, boolean selected) {
+
+            }
+        });
+        playlistRv.setAdapter(publicPlaylistItemAdapter);*/
+
+    }
+
+    private void plaSongFromBottomSheet(int songPosition1) {
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(my);
+        }
+        killMe = false;
+        RealTimeSession session = realTimeModel.getSessions().get(sessionKey);
+        if (session != null) {
+            if (songPosition1 > -1 && songPosition1 < playlist.size()) {
+                session.setSongID(playlist.get(songPosition1).getTrackId());
+                session.setSongPosiionInList(songPosition1);
+                session.setSongType(playlist.get(songPosition1).getType());
+                session.setStart_in(0);
+                session.setSong_changed(true);
+                session.setStatus(AppConstants.START);
+                Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+
+                myRef.setValue(realTimeModel);
+            }
+        }
+    }
+
 
     private void callPlaylistDetailAPI(String playlistId) {
 
@@ -667,12 +810,12 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
                                     realTimeModel.getUsers().get(userKey).setJoined_status(AppConstants.JOINED);
                                     myRef.setValue(realTimeModel);
                                 } else {
-                                    handler.postDelayed(this, 1000);
+                                    handler.postDelayed(this, 500);
                                 }
                             }
                         };
 
-                        handler.postDelayed(runnable, 1000);
+                        handler.postDelayed(runnable, 500);
                     }
 
                 } else {
@@ -749,7 +892,8 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
     // youtube functions
 
     @Override
-    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer
+            youTubePlayer, boolean b) {
 
         isAddSongLogRecorded = false;
         this.player = youTubePlayer;
@@ -759,7 +903,8 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
     }
 
     @Override
-    public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+    public void onInitializationFailure(YouTubePlayer.Provider
+                                                provider, YouTubeInitializationResult youTubeInitializationResult) {
         if (youTubeInitializationResult.isUserRecoverableError()) {
             youTubeInitializationResult.getErrorDialog(RealTimePlayer.this, REQUEST_VIDEO);
         } else {
@@ -803,34 +948,49 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
                 break;
 
             case R.id.fastforward:
+                killMe = false;
 
-                int songPosition = realTimeModel.getSessions().get(sessionKey).getSongPosiionInList() + 1;
+                RealTimeSession session1 = realTimeModel.getSessions().get(sessionKey);
+                if (session1 != null) {
+                    int songPosition = session1.getSongPosiionInList() + 1;
+                    if (songPosition > (playlist.size() - 1))
+                        songPosition = 0;
 
-                if (songPosition > -1 && songPosition < playlist.size()) {
+                    if (songPosition > -1 && songPosition < playlist.size()) {
 
-                    realTimeModel.getSessions().get(sessionKey).setSongID(playlist.get(songPosition).getTrackId());
-                    realTimeModel.getSessions().get(sessionKey).setSongPosiionInList(songPosition);
-                    realTimeModel.getSessions().get(sessionKey).setSongType(playlist.get(songPosition).getType());
-                    realTimeModel.getSessions().get(sessionKey).setStart_in(0);
-                    realTimeModel.getSessions().get(sessionKey).setSong_changed(true);
-
-
-                    myRef.setValue(realTimeModel);
+                        session1.setSongID(playlist.get(songPosition).getTrackId());
+                        session1.setSongPosiionInList(songPosition);
+                        session1.setSongType(playlist.get(songPosition).getType());
+                        session1.setStart_in(0);
+                        session1.setSong_changed(true);
+                        session1.setStatus(AppConstants.START);
+                        Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+                        myRef.setValue(realTimeModel);
+                    }
                 }
                 break;
 
             case R.id.fastrewind:
-                int songPosition1 = realTimeModel.getSessions().get(sessionKey).getSongPosiionInList() - 1;
+                killMe = false;
+                RealTimeSession session = realTimeModel.getSessions().get(sessionKey);
+                if (session != null) {
+                    int songPosition1 = session.getSongPosiionInList() - 1;
+                    if (songPosition1 < 0)
+                        songPosition1 = playlist.size() - 1;
 
-                if (songPosition1 > -1 && songPosition1 < playlist.size()) {
+                    if (songPosition1 > -1 && songPosition1 < playlist.size()) {
 
-                    realTimeModel.getSessions().get(sessionKey).setSongID(playlist.get(songPosition1).getTrackId());
-                    realTimeModel.getSessions().get(sessionKey).setSongPosiionInList(songPosition1);
-                    realTimeModel.getSessions().get(sessionKey).setSongType(playlist.get(songPosition1).getType());
-                    realTimeModel.getSessions().get(sessionKey).setStart_in(0);
-                    realTimeModel.getSessions().get(sessionKey).setSong_changed(true);
+                        session.setSongID(playlist.get(songPosition1).getTrackId());
+                        session.setSongPosiionInList(songPosition1);
+                        session.setSongType(playlist.get(songPosition1).getType());
+                        session.setStart_in(0);
+                        session.setSong_changed(true);
+                        session.setStatus(AppConstants.START);
+                        Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
 
-                    myRef.setValue(realTimeModel);
+
+                        myRef.setValue(realTimeModel);
+                    }
                 }
                 break;
         }
@@ -895,36 +1055,40 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
 
             // IMP : Commented By Swati
             //player.seekToMillis((int) realTimeModel.getSessions().get(AppConstants.SESSION_CHILD+"1").getStart_in());
-            player.seekToMillis((int) realTimeModel.getSessions().get(sessionKey).getStart_in());
+            RealTimeSession session = realTimeModel.getSessions().get(sessionKey);
+            if (session != null)
+                player.seekToMillis(session.getStart_in());
         }
 
         @Override
         public void onVideoEnded() {
             // Called when the video reaches its end.
+            RealTimeSession session = realTimeModel.getSessions().get(sessionKey);
+            if (session != null) {
+                int songPosition = session.getSongPosiionInList() + 1;
 
-            int songPosition = realTimeModel.getSessions().get(sessionKey).getSongPosiionInList() + 1;
-
-            if (songPosition < playlist.size()) {
+                if (songPosition < playlist.size()) {
 
 
-                // Preparing RealTime DB for the next Song by their track, position in list
-                realTimeModel.getSessions().get(sessionKey).setSongID(playlist.get(songPosition).getTrackId());
-                realTimeModel.getSessions().get(sessionKey).setSongPosiionInList(songPosition);
+                    // Preparing RealTime DB for the next Song by their track, position in list
+                    session.setSongID(playlist.get(songPosition).getTrackId());
+                    session.setSongPosiionInList(songPosition);
 
-                // SongType : Youtube or Spotify
-                realTimeModel.getSessions().get(sessionKey).setSongType(playlist.get(songPosition).getType());
+                    // SongType : Youtube or Spotify
+                    session.setSongType(playlist.get(songPosition).getType());
 
-                // setting 0 as newly added song should play from initial state.
-                realTimeModel.getSessions().get(sessionKey).setStart_in(0);
+                    // setting 0 as newly added song should play from initial state.
+                    session.setStart_in(0);
 
-                // setting true as current song has been end and next one should be play
-                realTimeModel.getSessions().get(sessionKey).setSong_changed(true);
+                    // setting true as current song has been end and next one should be play
+                    session.setSong_changed(true);
 
-                // Updating RealTime DB
-                myRef.setValue(realTimeModel);
-            } else {
-                realTimeModel.getSessions().get(sessionKey).setStatus(AppConstants.ENDED);
-                myRef.setValue(realTimeModel);
+                    // Updating RealTime DB
+                    myRef.setValue(realTimeModel);
+                } else {
+                    session.setStatus(AppConstants.ENDED);
+                    myRef.setValue(realTimeModel);
+                }
             }
         }
 
@@ -953,7 +1117,7 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
             handler1.removeCallbacks(runnable);
         /*if (spotifyHandler != null)
             spotifyHandler.removeCallbacksAndMessages(spotifyRunnable);*/
-        killMe = true;
+//        killMe = true;
     }
 
     // Session Deleting : It will call whenever admin wants to go back
@@ -967,13 +1131,14 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
         callback.enqueue(new Callback<APIResponse>() {
             @Override
             public void onResponse(Call<APIResponse> call, retrofit2.Response<APIResponse> response) {
-                if (response != null
-                        && response.body() != null) {
+                if (response.body() != null) {
                     if (response.body().getStatus().equalsIgnoreCase("success")) {
-                        Log.i(TAG, "Session Ended");
+                        Log.i(TAG, "Session Ended:-" + sessionKey);
                         try {
                             isEndSessionFromAdmin = true;
-                            realTimeModel.getSessions().get(sessionKey).setStatus(AppConstants.ENDED);
+                            RealTimeSession session = realTimeModel.getSessions().get(sessionKey);
+                            if (session != null)
+                                session.setStatus(AppConstants.ENDED);
                             myRef.setValue(realTimeModel);
                             finish();
                         } catch (Exception e) {

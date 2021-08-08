@@ -25,8 +25,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
--keep class com.shorincity.vibin.music_sharing.model.** { *; }
--keep class com.shorincity.vibin.music_sharing.model.avatar.** { *; }
 
 -keepclassmembers enum *{*;}
 
@@ -55,6 +53,27 @@
 # Prevent R8 from leaving Data object members always null
 -keepclassmembers,allowobfuscation class * {
   @com.google.gson.annotations.SerializedName <fields>;
+}
+
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep class * extends com.bumptech.glide.module.AppGlideModule {
+ <init>(...);
+}
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}
+
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+
+-dontwarn okhttp3.**
+
+-keep class com.shorincity.vibin.music_sharing.model.firebase.** { *; }
+-keepclassmembers class com.shorincity.vibin.music_sharing.model.firebase.** {
+ *;
 }
 
 ##---------------End: proguard configuration for Gson  ----------

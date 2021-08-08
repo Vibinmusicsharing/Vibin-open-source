@@ -1,10 +1,19 @@
 package com.shorincity.vibin.music_sharing.model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class CollabsList {
+    @SerializedName("status")
+    @Expose
     String status;
+    @SerializedName("private_playlist_colaborators")
+    @Expose
     ArrayList<UserData> private_playlist_colaborators;
+    @SerializedName("public_playlist_colaborators")
+    @Expose
     ArrayList<UserData> public_playlist_colaborators;
 
     public String getStatus() {
@@ -32,11 +41,23 @@ public class CollabsList {
     }
 
     public class UserData {
+        @SerializedName("id")
+        @Expose
         String id;
+        @SerializedName("email")
+        @Expose
         String email;
+        @SerializedName("username")
+        @Expose
         String username;
+        @SerializedName("fullname")
+        @Expose
         String fullname;
+        @SerializedName("avatar_link")
+        @Expose
         String avatar_link;
+        @SerializedName("type")
+        @Expose
         String type;
 
         public String getType() {

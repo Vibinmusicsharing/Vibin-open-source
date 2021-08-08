@@ -1041,7 +1041,7 @@ public class YoutubeHomeFragment extends MyBaseFragment {
                         }
 
                     } else {
-                        Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(mContext, "Something went wrong!", Toast.LENGTH_LONG).show();
                     }
                 } else {
                 }
@@ -1050,7 +1050,7 @@ public class YoutubeHomeFragment extends MyBaseFragment {
             @Override
             public void onFailure(Call<HomeYoutubeModel> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 

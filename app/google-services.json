@@ -15,11 +15,35 @@
       },
       "oauth_client": [
         {
+          "client_id": "752342949073-bf24mnqmhlv0uba41j0f620obsnhrdm3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shorincity.vibin.music_sharing",
+            "certificate_hash": "e8e8f9cefd61104fe1fb84cb55de056212347f86"
+          }
+        },
+        {
           "client_id": "752342949073-kqkghhl4dpkrbjun631hkb9t0e9btcd0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.shorincity.vibin.music_sharing",
             "certificate_hash": "c6f88d4c1078a81d1a8a321d24872102fd6f2aac"
+          }
+        },
+        {
+          "client_id": "752342949073-lvdjiophinrsv3e5eafcv8khhfms5l70.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shorincity.vibin.music_sharing",
+            "certificate_hash": "80482d949d0b778d2d2ca438ce06be04c79878a0"
+          }
+        },
+        {
+          "client_id": "752342949073-odm0oufhbc4qboqjtalebnfgbup780h7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shorincity.vibin.music_sharing",
+            "certificate_hash": "53293a384f0c059ad8af7aa713bf5d7e307cfbf0"
           }
         },
         {

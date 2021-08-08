@@ -21,7 +21,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.exoplayer2.C;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.activity.PrivacyPolicyActivity;
 import com.shorincity.vibin.music_sharing.activity.SplashActivity;

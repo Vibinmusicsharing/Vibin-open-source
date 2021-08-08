@@ -940,22 +940,26 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         //        }
 
         if (mYouTubePlayer != null && playerTotalDurationTv != null) {
-            lengthms = mYouTubePlayer.getDurationMillis();
-            float current = mYouTubePlayer.getCurrentTimeMillis();
-            float wowInt = ((current / lengthms) * 100);
-            mSeekBar.setProgress((int) wowInt);
-            processSeekBar();
-            Logging.d("wowInt-->" + wowInt);
-            // displaying current duration when song starts to play
-            if ((mYouTubePlayer != null && mYouTubePlayer.isPlaying()) && (int) wowInt > 0) {
-                playerCurrentDurationTv.setText(Utility.convertDuration(Long.valueOf(mYouTubePlayer.getCurrentTimeMillis())));
-            }
-            if ((mYouTubePlayer != null && mYouTubePlayer.isPlaying())) {
-                mYouTubePlayer.pause();
-                Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
-            } else {
-                mYouTubePlayer.play();
-                Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+            try {
+                lengthms = mYouTubePlayer.getDurationMillis();
+                float current = mYouTubePlayer.getCurrentTimeMillis();
+                float wowInt = ((current / lengthms) * 100);
+                mSeekBar.setProgress((int) wowInt);
+                processSeekBar();
+                Logging.d("wowInt-->" + wowInt);
+                // displaying current duration when song starts to play
+                if ((mYouTubePlayer != null && mYouTubePlayer.isPlaying()) && (int) wowInt > 0) {
+                    playerCurrentDurationTv.setText(Utility.convertDuration(Long.valueOf(mYouTubePlayer.getCurrentTimeMillis())));
+                }
+                if ((mYouTubePlayer != null && mYouTubePlayer.isPlaying())) {
+                    mYouTubePlayer.pause();
+                    Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
+                } else {
+                    mYouTubePlayer.play();
+                    Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -1444,7 +1448,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     }
 
     private void automaticNextSong() {
-        if (position != playlist.size() - 1) {
+        if (position > -1 && position < playlist.size()) {
             if (handler != null) {
                 handler.removeCallbacksAndMessages(my);
             }
@@ -1468,7 +1472,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
             playerStateChangeListener = new MyPlayerStateChangeListener();
             playbackEventListener = new MyPlaybackEventListener();
             callGetSongLikeStatusAPI(userId, videoId);
-        } else {
+        } else if (position == (playlist.size() - 1)) {
             Toast.makeText(getApplicationContext(), "This is last Song Of Playlist", +2000).show();
         }
     }
@@ -2038,4 +2042,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         setFragment(fragment, R.animator.fragment_slide_up_enter, R.animator.fragment_slide_down_enter);
     }
 
+    public void onLoadProfile() {
+        setFragment(userProfileFragment, R.animator.fragment_slide_up_enter, R.animator.fragment_slide_down_enter);
+    }
 }

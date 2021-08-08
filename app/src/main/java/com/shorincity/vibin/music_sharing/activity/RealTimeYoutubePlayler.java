@@ -17,7 +17,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,11 +31,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.PublicPlaylistItemAdapter;
-import com.shorincity.vibin.music_sharing.model.RealTimeModel;
-import com.shorincity.vibin.music_sharing.model.RealTimeSession;
-import com.shorincity.vibin.music_sharing.model.RealTimeUser;
+import com.shorincity.vibin.music_sharing.model.firebase.RealTimeModel;
+import com.shorincity.vibin.music_sharing.model.firebase.RealTimeSession;
+import com.shorincity.vibin.music_sharing.model.firebase.RealTimeUser;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
@@ -108,6 +111,9 @@ public class RealTimeYoutubePlayler extends YouTubeBaseActivity implements YouTu
 
     ProgressBar progressBar;
     Button Play_Pause;
+    private BottomSheetBehavior behavior;
+    private AppCompatTextView arrow;
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -406,6 +412,7 @@ public class RealTimeYoutubePlayler extends YouTubeBaseActivity implements YouTu
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void initViews() {
+        arrow = findViewById(R.id.arrow_up);
 
         youTubePlayerView = findViewById(R.id.myYoutube);
         youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
@@ -436,6 +443,16 @@ public class RealTimeYoutubePlayler extends YouTubeBaseActivity implements YouTu
             findViewById(R.id.live_streaming_btn).setVisibility(View.GONE);
         }
 
+        arrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (behavior != null)
+                    behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+                //arrow.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void setAdapter() {
@@ -483,6 +500,7 @@ public class RealTimeYoutubePlayler extends YouTubeBaseActivity implements YouTu
         viewCollabRecyclerView.setAdapter(ViewCollabAdapter);
 
         parseCollaborations();
+        setBottomSheetForPlaylist();
     }
 
     private void callPlaylistDetailAPI(String playlistId) {
@@ -557,7 +575,7 @@ public class RealTimeYoutubePlayler extends YouTubeBaseActivity implements YouTu
                         String fullname = jsonObject.getString("fullname");
                         String avatar_link = jsonObject.getString("avatar_link");
 
-                        ViewCollab viewCollab=new ViewCollab();
+                        ViewCollab viewCollab = new ViewCollab();
                         viewCollab.setAvatarLink(avatar_link);
                         viewCollab.setEmail(email);
                         viewCollab.setFullname(fullname);
@@ -599,6 +617,43 @@ public class RealTimeYoutubePlayler extends YouTubeBaseActivity implements YouTu
         };
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
+    }
+
+    private void setBottomSheetForPlaylist() {
+        View bottomSheet = findViewById(R.id.bottom_sheet_detail);
+        behavior = BottomSheetBehavior.from(bottomSheet);
+        behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    if (playlistRv != null)
+                        playlistRv.smoothScrollToPosition(0);
+                }
+
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+        /*playlistRv = findViewById(R.id.playlist_rv);
+        playlistRv.setLayoutManager(new LinearLayoutManager(RealTimeYoutubePlayler.this, LinearLayoutManager.VERTICAL, false));
+        playlistRv.setHasFixedSize(true);
+
+        publicPlaylistItemAdapter = new PublicPlaylistItemAdapter(RealTimeYoutubePlayler.this, playlist);
+        publicPlaylistItemAdapter.setCustomItemClickListener(new PublicPlaylistItemAdapter.CustomItemClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+            }
+
+            @Override
+            public void onSelectedplaylistID(int ids, boolean selected) {
+
+            }
+        });
+        playlistRv.setAdapter(publicPlaylistItemAdapter);*/
+
     }
 
     // youtube functions

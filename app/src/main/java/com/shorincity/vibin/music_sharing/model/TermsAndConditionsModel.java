@@ -4,15 +4,23 @@ package com.shorincity.vibin.music_sharing.model;
  * Created by Aditya S.Gangasagar
  * On 09-August-2020
  **/
+
 import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class TermsAndConditionsModel {
 
-    @SerializedName("status") @Expose private String status;
-    @SerializedName("details") @Expose private List<TermsAndConditionsDetailsModel> details = null;
-    @SerializedName("url") @Expose private String url;
+    @SerializedName("status")
+    @Expose
+    private String status;
+    @SerializedName("details")
+    @Expose
+    private List<TermsAndConditionsDetailsModel> details = null;
+    @SerializedName("url")
+    @Expose
+    private String url;
 
     public String getStatus() {
         return status;

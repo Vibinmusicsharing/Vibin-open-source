@@ -10,22 +10,22 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.shorincity.vibin.music_sharing.model.APIResponse;
-import com.shorincity.vibin.music_sharing.model.GetNotifications;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.adapters.NotificationsAdapter;
+import com.shorincity.vibin.music_sharing.model.APIResponse;
+import com.shorincity.vibin.music_sharing.model.GetNotifications;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,6 +53,8 @@ public class UserNotificationFragment extends MyBaseFragment {
         super.onViewCreated(view, savedInstanceState);
         unreadNotificationRv = view.findViewById(R.id.notification_unread_rv);
         readNotificationRv = view.findViewById(R.id.notification_read_rv);
+        unreadNotificationList = new ArrayList<>();
+        readNotificationList = new ArrayList<>();
 
         view.findViewById(R.id.mark_read_btn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,71 +65,98 @@ public class UserNotificationFragment extends MyBaseFragment {
     }
 
     private void setAdapter() {
-        unreadNotificationRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+        // Displaying Unread Notifications List
+        if (unreadNotificationList.size() == 0) {
+            Logging.d("TEST", "callGetNotificationsAPI onResponse Size 0 Called");
+            view.findViewById(R.id.unread_head_hldr).setVisibility(View.GONE);
+            unreadNotificationRv.setVisibility(View.GONE);
+        } else {
+            Logging.d("TEST", "callGetNotificationsAPI onResponse Size 0 else Called");
+            view.findViewById(R.id.unread_head_hldr).setVisibility(View.VISIBLE);
+            unreadNotificationRv.setVisibility(View.VISIBLE);
+        }
 
-        unreadNotificationsAdapter = new NotificationsAdapter(getActivity(), unreadNotificationList);
-        unreadNotificationsAdapter.setCustomItemClickListener(new NotificationsAdapter.CustomItemClickListener() {
-            @Override
-            public void onItemClick(View v, int position) {
+        // Displaying Read Notifications List
+        if (readNotificationList.size() == 0) {
+            view.findViewById(R.id.read_head_hldr).setVisibility(View.GONE);
+            readNotificationRv.setVisibility(View.GONE);
+        } else {
+            view.findViewById(R.id.read_head_hldr).setVisibility(View.VISIBLE);
+            readNotificationRv.setVisibility(View.VISIBLE);
+        }
 
-            }
+        if (unreadNotificationRv.getAdapter() == null) {
+            unreadNotificationRv.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-            @Override
-            public void onChildItemClick(View v, int position, String viewName) {
-                if (viewName.equalsIgnoreCase("ACCEPTED")) {
+            unreadNotificationsAdapter = new NotificationsAdapter(getActivity(), unreadNotificationList);
+            unreadNotificationsAdapter.setCustomItemClickListener(new NotificationsAdapter.CustomItemClickListener() {
+                @Override
+                public void onItemClick(View v, int position) {
 
                 }
-            }
 
-            @Override
-            public void onSpannableClick(int sender, String firstWord) {
+                @Override
+                public void onChildItemClick(View v, int position, String viewName) {
+                    if (viewName.equalsIgnoreCase("ACCEPTED")) {
 
-            }
-
-            @Override
-            public void showProgress(boolean isShow) {
-                if (isShow) {
-                    showDialog();
-                } else {
-                    hideDialog();
+                    }
                 }
-            }
-        });
-        unreadNotificationRv.setAdapter(unreadNotificationsAdapter);
 
-        //readNotificationList = new ArrayList<>();
-        readNotificationRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+                @Override
+                public void onSpannableClick(int sender, String firstWord) {
 
-        readNotificationsAdapter = new NotificationsAdapter(getActivity(), readNotificationList);
-        readNotificationsAdapter.setCustomItemClickListener(new NotificationsAdapter.CustomItemClickListener() {
-            @Override
-            public void onItemClick(View v, int position) {
-
-            }
-
-            @Override
-            public void onChildItemClick(View v, int position, String viewName) {
-
-            }
-
-            @Override
-            public void onSpannableClick(int sender, String firstWord) {
-                OtherUserProfileFragment fragment =
-                        OtherUserProfileFragment.getInstance(sender,
-                                0, firstWord, "");
-                ((youtube) getActivity()).onLoadFragment(fragment);
-            }
-
-            @Override
-            public void showProgress(boolean isShow) {
-                if (isShow) {
-                    showDialog();
-                } else {
-                    hideDialog();
                 }
-            }
-        });
-        readNotificationRv.setAdapter(readNotificationsAdapter);
+
+                @Override
+                public void showProgress(boolean isShow) {
+                    if (isShow) {
+                        showDialog();
+                    } else {
+                        hideDialog();
+                    }
+                }
+            });
+            unreadNotificationRv.setAdapter(unreadNotificationsAdapter);
+        } else {
+            unreadNotificationsAdapter.notifyDataSetChanged();
+        }
+
+        if (readNotificationRv.getAdapter() == null) {
+            readNotificationRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+            readNotificationsAdapter = new NotificationsAdapter(getActivity(), readNotificationList);
+            readNotificationsAdapter.setCustomItemClickListener(new NotificationsAdapter.CustomItemClickListener() {
+                @Override
+                public void onItemClick(View v, int position) {
+
+                }
+
+                @Override
+                public void onChildItemClick(View v, int position, String viewName) {
+
+                }
+
+                @Override
+                public void onSpannableClick(int sender, String firstWord) {
+                    OtherUserProfileFragment fragment =
+                            OtherUserProfileFragment.getInstance(sender,
+                                    0, firstWord, "");
+                    ((youtube) getActivity()).onLoadFragment(fragment);
+                }
+
+                @Override
+                public void showProgress(boolean isShow) {
+                    if (isShow) {
+                        showDialog();
+                    } else {
+                        hideDialog();
+                    }
+                }
+            });
+            readNotificationRv.setAdapter(readNotificationsAdapter);
+        } else {
+            readNotificationsAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -160,8 +189,6 @@ public class UserNotificationFragment extends MyBaseFragment {
 
     // API to get all the notifications
     private void callGetNotificationsAPI() {
-        unreadNotificationList = new ArrayList<>();
-        readNotificationList = new ArrayList<>();
         ((ProgressBar) view.findViewById(R.id.progressbar)).setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getData();
 
@@ -175,12 +202,11 @@ public class UserNotificationFragment extends MyBaseFragment {
             @Override
             public void onResponse(Call<ArrayList<GetNotifications>> call, Response<ArrayList<GetNotifications>> response) {
                 ((ProgressBar) view.findViewById(R.id.progressbar)).setVisibility(View.GONE);
-                unreadNotificationList.clear();
-                readNotificationList.clear();
                 // Logging.d("TEST","callGetNotificationsAPI res-->"+new Gson().toJson(response.body()));
 
                 if (response != null && response.body() != null && response.body().size() > 0) {
-
+                    unreadNotificationList.clear();
+                    readNotificationList.clear();
                     Logging.d("TEST", "callGetNotificationsAPI onResponse Called");
                     // Filtering the list as need to display separately
 
@@ -193,25 +219,8 @@ public class UserNotificationFragment extends MyBaseFragment {
                         }
                     }
 
-                    // Displaying Unread Notifications List
-                    if (unreadNotificationList.size() == 0) {
-                        Logging.d("TEST", "callGetNotificationsAPI onResponse Size 0 Called");
-                        view.findViewById(R.id.unread_head_hldr).setVisibility(View.GONE);
-                        unreadNotificationRv.setVisibility(View.GONE);
-                    } else {
-                        Logging.d("TEST", "callGetNotificationsAPI onResponse Size 0 else Called");
-                        view.findViewById(R.id.unread_head_hldr).setVisibility(View.VISIBLE);
-                        unreadNotificationRv.setVisibility(View.VISIBLE);
-                    }
-
-                    // Displaying Read Notifications List
-                    if (readNotificationList.size() == 0) {
-                        view.findViewById(R.id.read_head_hldr).setVisibility(View.GONE);
-                        readNotificationRv.setVisibility(View.GONE);
-                    } else {
-                        view.findViewById(R.id.read_head_hldr).setVisibility(View.VISIBLE);
-                        readNotificationRv.setVisibility(View.VISIBLE);
-                    }
+                    Collections.sort(readNotificationList, Collections.reverseOrder());
+                    Collections.sort(unreadNotificationList, Collections.reverseOrder());
                     setAdapter();
                 } else {
 
@@ -229,8 +238,6 @@ public class UserNotificationFragment extends MyBaseFragment {
 
     // API to mark all the notifications as read
     private void callMarkAllNotificationReadAPI() {
-        unreadNotificationList = new ArrayList<>();
-        readNotificationList = new ArrayList<>();
         DataAPI dataAPI = RetrofitAPI.getData();
         String headerToken = AppConstants.TOKEN + SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
         int userId = SharedPrefManager.getInstance(getActivity()).getSharedPrefInt(AppConstants.INTENT_USER_ID);

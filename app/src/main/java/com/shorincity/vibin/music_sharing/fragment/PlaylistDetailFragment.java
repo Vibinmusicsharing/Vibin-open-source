@@ -56,7 +56,6 @@ import com.like.LikeButton;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
-import com.shorincity.vibin.music_sharing.activity.OtherUserProfileActivity;
 import com.shorincity.vibin.music_sharing.activity.RealTimePlayer;
 import com.shorincity.vibin.music_sharing.adapters.UserSearchAdapter;
 import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
@@ -67,9 +66,9 @@ import com.shorincity.vibin.music_sharing.model.PlayListDeleteModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistLikeModel;
 import com.shorincity.vibin.music_sharing.model.PublicPlaylistItemAdapter;
-import com.shorincity.vibin.music_sharing.model.RealTimeModel;
-import com.shorincity.vibin.music_sharing.model.RealTimeSession;
-import com.shorincity.vibin.music_sharing.model.RealTimeUser;
+import com.shorincity.vibin.music_sharing.model.firebase.RealTimeModel;
+import com.shorincity.vibin.music_sharing.model.firebase.RealTimeSession;
+import com.shorincity.vibin.music_sharing.model.firebase.RealTimeUser;
 import com.shorincity.vibin.music_sharing.model.UserSearchModel;
 import com.shorincity.vibin.music_sharing.ripples.RippleButton;
 import com.shorincity.vibin.music_sharing.ripples.listener.OnRippleCompleteListener;
@@ -78,7 +77,6 @@ import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
-import com.shorincity.vibin.music_sharing.youtube_files.PlayYoutubeVideoActivity;
 import com.shorincity.vibin.music_sharing.youtube_files.PlaylistDetailActivity;
 
 import org.json.JSONArray;
@@ -167,8 +165,8 @@ public class PlaylistDetailFragment extends MyBaseFragment {
         super.onViewCreated(view, savedInstanceState);
         finalcollabslistid = new StringBuffer();
         finalplaylistid = new StringBuffer();
-        id = getArguments().getInt("id");
-        admin_id = getArguments().getInt("admin_id");
+        id = getArguments().getInt(BUNDLE_ID);
+        admin_id = getArguments().getInt(BUNDLE_ADMIN_ID);
 
         playlistId = new ArrayList<>();
         collabsId = new ArrayList<>();
@@ -437,7 +435,7 @@ public class PlaylistDetailFragment extends MyBaseFragment {
         more_image = view.findViewById(R.id.more_image);
         mTextViewTitle = view.findViewById(R.id.item_title);
         durationTv = view.findViewById(R.id.item_duration);
-        mTextViewTitle = view.findViewById(R.id.item_title);
+//        mTextViewTitle = view.findViewById(R.id.item_title);
         likeCountTxt = view.findViewById(R.id.like_count_txt);
         descTxt = view.findViewById(R.id.item_desc);
         play_btn = view.findViewById(R.id.play_btn);
@@ -640,7 +638,8 @@ public class PlaylistDetailFragment extends MyBaseFragment {
         realTimeSession.setSong_changed(false);
 
 
-        realTimeModel.getSessions().put(sessionKey, realTimeSession);
+        if (realTimeModel.getSessions() != null)
+            realTimeModel.getSessions().put(sessionKey, realTimeSession);
 
         String userIds = "", userKeys = "";
 

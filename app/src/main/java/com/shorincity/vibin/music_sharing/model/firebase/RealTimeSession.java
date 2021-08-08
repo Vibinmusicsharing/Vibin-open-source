@@ -1,4 +1,4 @@
-package com.shorincity.vibin.music_sharing.model;
+package com.shorincity.vibin.music_sharing.model.firebase;
 
 public class RealTimeSession {
 
