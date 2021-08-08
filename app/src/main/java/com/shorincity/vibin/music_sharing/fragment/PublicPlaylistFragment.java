@@ -433,7 +433,7 @@ public class PublicPlaylistFragment extends MyBaseFragment {
 
     public void callMyPlaylistAPI(String userToken) {
         textView.setVisibility(View.GONE);
-        progressBar.setVisibility(view.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getData();
         String token = AppConstants.TOKEN + SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
         Call<ArrayList<MyPlaylistModel>> callback = dataAPI.getMyPlaylist(token, userToken);
@@ -481,19 +481,20 @@ public class PublicPlaylistFragment extends MyBaseFragment {
             public void onResponse(Call<PlaylistLikeModel> call, retrofit2.Response<PlaylistLikeModel> response) {
                 if (response != null && response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
                     //ImageView likeBtn = ((ImageView) view.findViewById(R.id.like_btn));
-                    LikeButton likeButton = ((LikeButton) view.findViewById(R.id.like_btn));
+//                    LikeButton likeButton = ((LikeButton) view.findViewById(R.id.like_btn));
+                    myPlaylists.get(position).setLikedByUser(!myPlaylists.get(position).isLikedByUser());
                     if (response.body().getLikeCount() > 0) {
                         Logging.d("TEST", "putPublicPLaylistLike onResponse Called");
                         //likeBtn.setColorFilter(ContextCompat.getColor(getActivity(), R.color.gph_white));
-                        likeButton.setLiked(true);
+//                        likeButton.setLiked(true);
                         myPlaylists.get(position).setLikes(myPlaylists.get(position).getLikes() + 1);
-                        myPlaylistAdapter.notifyDataSetChanged();
+                        myPlaylistAdapter.notifyItemChanged(position);
                     } else {
                         Logging.d("TEST", "putPublicPLaylistLike onResponse else Called");
                         myPlaylists.get(position).setLikes(myPlaylists.get(position).getLikes() - 1);
-                        likeButton.setLiked(false);
+//                        likeButton.setLiked(false);
                         //likeBtn.setColorFilter(ContextCompat.getColor(getActivity(), R.color.light_gray));
-                        myPlaylistAdapter.notifyDataSetChanged();
+                        myPlaylistAdapter.notifyItemChanged(position);
                     }
                 } else {
                 }

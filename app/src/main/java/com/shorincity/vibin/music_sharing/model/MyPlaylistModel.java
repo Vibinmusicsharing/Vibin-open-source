@@ -44,6 +44,9 @@ public class MyPlaylistModel implements Serializable {
     @SerializedName("admin_id")
     @Expose
     private int admin_id;
+    @SerializedName("isLikedByUser")
+    @Expose
+    private boolean isLikedByUser;
 
     public int getAdmin_id() {
         return admin_id;
@@ -147,5 +150,13 @@ public class MyPlaylistModel implements Serializable {
 
     public void setAvatarLink(String avatarLink) {
         this.avatarLink = avatarLink;
+    }
+
+    public boolean isLikedByUser() {
+        return isLikedByUser;
+    }
+
+    public void setLikedByUser(boolean likedByUser) {
+        isLikedByUser = likedByUser;
     }
 }

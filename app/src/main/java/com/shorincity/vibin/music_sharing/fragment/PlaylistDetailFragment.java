@@ -830,7 +830,7 @@ public class PlaylistDetailFragment extends MyBaseFragment {
 
             gifView.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(mContext, R.color.light_gray));
 
-
+            likeBtn.setLiked(currentItem.isLikedByUser());
             String fullName = SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_FULL_NAME);
 
             if (!myPlaylistModel.getAdminName().equalsIgnoreCase(fullName)) {

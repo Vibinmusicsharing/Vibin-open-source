@@ -81,19 +81,18 @@ public class UserPlaylistAdapter extends RecyclerView.Adapter<UserPlaylistAdapte
     public void onBindViewHolder(@NonNull ExampleViewHolder holder, int position) {
         MyPlaylistModel currentItem = list.get(position);
         String name = currentItem.getName();
-        String firstname  = "";
+        String firstname = "";
         String[] fullNameArray = name.split("\\s+");
-        if(fullNameArray.length>1) {
+        if (fullNameArray.length > 1) {
             StringBuilder firstNameBuilder = new StringBuilder();
             for (int i = 0; i < fullNameArray.length - 1; i++) {
                 firstNameBuilder.append(fullNameArray[i]);
-                if(i != fullNameArray.length - 2){
+                if (i != fullNameArray.length - 2) {
                     firstNameBuilder.append(" ");
                 }
             }
             firstname = firstNameBuilder.toString();
-        }
-        else{
+        } else {
             firstname = fullNameArray[0];
         }
 
@@ -102,9 +101,10 @@ public class UserPlaylistAdapter extends RecyclerView.Adapter<UserPlaylistAdapte
         holder.mTextViewTitle.setText(firstname);
         NumberFormat formatter = new DecimalFormat("00");
         String duration = "";
+        holder.like_btn.setLiked(currentItem.isLikedByUser());
 
         if (currentItem.getPlaylistDurationHours() > 0) {
-            duration = formatter.format(currentItem.getPlaylistDurationHours()*60 +currentItem.getPlaylistDurationMinutes()) + ":" +
+            duration = formatter.format(currentItem.getPlaylistDurationHours() * 60 + currentItem.getPlaylistDurationMinutes()) + ":" +
                     formatter.format(currentItem.getPlaylistDurationSeconds());
         } else if (currentItem.getPlaylistDurationMinutes() > 0) {
             duration = formatter.format(currentItem.getPlaylistDurationMinutes()) + ":" +
@@ -124,7 +124,7 @@ public class UserPlaylistAdapter extends RecyclerView.Adapter<UserPlaylistAdapte
         }
 
         if (currentItem.getLikes() > 0) {
-            holder.likeCountTxt.setText(Utility.prettyCount(currentItem.getLikes())+" Likes");
+            holder.likeCountTxt.setText(Utility.prettyCount(currentItem.getLikes()) + " Likes");
         } else {
             holder.likeCountTxt.setText("");
         }
@@ -296,6 +296,6 @@ public class UserPlaylistAdapter extends RecyclerView.Adapter<UserPlaylistAdapte
 
         public void onLikeClick(View v, int position);
 
-        public void onPlayClicked(View v,int position);
+        public void onPlayClicked(View v, int position);
     }
 }
