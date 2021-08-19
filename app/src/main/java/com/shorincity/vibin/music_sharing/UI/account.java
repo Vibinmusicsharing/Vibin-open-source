@@ -1,10 +1,11 @@
 package com.shorincity.vibin.music_sharing.UI;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.shorincity.vibin.music_sharing.R;
 

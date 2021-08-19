@@ -1,5 +1,7 @@
 package com.shorincity.vibin.music_sharing.fragment;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -47,7 +49,6 @@ import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.youtube_files.PlayYoutubeVideoActivity;
-import com.shorincity.vibin.music_sharing.youtube_files.Search;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,8 +60,6 @@ import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-
-import static android.content.ContentValues.TAG;
 
 public class SearchFragment extends MyBaseFragment {
 
@@ -134,8 +133,7 @@ public class SearchFragment extends MyBaseFragment {
         playlistRv = (RecyclerView) view.findViewById(R.id.rv_playlist);
         playlistRv.setLayoutManager(new GridLayoutManager(mContext.getApplicationContext(), 2));
         playlistRv.setHasFixedSize(true);
-        Search search = new Search();
-        myPlaylistAdapter = new UserPlaylistAdapter(mContext, myPlaylists, search);
+        myPlaylistAdapter = new UserPlaylistAdapter(mContext, myPlaylists, this);
         myPlaylistAdapter.setCustomItemClickListener(new UserPlaylistAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {

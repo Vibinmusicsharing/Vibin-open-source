@@ -1,13 +1,9 @@
 package com.shorincity.vibin.music_sharing.utils;
 
 import android.content.Context;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
 
 import com.shorincity.vibin.music_sharing.R;
 

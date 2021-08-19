@@ -12,7 +12,6 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.activity.PrivacyPolicyActivity;
@@ -35,11 +39,6 @@ import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.browser.customtabs.CustomTabsIntent;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 
 import retrofit2.Call;
 import retrofit2.Callback;

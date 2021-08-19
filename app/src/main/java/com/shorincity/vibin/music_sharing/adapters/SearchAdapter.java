@@ -1,7 +1,6 @@
 package com.shorincity.vibin.music_sharing.adapters;
 
 import android.content.Context;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

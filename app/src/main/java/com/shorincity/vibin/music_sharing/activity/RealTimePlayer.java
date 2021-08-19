@@ -33,22 +33,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.gson.Gson;
-import com.shorincity.vibin.music_sharing.UI.youtube;
-import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
-import com.shorincity.vibin.music_sharing.adapters.ViewCollabAdapter;
-import com.shorincity.vibin.music_sharing.model.APIResponse;
-import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
-import com.shorincity.vibin.music_sharing.model.PublicPlaylistItemAdapter;
-import com.shorincity.vibin.music_sharing.model.firebase.RealTimeModel;
-import com.shorincity.vibin.music_sharing.model.firebase.RealTimeSession;
-import com.shorincity.vibin.music_sharing.model.firebase.RealTimeUser;
-import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.ripples.RippleButton;
-import com.shorincity.vibin.music_sharing.service.DataAPI;
-import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
-import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -58,6 +42,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
+import com.shorincity.vibin.music_sharing.adapters.ViewCollabAdapter;
+import com.shorincity.vibin.music_sharing.model.APIResponse;
+import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
+import com.shorincity.vibin.music_sharing.model.PublicPlaylistItemAdapter;
+import com.shorincity.vibin.music_sharing.model.firebase.RealTimeModel;
+import com.shorincity.vibin.music_sharing.model.firebase.RealTimeSession;
+import com.shorincity.vibin.music_sharing.model.firebase.RealTimeUser;
+import com.shorincity.vibin.music_sharing.ripples.RippleButton;
+import com.shorincity.vibin.music_sharing.service.DataAPI;
+import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
+import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
 
@@ -75,21 +74,18 @@ import retrofit2.Callback;
 // RealTime Player
 public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener, View.OnClickListener {
     private static final String TAG = RealTimePlayer.class.getName();
-    String view_collab = AppConstants.BASE_URL + "playlist/view_collab/";
+    private final String view_collab = AppConstants.BASE_URL + "playlist/view_collab/";
 
-    RealTimeModel realTimeModel;
+    private RealTimeModel realTimeModel;
 
-    int playlistId;
-    boolean isControlledByUser = false;
+    private int playlistId;
+    private boolean isControlledByUser = false;
 
-    int REQUEST_VIDEO = 123;
-    YouTubePlayerView youTubePlayerView;
-    ImageView spotifyPlayerView;
-    TextView titlemain;
-    boolean isEndSessionFromAdmin = false;
+    private final int REQUEST_VIDEO = 123;
+    private YouTubePlayerView youTubePlayerView;
+    private TextView titlemain;
 
-    int lengthms = 270000;
-    long spotifyLengthms;
+    private int lengthms = 270000;
 
     private RealTimePlayer.MyPlayerStateChangeListener playerStateChangeListener;
     private RealTimePlayer.MyPlaybackEventListener playbackEventListener;
@@ -98,54 +94,30 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
     private Handler handler;
     private Runnable my;
 
-   /* Handler handler;
-    Runnable my;*/
+    private boolean killMe = false;
+    private boolean seekusedbyuser = false;
+    private SeekBar seekbar;
 
-    Handler handler1;
-    Runnable runnable;
-    boolean killMe = false;
-    boolean seekusedbyuser = false;
-    SeekBar seekbar;
-
-    String title = "";
-
-    int userId;
-
-    ImageView forward, rewind, shuffle, repeatone;
-    Boolean isAddSongLogRecorded = false;
 
     // Songs List
-    RecyclerView playlistRv;
-    ArrayList<PlaylistDetailModel> playlist;
+    private RecyclerView playlistRv;
+    private ArrayList<PlaylistDetailModel> playlist;
     private PublicPlaylistItemAdapter publicPlaylistItemAdapter;
 
     // Collab List
-    ArrayList<ViewCollab> viewcollabList;
-    com.shorincity.vibin.music_sharing.adapters.ViewCollabAdapter ViewCollabAdapter;
-    RecyclerView viewCollabRecyclerView;
-    ProgressBar progressBarViewCollab;
+    private ArrayList<ViewCollab> viewcollabList;
+    private com.shorincity.vibin.music_sharing.adapters.ViewCollabAdapter ViewCollabAdapter;
+    private RecyclerView viewCollabRecyclerView;
+    private ProgressBar progressBarViewCollab;
 
-    ProgressBar progressBar;
-    Button Play_Pause;
-    RippleButton live_streaming_btn;
+    private Button Play_Pause;
+    private RippleButton live_streaming_btn;
 
-    // TODO: Replace with your client ID
-    private static final String CLIENT_ID = "d97e6af9d329405d997632c60fe79a16";
+    private TextView playerCurrentDurationTv, playerTotalDurationTv;
 
-    // TODO: Replace with your redirect URI
-    private static final String REDIRECT_URI = "http://vibin.in/callback/";
-    private static final int REQUEST_CODE = 1337;
-    //private Player spotifyPlayer;
-
-    TextView playerCurrentDurationTv, playerTotalDurationTv;
-
-
-    Handler spotifyHandler;
-    Runnable spotifyRunnable;
-    String playedSongType = "";
+    private String playedSongType = "";
 
     private BottomSheetBehavior behavior;
-    private AppCompatTextView arrow;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent intent) {
@@ -175,7 +147,6 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
         Logging.d("SPOTIFY Sharing-->" + new Gson().toJson(playlist));
         if (playlist.get(songPosition).getType().equalsIgnoreCase(AppConstants.YOUTUBE)) {
             Logging.d("YOUTUBE Sharing");
-            findViewById(R.id.img_cardview).setVisibility(View.INVISIBLE);
             youTubePlayerView.setVisibility(View.VISIBLE);
 
         }
@@ -186,7 +157,6 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
     int admin_id;
 
     private void getIntentData() {
-        userId = SharedPrefManager.getInstance(RealTimePlayer.this).getSharedPrefInt(AppConstants.INTENT_USER_ID);
         admin_id = getIntent().getExtras().getInt("admin_id");
         playlistId = getIntent().getExtras().getInt(AppConstants.INTENT_PLAYLIST_ID);
         sessionKey = getIntent().getExtras().getString(AppConstants.INTENT_SESSION_KEY);
@@ -217,30 +187,6 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
         inItListeners();
         statusBarColorChange();
         processSeekBar();
-       /* Handler handler1 = new Handler();
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                Log.i(TAG, "running");
-
-                if (killMe)
-                    return;
-
-                handler1.postDelayed(this, 1000);
-
-                if (playedSongType.equalsIgnoreCase(AppConstants.YOUTUBE) && player != null) {
-                    lengthms = player.getDurationMillis();
-                    float current = player.getCurrentTimeMillis();
-                    float wowInt = ((current / lengthms) * 100);
-                    if (seekusedbyuser == false) {
-                        seekbar.setProgress((int) wowInt);
-                    }
-
-                }
-            }
-        };
-
-        handler1.postDelayed(runnable, 1000);*/
 
         playerStateChangeListener = new RealTimePlayer.MyPlayerStateChangeListener();
         playbackEventListener = new RealTimePlayer.MyPlaybackEventListener();
@@ -625,21 +571,21 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
     }
 
     private void initViews() {
-        arrow = findViewById(R.id.arrow_up);
+        AppCompatTextView arrow = findViewById(R.id.arrow_up);
 
         playerCurrentDurationTv = findViewById(R.id.playerCurrentTimeText);
         playerTotalDurationTv = findViewById(R.id.playerTotalTimeText);
         live_streaming_btn = findViewById(R.id.live_streaming_btn);
-        spotifyPlayerView = findViewById(R.id.imageRsplayer);
         youTubePlayerView = findViewById(R.id.myYoutube);
         youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
         titlemain = findViewById(R.id.youtube_title);
 
+        String title = "";
         titlemain.setText(title);
         titlemain.setSelected(true);
 
-        forward = findViewById(R.id.fastforward);
-        rewind = findViewById(R.id.fastrewind);
+        ImageView forward = findViewById(R.id.fastforward);
+        ImageView rewind = findViewById(R.id.fastrewind);
 
         forward.setBackground(ContextCompat.getDrawable(RealTimePlayer.this, R.drawable.ic_fast_forward_black_24dp));
         rewind.setBackground(ContextCompat.getDrawable(RealTimePlayer.this, R.drawable.ic_fast_rewind_black_24dp));
@@ -895,7 +841,6 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer
             youTubePlayer, boolean b) {
 
-        isAddSongLogRecorded = false;
         this.player = youTubePlayer;
         youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
         youTubePlayer.setPlayerStateChangeListener(playerStateChangeListener);
@@ -1102,22 +1047,7 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (handler1 != null)
-            handler1.removeCallbacks(runnable);
-        /*if (spotifyHandler != null)
-            spotifyHandler.removeCallbacksAndMessages(spotifyRunnable);*/
-
         killMe = true;
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (handler1 != null)
-            handler1.removeCallbacks(runnable);
-        /*if (spotifyHandler != null)
-            spotifyHandler.removeCallbacksAndMessages(spotifyRunnable);*/
-//        killMe = true;
     }
 
     // Session Deleting : It will call whenever admin wants to go back
@@ -1135,7 +1065,6 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
                     if (response.body().getStatus().equalsIgnoreCase("success")) {
                         Log.i(TAG, "Session Ended:-" + sessionKey);
                         try {
-                            isEndSessionFromAdmin = true;
                             RealTimeSession session = realTimeModel.getSessions().get(sessionKey);
                             if (session != null)
                                 session.setStatus(AppConstants.ENDED);

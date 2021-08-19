@@ -1,10 +1,5 @@
 package com.shorincity.vibin.music_sharing.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,14 +10,18 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 
-import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
-import com.shorincity.vibin.music_sharing.model.RecentSongModel;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.adapters.RecentPlayedAdapter;
+import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
+import com.shorincity.vibin.music_sharing.model.RecentSongModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
-
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.youtube_files.PlayYoutubeVideoActivity;
 
@@ -35,9 +34,9 @@ import retrofit2.Response;
 // Screen to display all the songs played by user recently
 public class AllRecntSongsActivity extends AppCompatActivity {
 
-    ArrayList<RecentSongModel> recentSongList;
-    RecentPlayedAdapter recentPlayedAdapter;
-    RecyclerView recentSongRv;
+    private ArrayList<RecentSongModel> recentSongList;
+    private RecentPlayedAdapter recentPlayedAdapter;
+    private RecyclerView recentSongRv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +96,7 @@ public class AllRecntSongsActivity extends AppCompatActivity {
                         bundle.putString("videoId", recentSongList.get(position).getSongId());
                         bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
                         intent.putExtra("data", bundle);
-                        bundle.putString("from","channel");
+                        bundle.putString("from", "channel");
                         startActivity(intent);
                     }
                 } catch (Exception e) {

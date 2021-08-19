@@ -3,10 +3,6 @@ package com.shorincity.vibin.music_sharing.youtube_files;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
 import android.os.Parcelable;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,14 +16,16 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.shorincity.vibin.music_sharing.model.ModelData;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.model.Item;
+import com.shorincity.vibin.music_sharing.model.ModelData;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
-import com.shorincity.vibin.music_sharing.model.Item;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
-
 
 import java.util.ArrayList;
 

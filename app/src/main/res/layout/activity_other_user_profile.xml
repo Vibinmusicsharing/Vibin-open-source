@@ -11,8 +11,7 @@
     app:umanoOverlay="false"
     app:umanoPanelHeight="268dp"
     app:umanoParallaxOffset="100dp"
-    app:umanoShadowHeight="4dp"
-    tools:context=".youtube_files.youtube_user">
+    app:umanoShadowHeight="4dp">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/user_profile_appbar"
@@ -215,13 +214,12 @@
                             app:unlike_drawable="@drawable/heart_off_icon" />
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:visibility="gone"
                             android:id="@+id/like_img"
                             android:layout_width="@dimen/_25sdp"
                             android:layout_height="@dimen/_25sdp"
                             android:layout_centerHorizontal="true"
                             android:background="@drawable/heart_off_icon"
-                            />
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/like_txt"
@@ -287,22 +285,21 @@
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center"
                                 android:background="@drawable/bkgnd_rounded_corner_transparent"
-                                android:text="@string/collaborate"
-                                android:textColor="@color/black"
-                                app:rv_centered="true" android:textAllCaps="false"
-                                android:textSize="18sp"
+                                android:fontFamily="@font/tinos_regular"
                                 android:paddingLeft="@dimen/_7sdp"
                                 android:paddingRight="@dimen/_7sdp"
+                                android:text="@string/collaborate"
+                                android:textAllCaps="false"
+                                android:textColor="@color/black"
+                                android:textSize="18sp"
+                                app:rv_centered="true"
                                 app:rv_holdBgInPressing="true"
                                 app:rv_pressBgType="circleFitMax"
-                                app:rv_rippleColor="@color/colorPrimaryDark"
-                                android:fontFamily="@font/tinos_regular"/>
+                                app:rv_rippleColor="@color/colorPrimaryDark" />
 
                         </androidx.cardview.widget.CardView>
 
                     </RelativeLayout>
-
-
 
 
                 </LinearLayout>

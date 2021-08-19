@@ -1,14 +1,14 @@
 package com.shorincity.vibin.music_sharing.adapters;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+
 import com.shorincity.vibin.music_sharing.fragment.PrivacyPolicyFragment;
 import com.shorincity.vibin.music_sharing.fragment.ProfileILikedFragment;
 import com.shorincity.vibin.music_sharing.fragment.ProfileLikeIGotFragment;
 import com.shorincity.vibin.music_sharing.fragment.TermsAndConditionsFragment;
 import com.shorincity.vibin.music_sharing.model.UserLikeList;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 
 import java.util.ArrayList;
 

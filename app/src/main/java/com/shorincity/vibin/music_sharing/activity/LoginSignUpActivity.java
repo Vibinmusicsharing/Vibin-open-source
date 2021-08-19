@@ -1,11 +1,5 @@
 package com.shorincity.vibin.music_sharing.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,16 +15,12 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
-import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.LoginAct;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.UI.youtube;
-import com.shorincity.vibin.music_sharing.ripples.RippleButton;
-import com.shorincity.vibin.music_sharing.ripples.listener.OnRippleCompleteListener;
-import com.shorincity.vibin.music_sharing.service.DataAPI;
-import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
-import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -40,6 +30,16 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.UI.LoginAct;
+import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.UI.youtube;
+import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
+import com.shorincity.vibin.music_sharing.ripples.RippleButton;
+import com.shorincity.vibin.music_sharing.ripples.listener.OnRippleCompleteListener;
+import com.shorincity.vibin.music_sharing.service.DataAPI;
+import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
+import com.shorincity.vibin.music_sharing.utils.AppConstants;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,7 +52,6 @@ public class LoginSignUpActivity extends AppCompatActivity implements View.OnCli
     private static final int RC_APP_SIGN_IN = 006;
     private Button btbGoogleSignIn;
     private GoogleApiClient mGoogleApiClient;
-    private GoogleSignInOptions gso;
     private ProgressDialog mProgressDialog;
     private ProgressBar loading;
     private RippleButton emailSignInBtn, createAccBtn;
@@ -85,7 +84,7 @@ public class LoginSignUpActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void initializeGoogleSignIn() {
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
     }
@@ -99,7 +98,7 @@ public class LoginSignUpActivity extends AppCompatActivity implements View.OnCli
         createAccBtn.setOnRippleCompleteListener(onRippleCompleteListener);
     }
 
-    private OnRippleCompleteListener onRippleCompleteListener=new OnRippleCompleteListener() {
+    private OnRippleCompleteListener onRippleCompleteListener = new OnRippleCompleteListener() {
         @Override
         public void onComplete(View view) {
             onClick(view);
@@ -109,7 +108,7 @@ public class LoginSignUpActivity extends AppCompatActivity implements View.OnCli
     private void inItViews() {
 
         btbGoogleSignIn = (Button) findViewById(R.id.google_sign_up_btn);
-        emailSignInBtn =  findViewById(R.id.email_signin_btn);
+        emailSignInBtn = findViewById(R.id.email_signin_btn);
         createAccBtn = findViewById(R.id.create_account_btn);
         loading = (ProgressBar) findViewById(R.id.loading_login);
 
@@ -153,10 +152,9 @@ public class LoginSignUpActivity extends AppCompatActivity implements View.OnCli
     private int RESULT_CODE_SIGN_UP = 102;
 
 
-
     private void navigateTnCActivity(int resultCode) {
         Intent intent = new Intent(LoginSignUpActivity.this, TermsAndConditionsActivity.class);
-        startActivityForResult(intent,resultCode);
+        startActivityForResult(intent, resultCode);
     }
 
     private void googleSignIn() {
@@ -230,9 +228,9 @@ public class LoginSignUpActivity extends AppCompatActivity implements View.OnCli
             handleSignInResult(result);
         } else if (requestCode == RESULT_CODE_GOOGLE && resultCode == RESULT_OK) {
             googleSignIn();
-        }else if (requestCode == RESULT_CODE_EMAIL && resultCode == RESULT_OK) {
+        } else if (requestCode == RESULT_CODE_EMAIL && resultCode == RESULT_OK) {
             gotoLoginActivity();
-        }else if (requestCode == RESULT_CODE_SIGN_UP && resultCode == RESULT_OK) {
+        } else if (requestCode == RESULT_CODE_SIGN_UP && resultCode == RESULT_OK) {
             gotoSignUpActivity();
         }
     }
@@ -338,7 +336,7 @@ public class LoginSignUpActivity extends AppCompatActivity implements View.OnCli
         ft.commitAllowingStateLoss();
     }
 
-    private void statusBarColorChange(){
+    private void statusBarColorChange() {
         Window window = this.getWindow();
 
         // clear FLAG_TRANSLUCENT_STATUS flag:
@@ -349,7 +347,7 @@ public class LoginSignUpActivity extends AppCompatActivity implements View.OnCli
 
         // finally change the color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(ContextCompat.getColor(this,R.color.colorPrimaryDark));
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         }
     }
 

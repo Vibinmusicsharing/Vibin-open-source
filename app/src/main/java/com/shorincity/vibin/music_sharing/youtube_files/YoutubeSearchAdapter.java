@@ -12,9 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.shorincity.vibin.music_sharing.model.Item;
-
 import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.model.Item;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

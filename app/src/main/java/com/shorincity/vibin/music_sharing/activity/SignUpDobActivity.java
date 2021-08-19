@@ -17,6 +17,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
@@ -39,26 +42,21 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SignUpDobActivity extends AppCompatActivity implements View.OnClickListener {
 
-    boolean isLeepYearSelected = false;
-    private String genderStr,dobStr;
+    private boolean isLeepYearSelected = false;
+    private String genderStr, dobStr;
     private String mAvatarLink;
-    private int userId;
     private Spinner monthSpinner, daySpinner, yearSpinner;
     private ArrayList<String> yearList, monthList, dayList;
-    private ArrayAdapter<String> daySpinnerAdapter, monthSpinnerAdapter, yearSpinnerAdapter;
+    private ArrayAdapter<String> daySpinnerAdapter;
     private String selectedYear, selectedMonth, selectedDay;
     private RippleButton nextBtn;
     private String selectedMonthInTwoDigit, selectedDayInTwoDigit;
-    private int MIN_YEAR_LIMIT = 90;
 
     private Call<SignUpResponse> signUpCallback;
     private Call<AdditionalSignUpModel> registerCallback;
@@ -82,7 +80,7 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
 
     }
 
-    private void statusBarColorChange(){
+    private void statusBarColorChange() {
         Window window = this.getWindow();
 
         // clear FLAG_TRANSLUCENT_STATUS flag:
@@ -93,16 +91,19 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
 
         // finally change the color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(ContextCompat.getColor(this,R.color.white));
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.white));
         }
     }
 
     private void getIntentData() {
         Bundle bundle = getIntent().getBundleExtra(AppConstants.INTENT_USER_DATA_BUNDLE);
-        userId = bundle.getInt(AppConstants.INTENT_USER_ID, 0);
-        genderStr = bundle.getString(AppConstants.INTENT_GENDER);
-        mAvatarLink = bundle.getString(AppConstants.INTENT_GENDER_AVATAR_LINK);
-        Logging.d("SUDOB bundle:"+bundle.toString());
+        if (bundle != null) {
+            if (bundle.containsKey(AppConstants.INTENT_GENDER))
+                genderStr = bundle.getString(AppConstants.INTENT_GENDER);
+            if (bundle.containsKey(AppConstants.INTENT_GENDER_AVATAR_LINK))
+                mAvatarLink = bundle.getString(AppConstants.INTENT_GENDER_AVATAR_LINK);
+        }
+        Logging.d("SUDOB bundle:" + bundle.toString());
     }
 
     private void setMonthsSpinner() {
@@ -112,7 +113,10 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
         monthList = new ArrayList<>(Arrays.asList(months));
 
         // Initializing an ArrayAdapter
-        monthSpinnerAdapter = new ArrayAdapter<String>(this, R.layout.item_spinner, monthList) {
+        // Disable the first item from Spinner
+        // First item will be use for hint
+        // Set the hint text color gray
+        ArrayAdapter<String> monthSpinnerAdapter = new ArrayAdapter<String>(this, R.layout.item_spinner, monthList) {
             @Override
             public boolean isEnabled(int position) {
                 if (position == 0) {
@@ -265,6 +269,7 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
 
         final int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 
+        int MIN_YEAR_LIMIT = 90;
         int pastYear = currentYear - MIN_YEAR_LIMIT;
 
 
@@ -273,7 +278,10 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
         }
 
         // Initializing an ArrayAdapter
-        yearSpinnerAdapter = new ArrayAdapter<String>(this, R.layout.item_spinner, yearList) {
+        // Disable the first item from Spinner
+        // First item will be use for hint
+        // Set the hint text color gray
+        ArrayAdapter<String> yearSpinnerAdapter = new ArrayAdapter<String>(this, R.layout.item_spinner, yearList) {
             @Override
             public boolean isEnabled(int position) {
                 if (position == 0) {
@@ -361,27 +369,14 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_next:
-               // gotoNextActivity();
-                if(!((signUpCallback != null && signUpCallback.isExecuted())
+                // gotoNextActivity();
+                if (!((signUpCallback != null && signUpCallback.isExecuted())
                         || (registerCallback != null && registerCallback.isExecuted()))) {
                     preferredPlatform = AppConstants.YOUTUBE;
                     registerUser();
                 }
                 break;
         }
-    }
-
-    private void gotoNextActivity() {
-        String dob = selectedDayInTwoDigit + "/" + selectedMonthInTwoDigit + "/" + selectedYear;
-
-        Bundle bundle = getIntent().getBundleExtra(AppConstants.INTENT_USER_DATA_BUNDLE);
-        bundle.putString(AppConstants.INTENT_DOB, dob);
-        bundle.putString(AppConstants.INTENT_GENDER_AVATAR_LINK, mAvatarLink);
-
-        Logging.d("SUDOB Avatar:"+mAvatarLink);
-        Logging.d("SUDOB bundle:"+bundle.toString());
-
-        startActivity(new Intent(this, SignUpPreferPlatformActivity.class).putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle));
     }
 
     private void validate() {
@@ -391,6 +386,7 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
         else Utility.setViewEnable(nextBtn, true);
 
     }
+
     public void registerUser() {
         String dob = selectedDayInTwoDigit + "/" + selectedMonthInTwoDigit + "/" + selectedYear;
         // storing all the info in bundle travelled by previous screen
@@ -402,9 +398,9 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
         String signUpMethodStr = bundle.getString(AppConstants.INTENT_SIGN_UP_METHOD);
         genderStr = bundle.getString(AppConstants.INTENT_GENDER);
         dobStr = dob;
-        mAvatarLink= bundle.getString(AppConstants.INTENT_GENDER_AVATAR_LINK);
+        mAvatarLink = bundle.getString(AppConstants.INTENT_GENDER_AVATAR_LINK);
 
-        Logging.d("SUDP bundle 11:"+bundle.toString());
+        Logging.d("SUDP bundle 11:" + bundle.toString());
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
@@ -425,7 +421,7 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
                               String fullname,
                               String typeOfRegistration,
                               String timeOfRegistration,
-                              String  pushNotifications) {
+                              String pushNotifications) {
 
 //        if (preferredPlatform.equalsIgnoreCase(AppConstants.SPOTIFY)) {
 //            spotifyBtn.startAnimation();
@@ -441,7 +437,7 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
         DataAPI dataAPI = RetrofitAPI.getData();
 
         // Logging.dLong("SUP mAvatarLink:"+mAvatarLink);
-        signUpCallback = dataAPI.postSignUpFields(AppConstants.LOGIN_SIGNUP_HEADER,email,password,username,fullname,typeOfRegistration,timeOfRegistration,pushNotifications,mAvatarLink);
+        signUpCallback = dataAPI.postSignUpFields(AppConstants.LOGIN_SIGNUP_HEADER, email, password, username, fullname, typeOfRegistration, timeOfRegistration, pushNotifications, mAvatarLink);
 
 
         signUpCallback.enqueue(new Callback<SignUpResponse>() {
@@ -449,31 +445,33 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
             public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
                 if (response != null && response.body() != null
                         && response.body().getUserCreated().equalsIgnoreCase("true")) {
-                    Logging.dLong("SignUp res:"+new Gson().toJson(response.body()));
+                    Logging.dLong("SignUp res:" + new Gson().toJson(response.body()));
                     userIdStr = response.body().getUserId();
 
-                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_AVATAR_LINK,mAvatarLink);
-                    postAdditionalFields(userIdStr,genderStr,preferredPlatform,dobStr);
+                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_AVATAR_LINK, mAvatarLink);
+                    postAdditionalFields(userIdStr, genderStr, preferredPlatform, dobStr);
                 } else {
                     showMe.dismiss();
                     //resetButtonState();
                     Toast.makeText(SignUpDobActivity.this, response.message(), Toast.LENGTH_LONG).show();
                 }
             }
+
             @Override
             public void onFailure(Call<SignUpResponse> call, Throwable t) {
-                Logging.dLong("SignUp res:"+ Log.getStackTraceString(t));
+                Logging.dLong("SignUp res:" + Log.getStackTraceString(t));
                 showMe.dismiss();
-               // resetButtonState();
+                // resetButtonState();
                 Toast.makeText(SignUpDobActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
             }
         });
 
     }
+
     public void postAdditionalFields(final int userId, String sex, final String platfrom, String dob) {
         DataAPI dataAPI = RetrofitAPI.getData();
 
-        registerCallback = dataAPI.postAdditionalFields(AppConstants.LOGIN_SIGNUP_HEADER,userId,sex,platfrom,dob);
+        registerCallback = dataAPI.postAdditionalFields(AppConstants.LOGIN_SIGNUP_HEADER, userId, sex, platfrom, dob);
         registerCallback.enqueue(new Callback<AdditionalSignUpModel>() {
             @Override
             public void onResponse(Call<AdditionalSignUpModel> call, Response<AdditionalSignUpModel> response) {
@@ -483,13 +481,13 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
 
 
                     // Storing Users' info in preferences for further use
-                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefBoolean(AppConstants.INTENT_IS_USER_LOGGEDIN,true); // response.body().getUserLoggedIn()
-                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefInt(AppConstants.INTENT_USER_ID,response.body().getUserId());
-                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_USER_TOKEN,response.body().getToken());
-                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_USER_API_TOKEN,response.body().getApiToken());
-                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_USER_PREFERRED_PLATFORM,response.body().getPreferredPlatform());
-                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_USER_NAME,response.body().getUsername());
-                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_FULL_NAME,response.body().getFullname());
+                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefBoolean(AppConstants.INTENT_IS_USER_LOGGEDIN, true); // response.body().getUserLoggedIn()
+                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefInt(AppConstants.INTENT_USER_ID, response.body().getUserId());
+                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_USER_TOKEN, response.body().getToken());
+                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_USER_API_TOKEN, response.body().getApiToken());
+                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_USER_PREFERRED_PLATFORM, response.body().getPreferredPlatform());
+                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_USER_NAME, response.body().getUsername());
+                    SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_FULL_NAME, response.body().getFullname());
 
                     Intent k = new Intent(SignUpDobActivity.this, youtube.class);
                     k.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -511,10 +509,11 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
                     Toast.makeText(SignUpDobActivity.this, response.message(), Toast.LENGTH_LONG).show();
                 }
             }
+
             @Override
             public void onFailure(Call<AdditionalSignUpModel> call, Throwable t) {
-                Toast.makeText(SignUpDobActivity.this,"Error: " +t.getMessage(),Toast.LENGTH_LONG).show();
-               // resetButtonState();
+                Toast.makeText(SignUpDobActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                // resetButtonState();
             }
         });
 

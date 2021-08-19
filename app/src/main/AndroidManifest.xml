@@ -22,7 +22,6 @@
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
 
-        <activity android:name=".activity.YoutubeViewMoreArtistActivity" />
         <activity android:name=".activity.YoutubeUsersCollaboratedListingActivity" />
         <activity android:name=".activity.YoutubeUsersLikeListingActivity" />
         <activity android:name=".activity.TermsAndConditionsActivity" />
@@ -35,34 +34,16 @@
         </activity>
         <activity android:name=".activity.PrivacyPolicyActivity" />
         <activity android:name=".activity.LoginSignUpActivity" />
-        <activity android:name=".activity.RealTimeYoutubePlayler" />
         <activity android:name=".activity.RealTimePlayer" />
         <activity android:name=".activity.AboutUsActivity" />
         <activity
             android:name=".activity.WebviewActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.OtherUserProfileActivity"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activity.AllRecntSongsActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.YoutubeCountryActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.ChannelsPlaylistItemActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".activity.TempActivity">
 
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
-        </activity>
         <activity
             android:name=".activity.SignUpEmailPassActivity"
             android:screenOrientation="portrait"
@@ -77,22 +58,12 @@
         <activity
             android:name=".activity.SignUpDobActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".activity.SignUpPreferPlatformActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".activity.ChannelsPlaylistActivity"
-            android:label="@string/title_activity_channels_playlist" />
+
         <activity android:name=".UI.Platform_choose_activity" />
         <activity
             android:name=".UI.account"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".youtube_files.Search"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".youtube_files.PlaylistDetailActivity"
-            android:screenOrientation="portrait" />
+
         <!--<activity
             android:name=".spotify_files.rsplayer"
             android:screenOrientation="portrait" />

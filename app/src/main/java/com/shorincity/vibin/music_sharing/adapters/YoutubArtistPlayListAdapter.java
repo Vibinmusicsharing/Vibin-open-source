@@ -7,14 +7,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.model.YoutubePlaylistItemModel;
 
 import java.util.ArrayList;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 // playlist recycler view adapter
 public class YoutubArtistPlayListAdapter extends RecyclerView.Adapter<YoutubArtistPlayListAdapter.ExampleViewHolder> {

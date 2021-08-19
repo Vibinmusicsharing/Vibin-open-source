@@ -1,9 +1,6 @@
 package com.shorincity.vibin.music_sharing.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +13,8 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.shorincity.vibin.music_sharing.activity.YoutubeViewMoreArtistActivity;
-import com.shorincity.vibin.music_sharing.model.HomeYoutubeModel;
 import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.model.HomeYoutubeModel;
 
 import java.util.ArrayList;
 

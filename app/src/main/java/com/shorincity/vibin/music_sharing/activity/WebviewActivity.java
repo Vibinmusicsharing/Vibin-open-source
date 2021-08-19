@@ -1,12 +1,9 @@
 package com.shorincity.vibin.music_sharing.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
-
 import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceError;
@@ -16,6 +13,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
@@ -28,7 +27,6 @@ public class WebviewActivity extends AppCompatActivity {
 
     private WebView webview;
     private ProgressBar progressBar;
-    private String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +34,7 @@ public class WebviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_webview);
 
         // URL passing through intent
-        url = getIntent().getStringExtra(AppConstants.INTENT_WEBVIEW_URL);
+        String url = getIntent().getStringExtra(AppConstants.INTENT_WEBVIEW_URL);
 
         webview = (WebView) findViewById(R.id.webview);
         progressBar = (ProgressBar) findViewById(R.id.progressbar);

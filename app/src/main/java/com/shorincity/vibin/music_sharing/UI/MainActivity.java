@@ -1,7 +1,6 @@
 package com.shorincity.vibin.music_sharing.UI;
 
 import android.content.Intent;
-
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;

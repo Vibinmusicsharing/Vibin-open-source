@@ -1,6 +1,5 @@
 package com.shorincity.vibin.music_sharing.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -13,17 +12,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.adapters.CollaboratorListing;
-import com.shorincity.vibin.music_sharing.adapters.UserLikesAdapter;
 import com.shorincity.vibin.music_sharing.model.CollabsList;
-import com.shorincity.vibin.music_sharing.model.UserLikeList;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
-import com.shorincity.vibin.music_sharing.youtube_files.PlaylistDetailActivity;
 
 import java.util.ArrayList;
 
@@ -32,11 +27,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class YoutubeUsersCollaboratedListingActivity extends AppCompatActivity {
-    RecyclerView rv_collabs;
-    CollaboratorListing collaboratorListing;
-    ArrayList<CollabsList.UserData> maincollabslist;
-    ProgressBar progress_collabs;
-    private Toolbar mToolbar;
+    private RecyclerView rv_collabs;
+    private ArrayList<CollabsList.UserData> maincollabslist;
+    private ProgressBar progress_collabs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,12 +93,12 @@ public class YoutubeUsersCollaboratedListingActivity extends AppCompatActivity {
     public void setAdapter() {
         rv_collabs.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
         rv_collabs.setHasFixedSize(true);
-        collaboratorListing = new CollaboratorListing(getApplicationContext(), maincollabslist);
+        CollaboratorListing collaboratorListing = new CollaboratorListing(getApplicationContext(), maincollabslist);
         rv_collabs.setAdapter(collaboratorListing);
     }
 
     private void initView() {
-        mToolbar = findViewById(R.id.toolbar_likes);
+        Toolbar mToolbar = findViewById(R.id.toolbar_likes);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         rv_collabs = findViewById(R.id.rv_collabs);

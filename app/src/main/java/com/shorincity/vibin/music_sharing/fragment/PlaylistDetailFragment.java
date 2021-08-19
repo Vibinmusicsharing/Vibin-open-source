@@ -66,10 +66,10 @@ import com.shorincity.vibin.music_sharing.model.PlayListDeleteModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistLikeModel;
 import com.shorincity.vibin.music_sharing.model.PublicPlaylistItemAdapter;
+import com.shorincity.vibin.music_sharing.model.UserSearchModel;
 import com.shorincity.vibin.music_sharing.model.firebase.RealTimeModel;
 import com.shorincity.vibin.music_sharing.model.firebase.RealTimeSession;
 import com.shorincity.vibin.music_sharing.model.firebase.RealTimeUser;
-import com.shorincity.vibin.music_sharing.model.UserSearchModel;
 import com.shorincity.vibin.music_sharing.ripples.RippleButton;
 import com.shorincity.vibin.music_sharing.ripples.listener.OnRippleCompleteListener;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
@@ -77,7 +77,6 @@ import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
-import com.shorincity.vibin.music_sharing.youtube_files.PlaylistDetailActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -133,7 +132,6 @@ public class PlaylistDetailFragment extends MyBaseFragment {
     private ArrayList<Integer> collabsId;
     private StringBuffer finalplaylistid;
     private StringBuffer finalcollabslistid;
-    private PlaylistDetailActivity playlistDetailActivity;
     private BottomSheetDialog dialog;
 
     public static String BUNDLE_ID = "id";

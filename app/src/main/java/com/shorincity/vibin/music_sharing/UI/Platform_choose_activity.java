@@ -3,6 +3,14 @@ package com.shorincity.vibin.music_sharing.UI;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -12,18 +20,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.os.Bundle;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
-
-import android.widget.Toast;
-import com.shorincity.vibin.music_sharing.R;
 import com.google.android.material.navigation.NavigationView;
+import com.shorincity.vibin.music_sharing.R;
 
 public class Platform_choose_activity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 

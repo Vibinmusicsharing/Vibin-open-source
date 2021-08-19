@@ -1,5 +1,7 @@
 package com.shorincity.vibin.music_sharing.fragment;
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,9 +20,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +28,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,22 +38,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.like.LikeButton;
-import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
-import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
-import com.shorincity.vibin.music_sharing.model.PlaylistLikeModel;
-import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.UI.youtube;
-import com.shorincity.vibin.music_sharing.adapters.UserPlaylistAdapter;
-import com.shorincity.vibin.music_sharing.service.DataAPI;
-import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
-import com.shorincity.vibin.music_sharing.utils.AppConstants;
-import com.shorincity.vibin.music_sharing.utils.Logging;
-import com.shorincity.vibin.music_sharing.utils.Utility;
-import com.shorincity.vibin.music_sharing.youtube_files.PlayYoutubeVideoActivity;
-import com.shorincity.vibin.music_sharing.youtube_files.PlaylistDetailActivity;
-import com.shorincity.vibin.music_sharing.youtube_files.Search;
 import com.giphy.sdk.core.models.Media;
 import com.giphy.sdk.core.models.enums.MediaType;
 import com.giphy.sdk.core.models.enums.RatingType;
@@ -66,6 +49,18 @@ import com.giphy.sdk.ui.views.GPHGridCallback;
 import com.giphy.sdk.ui.views.GifView;
 import com.giphy.sdk.ui.views.GiphyGridView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.UI.youtube;
+import com.shorincity.vibin.music_sharing.adapters.UserPlaylistAdapter;
+import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
+import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
+import com.shorincity.vibin.music_sharing.model.PlaylistLikeModel;
+import com.shorincity.vibin.music_sharing.service.DataAPI;
+import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
+import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.Logging;
+import com.shorincity.vibin.music_sharing.utils.Utility;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -78,8 +73,6 @@ import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-
-import static android.content.ContentValues.TAG;
 
 public class PublicPlaylistFragment extends MyBaseFragment {
 

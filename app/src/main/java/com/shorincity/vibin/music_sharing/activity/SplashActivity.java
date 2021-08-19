@@ -9,17 +9,17 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.fragment.SplashFragment;
-
-import java.util.Objects;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.fragment.SplashFragment;
+
+import java.util.Objects;
 
 /**
  * Created by Aditya S.Gangasagar
@@ -28,7 +28,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private Context mContext;
     private AlertDialog mAlertDialog;
     private Toolbar mToolbar;
 
@@ -37,7 +36,6 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        mContext = SplashActivity.this;
         statusBarColorChange();
         init();
         navigateToFragment(SplashFragment.newInstance(), SplashFragment.class.getName(), null,

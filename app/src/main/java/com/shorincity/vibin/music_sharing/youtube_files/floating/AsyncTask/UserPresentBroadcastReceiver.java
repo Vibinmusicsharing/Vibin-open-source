@@ -9,12 +9,8 @@ import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.Settings;
 import android.util.Log;
 
-import com.shorincity.vibin.music_sharing.youtube_files.PlayYoutubeVideoActivity;
 import com.shorincity.vibin.music_sharing.youtube_files.floating.PlayerService;
 
 public class UserPresentBroadcastReceiver extends BroadcastReceiver {

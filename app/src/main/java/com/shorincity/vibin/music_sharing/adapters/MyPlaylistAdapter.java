@@ -10,12 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
-import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.giphy.sdk.core.models.enums.RenditionType;
 import com.giphy.sdk.ui.Giphy;
 import com.giphy.sdk.ui.views.GifView;
+import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
+import com.shorincity.vibin.music_sharing.utils.AppConstants;
 
 import java.util.ArrayList;
 

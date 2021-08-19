@@ -15,6 +15,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.model.SignUpUserNameCheckModel;
@@ -24,21 +28,17 @@ import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 
 // SignUp Second Screen : UserName, FullName
-public class SignUpUserNameActivity  extends AppCompatActivity implements View.OnClickListener {
+public class SignUpUserNameActivity extends AppCompatActivity implements View.OnClickListener {
 
-    String fullName = "";
-    String emailStr, passStr, signUpMethodStr;
-    EditText cust_full_name, usernameEdt;
+    private String fullName = "";
+    private String emailStr, passStr, signUpMethodStr;
+    private EditText cust_full_name, usernameEdt;
     private Button nextBtn;
     boolean isUserNameVerified = false;
 
@@ -58,7 +58,7 @@ public class SignUpUserNameActivity  extends AppCompatActivity implements View.O
         inItListeners();
     }
 
-    private void statusBarColorChange(){
+    private void statusBarColorChange() {
         Window window = this.getWindow();
 
         // clear FLAG_TRANSLUCENT_STATUS flag:
@@ -69,7 +69,7 @@ public class SignUpUserNameActivity  extends AppCompatActivity implements View.O
 
         // finally change the color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(ContextCompat.getColor(this,R.color.white));
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.white));
         }
     }
 
@@ -79,7 +79,7 @@ public class SignUpUserNameActivity  extends AppCompatActivity implements View.O
         passStr = getIntent().getStringExtra(AppConstants.INTENT_PASSWORD);
         signUpMethodStr = getIntent().getStringExtra(AppConstants.INTENT_SIGN_UP_METHOD);
 
-        signUpMethodStr = TextUtils.isEmpty(signUpMethodStr)? AppConstants.SIGNUP_BY_APP : signUpMethodStr;
+        signUpMethodStr = TextUtils.isEmpty(signUpMethodStr) ? AppConstants.SIGNUP_BY_APP : signUpMethodStr;
     }
 
     private void inItViews() {
@@ -94,22 +94,21 @@ public class SignUpUserNameActivity  extends AppCompatActivity implements View.O
         });*/
 
 
-
-        if(!TextUtils.isEmpty(fullName)) {
+        if (!TextUtils.isEmpty(fullName)) {
             cust_full_name.setText(fullName);
             cust_full_name.setEnabled(false);
             cust_full_name.setAlpha(0.5f);
         }
         usernameEdt.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-        Utility.setViewEnable(nextBtn,false);
+        Utility.setViewEnable(nextBtn, false);
     }
 
     private void inItListeners() {
 
-        cust_full_name.addTextChangedListener(new EditTextWatch(this,cust_full_name));
+        cust_full_name.addTextChangedListener(new EditTextWatch(this, cust_full_name));
         usernameEdt.addTextChangedListener(new EditTextWatch(this, usernameEdt));
 
-      nextBtn.setOnClickListener(this);
+        nextBtn.setOnClickListener(this);
     }
 
     @Override
@@ -119,7 +118,7 @@ public class SignUpUserNameActivity  extends AppCompatActivity implements View.O
 
                 // Going to next Screen which is Gender Screen
                 gotoNextActivity();
-            break;
+                break;
         }
     }
 
@@ -129,11 +128,11 @@ public class SignUpUserNameActivity  extends AppCompatActivity implements View.O
         String fullName = cust_full_name.getText().toString();
 
         Bundle bundle = new Bundle();
-        bundle.putString(AppConstants.INTENT_EMAIL,emailStr);
-        bundle.putString(AppConstants.INTENT_PASSWORD,passStr);
-        bundle.putString(AppConstants.INTENT_USER_NAME,userName);
-        bundle.putString(AppConstants.INTENT_FULL_NAME,fullName);
-        bundle.putString(AppConstants.INTENT_SIGN_UP_METHOD,signUpMethodStr);
+        bundle.putString(AppConstants.INTENT_EMAIL, emailStr);
+        bundle.putString(AppConstants.INTENT_PASSWORD, passStr);
+        bundle.putString(AppConstants.INTENT_USER_NAME, userName);
+        bundle.putString(AppConstants.INTENT_FULL_NAME, fullName);
+        bundle.putString(AppConstants.INTENT_SIGN_UP_METHOD, signUpMethodStr);
 
         startActivity(new Intent(this, SignUpGenderActivity.class)
                 .putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle));
@@ -165,11 +164,11 @@ public class SignUpUserNameActivity  extends AppCompatActivity implements View.O
 
             switch (editText.getId()) {
                 case R.id.tv_username:
-                    Logging.d("Lengh--->"+usernameEdt.getText().toString().trim().length());
-                    if(!TextUtils.isEmpty(usernameEdt.getText()) && usernameEdt.getText().toString().trim().length() >= 6)
+                    Logging.d("Lengh--->" + usernameEdt.getText().toString().trim().length());
+                    if (!TextUtils.isEmpty(usernameEdt.getText()) && usernameEdt.getText().toString().trim().length() >= 6)
                         callUserNameCheckerAPI(usernameEdt.getText().toString().trim());
                     else {
-                        isUserNameVerified=false;
+                        isUserNameVerified = false;
                         usernameEdt.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                     }
                     break;
@@ -178,10 +177,10 @@ public class SignUpUserNameActivity  extends AppCompatActivity implements View.O
                     break;
             }
             try {
-                Logging.d("22 usernameEdt-->"+usernameEdt.getText().toString());
-                Logging.d("22 usernameEdt-->"+cust_full_name.getText().toString());
-                Logging.d("22 isUserNameVerified-->"+isUserNameVerified);
-                Logging.d("22  length-->"+usernameEdt.getText().toString().trim().length());
+                Logging.d("22 usernameEdt-->" + usernameEdt.getText().toString());
+                Logging.d("22 usernameEdt-->" + cust_full_name.getText().toString());
+                Logging.d("22 isUserNameVerified-->" + isUserNameVerified);
+                Logging.d("22  length-->" + usernameEdt.getText().toString().trim().length());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -190,12 +189,12 @@ public class SignUpUserNameActivity  extends AppCompatActivity implements View.O
                     || usernameEdt.getText().toString().trim().length() < 6
                     || TextUtils.isEmpty(cust_full_name.getText().toString())
                     || !isUserNameVerified) {
-                Utility.setViewEnable(nextBtn,false);
-               Logging.d(" 11-setViewEnable false");
-                isUserNameVerified=false;
-                usernameEdt.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0);
+                Utility.setViewEnable(nextBtn, false);
+                Logging.d(" 11-setViewEnable false");
+                isUserNameVerified = false;
+                usernameEdt.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             } else {
-               Logging.d(" 11-setViewEnable true");
+                Logging.d(" 11-setViewEnable true");
                 Utility.setViewEnable(nextBtn, true);
             }
         }
@@ -211,14 +210,14 @@ public class SignUpUserNameActivity  extends AppCompatActivity implements View.O
             public void onResponse(Call<SignUpUserNameCheckModel> call, Response<SignUpUserNameCheckModel> response) {
                 //progressBar.setVisibility(View.GONE);
                 if (response != null && response.body() != null) {
-                    Logging.d(" callUserNameCheckerAPI response-->"+new Gson().toJson(response));
+                    Logging.d(" callUserNameCheckerAPI response-->" + new Gson().toJson(response));
                     Log.i("YOUTUBE_TRENDING RESULT", response.toString());
 
-                    if(response.body() != null) {
+                    if (response.body() != null) {
 
                         if (response.body().getStatus().equalsIgnoreCase("checked")) {
 
-                            Logging.d("exist-->"+response.body().getExists());
+                            Logging.d("exist-->" + response.body().getExists());
                             if (response.body().getExists()) {
                                 isUserNameVerified = false;
                                 usernameEdt.setError(getResources().getString(R.string.error_on_user_exist));
@@ -226,30 +225,30 @@ public class SignUpUserNameActivity  extends AppCompatActivity implements View.O
                                 isUserNameVerified = true;
 
                                 usernameEdt.setError(null);
-                                usernameEdt.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.check_mark_small,0);
+                                usernameEdt.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.check_mark_small, 0);
                             }
 
 
                             try {
-                                Logging.d("11 usernameEdt-->"+usernameEdt.getText().toString());
-                                Logging.d("11 usernameEdt-->"+cust_full_name.getText().toString());
-                                Logging.d("11 isUserNameVerified-->"+isUserNameVerified);
-                                Logging.d("11  length-->"+usernameEdt.getText().toString().trim().length());
+                                Logging.d("11 usernameEdt-->" + usernameEdt.getText().toString());
+                                Logging.d("11 usernameEdt-->" + cust_full_name.getText().toString());
+                                Logging.d("11 isUserNameVerified-->" + isUserNameVerified);
+                                Logging.d("11  length-->" + usernameEdt.getText().toString().trim().length());
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
-                            if (TextUtils.isEmpty(usernameEdt.getText().toString()) || TextUtils.isEmpty(cust_full_name.getText().toString()) || !isUserNameVerified ||   usernameEdt.getText().toString().trim().length() < 6) {
-                                Utility.setViewEnable(nextBtn,false);
-                               Logging.d(" -setViewEnable false 22");
-                                usernameEdt.setCompoundDrawablesWithIntrinsicBounds(0,0,0,0);
+                            if (TextUtils.isEmpty(usernameEdt.getText().toString()) || TextUtils.isEmpty(cust_full_name.getText().toString()) || !isUserNameVerified || usernameEdt.getText().toString().trim().length() < 6) {
+                                Utility.setViewEnable(nextBtn, false);
+                                Logging.d(" -setViewEnable false 22");
+                                usernameEdt.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                             } else {
                                 Utility.setViewEnable(nextBtn, true);
-                                usernameEdt.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.check_mark_small,0);
-                              Logging.d(" -setViewEnable true 22");
+                                usernameEdt.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.check_mark_small, 0);
+                                Logging.d(" -setViewEnable true 22");
                             }
 
-                        }else{
+                        } else {
                             Logging.d(" callUserNameCheckerAPI unchecked res");
                         }
 
@@ -260,6 +259,7 @@ public class SignUpUserNameActivity  extends AppCompatActivity implements View.O
                     Toast.makeText(SignUpUserNameActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
                 }
             }
+
             @Override
             public void onFailure(Call<SignUpUserNameCheckModel> call, Throwable t) {
                 //progressBar.setVisibility(View.GONE);

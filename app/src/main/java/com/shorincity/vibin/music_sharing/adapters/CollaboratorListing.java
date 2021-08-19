@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,11 +15,8 @@ import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.custom.RoundedImageView;
 import com.shorincity.vibin.music_sharing.model.CollabsList;
-import com.shorincity.vibin.music_sharing.model.UserLikeList;
 
 import java.util.ArrayList;
-
-import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
 
 public class CollaboratorListing extends RecyclerView.Adapter<CollaboratorListing.ExampleViewHolder> {
     Context context;

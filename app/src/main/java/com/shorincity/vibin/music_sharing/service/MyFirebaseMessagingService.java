@@ -24,19 +24,17 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import androidx.core.app.NotificationCompat;
-
-import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
-
-import androidx.core.content.ContextCompat;
 
 /**
  * NOTE: There can only be one service in each app that receives FCM messages. If multiple

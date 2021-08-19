@@ -15,7 +15,6 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.adapters.UserLikesAdapter;
 import com.shorincity.vibin.music_sharing.adapters.ViewPagerAdapter;
 import com.shorincity.vibin.music_sharing.model.UserLikeList;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
@@ -23,31 +22,23 @@ import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class YoutubeUsersLikeListingActivity extends AppCompatActivity {
-    RecyclerView rv_likeslisting;
-    TextView txt_nolikes;
-    ArrayList<UserLikeList.GotLikes> userLikeIGotLists;
-    ArrayList<UserLikeList.GotLikes> userLikeILikedLists;
-    UserLikesAdapter userLikesAdapter;
-    private Toolbar mToolbar;
-    private TabLayout tabLayout;
-    ProgressBar progress_like;
-    private ViewPager viewPager;
-    private ViewPagerAdapter viewPagerAdapter;
+    private ArrayList<UserLikeList.GotLikes> userLikeIGotLists;
+    private ArrayList<UserLikeList.GotLikes> userLikeILikedLists;
+    private ProgressBar progress_like;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_youtube_users_like_listing);
 
-        userLikeIGotLists = new ArrayList<UserLikeList.GotLikes>();
-        userLikeILikedLists = new ArrayList<UserLikeList.GotLikes>();
+        userLikeIGotLists = new ArrayList<>();
+        userLikeILikedLists = new ArrayList<>();
         initView();
         progress_like.setVisibility(View.VISIBLE);
 
@@ -64,7 +55,7 @@ public class YoutubeUsersLikeListingActivity extends AppCompatActivity {
         callback.enqueue(new Callback<UserLikeList>() {
             @Override
             public void onResponse(Call<UserLikeList> call, Response<UserLikeList> response) {
-                 if (response != null && response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
+                if (response != null && response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
                     if (response.body().getProfile_likes_i_got() != null) {
                         userLikeIGotLists.addAll(response.body().getProfile_likes_i_got());
                     }
@@ -85,20 +76,18 @@ public class YoutubeUsersLikeListingActivity extends AppCompatActivity {
     }
 
     private void setupViewPager(ArrayList<UserLikeList.GotLikes> userLikeIGotLists, ArrayList<UserLikeList.GotLikes> userLikeILikedLists) {
-        viewPager = (ViewPager) findViewById(R.id.viewPager_likes);
-        tabLayout = (TabLayout) findViewById(R.id.tabs_likes);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager_likes);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs_likes);
         String[] titles = {"Likes Received", "Liked Profiles3d"};
-        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), titles, "1", userLikeIGotLists, userLikeILikedLists);
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), titles, "1", userLikeIGotLists, userLikeILikedLists);
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
     }
 
     private void initView() {
-        mToolbar = findViewById(R.id.toolbar_likes);
+        Toolbar mToolbar = findViewById(R.id.toolbar_likes);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        rv_likeslisting = findViewById(R.id.rv_likeslisting);
-        txt_nolikes = findViewById(R.id.txt_nolikes);
         progress_like = findViewById(R.id.progress_like);
     }
 

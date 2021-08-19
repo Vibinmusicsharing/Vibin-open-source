@@ -19,20 +19,20 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.giphy.sdk.core.models.enums.RenditionType;
+import com.giphy.sdk.ui.Giphy;
+import com.giphy.sdk.ui.views.GifView;
 import com.like.LikeButton;
+import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.fragment.PublicPlaylistFragment;
+import com.shorincity.vibin.music_sharing.fragment.SearchFragment;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
-import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.model.PlayListDeleteModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Utility;
-import com.giphy.sdk.core.models.enums.RenditionType;
-import com.giphy.sdk.ui.Giphy;
-import com.giphy.sdk.ui.views.GifView;
-import com.shorincity.vibin.music_sharing.youtube_files.Search;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -46,7 +46,7 @@ public class UserPlaylistAdapter extends RecyclerView.Adapter<UserPlaylistAdapte
     private Context mContext;
     private ArrayList<MyPlaylistModel> list;
     PublicPlaylistFragment publicPlaylistFrag;
-    Search searchFrag;
+    SearchFragment searchFrag;
 
     public UserPlaylistAdapter(Context context, ArrayList<MyPlaylistModel> exampleList, PublicPlaylistFragment publicPlaylistFragment) {
         Giphy.INSTANCE.configure(context, AppConstants.GIPHY_API_KEY, true);
@@ -55,7 +55,7 @@ public class UserPlaylistAdapter extends RecyclerView.Adapter<UserPlaylistAdapte
         this.publicPlaylistFrag = publicPlaylistFragment;
     }
 
-    public UserPlaylistAdapter(Context context, ArrayList<MyPlaylistModel> exampleList, Search search) {
+    public UserPlaylistAdapter(Context context, ArrayList<MyPlaylistModel> exampleList, SearchFragment search) {
         Giphy.INSTANCE.configure(context, AppConstants.GIPHY_API_KEY, true);
         mContext = context;
         list = exampleList;

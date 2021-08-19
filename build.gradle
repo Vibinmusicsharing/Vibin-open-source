@@ -5,7 +5,8 @@ buildscript {
     repositories {
         google()
         jcenter()
-        
+        mavenCentral()
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.0.0'
@@ -30,6 +31,7 @@ allprojects {
         maven {
             url "http://giphy.bintray.com/giphy-sdk"
         }
+        mavenCentral()
     }
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {

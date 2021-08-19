@@ -13,8 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.shorincity.vibin.music_sharing.model.YoutubeChannelModel;
 import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.model.YoutubeChannelModel;
 
 import java.util.ArrayList;
 import java.util.Random;

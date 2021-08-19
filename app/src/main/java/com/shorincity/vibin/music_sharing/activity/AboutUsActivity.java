@@ -15,18 +15,15 @@ import com.shorincity.vibin.music_sharing.utils.Utility;
 
 public class AboutUsActivity extends AppCompatActivity {
 
-    ImageView img_facebook, img_instagram, img_twitter, img_linkedin;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_us);
 
-        img_facebook = findViewById(R.id.img_facebook);
-        img_instagram = findViewById(R.id.img_instagram);
-        img_twitter = findViewById(R.id.img_twitter);
-        img_linkedin = findViewById(R.id.img_linkedin);
-
+        ImageView img_facebook = findViewById(R.id.img_facebook);
+        ImageView img_instagram = findViewById(R.id.img_instagram);
+        ImageView img_twitter = findViewById(R.id.img_twitter);
+        ImageView img_linkedin = findViewById(R.id.img_linkedin);
 
 
         TextView versionTv = (TextView) findViewById(R.id.tv_version);
@@ -46,7 +43,7 @@ public class AboutUsActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Uri uri = Uri.parse("https://instagram.com/vibin_sharing?igshid=npmvbss2mj86");
-                Intent i= new Intent(Intent.ACTION_VIEW,uri);
+                Intent i = new Intent(Intent.ACTION_VIEW, uri);
 
                 i.setPackage("com.instagram.android");
 
@@ -65,7 +62,7 @@ public class AboutUsActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Uri uri = Uri.parse("https://www.facebook.com/vibinmusicsharing/");
-                Intent i= new Intent(Intent.ACTION_VIEW,uri);
+                Intent i = new Intent(Intent.ACTION_VIEW, uri);
 
                 i.setPackage("com.facebook.katana");
 
@@ -84,7 +81,7 @@ public class AboutUsActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Uri uri = Uri.parse("https://twitter.com/vibin_music");
-                Intent i= new Intent(Intent.ACTION_VIEW,uri);
+                Intent i = new Intent(Intent.ACTION_VIEW, uri);
 
                 i.setPackage("com.twitter.android");
 
@@ -103,7 +100,7 @@ public class AboutUsActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Uri uri = Uri.parse("https://www.linkedin.com/company/35884186/admin/");
-                Intent i= new Intent(Intent.ACTION_VIEW,uri);
+                Intent i = new Intent(Intent.ACTION_VIEW, uri);
 
                 i.setPackage("com.linkedin.android");
 

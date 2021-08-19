@@ -4,14 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".youtube_files.PlaylistDetailActivity">
+    android:background="@color/white">
 
     <RelativeLayout
         android:id="@+id/relative_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".youtube_files.PlaylistDetailActivity">
+        android:layout_height="match_parent">
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/sliding_main"

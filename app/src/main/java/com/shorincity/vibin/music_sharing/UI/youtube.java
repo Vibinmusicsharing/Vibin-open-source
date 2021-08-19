@@ -22,8 +22,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -47,7 +45,6 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -71,7 +68,6 @@ import com.giphy.sdk.ui.views.GiphyGridView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -80,8 +76,6 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.jackandphantom.androidlikebutton.AndroidLikeButton;
 import com.shorincity.vibin.music_sharing.R;
@@ -118,15 +112,21 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
+import javax.net.ssl.SSLSocketFactory;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -212,6 +212,8 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     private LinearLayout bottom_sheet_detail;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
+    private WebSocketClient webSocketClient;
+    private URI coinbaseUri;
 
 
     @Override
@@ -926,6 +928,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     @Override
     protected void onResume() {
         super.onResume();
+        initWebSocket();
         callGetNotificationUnreadCountAPI();
 
         stopFloatingService();
@@ -948,20 +951,80 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 processSeekBar();
                 Logging.d("wowInt-->" + wowInt);
                 // displaying current duration when song starts to play
-                if ((mYouTubePlayer != null && mYouTubePlayer.isPlaying()) && (int) wowInt > 0) {
-                    playerCurrentDurationTv.setText(Utility.convertDuration(Long.valueOf(mYouTubePlayer.getCurrentTimeMillis())));
-                }
-                if ((mYouTubePlayer != null && mYouTubePlayer.isPlaying())) {
-                    mYouTubePlayer.pause();
-                    Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
-                } else {
-                    mYouTubePlayer.play();
-                    Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+                if (mYouTubePlayer != null) {
+                    if (mYouTubePlayer.isPlaying() && (int) wowInt > 0) {
+                        playerCurrentDurationTv.setText(Utility.convertDuration(Long.valueOf(mYouTubePlayer.getCurrentTimeMillis())));
+                    }
+                    // 0=noActive,1=miniPlayer,2=PlayerFullScreen
+                    if (mYouTubePlayer.isPlaying()) {
+                        playerMode = 0;
+                        mYouTubePlayer.pause();
+                        Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
+                    } else {
+                        playerMode = 1;
+                        mYouTubePlayer.play();
+                        Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+                    }
+                    setPlayerMode();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (webSocketClient != null)
+            webSocketClient.close();
+    }
+
+    private void initWebSocket() {
+        try {
+            coinbaseUri = new URI(Constants.WEB_SOCKET_URL);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        webSocketClient = new WebSocketClient(coinbaseUri) {
+            @Override
+            public void onOpen(ServerHandshake handshakedata) {
+                Log.d(TAG, "WebSocket onOpen");
+                webSocketClient.send(
+                        "{\n" +
+                                "    \"type\": \"subscribe\",\n" +
+                                "    \"channels\": [{ \"name\": \"ticker\", \"product_ids\": [\"BTC-EUR\"] }]\n" +
+                                "}"
+                );
+            }
+
+            @Override
+            public void onMessage(String message) {
+                Log.d(TAG, "WebSocket onMessage" + message);
+            }
+
+            @Override
+            public void onClose(int code, String reason, boolean remote) {
+                Log.d(TAG, "WebSocket onClose");
+                webSocketClient.send(
+                        "{\n" +
+                                "    \"type\": \"unsubscribe\",\n" +
+                                "    \"channels\": [\"ticker\"]\n" +
+                                "}"
+                );
+            }
+
+            @Override
+            public void onError(Exception ex) {
+                ex.printStackTrace();
+            }
+        };
+
+        SSLSocketFactory socketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+        webSocketClient.setSocketFactory(socketFactory);
+        webSocketClient.connect();
+
     }
 
     private void stopFloatingService() {

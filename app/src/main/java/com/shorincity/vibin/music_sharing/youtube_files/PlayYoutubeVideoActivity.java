@@ -1,6 +1,5 @@
 package com.shorincity.vibin.music_sharing.youtube_files;
 
-import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.content.Context;
@@ -48,27 +47,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.adapters.AddToPlaylistAdapter;
-import com.shorincity.vibin.music_sharing.adapters.PlayListDetailsAdapter;
-import com.shorincity.vibin.music_sharing.adapters.Playlist;
-import com.shorincity.vibin.music_sharing.adapters.PlaylistRecyclerView;
-import com.shorincity.vibin.music_sharing.adapters.YoutubeArtistChannelAdapter;
-import com.shorincity.vibin.music_sharing.model.APIResponse;
-import com.shorincity.vibin.music_sharing.model.AddSongLogModel;
-import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
-import com.shorincity.vibin.music_sharing.model.SongLikeModel;
-import com.shorincity.vibin.music_sharing.ripples.RippleButton;
-import com.shorincity.vibin.music_sharing.service.DataAPI;
-import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
-import com.shorincity.vibin.music_sharing.utils.AppConstants;
-import com.shorincity.vibin.music_sharing.utils.Logging;
-import com.shorincity.vibin.music_sharing.utils.Utility;
-import com.shorincity.vibin.music_sharing.youtube_files.floating.AsyncTask.Constants;
-import com.shorincity.vibin.music_sharing.youtube_files.floating.PlayerService;
 import com.giphy.sdk.core.models.Media;
 import com.giphy.sdk.core.models.enums.MediaType;
 import com.giphy.sdk.core.models.enums.RatingType;
@@ -78,13 +56,29 @@ import com.giphy.sdk.ui.pagination.GPHContent;
 import com.giphy.sdk.ui.views.GPHGridCallback;
 import com.giphy.sdk.ui.views.GifView;
 import com.giphy.sdk.ui.views.GiphyGridView;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 import com.jackandphantom.androidlikebutton.AndroidLikeButton;
-import com.like.IconType;
-import com.like.LikeButton;
-import com.like.OnLikeListener;
+import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.adapters.AddToPlaylistAdapter;
+import com.shorincity.vibin.music_sharing.adapters.PlayListDetailsAdapter;
+import com.shorincity.vibin.music_sharing.adapters.Playlist;
+import com.shorincity.vibin.music_sharing.adapters.PlaylistRecyclerView;
+import com.shorincity.vibin.music_sharing.model.APIResponse;
+import com.shorincity.vibin.music_sharing.model.AddSongLogModel;
+import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
+import com.shorincity.vibin.music_sharing.model.SongLikeModel;
+import com.shorincity.vibin.music_sharing.service.DataAPI;
+import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
+import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.Logging;
+import com.shorincity.vibin.music_sharing.utils.Utility;
+import com.shorincity.vibin.music_sharing.youtube_files.floating.PlayerService;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -92,16 +86,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-
-import com.google.android.youtube.player.YouTubePlayer;
 
 // Youtube Player
 

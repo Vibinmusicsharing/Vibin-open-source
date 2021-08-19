@@ -2,7 +2,6 @@ package com.shorincity.vibin.music_sharing.youtube_files;
 
 import android.content.Context;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import androidx.fragment.app.Fragment;
 
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 

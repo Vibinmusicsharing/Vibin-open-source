@@ -1,7 +1,6 @@
 package com.shorincity.vibin.music_sharing.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -20,19 +19,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.shorincity.vibin.music_sharing.model.Item;
-import com.shorincity.vibin.music_sharing.model.ModelData;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.adapters.YoutubeSearchAdapter;
+import com.shorincity.vibin.music_sharing.model.Item;
+import com.shorincity.vibin.music_sharing.model.ModelData;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
-import com.shorincity.vibin.music_sharing.youtube_files.PlayYoutubeVideoActivity;
 
 import java.util.ArrayList;
 

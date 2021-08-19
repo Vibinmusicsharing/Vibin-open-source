@@ -1,13 +1,13 @@
 package com.shorincity.vibin.music_sharing.activity;
 
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.View;
 
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.fragment.TermsAndConditionsFragment;

@@ -7,15 +7,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.custom.RoundedImageView;
 import com.shorincity.vibin.music_sharing.model.avatar.Avatar;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 // playlist recycler view adapter
 public class AvatarListAdapter extends RecyclerView.Adapter<AvatarListAdapter.ViewHolder> {

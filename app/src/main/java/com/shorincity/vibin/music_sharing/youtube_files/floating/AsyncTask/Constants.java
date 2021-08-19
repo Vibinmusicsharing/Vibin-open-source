@@ -82,6 +82,7 @@ public class Constants {
     public static String SUGGESTIONS_CLIENT = "youtube";
     public static String SUGGESTIONS_CLIENT_RETURN_TYPE = "firefox";
     public static String SUGGESTIONS_DS = "yt";
+    public static String WEB_SOCKET_URL="wss://ws-feed.pro.coinbase.com";
 
 
 }

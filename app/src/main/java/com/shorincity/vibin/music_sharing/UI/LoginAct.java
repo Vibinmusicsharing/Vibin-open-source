@@ -6,10 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,18 +17,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.shorincity.vibin.music_sharing.activity.TermsAndConditionsActivity;
-import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
-import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.activity.SignUpEmailPassActivity;
-import com.shorincity.vibin.music_sharing.activity.WebviewActivity;
-import com.shorincity.vibin.music_sharing.fragment.ErrorDailogFragment;
-import com.shorincity.vibin.music_sharing.ripples.RippleButton;
-import com.shorincity.vibin.music_sharing.ripples.listener.OnRippleCompleteListener;
-import com.shorincity.vibin.music_sharing.service.DataAPI;
-import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
-import com.shorincity.vibin.music_sharing.utils.AppConstants;
-import com.shorincity.vibin.music_sharing.utils.Logging;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -42,6 +29,18 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.activity.SignUpEmailPassActivity;
+import com.shorincity.vibin.music_sharing.activity.TermsAndConditionsActivity;
+import com.shorincity.vibin.music_sharing.activity.WebviewActivity;
+import com.shorincity.vibin.music_sharing.fragment.ErrorDailogFragment;
+import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
+import com.shorincity.vibin.music_sharing.ripples.RippleButton;
+import com.shorincity.vibin.music_sharing.ripples.listener.OnRippleCompleteListener;
+import com.shorincity.vibin.music_sharing.service.DataAPI;
+import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
+import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.Logging;
 
 import retrofit2.Call;
 import retrofit2.Callback;

@@ -11,6 +11,12 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.adapters.AvatarListAdapter;
 import com.shorincity.vibin.music_sharing.model.avatar.Avatar;
@@ -25,11 +31,6 @@ import com.shorincity.vibin.music_sharing.utils.Logging;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,7 +41,6 @@ public class SignUpGenderActivity extends AppCompatActivity implements View.OnCl
     private Context mContext;
     private RelativeLayout genderMaleHldr, genderFemaleHldr, genderMaleFemaleHldr;
     private RippleButton nextBtn;
-    private int userId;
     private final int MALE = 1;
     private final int FEMALE = 2;
     private final int MALE_FEMALE = 3;
@@ -50,7 +50,6 @@ public class SignUpGenderActivity extends AppCompatActivity implements View.OnCl
     private AvatarListAdapter mAvatarListAdapter;
 
     private String mAvatarLink;
-    private Call<AvatarDetails> avatarCallBack;
 
     private List<Avatar> mMaleList;
     private List<Avatar> mFeMaleList;
@@ -142,7 +141,7 @@ public class SignUpGenderActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void getIntentData() {
-        userId = getIntent().getIntExtra(AppConstants.INTENT_USER_ID, 0);
+        int userId = getIntent().getIntExtra(AppConstants.INTENT_USER_ID, 0);
     }
 
     private void inItViews() {
@@ -261,7 +260,7 @@ public class SignUpGenderActivity extends AppCompatActivity implements View.OnCl
         progress_view.setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getData();
 
-        avatarCallBack = dataAPI.getAvatars(AppConstants.LOGIN_SIGNUP_HEADER, gender);
+        Call<AvatarDetails> avatarCallBack = dataAPI.getAvatars(AppConstants.LOGIN_SIGNUP_HEADER, gender);
         avatarCallBack.enqueue(new Callback<AvatarDetails>() {
             @Override
             public void onResponse(Call<AvatarDetails> call, Response<AvatarDetails> response) {

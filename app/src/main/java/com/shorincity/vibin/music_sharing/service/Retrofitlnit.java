@@ -7,7 +7,6 @@ import com.google.gson.GsonBuilder;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -21,7 +20,6 @@ import okhttp3.Protocol;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import timber.log.Timber;
 
 // youtube initializing retrofit
 public class Retrofitlnit {

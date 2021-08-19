@@ -71,27 +71,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/youtube_title">
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/img_cardview"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/gph_transparent"
-                    android:elevation="@dimen/_20sdp"
-                    android:visibility="invisible"
-                    app:cardCornerRadius="@dimen/_10sdp"
-                    tools:ignore="MissingConstraints">
-
-                    <ImageView
-                        android:id="@+id/imageRsplayer"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:elevation="@dimen/_15sdp"
-                        android:scaleType="centerCrop" />
-
-                </androidx.cardview.widget.CardView>
-
                 <com.google.android.youtube.player.YouTubePlayerView
                     android:id="@+id/myYoutube"
                     android:layout_width="match_parent"
@@ -285,8 +264,8 @@
                 android:id="@+id/arrow_up"
                 android:layout_width="@dimen/_40sdp"
                 android:layout_height="@dimen/_40sdp"
-                android:text="test text"
                 android:layout_gravity="center"
+                android:text="test text"
                 android:tint="@color/black"
                 android:visibility="visible"
                 app:drawableStartCompat="@drawable/ic_baseline_keyboard_arrow_up_24"

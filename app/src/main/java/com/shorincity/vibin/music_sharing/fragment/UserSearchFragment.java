@@ -1,7 +1,6 @@
 
 package com.shorincity.vibin.music_sharing.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -18,22 +17,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.shorincity.vibin.music_sharing.activity.AllRecntSongsActivity;
-import com.shorincity.vibin.music_sharing.model.UserSearchModel;
+import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
-import com.shorincity.vibin.music_sharing.activity.OtherUserProfileActivity;
 import com.shorincity.vibin.music_sharing.adapters.UserSearchAdapter;
+import com.shorincity.vibin.music_sharing.model.UserSearchModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 

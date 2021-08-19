@@ -10,7 +10,6 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
-
 import com.shorincity.vibin.music_sharing.BuildConfig;
 
 import java.text.DecimalFormat;

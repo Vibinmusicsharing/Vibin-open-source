@@ -16,12 +16,24 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.LoginAct;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
@@ -35,22 +47,9 @@ import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,22 +59,19 @@ import retrofit2.Response;
 public class SignUpEmailPassActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private Context mContext;
-    Animation frombottom, fromtop;
-    RippleButton btnLogin_signup;
+    private RippleButton btnLogin_signup;
     private RippleButton joinBtn;
-    TextView textView2;
-    EditText emailSignUpEdt, password_signup, password_confirm;
-    ProgressBar loading;
+    private EditText emailSignUpEdt, password_signup, password_confirm;
+    private ProgressBar loading;
 
     private String fullName = "", signUpMethod = "", email, googlePass;
     private String password = "";
     private boolean isEmailVerified;
     private ProgressBar validatorProgress;
     private RippleButton google_sign_up_btn;
-    private int RESULT_CODE_GOOGLE = 100;
+    private final int RESULT_CODE_GOOGLE = 100;
     private static final int RC_GOOGLE_SIGN_IN = 007;
     private GoogleApiClient mGoogleApiClient;
-    private GoogleSignInOptions gso;
     private ProgressDialog mProgressDialog;
 
     @Override
@@ -115,14 +111,14 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
 
         TextView text = findViewById(R.id.textviewtext);
 
-        frombottom = AnimationUtils.loadAnimation(this, R.anim.frombottom);
-        fromtop = AnimationUtils.loadAnimation(this, R.anim.fromtop);
+        Animation frombottom = AnimationUtils.loadAnimation(this, R.anim.frombottom);
+        Animation fromtop = AnimationUtils.loadAnimation(this, R.anim.fromtop);
 
         loading = (ProgressBar) findViewById(R.id.loading_signup);
         joinBtn = findViewById(R.id.btn_submit);
-        btnLogin_signup =  findViewById(R.id.btnLogin_signup);
+        btnLogin_signup = findViewById(R.id.btnLogin_signup);
 
-        textView2 = (TextView) findViewById(R.id.textView2);
+        TextView textView2 = (TextView) findViewById(R.id.textView2);
 
         emailSignUpEdt = (EditText) findViewById(R.id.edt_email_signup);
 
@@ -132,7 +128,7 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
         validatorProgress = (ProgressBar) findViewById(R.id.validator_progress);
         google_sign_up_btn = findViewById(R.id.google_sign_up_btn);
 
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
         mGoogleApiClient = new GoogleApiClient.Builder(this).enableAutoManage
                 (this, this).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
         //joinBtn.startAnimation(frombottom);
@@ -262,7 +258,7 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
                 String personName = acct.getDisplayName();
                 String personPhotoUrl = acct.getPhotoUrl() != null ? acct.getPhotoUrl().toString() : "";
                 String Email = acct.getEmail();
-                String [] pass = personName.split("\\s");
+                String[] pass = personName.split("\\s");
 
 
                 Logging.d("TEST", "Name: " + personName + ", email: " + Email + ", Image: " + personPhotoUrl);
@@ -273,7 +269,7 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
                     fullName = personName;
                     email = Email;
                     signUpMethod = AppConstants.SIGNUP_BY_Google;
-                    password = pass[0]+"123@";
+                    password = pass[0] + "123@";
 
                     gotoNextActivity();
                     //postLogin(email, personName);
@@ -481,8 +477,8 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
 
     private void gotoNextActivity() {
 
-        if (password_signup.getVisibility() == View.VISIBLE){
-            if (password.equals("")){
+        if (password_signup.getVisibility() == View.VISIBLE) {
+            if (password.equals("")) {
                 password = password_signup.getText().toString().trim();
                 signUpMethod = AppConstants.SIGNUP_BY_APP;
             }
@@ -522,7 +518,7 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
             switch (editText.getId()) {
                 case R.id.edt_email_signup:
                     email = emailSignUpEdt.getText().toString().trim();
-                   // Log.d("TEST", "onTextChanged email-->" + email);
+                    // Log.d("TEST", "onTextChanged email-->" + email);
                     if (TextUtils.isEmpty(email)) {
                         emailSignUpEdt.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_mail, 0);
                     } else {
@@ -539,7 +535,7 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
 
                     email = emailSignUpEdt.getText().toString().trim();
 
-                   // Log.d("TEST", "afterTextChanged email-->" + email);
+                    // Log.d("TEST", "afterTextChanged email-->" + email);
 
                     if (!TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                         validatorProgress.setVisibility(View.VISIBLE);

@@ -10,8 +10,14 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.giphy.sdk.ui.Giphy;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.custom.RoundedImageView;
@@ -28,22 +34,13 @@ import com.shorincity.vibin.music_sharing.model.RecentSongModel;
 import com.shorincity.vibin.music_sharing.model.UserProfileModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
-
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.CustomSlidePanLayout;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
 import com.shorincity.vibin.music_sharing.youtube_files.PlayYoutubeVideoActivity;
-import com.shorincity.vibin.music_sharing.youtube_files.PlaylistDetailActivity;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import retrofit2.Call;
 import retrofit2.Callback;

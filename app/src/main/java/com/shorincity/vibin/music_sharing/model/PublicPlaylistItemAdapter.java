@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
-import com.shorincity.vibin.music_sharing.youtube_files.PlaylistDetailActivity;
 
 import java.util.ArrayList;
 

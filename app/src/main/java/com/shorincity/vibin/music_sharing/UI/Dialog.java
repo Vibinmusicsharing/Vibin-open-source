@@ -3,7 +3,6 @@ package com.shorincity.vibin.music_sharing.UI;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;

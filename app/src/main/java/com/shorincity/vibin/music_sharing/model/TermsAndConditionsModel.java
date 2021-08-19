@@ -5,10 +5,10 @@ package com.shorincity.vibin.music_sharing.model;
  * On 09-August-2020
  **/
 
-import java.util.List;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class TermsAndConditionsModel {
 

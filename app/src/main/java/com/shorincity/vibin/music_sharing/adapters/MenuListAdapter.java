@@ -1,9 +1,6 @@
 package com.shorincity.vibin.music_sharing.adapters;
 
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.ContentResolver;
-import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -11,12 +8,9 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.appcompat.widget.SwitchCompat;
-
-import com.shorincity.vibin.music_sharing.model.MenuActionItem;
 import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.model.MenuActionItem;
 
 public class MenuListAdapter extends ArrayAdapter<MenuActionItem> {
 
