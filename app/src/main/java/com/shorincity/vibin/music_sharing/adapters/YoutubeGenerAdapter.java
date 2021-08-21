@@ -13,8 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.shorincity.vibin.music_sharing.model.HomeYoutubeModel;
 import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.utils.Logging;
 
 import java.util.ArrayList;
 
@@ -23,7 +25,7 @@ public class YoutubeGenerAdapter extends RecyclerView.Adapter<YoutubeGenerAdapte
     private Context mContext;
     private ArrayList<HomeYoutubeModel.YoutubeCustomModel> list;
 
-    public YoutubeGenerAdapter(Context context, ArrayList<HomeYoutubeModel.YoutubeCustomModel> exampleList){
+    public YoutubeGenerAdapter(Context context, ArrayList<HomeYoutubeModel.YoutubeCustomModel> exampleList) {
         mContext = context;
         list = exampleList;
     }
@@ -31,7 +33,7 @@ public class YoutubeGenerAdapter extends RecyclerView.Adapter<YoutubeGenerAdapte
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.adapter_gener,parent,false);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.adapter_gener, parent, false);
 
         final ExampleViewHolder mViewHolder = new ExampleViewHolder(v);
         v.setOnClickListener(new View.OnClickListener() {
@@ -50,8 +52,8 @@ public class YoutubeGenerAdapter extends RecyclerView.Adapter<YoutubeGenerAdapte
 
         holder.mTextViewTitle.setText(name);
 
-        if(!currentItem.getThumbnail().equalsIgnoreCase("THUMBNAIL_URI"))
-            Glide.with(mContext).load(currentItem.getThumbnail()).into(holder.mImageView).onLoadFailed(new ColorDrawable(mContext.getResources().getColor(R.color.light_gray)));
+        if (!currentItem.getThumbnail().equalsIgnoreCase("THUMBNAIL_URI"))
+            Glide.with(mContext).load(currentItem.getThumbnail()).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(holder.mImageView);
         else
             holder.mImageView.setImageResource(R.drawable.music_placeholder);
     }
@@ -62,11 +64,12 @@ public class YoutubeGenerAdapter extends RecyclerView.Adapter<YoutubeGenerAdapte
     }
 
 
-    public class ExampleViewHolder extends RecyclerView.ViewHolder{
+    public class ExampleViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView mImageView;
         public TextView mTextViewTitle;
         public RelativeLayout mainRl;
+
         public ExampleViewHolder(@NonNull View itemView) {
             super(itemView);
             mainRl = itemView.findViewById(R.id.main_layout);
@@ -84,6 +87,7 @@ public class YoutubeGenerAdapter extends RecyclerView.Adapter<YoutubeGenerAdapte
     }
 
     CustomItemClickListener customItemClickListener;
+
     public interface CustomItemClickListener {
         public void onItemClick(View v, int position);
     }
