@@ -380,6 +380,10 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                     if (response.body().getStatus().equalsIgnoreCase("success")) {
                         callUpdateCollabAPI(getNotifications, status, type, position);
                     } else if (response.body().getStatus().equalsIgnoreCase("failed") && !TextUtils.isEmpty(response.body().getMessage())) {
+                        if (response.body().getMessage().equalsIgnoreCase("Collab Already Exists")) {
+                            getNotifications.setIsAccepted(AppConstants.ACCEPTED);
+                            notifyItemChanged(position);
+                        }
                         customItemClickListener.showProgress(false);
                         Toast.makeText(mContext, response.body().getMessage(), Toast.LENGTH_LONG).show();
                     } else {
