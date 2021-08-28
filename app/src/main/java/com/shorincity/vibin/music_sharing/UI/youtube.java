@@ -982,7 +982,8 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
     private void initWebSocket() {
         try {
-            coinbaseUri = new URI(Constants.WEB_SOCKET_URL);
+//            Logging.d("==> initWebSocket " + userId);
+            coinbaseUri = new URI(Constants.WEB_SOCKET_URL + String.valueOf(3) + "/");
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -990,13 +991,13 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         webSocketClient = new WebSocketClient(coinbaseUri) {
             @Override
             public void onOpen(ServerHandshake handshakedata) {
-                Log.d(TAG, "WebSocket onOpen");
-                webSocketClient.send(
+                Log.d(TAG, "WebSocket onOpen" + handshakedata.getHttpStatusMessage());
+                /*webSocketClient.send(
                         "{\n" +
                                 "    \"type\": \"subscribe\",\n" +
                                 "    \"channels\": [{ \"name\": \"ticker\", \"product_ids\": [\"BTC-EUR\"] }]\n" +
                                 "}"
-                );
+                );*/
             }
 
             @Override
@@ -1007,12 +1008,12 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
             @Override
             public void onClose(int code, String reason, boolean remote) {
                 Log.d(TAG, "WebSocket onClose");
-                webSocketClient.send(
+                /*webSocketClient.send(
                         "{\n" +
                                 "    \"type\": \"unsubscribe\",\n" +
                                 "    \"channels\": [\"ticker\"]\n" +
                                 "}"
-                );
+                );*/
             }
 
             @Override
