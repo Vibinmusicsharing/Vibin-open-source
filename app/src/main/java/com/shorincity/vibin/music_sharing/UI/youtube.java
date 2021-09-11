@@ -540,7 +540,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         });
 
         motionLayout.addTransitionListener(this);
-        findViewById(R.id.now_play_tv).setOnClickListener(new View.OnClickListener() {
+        /*findViewById(R.id.now_play_tv).setOnClickListener(new View.OnClickListener() {
             @SuppressLint("LogNotTimber")
             @Override
             public void onClick(View view) {
@@ -567,7 +567,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 }
 
             }
-        });
+        });*/
 
     }
 

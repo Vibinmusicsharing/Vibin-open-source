@@ -193,6 +193,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
                 notifyStatusTv.setVisibility(View.GONE);
 
+                Logging.d("==>" + currentItem.getIsAccepted());
                 if ((currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_REQUEST) || currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_INVITE) || currentItem.getType().equalsIgnoreCase(AppConstants.REAL_TIME_INVITE)
                         || currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_REQUEST_RESPONDED)
                         || currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_INVITE_RESPONDED))
@@ -254,7 +255,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
                         sendCollabAcceptedNotification(senderID, receiverID, playlistId);
 
-                        new Handler().postDelayed(new Runnable() {
+                      /*  new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 //  acceptIgnoreHldr.setVisibility(View.GONE);
@@ -263,8 +264,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                                 swipelayout.setLockDrag(true);
                                 notifyStatusTv.setVisibility(View.VISIBLE);
                             }
-                        }, 2000);
-                        notifyItemChanged(position);
+                        }, 2000);*/
+//                        notifyItemChanged(position);
                     }
                 });
 
@@ -377,6 +378,10 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                     if (response.body().getStatus().equalsIgnoreCase("success")) {
                         callUpdateCollabAPI(getNotifications, status, type, position);
                     } else if (response.body().getStatus().equalsIgnoreCase("failed") && !TextUtils.isEmpty(response.body().getMessage())) {
+                        if (response.body().getMessage().equalsIgnoreCase("Collab Already Exists")) {
+                            getNotifications.setIsAccepted(AppConstants.ACCEPTED);
+                            notifyItemChanged(position);
+                        }
                         customItemClickListener.showProgress(false);
                         Toast.makeText(mContext, response.body().getMessage(), Toast.LENGTH_LONG).show();
                     } else {
@@ -429,6 +434,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                             list.remove(position);
                             notifyItemRemoved(position);
                         }
+                        Logging.d("==>" + getNotifications.getIsAccepted());
                     } else
                         Toast.makeText(mContext, "Something went wrong!", Toast.LENGTH_LONG).show();
                 }
