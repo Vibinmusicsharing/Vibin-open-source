@@ -5,7 +5,7 @@ public class AppConstants {
     // Prod
     //public static String URL = "https://vibin.pythonanywhere.com//user/login/";
     //public static String BASE_URL = "https://vibin.pythonanywhere.com/";
-    public static final boolean LOG_ENABLED =true;
+    public static final boolean LOG_ENABLED = true;
 
     // Splash
     public static final long SPLASH_DELAY = 2800; //1
@@ -73,7 +73,7 @@ public class AppConstants {
     public static final String INTENT_NOTIFICATION_UNREAD_COUNT = "intent_notification_unread_count";
 
     public static final String TERMS_COND_KEY = "terms_cond_key";
-
+    public static final String IS_VERIFY = "is_verify";
 
 
     // APIs Key

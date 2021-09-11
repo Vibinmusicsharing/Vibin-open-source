@@ -76,5 +76,9 @@
     <color name="cardBackground">#E5DCFA</color>
     <color name="appBackground">#F2F0F7</color>
     <color name="semi_tran">#66000000</color>
+    <color name="textColor">#4C4C4C</color>
+    <color name="bgColor">#E7DCFF</color>
+    <color name="counterColor">#5213D3</color>
+    <color name="btnRoundColor">#805213D3</color>
 
 </resources>

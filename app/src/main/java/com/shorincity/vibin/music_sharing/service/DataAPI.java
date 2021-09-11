@@ -32,6 +32,7 @@ import com.shorincity.vibin.music_sharing.model.avatar.AvatarDetails;
 
 import java.util.ArrayList;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -341,6 +342,19 @@ public interface DataAPI {
     @POST("/user/liked_disliked/get_profiles/")
     Call<UserLikeList> getLikes_DisLikesListing(@Header("Authorization") String token,
                                                 @Field("token") String usertoken);
+
+    @FormUrlEncoded
+    @POST("/user/send_verification_email/")
+    Call<APIResponse> sendVerificationOtp(@Header("Authorization") String token,
+                                          @Field("email") String email);
+
+
+    @FormUrlEncoded
+    @POST("/user/verify_email/")
+    Call<APIResponse> sendVerifyEmail(@Header("Authorization") String token,
+                                      @Field("email") String email,
+                                      @Field("code_entered") String code);
+
 
     @FormUrlEncoded
     @POST("/playlist/get_collaborators_profiles/")

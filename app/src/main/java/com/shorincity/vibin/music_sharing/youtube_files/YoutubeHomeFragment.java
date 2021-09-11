@@ -955,87 +955,87 @@ public class YoutubeHomeFragment extends MyBaseFragment {
                     Log.i("SPOTIFY TRENDING RESULT", response.toString());
 
                     homeYoutubeModel = (HomeYoutubeModel) response.body();
+                    if (isVisible()) {
+                        if (homeYoutubeModel != null) {
+
+                            if (homeYoutubeModel.getCharts() != null
+                                    && homeYoutubeModel.getCharts().size() > 0) {
+
+                                chartList.addAll(homeYoutubeModel.getCharts());
+                                chartsAdapter.notifyDataSetChanged();
+
+                            }
+
+                            if (homeYoutubeModel.getArtists() != null
+                                    && homeYoutubeModel.getArtists().size() > 0) {
 
 
-                    if (homeYoutubeModel != null) {
-
-                        if (homeYoutubeModel.getCharts() != null
-                                && homeYoutubeModel.getCharts().size() > 0) {
-
-                            chartList.addAll(homeYoutubeModel.getCharts());
-                            chartsAdapter.notifyDataSetChanged();
-
-                        }
-
-                        if (homeYoutubeModel.getArtists() != null
-                                && homeYoutubeModel.getArtists().size() > 0) {
-
-
-                            for (int i = 0; i < homeYoutubeModel.getArtists().size(); i++) {
-                                if (homeYoutubeModel.getArtists().get(i).getLanguage().equalsIgnoreCase("punjabi")) {
-                                    panjabiList.add(homeYoutubeModel.getArtists().get(i));
-                                } else if (homeYoutubeModel.getArtists().get(i).getLanguage().equalsIgnoreCase("English")) {
-                                    artistList.add(homeYoutubeModel.getArtists().get(i));
-                                } else {
-                                    artistHindiList.add(homeYoutubeModel.getArtists().get(i));
+                                for (int i = 0; i < homeYoutubeModel.getArtists().size(); i++) {
+                                    if (homeYoutubeModel.getArtists().get(i).getLanguage().equalsIgnoreCase("punjabi")) {
+                                        panjabiList.add(homeYoutubeModel.getArtists().get(i));
+                                    } else if (homeYoutubeModel.getArtists().get(i).getLanguage().equalsIgnoreCase("English")) {
+                                        artistList.add(homeYoutubeModel.getArtists().get(i));
+                                    } else {
+                                        artistHindiList.add(homeYoutubeModel.getArtists().get(i));
+                                    }
                                 }
+
+
+                                if (artistList.size() > 10) {
+                                    tempartistList.addAll(artistList.subList(0, 10));
+                                    tempartistList.add(new HomeYoutubeModel.YoutubeCustomModel("", getString(R.string.artist), "", ""));
+                                } else {
+                                    tempartistList.addAll(artistList);
+                                }
+
+                                if (panjabiList.size() > 10) {
+                                    temppanjabiList.addAll(panjabiList.subList(0, 10));
+                                    temppanjabiList.add(new HomeYoutubeModel.YoutubeCustomModel("", getString(R.string.panjabi_artist), "", ""));
+                                } else {
+                                    temppanjabiList.addAll(panjabiList);
+                                }
+
+                                if (artistHindiList.size() > 10) {
+                                    tempartistHindiList.addAll(artistHindiList.subList(0, 10));
+                                    tempartistHindiList.add(new HomeYoutubeModel.YoutubeCustomModel("", getString(R.string.artist_hindi), "", ""));
+                                } else {
+                                    tempartistHindiList.addAll(artistHindiList);
+                                }
+
+
+                                artistAdapter.notifyDataSetChanged();
+                                artistHindiAdapter.notifyDataSetChanged();
+                                panjabiAdapter.notifyDataSetChanged();
                             }
 
+                            if (homeYoutubeModel.getEnglishHits() != null
+                                    && homeYoutubeModel.getEnglishHits().size() > 0) {
 
-                            if (artistList.size() > 10) {
-                                tempartistList.addAll(artistList.subList(0, 10));
-                                tempartistList.add(new HomeYoutubeModel.YoutubeCustomModel("", getString(R.string.artist), "", ""));
-                            } else {
-                                tempartistList.addAll(artistList);
+                                generList.addAll(homeYoutubeModel.getEnglishHits());
+                                generAdapter.notifyDataSetChanged();
+
                             }
 
-                            if (panjabiList.size() > 10) {
-                                temppanjabiList.addAll(panjabiList.subList(0, 10));
-                                temppanjabiList.add(new HomeYoutubeModel.YoutubeCustomModel("", getString(R.string.panjabi_artist), "", ""));
-                            } else {
-                                temppanjabiList.addAll(panjabiList);
+                            if (homeYoutubeModel.getBollywood() != null
+                                    && homeYoutubeModel.getBollywood().size() > 0) {
+
+                                bollywoodList.addAll(homeYoutubeModel.getBollywood());
+                                bollywoodAdapter.notifyDataSetChanged();
+
                             }
 
-                            if (artistHindiList.size() > 10) {
-                                tempartistHindiList.addAll(artistHindiList.subList(0, 10));
-                                tempartistHindiList.add(new HomeYoutubeModel.YoutubeCustomModel("", getString(R.string.artist_hindi), "", ""));
-                            } else {
-                                tempartistHindiList.addAll(artistHindiList);
+                            if (homeYoutubeModel.getOthers() != null
+                                    && homeYoutubeModel.getOthers().size() > 0) {
+
+                                othersList.addAll(homeYoutubeModel.getOthers());
+                                othersList.addAll(homeYoutubeModel.getPunjabi());
+                                othersAdapter.notifyDataSetChanged();
+
                             }
 
-
-                            artistAdapter.notifyDataSetChanged();
-                            artistHindiAdapter.notifyDataSetChanged();
-                            panjabiAdapter.notifyDataSetChanged();
+                        } else {
+                            Toast.makeText(mContext, "Something went wrong!", Toast.LENGTH_LONG).show();
                         }
-
-                        if (homeYoutubeModel.getEnglishHits() != null
-                                && homeYoutubeModel.getEnglishHits().size() > 0) {
-
-                            generList.addAll(homeYoutubeModel.getEnglishHits());
-                            generAdapter.notifyDataSetChanged();
-
-                        }
-
-                        if (homeYoutubeModel.getBollywood() != null
-                                && homeYoutubeModel.getBollywood().size() > 0) {
-
-                            bollywoodList.addAll(homeYoutubeModel.getBollywood());
-                            bollywoodAdapter.notifyDataSetChanged();
-
-                        }
-
-                        if (homeYoutubeModel.getOthers() != null
-                                && homeYoutubeModel.getOthers().size() > 0) {
-
-                            othersList.addAll(homeYoutubeModel.getOthers());
-                            othersList.addAll(homeYoutubeModel.getPunjabi());
-                            othersAdapter.notifyDataSetChanged();
-
-                        }
-
-                    } else {
-                        Toast.makeText(mContext, "Something went wrong!", Toast.LENGTH_LONG).show();
                     }
                 } else {
                 }

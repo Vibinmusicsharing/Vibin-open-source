@@ -485,7 +485,7 @@ public class SignUpEmailPassActivity extends AppCompatActivity implements Google
         }
 
 
-        startActivity(new Intent(this, SignUpUserNameActivity.class)
+        startActivity(new Intent(this, VerificationActivity.class)
                 .putExtra(AppConstants.INTENT_FULL_NAME, fullName)
                 .putExtra(AppConstants.INTENT_SIGN_UP_METHOD, signUpMethod)
                 .putExtra(AppConstants.INTENT_EMAIL, email)

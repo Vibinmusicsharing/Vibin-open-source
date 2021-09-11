@@ -225,5 +225,7 @@
     <string name="label_next">Next track</string>
     <string name="with_all_songs">with All Songs</string>
     <string name="only_leave">Only Leave</string>
+    <string name="lbl_verification">Verification</string>
+    <string name="msg_verification">Enter the code we just send you,\n on your email address.</string>
 
 </resources>

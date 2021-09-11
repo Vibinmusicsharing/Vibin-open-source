@@ -4,9 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".music_sharing.UI.account"
-    android:background="#000000"
-    >
+    android:background="#000000">
 
     <Button
         android:id="@+id/log_out"
@@ -44,8 +42,8 @@
         android:layout_height="51dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:text="email"
         android:layout_marginEnd="8dp"
+        android:text="email"
         android:textColor="@android:color/white"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"

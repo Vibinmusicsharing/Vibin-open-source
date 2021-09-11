@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
@@ -67,6 +68,7 @@ import com.giphy.sdk.ui.views.GifView;
 import com.giphy.sdk.ui.views.GiphyGridView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -77,7 +79,12 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.Gson;
 import com.jackandphantom.androidlikebutton.AndroidLikeButton;
+import com.neovisionaries.ws.client.WebSocket;
+import com.neovisionaries.ws.client.WebSocketAdapter;
+import com.neovisionaries.ws.client.WebSocketException;
+import com.neovisionaries.ws.client.WebSocketFactory;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.adapters.AddToPlaylistAdapter;
 import com.shorincity.vibin.music_sharing.adapters.PlayListDetailsAdapter;
@@ -98,7 +105,9 @@ import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.CustomSlidePanLayout;
 import com.shorincity.vibin.music_sharing.utils.Logging;
+import com.shorincity.vibin.music_sharing.websocket.NaiveSSLContext;
 import com.shorincity.vibin.music_sharing.utils.Utility;
+import com.shorincity.vibin.music_sharing.websocket.RealTimeNotificationCount;
 import com.shorincity.vibin.music_sharing.youtube_files.YoutubeHomeFragment;
 import com.shorincity.vibin.music_sharing.youtube_files.floating.AsyncTask.Constants;
 import com.shorincity.vibin.music_sharing.youtube_files.floating.PlayerService;
@@ -112,21 +121,20 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.handshake.ServerHandshake;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLContext;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -212,9 +220,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     private LinearLayout bottom_sheet_detail;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
-    private WebSocketClient webSocketClient;
-    private URI coinbaseUri;
-
+    private WebSocket webSocketClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -826,7 +832,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                             // showing notification badge count
                             MenuItem itemCart = bottomNavigationView.getMenu().findItem(R.id.navigation_notification);
                             //LayerDrawable icon = (LayerDrawable) itemCart.getIcon();
-                            showBadge(youtube.this, bottomNavigationView, R.id.navigation_notification, String.valueOf(response.body().getCount()));
+//                            showBadge(youtube.this, bottomNavigationView, R.id.navigation_notification, String.valueOf(response.body().getCount()));
                         }
 
                         SharedPrefManager.getInstance(youtube.this).setSharedPrefInt(AppConstants.INTENT_NOTIFICATION_UNREAD_COUNT, response.body().getCount());
@@ -929,7 +935,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     protected void onResume() {
         super.onResume();
         initWebSocket();
-        callGetNotificationUnreadCountAPI();
+//        callGetNotificationUnreadCountAPI();
 
         stopFloatingService();
         //        if(mYouTubePlayer!=null && playerTotalDurationTv!=null){
@@ -977,55 +983,111 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     protected void onPause() {
         super.onPause();
         if (webSocketClient != null)
-            webSocketClient.close();
+            webSocketClient.disconnect();
     }
 
     private void initWebSocket() {
+//   /*     try {
+////            Logging.d("==> initWebSocket " + userId);
+//            coinbaseUri = new URI(Constants.WEB_SOCKET_URL + String.valueOf(3) + "/");
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        }
+//
+//        webSocketClient = new WebSocketClient(coinbaseUri) {
+//            @Override
+//            public void onOpen(ServerHandshake handshakedata) {
+//                Log.d(TAG, "WebSocket onOpen" + handshakedata.getHttpStatusMessage());
+//                *//*webSocketClient.send(
+//                        "{\n" +
+//                                "    \"type\": \"subscribe\",\n" +
+//                                "    \"channels\": [{ \"name\": \"ticker\", \"product_ids\": [\"BTC-EUR\"] }]\n" +
+//                                "}"
+//                );*//*
+//            }
+//
+//            @Override
+//            public void onMessage(String message) {
+//                Log.d(TAG, "WebSocket onMessage" + message);
+//            }
+//
+//            @Override
+//            public void onClose(int code, String reason, boolean remote) {
+//                Log.d(TAG, "WebSocket onClose");
+//                *//*webSocketClient.send(
+//                        "{\n" +
+//                                "    \"type\": \"unsubscribe\",\n" +
+//                                "    \"channels\": [\"ticker\"]\n" +
+//                                "}"
+//                );*//*
+//            }
+//
+//            @Override
+//            public void onError(Exception ex) {
+//                ex.printStackTrace();
+//            }
+//        };
+//
+//        SSLSocketFactory socketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+//        webSocketClient.setSocketFactory(socketFactory);
+//        webSocketClient.connect();*/
+
         try {
-//            Logging.d("==> initWebSocket " + userId);
-            coinbaseUri = new URI(Constants.WEB_SOCKET_URL + String.valueOf(3) + "/");
-        } catch (URISyntaxException e) {
+            WebSocketFactory factory = new WebSocketFactory();
+            SSLContext context = NaiveSSLContext.getInstance("TLS");
+            factory.setSSLContext(context);
+            factory.setVerifyHostname(false);
+            factory.setServerName("api.vibin.in");
+            //Todo need to change static id to userId
+            webSocketClient = factory.createSocket(Constants.WEB_SOCKET_URL + String.valueOf(3) + "/");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
 
-        webSocketClient = new WebSocketClient(coinbaseUri) {
+        webSocketClient.addListener(new WebSocketAdapter() {
             @Override
-            public void onOpen(ServerHandshake handshakedata) {
-                Log.d(TAG, "WebSocket onOpen" + handshakedata.getHttpStatusMessage());
-                /*webSocketClient.send(
-                        "{\n" +
-                                "    \"type\": \"subscribe\",\n" +
-                                "    \"channels\": [{ \"name\": \"ticker\", \"product_ids\": [\"BTC-EUR\"] }]\n" +
-                                "}"
-                );*/
+            public void onTextMessage(WebSocket websocket, String message) {
+                // Received a text message.
+                Log.d("LOGTAG", "==>" + message);
+                RealTimeNotificationCount response = new Gson().fromJson(message, RealTimeNotificationCount.class);
+                showBadge(youtube.this, bottomNavigationView, R.id.navigation_notification,
+                        response.getNotificationCount(), response.getNotificationCount() > 0);
+
+                SharedPrefManager.getInstance(youtube.this).setSharedPrefInt(AppConstants.INTENT_NOTIFICATION_UNREAD_COUNT, response.getNotificationCount());
+
+            }
+        });
+
+
+        class WebSocketTask extends AsyncTask<Void, Void, Void> {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    // Connect to the server and perform an opening handshake.
+                    // This method blocks until the opening handshake is finished.
+                    webSocketClient.connect();
+
+                }  // The certificate of the peer does not match the expected hostname.
+                catch (WebSocketException e) {
+                    // A violation against the WebSocket protocol was detected
+                    // during the opening handshake.
+                    e.printStackTrace();
+                }
+
+                return null;
             }
 
             @Override
-            public void onMessage(String message) {
-                Log.d(TAG, "WebSocket onMessage" + message);
+            protected void onPostExecute(Void unused) {
+                super.onPostExecute(unused);
+                Log.d("Log tag", "onPostExecute");
             }
+        }
 
-            @Override
-            public void onClose(int code, String reason, boolean remote) {
-                Log.d(TAG, "WebSocket onClose");
-                /*webSocketClient.send(
-                        "{\n" +
-                                "    \"type\": \"unsubscribe\",\n" +
-                                "    \"channels\": [\"ticker\"]\n" +
-                                "}"
-                );*/
-            }
-
-            @Override
-            public void onError(Exception ex) {
-                ex.printStackTrace();
-            }
-        };
-
-        SSLSocketFactory socketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-        webSocketClient.setSocketFactory(socketFactory);
-        webSocketClient.connect();
-
+        new WebSocketTask().execute();
     }
 
     private void stopFloatingService() {
@@ -1039,14 +1101,24 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         }
     }
 
-    public static void showBadge(Context context, BottomNavigationView
-            bottomNavigationView, @IdRes int itemId, String value) {
+    private void showBadge(Context context, BottomNavigationView
+            bottomNavigationView, @IdRes int itemId, int value, boolean isShow) {
         BottomNavigationItemView itemView = bottomNavigationView.findViewById(itemId);
-        View badge = LayoutInflater.from(context).inflate(R.layout.layout_notification_badge, bottomNavigationView, false);
+        /*if (isShow) {
+            if (badgeView == null)
+                badgeView = LayoutInflater.from(context).inflate(R.layout.layout_notification_badge, bottomNavigationView, false);
 
-        TextView text = badge.findViewById(R.id.badge_text_view);
-        text.setText(value);
-        itemView.addView(badge);
+            TextView text = badgeView.findViewById(R.id.badge_text_view);
+            text.setText(value);
+            itemView.addView(badgeView);
+        } else {
+            Log.d("LOG Tag", "==>removeView(badgeView)");
+            if (badgeView != null)
+                itemView.removeView(badgeView);
+        }*/
+        BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(itemId);
+        badgeDrawable.setNumber(value);
+        badgeDrawable.setVisible(isShow);
     }
 
     @Override
