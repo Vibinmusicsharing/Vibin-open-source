@@ -18,7 +18,6 @@
             android:layout_height="@dimen/_100sdp"
             android:background="@drawable/ic_dashboard_wave"
             android:gravity="center_vertical"
-
             android:orientation="horizontal"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"

@@ -1,5 +1,6 @@
 package com.shorincity.vibin.music_sharing.activity;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -12,11 +13,15 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
@@ -27,6 +32,10 @@ import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,13 +48,16 @@ public class SignUpUserNameActivity extends AppCompatActivity implements View.On
     private String fullName = "";
     private String emailStr, passStr, signUpMethodStr;
     private EditText cust_full_name, usernameEdt;
-    private Button nextBtn;
-    boolean isUserNameVerified = false;
+    private RadioGroup rgGender;
+    private AppCompatButton nextBtn;
+    private boolean isUserNameVerified = false;
+    private TextView tvDob;
+    private final Calendar myCalendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup_username);
+        setContentView(R.layout.activity_about_yourself);
 
         statusBarColorChange();
         // function to get all the data passed by previous activity through intent
@@ -83,9 +95,11 @@ public class SignUpUserNameActivity extends AppCompatActivity implements View.On
     }
 
     private void inItViews() {
-        cust_full_name = (EditText) findViewById(R.id.cust_full_name);
-        usernameEdt = (EditText) findViewById(R.id.tv_username);
-        nextBtn = findViewById(R.id.btn_next);
+//        cust_full_name = (EditText) findViewById(R.id.cust_full_name);
+        usernameEdt = findViewById(R.id.tv_username);
+        rgGender = findViewById(R.id.rgGender);
+        nextBtn = findViewById(R.id.flNext);
+        tvDob = findViewById(R.id.tvDob);
        /* nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,30 +108,48 @@ public class SignUpUserNameActivity extends AppCompatActivity implements View.On
         });*/
 
 
-        if (!TextUtils.isEmpty(fullName)) {
+        /*if (!TextUtils.isEmpty(fullName)) {
             cust_full_name.setText(fullName);
             cust_full_name.setEnabled(false);
             cust_full_name.setAlpha(0.5f);
-        }
+        }*/
         usernameEdt.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         Utility.setViewEnable(nextBtn, false);
     }
 
     private void inItListeners() {
 
-        cust_full_name.addTextChangedListener(new EditTextWatch(this, cust_full_name));
+//        cust_full_name.addTextChangedListener(new EditTextWatch(this, cust_full_name));
         usernameEdt.addTextChangedListener(new EditTextWatch(this, usernameEdt));
 
         nextBtn.setOnClickListener(this);
+        tvDob.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_next:
+            case R.id.flNext:
 
                 // Going to next Screen which is Gender Screen
                 gotoNextActivity();
+                break;
+
+            case R.id.tvDob:
+                myCalendar.set(Calendar.YEAR, 2000);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                        (view1, year, month, dayOfMonth) -> {
+                            myCalendar.set(Calendar.YEAR, year);
+                            myCalendar.set(Calendar.MONTH, month);
+                            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                            String myFormat = "dd/MM/yyyy"; //In which you need put here
+                            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+                            tvDob.setText(sdf.format(myCalendar.getTime()));
+                        }, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH));
+
+                datePickerDialog.show();
                 break;
         }
     }
@@ -125,7 +157,28 @@ public class SignUpUserNameActivity extends AppCompatActivity implements View.On
     private void gotoNextActivity() {
 
         String userName = usernameEdt.getText().toString();
-        String fullName = cust_full_name.getText().toString();
+//        String fullName = cust_full_name.getText().toString();
+        int selectedId = rgGender.getCheckedRadioButtonId();
+        String gender = "";
+        if (selectedId == R.id.rbMale) {
+            gender = AppConstants.MALE;
+        } else if (selectedId == R.id.rbFemale) {
+            gender = AppConstants.FEMALE;
+        } else if (selectedId == R.id.rbOther) {
+            gender = AppConstants.OTHER;
+        }
+        String dob = tvDob.getText().toString();
+
+        if (TextUtils.isEmpty(userName)) {
+            Toast.makeText(this, "Please enter username", Toast.LENGTH_LONG).show();
+            return;
+        } else if (TextUtils.isEmpty(gender)) {
+            Toast.makeText(this, "Please enter gender", Toast.LENGTH_LONG).show();
+            return;
+        } else if (TextUtils.isEmpty(dob)) {
+            Toast.makeText(this, "Please select Date of birth", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         Bundle bundle = new Bundle();
         bundle.putString(AppConstants.INTENT_EMAIL, emailStr);
@@ -133,13 +186,18 @@ public class SignUpUserNameActivity extends AppCompatActivity implements View.On
         bundle.putString(AppConstants.INTENT_USER_NAME, userName);
         bundle.putString(AppConstants.INTENT_FULL_NAME, fullName);
         bundle.putString(AppConstants.INTENT_SIGN_UP_METHOD, signUpMethodStr);
+        bundle.putString(AppConstants.INTENT_GENDER, gender);
+        bundle.putString(AppConstants.INTENT_DOB, dob);
 
-        startActivity(new Intent(this, SignUpGenderActivity.class)
+        /*startActivity(new Intent(this, SignUpGenderActivity.class)
+                .putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle));*/
+
+        startActivity(new Intent(this, SelectMusicLanguageActivity.class)
                 .putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle));
 
     }
 
-    public class EditTextWatch implements TextWatcher {
+    private class EditTextWatch implements TextWatcher {
 
         Context context;
         EditText editText;
@@ -176,18 +234,9 @@ public class SignUpUserNameActivity extends AppCompatActivity implements View.On
 
                     break;
             }
-            try {
-                Logging.d("22 usernameEdt-->" + usernameEdt.getText().toString());
-                Logging.d("22 usernameEdt-->" + cust_full_name.getText().toString());
-                Logging.d("22 isUserNameVerified-->" + isUserNameVerified);
-                Logging.d("22  length-->" + usernameEdt.getText().toString().trim().length());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
             if (TextUtils.isEmpty(usernameEdt.getText().toString())
                     || usernameEdt.getText().toString().trim().length() < 6
-                    || TextUtils.isEmpty(cust_full_name.getText().toString())
                     || !isUserNameVerified) {
                 Utility.setViewEnable(nextBtn, false);
                 Logging.d(" 11-setViewEnable false");
@@ -200,7 +249,7 @@ public class SignUpUserNameActivity extends AppCompatActivity implements View.On
         }
     }
 
-    public void callUserNameCheckerAPI(String username) {
+    private void callUserNameCheckerAPI(String username) {
         //progressBar.setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getData();
 
@@ -229,16 +278,8 @@ public class SignUpUserNameActivity extends AppCompatActivity implements View.On
                             }
 
 
-                            try {
-                                Logging.d("11 usernameEdt-->" + usernameEdt.getText().toString());
-                                Logging.d("11 usernameEdt-->" + cust_full_name.getText().toString());
-                                Logging.d("11 isUserNameVerified-->" + isUserNameVerified);
-                                Logging.d("11  length-->" + usernameEdt.getText().toString().trim().length());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                            if (TextUtils.isEmpty(usernameEdt.getText().toString()) || TextUtils.isEmpty(cust_full_name.getText().toString()) || !isUserNameVerified || usernameEdt.getText().toString().trim().length() < 6) {
+                            if (TextUtils.isEmpty(usernameEdt.getText().toString())
+                                    || !isUserNameVerified || usernameEdt.getText().toString().trim().length() < 6) {
                                 Utility.setViewEnable(nextBtn, false);
                                 Logging.d(" -setViewEnable false 22");
                                 usernameEdt.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
@@ -269,4 +310,6 @@ public class SignUpUserNameActivity extends AppCompatActivity implements View.On
         });
 
     }
+
+
 }

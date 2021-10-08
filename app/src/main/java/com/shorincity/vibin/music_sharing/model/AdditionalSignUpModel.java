@@ -47,6 +47,10 @@ public class AdditionalSignUpModel {
     @SerializedName("api_token")
     @Expose
     private String apiToken;
+    @SerializedName("added_preferences")
+    @Expose
+    private boolean addedPreferences;
+
 
     public String getStatus() {
         return status;
@@ -158,5 +162,9 @@ public class AdditionalSignUpModel {
 
     public void setApiToken(String apiToken) {
         this.apiToken = apiToken;
+    }
+
+    public boolean isAddedPreferences() {
+        return addedPreferences;
     }
 }

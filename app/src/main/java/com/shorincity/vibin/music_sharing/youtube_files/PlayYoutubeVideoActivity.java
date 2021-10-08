@@ -418,7 +418,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
         recyclerView_bottom = (RecyclerView) findViewById(R.id.recyclerView_bottom);
         recyclerView_bottom.setHasFixedSize(true);
         recyclerView_bottom.setLayoutManager(new LinearLayoutManager(this));
-        ArrayList<PlaylistDetailModel> tempplaylist = new ArrayList();
+        ArrayList<PlaylistDetailModel> tempplaylist = new ArrayList<PlaylistDetailModel>();
 //        tempplaylist.addAll(playlist);
 //        Collections.reverse(tempplaylist);
         playListDetailsAdapter = new PlayListDetailsAdapter(getApplicationContext(), playlist, position, this);

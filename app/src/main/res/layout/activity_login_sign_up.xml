@@ -32,10 +32,10 @@
                     android:id="@+id/app_logo_iv"
                     android:layout_width="@dimen/_150sdp"
                     android:layout_height="@dimen/_150sdp"
-                    android:layout_marginTop="@dimen/_15sdp"
                     android:layout_above="@+id/app_name_tv"
                     android:layout_centerHorizontal="true"
-                    android:src="@drawable/vibin_white_logo"/>
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:src="@drawable/vibin_white_logo" />
 
                 <TextView
                     android:id="@+id/app_name_tv"
@@ -95,38 +95,38 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_12sdp"
-                    android:paddingLeft="@dimen/_10sdp"
-                    android:textAllCaps="false"
                     android:background="@drawable/common_btn_bg_white"
-                    android:text="@string/create_new_acc"
-                    android:textColor="@color/black"
-                    android:elevation="@dimen/_5sdp"
                     android:drawableTint="@color/white"
+                    android:elevation="@dimen/_5sdp"
+                    android:fontFamily="@font/tinos_regular"
+                    android:paddingLeft="@dimen/_10sdp"
+                    android:text="@string/create_new_acc"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
                     android:textStyle="bold"
                     app:rv_centered="true"
                     app:rv_holdBgInPressing="true"
-                    app:rv_pressBgType="circleFitMax"
-                    android:fontFamily="@font/tinos_regular" />
+                    app:rv_pressBgType="circleFitMax" />
 
 
                 <com.shorincity.vibin.music_sharing.ripples.RippleButton
                     android:id="@+id/email_signin_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/create_account_btn"
                     android:layout_marginTop="@dimen/_12sdp"
-                    android:paddingLeft="@dimen/_10sdp"
-                    android:textAllCaps="false"
                     android:background="@drawable/common_btn_bg_white"
-                    android:text="@string/sign_in_with_email"
-                    android:textColor="@color/black"
-                    android:elevation="@dimen/_5sdp"
                     android:drawableTint="@color/white"
+                    android:elevation="@dimen/_5sdp"
+                    android:fontFamily="@font/tinos_regular"
+                    android:paddingLeft="@dimen/_10sdp"
+                    android:text="@string/sign_in_with_email"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
                     android:textStyle="bold"
                     app:rv_centered="true"
                     app:rv_holdBgInPressing="true"
-                    app:rv_pressBgType="circleFitMax"
-                    android:fontFamily="@font/tinos_regular"
-                    android:layout_below="@+id/create_account_btn"/>
+                    app:rv_pressBgType="circleFitMax" />
 
 
             </RelativeLayout>

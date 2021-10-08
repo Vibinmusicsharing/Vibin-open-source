@@ -25,6 +25,15 @@
         <activity android:name=".activity.YoutubeUsersCollaboratedListingActivity" />
         <activity android:name=".activity.YoutubeUsersLikeListingActivity" />
         <activity android:name=".activity.TermsAndConditionsActivity" />
+
+        <activity
+            android:name=".activity.SelectMusicLanguageActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.SelectMusicGenreActivity"
+            android:screenOrientation="portrait" />
+
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -92,9 +101,7 @@
         <activity
             android:name=".UI.LoginAct"
             android:screenOrientation="portrait" /> <!-- android:noHistory="true" -->
-        <activity
-            android:name=".UI.SignUpAct"
-            android:screenOrientation="portrait" /> <!-- android:noHistory="true" -->
+
         <activity
             android:name=".UI.youtube"
             android:screenOrientation="portrait"

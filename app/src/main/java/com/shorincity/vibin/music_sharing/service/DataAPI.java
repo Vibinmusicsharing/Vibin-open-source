@@ -149,7 +149,32 @@ public interface DataAPI {
                                           @Field("fullname") String fullname,
                                           @Field("typeOfRegistration") String typeOfRegistration,
                                           @Field("timeOfRegistration") String timeOfRegistration,
-                                          @Field("pushNotifications") String pushNotifications, @Field("avatar_link") String avatarLink);
+                                          @Field("pushNotifications") String pushNotifications,
+                                          @Field("avatar_link") String avatarLink,
+                                          @Field("sex") String sex,
+                                          @Field("dobUser") String dobUser,
+                                          @Field("preferredPlatform") String platform,
+                                          @Field("preferredLanguage") String languages,
+                                          @Field("preferredGenre") String genres);
+
+    @FormUrlEncoded
+    @POST("/user/signup_google/")
+    Call<SignUpResponse> postGoogleSignup(@Header("Authorization") String loginSignUpHeader,
+                                          @Field("email") String email,
+                                          @Field("name") String name,
+                                          @Field("picture") String picture);
+
+    @FormUrlEncoded
+    @POST("/user/add_preferred_lang_genres/")
+    Call<APIResponse> postUpdateProfile(@Header("Authorization") String token,
+                                        @Field("token") String token1,
+                                        @Field("preferredLanguage") String languages,
+                                        @Field("preferredGenre") String genres);
+
+    @FormUrlEncoded
+    @POST("/user/load_user_details/")
+    Call<SignUpResponse> getUserDetail(@Header("Authorization") String token,
+                                       @Field("token") String token1);
 
     @FormUrlEncoded
     @POST("/user/signup/usernamechecker/")
@@ -325,10 +350,9 @@ public interface DataAPI {
     Call<ArrayList<GetNotifications>> getNotifications(@Header("Authorization") String token,
                                                        @Query("search") int userId);
 
-    @FormUrlEncoded
-    @POST("/user/get_policies/")
+    @GET("/user/get_policies/")
     Call<TermsAndConditionsModel> getTermsAndConditions(@Header("Authorization") String token,
-                                                        @Field("type") String type);
+                                                        @Query("type") String type);
 
 
     @FormUrlEncoded

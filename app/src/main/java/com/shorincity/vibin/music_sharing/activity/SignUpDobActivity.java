@@ -399,6 +399,8 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
         genderStr = bundle.getString(AppConstants.INTENT_GENDER);
         dobStr = dob;
         mAvatarLink = bundle.getString(AppConstants.INTENT_GENDER_AVATAR_LINK);
+        String languages = bundle.getString(AppConstants.INTENT_LANGUAGE);
+        String genres = bundle.getString(AppConstants.INTENT_GENRES);
 
         Logging.d("SUDP bundle 11:" + bundle.toString());
 
@@ -412,7 +414,9 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
                 fullNameStr,
                 signUpMethodStr,
                 timeOfRegistration,
-                "True");
+                "True",
+                languages,
+                genres);
     }
 
     public void callSignUpAPI(String email,
@@ -421,7 +425,9 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
                               String fullname,
                               String typeOfRegistration,
                               String timeOfRegistration,
-                              String pushNotifications) {
+                              String pushNotifications,
+                              String languages,
+                              String genres) {
 
 //        if (preferredPlatform.equalsIgnoreCase(AppConstants.SPOTIFY)) {
 //            spotifyBtn.startAnimation();
@@ -437,7 +443,10 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
         DataAPI dataAPI = RetrofitAPI.getData();
 
         // Logging.dLong("SUP mAvatarLink:"+mAvatarLink);
-        signUpCallback = dataAPI.postSignUpFields(AppConstants.LOGIN_SIGNUP_HEADER, email, password, username, fullname, typeOfRegistration, timeOfRegistration, pushNotifications, mAvatarLink);
+        signUpCallback = dataAPI.postSignUpFields(AppConstants.LOGIN_SIGNUP_HEADER, email, password,
+                username, fullname, typeOfRegistration,
+                timeOfRegistration, pushNotifications, mAvatarLink,
+                genderStr, preferredPlatform, dobStr, languages, genres);
 
 
         signUpCallback.enqueue(new Callback<SignUpResponse>() {
@@ -449,7 +458,7 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
                     userIdStr = response.body().getUserId();
 
                     SharedPrefManager.getInstance(SignUpDobActivity.this).setSharedPrefString(AppConstants.INTENT_AVATAR_LINK, mAvatarLink);
-                    postAdditionalFields(userIdStr, genderStr, preferredPlatform, dobStr);
+//                    postAdditionalFields(userIdStr, genderStr, preferredPlatform, dobStr);
                 } else {
                     showMe.dismiss();
                     //resetButtonState();

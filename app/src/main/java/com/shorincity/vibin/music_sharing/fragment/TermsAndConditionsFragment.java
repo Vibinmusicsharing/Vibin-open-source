@@ -239,11 +239,11 @@ public class TermsAndConditionsFragment extends Fragment {
     }
 
     private void onAccept() {
-
         saveSharedPrefTermsAndCond();
-        getActivity().setResult(Activity.RESULT_OK);
-        getActivity().finish();
-
+        if (getActivity() != null) {
+            getActivity().setResult(Activity.RESULT_OK);
+            getActivity().finish();
+        }
     }
 
     private void saveSharedPrefTermsAndCond() {

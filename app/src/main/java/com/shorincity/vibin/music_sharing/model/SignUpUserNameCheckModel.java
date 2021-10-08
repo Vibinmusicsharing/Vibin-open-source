@@ -11,6 +11,9 @@ public class SignUpUserNameCheckModel {
     @SerializedName("exists")
     @Expose
     private Boolean exists;
+    @SerializedName("message")
+    @Expose
+    private String message;
 
     public String getStatus() {
         return status;
@@ -28,4 +31,7 @@ public class SignUpUserNameCheckModel {
         this.exists = exists;
     }
 
+    public String getMessage() {
+        return message;
+    }
 }

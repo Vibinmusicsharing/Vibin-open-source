@@ -71,6 +71,10 @@ public class AppConstants {
     public static final String INTENT_PLAYLIST_ID = "intentPlaylistId";
     public static final String INTENT_COMING_FROM = "intentComingFrom";
     public static final String INTENT_NOTIFICATION_UNREAD_COUNT = "intent_notification_unread_count";
+    public static final String INTENT_LANGUAGE = "intentLanguages";
+    public static final String INTENT_GENRES = "intentGenres";
+    public static final String INTENT_IS_FROM_GOOGLE="is_from_google";
+
 
     public static final String TERMS_COND_KEY = "terms_cond_key";
     public static final String IS_VERIFY = "is_verify";

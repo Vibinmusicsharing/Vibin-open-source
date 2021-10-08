@@ -205,11 +205,11 @@ public class PlayerService extends Service implements View.OnClickListener {
             Bundle bundle = new Bundle();
             bundle.putInt("position", position);
             bundle.putString("title", VID_ID);
-            bundle.putString("playId",PLIST_ID);
-            bundle.putString("description",DESCRIPTION);
+            bundle.putString("playId", PLIST_ID);
+            bundle.putString("description", DESCRIPTION);
             bundle.putString("thumbnail", THUMBNAIL);
             bundle.putString("videoId", VID_ID);
-            bundle.putString("from","channel");
+            bundle.putString("from", "channel");
             bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
             intent.putExtra("data", bundle);
             startActivity(intent);
@@ -510,7 +510,7 @@ public class PlayerService extends Service implements View.OnClickListener {
         viewToHide.addView(webPlayer.getPlayer(), parWebView);
 
         //------------------------------Got Player Id--------------------------------------------------------
-        Map hashMap = new HashMap();
+        Map<String, String> hashMap = new HashMap<String, String>();
         hashMap.put("Referer", "http://www.youtube.com");
         if (Constants.linkType == 1) {
             Log.d("Starting ", "Playlist!!!");
