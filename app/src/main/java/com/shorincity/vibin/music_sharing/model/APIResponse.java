@@ -25,6 +25,10 @@ public class APIResponse {
     @Expose
     private Boolean collabCreated;
 
+    @SerializedName("session_key")
+    @Expose
+    private String sessionKey;
+
     @SerializedName("count")
     @Expose
     private int count;
@@ -51,5 +55,13 @@ public class APIResponse {
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    public String getSessionKey() {
+        return sessionKey;
+    }
+
+    public void setSessionKey(String sessionKey) {
+        this.sessionKey = sessionKey;
     }
 }

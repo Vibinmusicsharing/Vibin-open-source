@@ -1,6 +1,7 @@
 package com.shorincity.vibin.music_sharing.service;
 
 
+import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.AddSongLogModel;
 import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
@@ -13,6 +14,7 @@ import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlayListDeleteModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistLikeModel;
+import com.shorincity.vibin.music_sharing.model.PlaylistSongCollabDeleteModel;
 import com.shorincity.vibin.music_sharing.model.RecentSongModel;
 import com.shorincity.vibin.music_sharing.model.SignUpResponse;
 import com.shorincity.vibin.music_sharing.model.SignUpUserNameCheckModel;
@@ -31,6 +33,7 @@ import com.shorincity.vibin.music_sharing.model.YoutubeTrendingModel;
 import com.shorincity.vibin.music_sharing.model.avatar.AvatarDetails;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -400,5 +403,66 @@ public interface DataAPI {
             @Field("songs_list") String songs_list,
             @Field("collabs_list") String collabs_list);
 
+    @FormUrlEncoded
+    @POST("/playlist/edit_playlist/")
+    Call<PlaylistSongCollabDeleteModel> callDeleteSongsOrCollabApi(
+            @Header("Authorization") String token, @Field("token") String usertoken,
+            @Field("playlist") int playlist,
+            @Field("songs_list") String songs_list,
+            @Field("collabs_list") String collabs_list);
+
+    @FormUrlEncoded
+    @POST("/playlist/view_collab/")
+    Call<List<ViewCollab>> getCollaboratorsList(
+            @Header("Authorization") String token,
+            @Field("token") String usertoken,
+            @Field("playlist_id") String playListId
+    );
+
+    @FormUrlEncoded
+    @POST("/playlist/like_playlist_song/")
+    Call<PlaylistDetailModel> callPlaylistLike(
+            @Header("Authorization") String token,
+            @Field("token") String usertoken,
+            @Field("playlist") Integer playListId,
+            @Field("track") Integer trackId,
+            @Field("liked") String liked
+
+    );
+
+    @FormUrlEncoded
+    @POST("/playlist/create_new_playlist/")
+    Call<MyPlaylistModel> callCreatePlayList(
+            @Header("Authorization") String token,
+            @Field("token") String usertoken,
+            @Field("name") String name,
+            @Field("password") String password,
+            @Field("description") String description,
+            @Field("gif_link") String gif_link,
+            @Field("private") String isPrivate,
+            @Field("playlist_tags") String playlistTags
+    );
+
+    @FormUrlEncoded
+    @POST("/playlist/edit_playlist_basics/")
+    Call<MyPlaylistModel> callEditPlaylistBasics(
+            @Header("Authorization") String token,
+            @Field("token") String usertoken,
+            @Field("update_name") String name,
+            @Field("playlist") Integer playListId,
+            @Field("update_description") String description,
+            @Field("update_gif_link") String gif_link,
+            @Field("new_tags") String playlistTags,
+            @Field("remove_tags") String removeTags
+    );
+
+    @FormUrlEncoded
+    @POST("/playlist/edit_playlist_basics/")
+    Call<MyPlaylistModel> callSetPassword(
+            @Header("Authorization") String token,
+            @Field("token") String usertoken,
+            @Field("update_password") String password,
+            @Field("update_private") String isPrivate
+    );
 
 }

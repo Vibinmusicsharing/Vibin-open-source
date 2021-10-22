@@ -7,6 +7,14 @@ import java.io.Serializable;
 
 public class MyPlaylistModel implements Serializable {
 
+    @SerializedName("status")
+    @Expose
+    private String status;
+
+    @SerializedName("message")
+    @Expose
+    private String message;
+
     @SerializedName("name")
     @Expose
     private String name;
@@ -37,7 +45,6 @@ public class MyPlaylistModel implements Serializable {
     @SerializedName("admin_name")
     @Expose
     private String adminName;
-
     @SerializedName("admin_avatar_link")
     @Expose
     private String avatarLink;
@@ -47,6 +54,13 @@ public class MyPlaylistModel implements Serializable {
     @SerializedName("isLikedByUser")
     @Expose
     private boolean isLikedByUser;
+    @SerializedName("no_of_songs")
+    @Expose
+    private int songs;
+    @SerializedName("playlist_tags")
+    @Expose
+    private String playListTags;
+
 
     public int getAdmin_id() {
         return admin_id;
@@ -159,4 +173,38 @@ public class MyPlaylistModel implements Serializable {
     public void setLikedByUser(boolean likedByUser) {
         isLikedByUser = likedByUser;
     }
+
+    public int getSongs() {
+        return songs;
+    }
+
+    public void setSongs(int songs) {
+        this.songs = songs;
+    }
+
+    public String getPlayListTags() {
+        return playListTags;
+    }
+
+    public void setPlayListTags(String playListTags) {
+        this.playListTags = playListTags;
+    }
+
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
 }

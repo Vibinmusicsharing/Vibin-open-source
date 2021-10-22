@@ -3,13 +3,12 @@ package com.shorincity.vibin.music_sharing.fragment;
 import static android.content.ContentValues.TAG;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -18,14 +17,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.CompoundButton;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -48,10 +48,12 @@ import com.giphy.sdk.ui.pagination.GPHContent;
 import com.giphy.sdk.ui.views.GPHGridCallback;
 import com.giphy.sdk.ui.views.GifView;
 import com.giphy.sdk.ui.views.GiphyGridView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
+import com.shorincity.vibin.music_sharing.adapters.AutoCompleteAdapter;
 import com.shorincity.vibin.music_sharing.adapters.UserPlaylistAdapter;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
@@ -59,8 +61,10 @@ import com.shorincity.vibin.music_sharing.model.PlaylistLikeModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.CommonUtils;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
+import com.shorincity.vibin.music_sharing.widgets.TagView;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -78,7 +82,6 @@ public class PublicPlaylistFragment extends MyBaseFragment {
 
     RequestQueue requestQueue;
     String url = AppConstants.BASE_URL + "playlist/create_new_playlist/";
-    String url1 = AppConstants.BASE_URL + "playlist/my_playlists/";
     View view;
     Context context;
     ProgressBar progressBar;
@@ -87,6 +90,7 @@ public class PublicPlaylistFragment extends MyBaseFragment {
     ArrayList<MyPlaylistModel> myPlaylists;
     RecyclerView playlistRv;
     EditText edittext;
+    private ArrayList<String> genreList;
 
     ArrayList<PlaylistDetailModel> Songplaylist = new ArrayList<>();
 
@@ -119,16 +123,15 @@ public class PublicPlaylistFragment extends MyBaseFragment {
             getActivity().registerReceiver(broadcastReceiver, new IntentFilter("DeletePlaylist"));
             // set Playlist Adapter
             myPlaylists = new ArrayList<>();
-            playlistRv = (RecyclerView) view.findViewById(R.id.rv_playlist);
+            playlistRv = view.findViewById(R.id.rv_playlist);
             /*playlistRv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL,false));*/
             playlistRv.setLayoutManager(new GridLayoutManager(getActivity(), 2));
             playlistRv.setHasFixedSize(true);
-            PublicPlaylistFragment publicPlaylistFragment = new PublicPlaylistFragment();
-            myPlaylistAdapter = new UserPlaylistAdapter(getActivity(), myPlaylists, publicPlaylistFragment);
+            myPlaylistAdapter = new UserPlaylistAdapter(getActivity(), myPlaylists);
             myPlaylistAdapter.setCustomItemClickListener(new UserPlaylistAdapter.CustomItemClickListener() {
                 @Override
                 public void onItemClick(View v, int position) {
-                    PlaylistDetailFragment fragment = PlaylistDetailFragment.getInstance(myPlaylists.get(position).getId(),
+                    PlaylistDetailFragmentNew fragment = PlaylistDetailFragmentNew.getInstance(myPlaylists.get(position).getId(),
                             myPlaylists.get(position).getAdmin_id(), myPlaylists.get(position));
                     ((youtube) getActivity()).onLoadFragment(fragment);
                     /*Intent intent = new Intent(context, PlaylistDetailActivity.class);
@@ -183,6 +186,11 @@ public class PublicPlaylistFragment extends MyBaseFragment {
         return view;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        genreList = CommonUtils.getGenre();
+    }
 
     @Override
     public void onDestroy() {
@@ -196,7 +204,7 @@ public class PublicPlaylistFragment extends MyBaseFragment {
 
     // dialog to add playlist
     private void openCreatePlaylistDialog() {
-        final AlertDialog.Builder mb = new AlertDialog.Builder(getActivity());
+        /*final AlertDialog.Builder mb = new AlertDialog.Builder(getActivity());
 
         final View dialog = LayoutInflater.from(getActivity()).inflate(R.layout.layout_dialog, null, false);
         final EditText playlistName = dialog.findViewById(R.id.dialog_playlistname);
@@ -318,7 +326,8 @@ public class PublicPlaylistFragment extends MyBaseFragment {
                 });
         mb.setView(dialog);
         final AlertDialog ass = mb.create();
-        ass.show();
+        ass.show();*/
+        openCreatePlaylistBottomsheet();
     }
 
     //  add text to server
@@ -379,7 +388,7 @@ public class PublicPlaylistFragment extends MyBaseFragment {
         callMyPlaylistAPI(SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_TOKEN));
     }
 
-    private TextView.OnEditorActionListener editorActionListener = new TextView.OnEditorActionListener() {
+    private final TextView.OnEditorActionListener editorActionListener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             switch (actionId) {
@@ -412,7 +421,6 @@ public class PublicPlaylistFragment extends MyBaseFragment {
             });
         }
     }
-
 
     @Override
     public void onResume() {
@@ -526,7 +534,7 @@ public class PublicPlaylistFragment extends MyBaseFragment {
                             bundle.putString("thumbnail", Songplaylist.get(pos).getImage());
                             bundle.putString("videoId", Songplaylist.get(pos).getTrackId());
                             bundle.putString("from", "channel");
-                            bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) Songplaylist);
+                            bundle.putParcelableArrayList("playlist", Songplaylist);
                             onMusicPlay(bundle);
                             /*Intent intent = new Intent(context, PlayYoutubeVideoActivity.class);
                             intent.putExtra("data", bundle);
@@ -545,4 +553,126 @@ public class PublicPlaylistFragment extends MyBaseFragment {
             }
         });
     }
+
+    private void openCreatePlaylistBottomsheet() {
+        BottomSheetDialog bottomSheet = new BottomSheetDialog(context);
+        View bottom_sheet = LayoutInflater.from(context).inflate(R.layout.bottomsheet_create_playlist, null);
+        bottomSheet.setContentView(bottom_sheet);
+
+        EditText playlistName = bottom_sheet.findViewById(R.id.dialog_playlistname);
+        SearchView playlistGif = bottom_sheet.findViewById(R.id.dialog_playlist_gif);
+        GifView selectedGifIv = bottom_sheet.findViewById(R.id.selected_gif_iv);
+        EditText playlistDesc = bottom_sheet.findViewById(R.id.dialog_playlist_desc);
+        GiphyGridView giphyGridView = bottom_sheet.findViewById(R.id.gifsGridView);
+        TagView tagView = bottom_sheet.findViewById(R.id.tag_view_test);
+        AppCompatImageView ivClose = bottom_sheet.findViewById(R.id.ivClose);
+        Button btnCreate = bottom_sheet.findViewById(R.id.btnCreate);
+
+        AppCompatAutoCompleteTextView autoCompleteTextView = bottom_sheet.findViewById(R.id.actTags);
+        AutoCompleteAdapter adapter = new AutoCompleteAdapter(context, android.R.layout.simple_dropdown_item_1line, android.R.id.text1, genreList);
+        autoCompleteTextView.setAdapter(adapter);
+
+        autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
+            String tag = parent.getItemAtPosition(position).toString();
+            tagView.addTag(tag);
+            autoCompleteTextView.setText("");
+        });
+
+        final String[] selectedGifLink = {""};
+        // setting Giphy GridView
+        giphyGridView.setDirection(GiphyGridView.HORIZONTAL);
+        giphyGridView.setSpanCount(2);
+        giphyGridView.setCellPadding(0);
+        giphyGridView.setCallback(new GPHGridCallback() {
+            @Override
+            public void contentDidUpdate(int i) {
+                Log.i("GifURL", "Position " + i);
+            }
+
+            @Override
+            public void didSelectMedia(@NotNull Media media) {
+                Log.i("GifURL", "BitlyGifURL " + media.getBitlyGifUrl());
+                Log.i("GifURL", "BitlyURL " + media.getBitlyUrl());
+                Log.i("GifURL", "Content " + media.getContentUrl());
+                Log.i("GifURL", "EmbededUrl " + media.getEmbedUrl());
+                Log.i("GifURL", "SourceUrl " + media.getSourcePostUrl());
+
+                selectedGifLink[0] = media.getEmbedUrl();
+                selectedGifIv.setVisibility(View.VISIBLE);
+                selectedGifIv.setMedia(media, RenditionType.preview, ContextCompat.getDrawable(getActivity(), R.color.light_gray));
+            }
+        });
+        playlistGif.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                GPHContent gphContent = new GPHContent();
+                gphContent.setMediaType(MediaType.gif);
+                gphContent.setRating(RatingType.pg13);
+                gphContent.setRequestType(GPHRequestType.search);
+                gphContent.setSearchQuery(query);
+                giphyGridView.setContent(gphContent);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        ivClose.setOnClickListener(v -> bottomSheet.dismiss());
+
+        btnCreate.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(playlistName.getText().toString().trim())) {
+                Toast.makeText(context, "please give playlist some name", Toast.LENGTH_SHORT).show();
+            } else if (TextUtils.isEmpty(selectedGifLink[0])) {
+                Toast.makeText(context, "please choose a GIF", Toast.LENGTH_SHORT).show();
+            } else if (!Utility.isWebUrl(selectedGifLink[0])) {
+                Toast.makeText(context, "please choose a valid GIF", Toast.LENGTH_SHORT).show();
+            } else if (TextUtils.isEmpty(playlistDesc.getText().toString().trim())) {
+                Toast.makeText(context, "please enter playlist's description", Toast.LENGTH_SHORT).show();
+            } else {
+
+                ProgressDialog showMe = new ProgressDialog(context);
+                showMe.setMessage("Please wait");
+                showMe.setCancelable(true);
+                showMe.setCanceledOnTouchOutside(false);
+                showMe.show();
+
+                DataAPI dataAPI = RetrofitAPI.getData();
+                String token = AppConstants.TOKEN + SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+                Call<MyPlaylistModel> callback = dataAPI.callCreatePlayList(token,
+                        SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
+                        playlistName.getText().toString().trim(), "",
+                        playlistDesc.getText().toString().trim(), selectedGifLink[0], "flase",
+                        tagView.getSelectedTags().size() > 0 ? TextUtils.join("|", tagView.getSelectedTags()) : "# All");
+                callback.enqueue(new Callback<MyPlaylistModel>() {
+                    @Override
+                    public void onResponse(Call<MyPlaylistModel> call, retrofit2.Response<MyPlaylistModel> response) {
+                        showMe.dismiss();
+                        if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
+                            bottomSheet.dismiss();
+                            myPlaylists.add(response.body());
+                            myPlaylistAdapter.notifyItemInserted(myPlaylists.size());
+                        } else {
+                            Toast.makeText(context,
+                                    (response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<MyPlaylistModel> call, Throwable t) {
+                        showMe.dismiss();
+                        Toast.makeText(context,
+                                t.getLocalizedMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+
+        bottomSheet.show();
+
+    }
+
 }

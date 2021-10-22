@@ -25,11 +25,11 @@
             <com.shorincity.vibin.music_sharing.UI.custom.RoundedImageView
                 android:id="@+id/avatar_image"
                 android:layout_width="@dimen/_40sdp"
-                app:riv_mutate_background="true"
-                app:riv_corner_radius="@dimen/_35sdp"
                 android:layout_height="@dimen/_40sdp"
                 android:layout_centerInParent="true"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                app:riv_corner_radius="@dimen/_35sdp"
+                app:riv_mutate_background="true" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -79,17 +79,17 @@
             android:layout_gravity="right|center"
             android:layout_marginRight="@dimen/_10sdp"
             android:background="@color/gph_transparent"
-            app:cardCornerRadius="@dimen/_15sdp">
+            app:cardCornerRadius="@dimen/_4sdp">
 
             <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
                 android:id="@+id/add_collab_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_25sdp"
                 android:layout_gravity="center_horizontal"
-                android:background="@color/colorPrimaryDark"
+                android:background="@color/colorCollab"
                 android:paddingLeft="@dimen/_5sdp"
                 android:paddingRight="@dimen/_5sdp"
-                android:text="Add Collab"
+                android:text="Add"
                 android:textAllCaps="false"
                 android:textColor="#FFF"
                 android:textSize="@dimen/_9sdp"
@@ -102,12 +102,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_25sdp"
                 android:layout_gravity="center_horizontal"
-                android:background="@color/spot_green"
+                android:background="@drawable/btn_collab_sent"
+                android:drawableStart="@drawable/ic_baseline_done_24"
                 android:paddingLeft="@dimen/_5sdp"
                 android:paddingRight="@dimen/_5sdp"
-                android:text="Requested"
+                android:text="Sent"
                 android:textAllCaps="false"
-                android:textColor="@color/nav_white"
+                android:textColor="@color/colorCollab"
                 android:textSize="@dimen/_9sdp"
                 android:visibility="gone" />
         </androidx.cardview.widget.CardView>

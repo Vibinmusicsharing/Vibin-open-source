@@ -171,9 +171,8 @@
                         android:layout_height="@dimen/_70sdp"
                         android:layout_centerHorizontal="true"
                         android:scaleType="fitXY"
-                        app:riv_mutate_background="true"
                         app:riv_corner_radius="@dimen/_35sdp"
-                         />
+                        app:riv_mutate_background="true" />
                 </RelativeLayout>
 
             </RelativeLayout>

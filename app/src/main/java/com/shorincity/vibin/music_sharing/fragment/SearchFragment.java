@@ -133,7 +133,7 @@ public class SearchFragment extends MyBaseFragment {
         playlistRv = (RecyclerView) view.findViewById(R.id.rv_playlist);
         playlistRv.setLayoutManager(new GridLayoutManager(mContext.getApplicationContext(), 2));
         playlistRv.setHasFixedSize(true);
-        myPlaylistAdapter = new UserPlaylistAdapter(mContext, myPlaylists, this);
+        myPlaylistAdapter = new UserPlaylistAdapter(mContext, myPlaylists);
         myPlaylistAdapter.setCustomItemClickListener(new UserPlaylistAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
@@ -153,6 +153,7 @@ public class SearchFragment extends MyBaseFragment {
             public void onLikeClick(View view, int position) {
                 putPublicPLaylistLike(view, myPlaylists.get(position).getId(), position);
             }
+
             @Override
             public void onPlayClicked(View view, int position) {
                 //Toast.makeText(getContext(), "Play", Toast.LENGTH_SHORT).show();
@@ -443,6 +444,7 @@ public class SearchFragment extends MyBaseFragment {
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
         requestQueue.add(stringRequest);
     }
+
     private void callPlaylistDetailAPI(String playlistId) {
 
         DataAPI dataAPI = RetrofitAPI.getData();
@@ -469,7 +471,7 @@ public class SearchFragment extends MyBaseFragment {
                             bundle.putString("description", "");
                             bundle.putString("thumbnail", Songplaylist.get(pos).getImage());
                             bundle.putString("videoId", Songplaylist.get(pos).getTrackId());
-                            bundle.putString("from","channel");
+                            bundle.putString("from", "channel");
                             bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) Songplaylist);
                             intent.putExtra("data", bundle);
                             startActivity(intent);

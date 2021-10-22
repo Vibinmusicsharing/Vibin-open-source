@@ -134,8 +134,8 @@ public class PlaylistDetailFragment extends MyBaseFragment {
     private StringBuffer finalcollabslistid;
     private BottomSheetDialog dialog;
 
-    public static String BUNDLE_ID = "id";
-    public static String BUNDLE_ADMIN_ID = "admin_id";
+    private static final String BUNDLE_ID = "id";
+    private static final String BUNDLE_ADMIN_ID = "admin_id";
     private LinearLayout ll_edit;
     private TextView txt_edit, txt_cancel;
     private LikeButton likeBtn;
@@ -378,7 +378,7 @@ public class PlaylistDetailFragment extends MyBaseFragment {
                         bundle.putString("thumbnail", playlist.get(pos).getImage());
                         bundle.putString("videoId", playlist.get(pos).getTrackId());
                         bundle.putString("from", "channel");
-                        bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
+                        bundle.putParcelableArrayList("playlist", playlist);
                         onMusicPlay(bundle);
 /*                        Intent intent = new Intent(PlaylistDetailActivity.this, PlayYoutubeVideoActivity.class);
                         intent.putExtra("data", bundle);
@@ -1307,7 +1307,6 @@ public class PlaylistDetailFragment extends MyBaseFragment {
         Log.d(TAG, "editPlayList: " + userTokenapi);
         Log.d("yash", "editPlayList: params" + userTokenapi + "\n" + userToken + "\n" + finalplaylistid + "\n" + finalcollabslistid + "\n" + id);
         Call<PlayListDeleteModel> callback = dataAPI.getEditPlaylist(userTokenapi, userToken, id, finalplaylistid.toString(), finalcollabslistid.toString());
-//        J72EB5A5JM1K1QD6AIS6LG37
         callback.enqueue(new Callback<PlayListDeleteModel>() {
             @Override
             public void onResponse(Call<PlayListDeleteModel> call, retrofit2.Response<PlayListDeleteModel> response) {

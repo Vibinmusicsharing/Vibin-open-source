@@ -8,6 +8,14 @@ import com.google.gson.annotations.SerializedName;
 
 public class PlaylistDetailModel implements Parcelable {
 
+    @SerializedName("status")
+    @Expose
+    private String status;
+
+    @SerializedName("message")
+    @Expose
+    private String message;
+
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -36,10 +44,21 @@ public class PlaylistDetailModel implements Parcelable {
     @Expose
     private Integer playlist;
 
-
     @SerializedName("added_by")
     @Expose
     private Integer added_by;
+
+    @SerializedName("likes")
+    @Expose
+    private Integer likes;
+
+    @SerializedName("is_liked_by_viewer")
+    @Expose
+    private boolean isLikedByViewer;
+
+    @SerializedName("artist_name")
+    @Expose
+    private String artistName;
 
     boolean isSelected = false;
 
@@ -69,12 +88,13 @@ public class PlaylistDetailModel implements Parcelable {
         isSelected = selected;
     }
 
-    public PlaylistDetailModel(String name, String image, String trackId,String songDuration) {
+    public PlaylistDetailModel(String name, String image, String trackId, String songDuration) {
         this.name = name;
         this.image = image;
         this.trackId = trackId;
         this.songDuration = songDuration;
     }
+
     public PlaylistDetailModel(String name, String image, String trackId) {
         this.name = name;
         this.image = image;
@@ -103,6 +123,14 @@ public class PlaylistDetailModel implements Parcelable {
         } else {
             added_by = in.readInt();
         }
+        if (in.readByte() == 0) {
+            likes = null;
+        } else {
+            likes = in.readInt();
+        }
+
+        isLikedByViewer = in.readByte() == 0;
+        artistName = in.readString();
     }
 
     public static final Creator<PlaylistDetailModel> CREATOR = new Creator<PlaylistDetailModel>() {
@@ -173,6 +201,47 @@ public class PlaylistDetailModel implements Parcelable {
         this.playlist = playlist;
     }
 
+    public Integer getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Integer likes) {
+        this.likes = likes;
+    }
+
+    public boolean isLikedByViewer() {
+        return isLikedByViewer;
+    }
+
+    public void setLikedByViewer(boolean likedByViewer) {
+        isLikedByViewer = likedByViewer;
+    }
+
+    public String getArtistName() {
+        return artistName;
+    }
+
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
+    }
+
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -203,5 +272,16 @@ public class PlaylistDetailModel implements Parcelable {
             parcel.writeByte((byte) 1);
             parcel.writeInt(added_by);
         }
+
+        if (likes == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(likes);
+        }
+
+        parcel.writeByte((byte) (isLikedByViewer ? 1 : 0));
+        parcel.writeString(artistName);
+
     }
 }

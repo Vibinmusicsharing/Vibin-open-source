@@ -71,10 +71,10 @@
         android:id="@+id/dialog_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="password"
-        android:visibility="visible"
         android:layout_below="@+id/gifsGridView"
-        android:inputType="textPassword" />
+        android:hint="password"
+        android:inputType="textPassword"
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/privatepublic"

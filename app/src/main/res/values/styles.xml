@@ -85,6 +85,11 @@
         <item name="android:textColor">@color/constant_black</item>
     </style>
 
+    <style name="Dialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="windowMinWidthMajor">95%</item>
+        <item name="windowMinWidthMinor">95%</item>
+    </style>
+
 
     <style name="TextInputLayout.OutlinedBox" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="android:background">@android:color/transparent</item>
