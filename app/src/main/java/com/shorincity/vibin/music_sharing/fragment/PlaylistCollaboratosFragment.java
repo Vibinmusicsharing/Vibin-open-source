@@ -86,19 +86,16 @@ public class PlaylistCollaboratosFragment extends MyBaseFragment {
     private void initControls() {
         playlistId = getArguments().getString(PLAYLIST_ID);
         binding.rvSongs.setLayoutManager(new GridLayoutManager(binding.rvSongs.getContext(), 4));
-        binding.rvSongs.setAdapter(new PlaylistCollaboratosAdapter(mContext, viewModel.getViewcollabList(), new PlaylistCollaboratosAdapter.CustomItemClickListener() {
-            @Override
-            public void onItemClick(int type, int position) {
-                if (type == 0) {
-                    ViewCollab collab = viewModel.getViewcollabList().get(position);
-                    if (collab == null) {
-                        openDailogSearchCollab(Integer.parseInt(playlistId));
-                    }
-                } else if (type == 1) {
-                    ViewCollab collab = viewModel.getViewcollabList().get(position);
-                    if (collab != null) {
-                        callDeleteCollab(String.valueOf(collab.getId()));
-                    }
+        binding.rvSongs.setAdapter(new PlaylistCollaboratosAdapter(mContext, viewModel.getViewcollabList(), (type, position) -> {
+            if (type == 0) {
+                ViewCollab collab = viewModel.getViewcollabList().get(position);
+                if (collab == null) {
+                    openDailogSearchCollab(Integer.parseInt(playlistId));
+                }
+            } else if (type == 1) {
+                ViewCollab collab = viewModel.getViewcollabList().get(position);
+                if (collab != null) {
+                    callDeleteCollab(String.valueOf(collab.getId()));
                 }
             }
         }));
@@ -235,10 +232,10 @@ public class PlaylistCollaboratosFragment extends MyBaseFragment {
                     List<Integer> deletedSongs = mResponse.getDeletedCollaborator();
                     for (int i = 0; i < songList.size(); i++) {
                         ViewCollab mBean = songList.get(i);
-                        if (deletedSongs.size() > 1) {
+                        if (deletedSongs.size() >= 1) {
                             int id = deletedSongs.get(0);
                             if (mBean != null && mBean.getId() == id) {
-                                songList.remove(i);
+                                songList.remove(mBean);
                                 if (binding.rvSongs.getAdapter() != null)
                                     binding.rvSongs.getAdapter().notifyItemRemoved(i);
                                 break;

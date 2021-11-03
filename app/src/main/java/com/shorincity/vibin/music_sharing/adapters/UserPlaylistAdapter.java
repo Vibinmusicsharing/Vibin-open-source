@@ -1,6 +1,7 @@
 package com.shorincity.vibin.music_sharing.adapters;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -103,7 +104,7 @@ public class UserPlaylistAdapter extends RecyclerView.Adapter<UserPlaylistAdapte
             tvTitle.setText(String.format("Are you sure you want to delete \"%s\" playlist?", finalFirstname));
             btnCancel.setOnClickListener(v -> alertDialog.dismiss());
             btnDelete.setOnClickListener(v -> {
-                deletePlayList(currentItem.getId());
+                deletePlayList(v, currentItem.getId());
                 alertDialog.dismiss();
             });
             alertDialog.show();
@@ -123,16 +124,25 @@ public class UserPlaylistAdapter extends RecyclerView.Adapter<UserPlaylistAdapte
         });
     }
 
-    private void deletePlayList(Integer id) {
+    private void deletePlayList(View v, Integer id) {
         DataAPI dataAPI = RetrofitAPI.getData();
 
         String userToken = SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
         String userTokenapi = AppConstants.TOKEN + SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
         Log.d("yash", "deletePlayList: " + userTokenapi);
+
+        ProgressDialog showMe = new ProgressDialog(v.getContext());
+        showMe.setMessage("Please wait");
+        showMe.setCancelable(true);
+        showMe.setCanceledOnTouchOutside(false);
+        showMe.show();
+
+
         Call<PlayListDeleteModel> callback = dataAPI.getDeletePlaylist(userTokenapi, userToken, id);
         callback.enqueue(new Callback<PlayListDeleteModel>() {
             @Override
             public void onResponse(Call<PlayListDeleteModel> call, retrofit2.Response<PlayListDeleteModel> response) {
+                showMe.dismiss();
                 try {
                     System.out.println(response.body());
                     if (response.body().getStatus() != null) {
@@ -140,10 +150,8 @@ public class UserPlaylistAdapter extends RecyclerView.Adapter<UserPlaylistAdapte
                             Intent intent = new Intent();
                             intent.setAction("DeletePlaylist");
                             mContext.sendBroadcast(intent);
-                            Toast.makeText(mContext, response.body().getMessage(), +2000).show();
-                        } else {
-                            Toast.makeText(mContext, response.body().getMessage(), +2000).show();
                         }
+                        Toast.makeText(mContext, response.body().getMessage(), +2000).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -154,6 +162,7 @@ public class UserPlaylistAdapter extends RecyclerView.Adapter<UserPlaylistAdapte
 
             @Override
             public void onFailure(Call<PlayListDeleteModel> call, Throwable t) {
+                showMe.dismiss();
                 System.out.println(t.getMessage());
             }
         });

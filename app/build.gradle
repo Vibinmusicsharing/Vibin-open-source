@@ -54,7 +54,7 @@ repositories {
 
 dependencies {
 
-    def lifecycle_version = "2.4.0-beta01"
+    def lifecycle_version = "2.3.1"
     def arch_version = "2.1.0"
 
     // ViewModel
@@ -166,6 +166,7 @@ dependencies {
     implementation 'com.github.mukeshsolanki:android-otpview-pinview:2.1.2'
 
     implementation 'com.google.android:flexbox:1.0.0'
+    implementation "com.daimajia.swipelayout:library:1.2.0@aar"
 //    implementation 'com.github.mahimrocky:TagView:1.0.3'
 }
 apply plugin: 'com.google.gms.google-services'

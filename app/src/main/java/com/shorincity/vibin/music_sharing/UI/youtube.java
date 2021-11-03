@@ -1,6 +1,5 @@
 package com.shorincity.vibin.music_sharing.UI;
 
-import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.Fragment;
@@ -23,6 +22,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -37,6 +37,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -91,12 +92,14 @@ import com.shorincity.vibin.music_sharing.adapters.PlayListDetailsAdapter;
 import com.shorincity.vibin.music_sharing.adapters.Playlist;
 import com.shorincity.vibin.music_sharing.adapters.PlaylistRecyclerView;
 import com.shorincity.vibin.music_sharing.fragment.MyBaseFragment;
+import com.shorincity.vibin.music_sharing.fragment.PlaylistDetailFragmentNew;
 import com.shorincity.vibin.music_sharing.fragment.PublicPlaylistFragment;
 import com.shorincity.vibin.music_sharing.fragment.UserNotificationFragment;
 import com.shorincity.vibin.music_sharing.fragment.UserProfileFragment;
 import com.shorincity.vibin.music_sharing.fragment.UserSearchFragment;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.AddSongLogModel;
+import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.SongLikeModel;
 import com.shorincity.vibin.music_sharing.model.UpdatePreferPlatformModel;
@@ -122,12 +125,10 @@ import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -136,6 +137,7 @@ import java.util.Random;
 
 import javax.net.ssl.SSLContext;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -337,19 +339,23 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
             @Override
             public void onBackStackChanged() {
                 Fragment f = fragmentManager.findFragmentById(R.id.youtube_frame);
-
+                statusBarColorChange(ContextCompat.getColor(youtube.this, R.color.colorPrimaryDark));
                 if (f == null) {
                     finishAffinity();
                 } else if (f instanceof YoutubeHomeFragment)
                     bottomNavigationView.getMenu().getItem(0).setChecked(true);
-                else if (f instanceof PublicPlaylistFragment)
+                else if (f instanceof PublicPlaylistFragment) {
+                    statusBarColorChange(ContextCompat.getColor(youtube.this, R.color.white));
                     bottomNavigationView.getMenu().getItem(1).setChecked(true);
-                else if (f instanceof UserSearchFragment)
+                } else if (f instanceof UserSearchFragment)
                     bottomNavigationView.getMenu().getItem(2).setChecked(true);
                 else if (f instanceof UserNotificationFragment)
                     bottomNavigationView.getMenu().getItem(3).setChecked(true);
                 else if (f instanceof UserProfileFragment)
                     bottomNavigationView.getMenu().getItem(4).setChecked(true);
+                else if (f instanceof PlaylistDetailFragmentNew) {
+                    statusBarColorChange(ContextCompat.getColor(youtube.this, R.color.white));
+                }
             }
         });
     }
@@ -367,6 +373,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         } else {
             super.onBackPressed();
         }
+
     }
 
     private void initViews() {
@@ -611,10 +618,32 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         if (!fragment.isAdded())
             fragmentTransaction.addToBackStack(fragment.getClass().getName());
 
+        if (fragment instanceof PublicPlaylistFragment ||
+                fragment instanceof PlaylistDetailFragmentNew) {
+            statusBarColorChange(ContextCompat.getColor(this, R.color.white));
+        } else {
+            statusBarColorChange(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        }
+
         fragmentTransaction.replace(R.id.youtube_frame, fragment, fragment.getClass().getName());
         fragmentTransaction.commitAllowingStateLoss();
 
         isHomeLoaded = false;
+    }
+
+    private void statusBarColorChange(@ColorInt int color) {
+        Window window = this.getWindow();
+
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+        // finally change the color
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(color);
+        }
     }
 
     @Override
@@ -1753,7 +1782,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
                 String videoId = youtube.this.videoId;
                 int id = currentItem.getId();
-                AddThisToPlaylist(videoId, id, title, thumbnail, duration);
+                callAddTrackApi(videoId, id, title, thumbnail, duration);
             }
         });
         youtubePlayListRecyclerView.setAdapter(addToPlaylistAdapter);
@@ -1967,110 +1996,84 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     }
 
     // add video to server
-    private void AddThisToPlaylist(final String videoId, final int id, final String title,
-                                   final String thumbnail, String duration) {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url2, new com.android.volley.Response.Listener<String>() {
+    private void callAddTrackApi(final String videoId, final int id, final String title,
+                                 final String thumbnail, String duration) {
+        DataAPI dataAPI = RetrofitAPI.getData();
+        String token = AppConstants.TOKEN + SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+        String userToken = SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
+        String timeDuration = "T" + Utility.millisIntoHHMMSS(Long.valueOf(duration));
+        Call<ResponseBody> callback = dataAPI.callAddTrackApi(token, userToken,
+                String.valueOf(id), "youtube", videoId, title, thumbnail, timeDuration);
+        callback.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(String response) {
-
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                 try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    Boolean trackadded = jsonObject.getBoolean("Track added");
+                    JSONObject jsonObject = new JSONObject(response.body().string());
 
-                    if (trackadded) {
-                        sendSongAddedNotification(id);
-                        Toast.makeText(youtube.this, "track successfully added", Toast.LENGTH_SHORT).show();
+                    String msg = null;
+                    if (jsonObject.has("message"))
+                        msg = jsonObject.getString("message");
+                    if (jsonObject.has("Track added")) {
+                        boolean trackadded = jsonObject.getBoolean("Track added");
+                        if (trackadded) {
+                            sendSongAddedNotification(id);
+                            Toast.makeText(youtube.this, "track successfully added", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(youtube.this,
+                                msg != null ? msg : "Something went wrong", Toast.LENGTH_SHORT).show();
                     }
-                } catch (JSONException e) {
-                    Toast.makeText(youtube.this, "track already exists in the playlist", Toast.LENGTH_SHORT).show();
+                } catch (JSONException | IOException e) {
+                    Toast.makeText(youtube.this,
+                            "Something went wrong", Toast.LENGTH_SHORT).show();
                 }
-
-            }
-        }, new com.android.volley.Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(youtube.this, "track already exists in the playlist", Toast.LENGTH_SHORT).show();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                String token = SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
-
-                params.put("token", token);
-                params.put("playlist", String.valueOf(id));
-                params.put("type", "youtube");
-                params.put("track_id", videoId);
-                params.put("name", title);
-                params.put("image", thumbnail);
-                String timeDuration = "T" + Utility.millisIntoHHMMSS(Long.valueOf(duration));
-                params.put("song_duration", timeDuration);
-                return params;
             }
 
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                String token = AppConstants.TOKEN + SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-                params.put("Authorization", token);
-                return params;
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(youtube.this,
+                        "Something went wrong",
+                        Toast.LENGTH_SHORT).show();
             }
-        };
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+        });
     }
 
     // parse data to recycler view
     private void parseData() {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url1, new com.android.volley.Response.Listener<String>() {
+        DataAPI dataAPI = RetrofitAPI.getData();
+        String token = AppConstants.TOKEN + SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+        String userToken = SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
+        Call<ArrayList<MyPlaylistModel>> callback = dataAPI.getMyPlaylist(token, userToken);
+        callback.enqueue(new Callback<ArrayList<MyPlaylistModel>>() {
             @Override
-            public void onResponse(String response) {
-                try {
-                    JSONArray jsonArray = new JSONArray(response);
+            public void onResponse(Call<ArrayList<MyPlaylistModel>> call, retrofit2.Response<ArrayList<MyPlaylistModel>> response) {
+                progressBar.setVisibility(View.GONE);
+                if (response != null && response.body() != null && response.body().size() > 0) {
                     playlistList.clear();
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        String name = jsonObject.getString("name");
-                        int id = jsonObject.getInt("id");
-                        playlistList.add(new Playlist(name, id));
-                        addToPlaylistAdapter.notifyDataSetChanged();
+                    for (MyPlaylistModel mBean : response.body()) {
+                        playlistList.add(new Playlist(mBean.getName(), mBean.getId()));
                     }
+                    addToPlaylistAdapter.notifyDataSetChanged();
                     progressBar.setVisibility(View.GONE);
-
                     if (playlistList.size() == 0) {
                         textVieww.setVisibility(View.VISIBLE);
                     } else {
                         textVieww.setVisibility(View.GONE);
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+
+                    Logging.d("TEST", "callMyPlaylistAPI Called");
+                } else {
+                    Logging.d("TEST", "callMyPlaylistAPI Else Called");
                 }
-            }
-        }, new com.android.volley.Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
 
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                String token = SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
-                params.put("token", token);
-                return params;
             }
 
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                String token = AppConstants.TOKEN + SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-                params.put("Authorization", token);
-                return params;
+            public void onFailure(Call<ArrayList<MyPlaylistModel>> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                Logging.d("TEST", "callMyPlaylistAPI onFailure Called");
             }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+        });
     }
 
     private void callAddSongLogAPI(int userId, String songType, String songName, String

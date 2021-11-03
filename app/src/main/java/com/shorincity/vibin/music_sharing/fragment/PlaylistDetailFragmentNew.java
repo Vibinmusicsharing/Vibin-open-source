@@ -28,7 +28,6 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.giphy.sdk.core.models.Media;
 import com.giphy.sdk.core.models.enums.MediaType;
@@ -160,7 +159,10 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
                 });
                 popupView.llPrivate.setOnClickListener(v12 -> {
                     popupWindow.dismiss();
-                    openSetPassword();
+                    if (myPlaylistModel.getPrivate().equalsIgnoreCase("true")) {
+                        callUpdateDetails("", "false", null);
+                    } else
+                        openSetPassword();
                 });
 
                 popupView.ivSwitch.setSelected(myPlaylistModel.getPrivate().equalsIgnoreCase("true"));
@@ -194,6 +196,7 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
             binding.ivBack.setOnClickListener(v -> {
                 getActivity().onBackPressed();
             });
+            binding.ivLike.setOnClickListener(v -> putPublicPLaylistLike(myPlaylistModel.getId()));
 
             // Initializing REAL TIME Firebase DB variable.............
 
@@ -245,20 +248,21 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
     }
 
     private void setPlaylistDetails() {
-        binding.tvName.setText(myPlaylistModel.getName());
-        binding.tvAdminName.setText(myPlaylistModel.getAdminName());
-        binding.tvDesc.setText(myPlaylistModel.getDescription());
-        binding.tvTags.setText(myPlaylistModel.getPlayListTags());
-        binding.tvSongTime.setText(String.format(Locale.US, "%d songs, %d hour %d min", myPlaylistModel.getSongs(),
-                myPlaylistModel.getPlaylistDurationHours(),
-                myPlaylistModel.getPlaylistDurationMinutes()));
+        if (myPlaylistModel != null) {
+            binding.tvName.setText(myPlaylistModel.getName());
+            binding.tvAdminName.setText(myPlaylistModel.getAdminName());
+            binding.tvDesc.setText(myPlaylistModel.getDescription());
+            binding.tvTags.setText(myPlaylistModel.getPlayListTags());
+            binding.tvSongTime.setText(String.format(Locale.US, "%d songs, %d hour %d min", myPlaylistModel.getSongs(),
+                    myPlaylistModel.getPlaylistDurationHours(),
+                    myPlaylistModel.getPlaylistDurationMinutes()));
 
-        String[] gifArraySplit = myPlaylistModel.getGifLink().split("/");
-        String mediaId = gifArraySplit[gifArraySplit.length - 1];
+            String[] gifArraySplit = myPlaylistModel.getGifLink().split("/");
+            String mediaId = gifArraySplit[gifArraySplit.length - 1];
 
-        binding.gifIv.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(binding.gifIv.getContext(), R.color.light_gray));
-        binding.ivLike.setSelected(myPlaylistModel.isLikedByUser());
-
+            binding.gifIv.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(binding.gifIv.getContext(), R.color.light_gray));
+            binding.ivLike.setSelected(myPlaylistModel.isLikedByUser());
+        }
     }
 
     private void openSetPassword() {
@@ -293,45 +297,51 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
                 Toast.makeText(context, "please enter playlist a password", Toast.LENGTH_SHORT).show();
                 return;
             }
-            ProgressDialog showMe = new ProgressDialog(context);
-            showMe.setMessage("Please wait");
-            showMe.setCancelable(true);
-            showMe.setCanceledOnTouchOutside(false);
-            showMe.show();
-
-            DataAPI dataAPI = RetrofitAPI.getData();
-            String token = AppConstants.TOKEN + SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-            Call<MyPlaylistModel> callback = dataAPI.callSetPassword(token,
-                    SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
-                    passwordBinding.etPassword.getText().toString().trim(),
-                    passwordBinding.ivSwitch.isSelected() ? "true" : "false");
-            callback.enqueue(new Callback<MyPlaylistModel>() {
-                @Override
-                public void onResponse(Call<MyPlaylistModel> call, retrofit2.Response<MyPlaylistModel> response) {
-                    showMe.dismiss();
-                    if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
-                        bottomSheet.dismiss();
-                        myPlaylistModel = response.body();
-                        setPlaylistDetails();
-                    } else {
-                        Toast.makeText(context,
-                                (response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!",
-                                Toast.LENGTH_LONG).show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<MyPlaylistModel> call, Throwable t) {
-                    showMe.dismiss();
-                    Toast.makeText(context,
-                            t.getLocalizedMessage(),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-
+            callUpdateDetails(passwordBinding.etPassword.getText().toString().trim(),
+                    passwordBinding.ivSwitch.isSelected() ? "true" : "false", bottomSheet);
         });
         passwordBinding.ivClose.setOnClickListener(v -> bottomSheet.dismiss());
         bottomSheet.show();
+    }
+
+    private void callUpdateDetails(String password, String isPrivate, BottomSheetDialog bottomSheet) {
+        ProgressDialog showMe = new ProgressDialog(context);
+        showMe.setMessage("Please wait");
+        showMe.setCancelable(true);
+        showMe.setCanceledOnTouchOutside(false);
+        showMe.show();
+
+        DataAPI dataAPI = RetrofitAPI.getData();
+        String token = AppConstants.TOKEN + SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+        Call<MyPlaylistModel> callback = dataAPI.callEditPlaylistBasics(token,
+                SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
+                "", myPlaylistModel.getId(), "", "", "",
+                password,
+                isPrivate);
+        callback.enqueue(new Callback<MyPlaylistModel>() {
+            @Override
+            public void onResponse(Call<MyPlaylistModel> call, retrofit2.Response<MyPlaylistModel> response) {
+                showMe.dismiss();
+                if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
+                    if (bottomSheet != null)
+                        bottomSheet.dismiss();
+                    myPlaylistModel = response.body();
+                    setPlaylistDetails();
+                } else {
+                    Toast.makeText(context,
+                            (response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MyPlaylistModel> call, Throwable t) {
+                showMe.dismiss();
+                Toast.makeText(context,
+                        t.getLocalizedMessage(),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void openEditPlaylistBottomsheet() {
@@ -353,7 +363,8 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
         btnCreate.setText("Save");
         playlistName.setText(myPlaylistModel.getName());
         playlistDesc.setText(myPlaylistModel.getDescription());
-        List<String> items = Arrays.asList(myPlaylistModel.getPlayListTags().split("\\s*,\\s*"));
+        String tags = myPlaylistModel.getPlayListTags().replaceAll("#", "");
+        List<String> items = Arrays.asList(tags.split("\\s*,\\s*"));
         tagView.addTags(items);
 
         AppCompatAutoCompleteTextView autoCompleteTextView = bottom_sheet.findViewById(R.id.actTags);
@@ -361,12 +372,13 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
         autoCompleteTextView.setAdapter(adapter);
 
         autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
-            String tag = "# " + parent.getItemAtPosition(position).toString();
+            String tag = parent.getItemAtPosition(position).toString();
             tagView.addTag(tag);
             autoCompleteTextView.setText("");
         });
 
         final String[] selectedGifLink = {""};
+        selectedGifLink[0] = myPlaylistModel.getGifLink();
         // setting Giphy GridView
         giphyGridView.setDirection(GiphyGridView.HORIZONTAL);
         giphyGridView.setSpanCount(2);
@@ -407,6 +419,12 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
                 return false;
             }
         });
+
+        String[] gifArraySplit = myPlaylistModel.getGifLink().split("/");
+        String mediaId = gifArraySplit[gifArraySplit.length - 1];
+        selectedGifIv.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(selectedGifIv.getContext(), R.color.light_gray));
+        selectedGifIv.setVisibility(View.VISIBLE);
+
         ivClose.setOnClickListener(v -> bottomSheet.dismiss());
 
         btnCreate.setOnClickListener(v -> {
@@ -431,7 +449,8 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
                         SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
                         playlistName.getText().toString().trim(), myPlaylistModel.getId(),
                         playlistDesc.getText().toString().trim(), selectedGifLink[0],
-                        TextUtils.join("|", tagView.getSelectedTags()), myPlaylistModel.getPlayListTags());
+                        tagView.getSelectedTags().size() > 0 ? TextUtils.join("|", tagView.getSelectedTags()) : "All",
+                        "", "");
                 callback.enqueue(new Callback<MyPlaylistModel>() {
                     @Override
                     public void onResponse(Call<MyPlaylistModel> call, retrofit2.Response<MyPlaylistModel> response) {
@@ -706,6 +725,44 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
             }
         });
 
+    }
+
+    private void putPublicPLaylistLike(int playlistId) {
+        ProgressDialog showMe = new ProgressDialog(context);
+        showMe.setMessage("Please wait");
+        showMe.setCancelable(true);
+        showMe.setCanceledOnTouchOutside(false);
+        showMe.show();
+
+        DataAPI dataAPI = RetrofitAPI.getData();
+
+        String token = AppConstants.TOKEN + SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+
+        Call<MyPlaylistModel> callback = dataAPI.putPlaylistLikeNew(token,
+                SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_TOKEN), playlistId);
+        callback.enqueue(new Callback<MyPlaylistModel>() {
+            @Override
+            public void onResponse(Call<MyPlaylistModel> call, retrofit2.Response<MyPlaylistModel> response) {
+                showMe.dismiss();
+                if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
+                    myPlaylistModel = response.body();
+                    setPlaylistDetails();
+                } else {
+                    Toast.makeText(context,
+                            (response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MyPlaylistModel> call, Throwable t) {
+                showMe.dismiss();
+                Toast.makeText(context,
+                        "Something went wrong!",
+                        Toast.LENGTH_LONG).show();
+                Logging.d("TEST", "putPublicPLaylistLike onFailure Called");
+            }
+        });
     }
 
     private void showProgressDialog() {

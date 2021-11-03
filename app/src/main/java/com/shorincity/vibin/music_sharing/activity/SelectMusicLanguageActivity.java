@@ -72,7 +72,7 @@ public class SelectMusicLanguageActivity extends AppCompatActivity {
         binding.rvLanguages.setAdapter(new SelectLanguageAdapter(viewModel.getList(), position -> {
             if (position != RecyclerView.NO_POSITION) {
                 MusicLanguageModel mBean = viewModel.getList().get(position);
-                viewModel.setSelectedCounter(mBean.isSelected());
+                viewModel.setSelectedCounter(!mBean.isSelected());
 
                 mBean.setSelected(!mBean.isSelected());
                 if (binding.rvLanguages.getAdapter() != null)
@@ -95,7 +95,7 @@ public class SelectMusicLanguageActivity extends AppCompatActivity {
 
     private void goToNextScreen() {
         String selectedLangs = viewModel.getSelectedItem();
-        if (!selectedLangs.contains("|")){
+        if (!selectedLangs.contains("|")) {
             Toast.makeText(SelectMusicLanguageActivity.this, "Please select at-least three languages", Toast.LENGTH_LONG).show();
             return;
         }

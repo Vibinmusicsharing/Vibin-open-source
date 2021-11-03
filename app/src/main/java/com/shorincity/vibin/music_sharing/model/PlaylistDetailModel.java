@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class PlaylistDetailModel implements Parcelable {
+public class PlaylistDetailModel implements Parcelable, Comparable<PlaylistDetailModel> {
 
     @SerializedName("status")
     @Expose
@@ -59,6 +59,10 @@ public class PlaylistDetailModel implements Parcelable {
     @SerializedName("artist_name")
     @Expose
     private String artistName;
+
+    @SerializedName("added_by_avatar")
+    @Expose
+    private String collabProfile;
 
     boolean isSelected = false;
 
@@ -131,6 +135,7 @@ public class PlaylistDetailModel implements Parcelable {
 
         isLikedByViewer = in.readByte() == 0;
         artistName = in.readString();
+        collabProfile = in.readString();
     }
 
     public static final Creator<PlaylistDetailModel> CREATOR = new Creator<PlaylistDetailModel>() {
@@ -225,6 +230,13 @@ public class PlaylistDetailModel implements Parcelable {
         this.artistName = artistName;
     }
 
+    public String getCollabProfile() {
+        return collabProfile;
+    }
+
+    public void setCollabProfile(String collabProfile) {
+        this.collabProfile = collabProfile;
+    }
 
     public String getMessage() {
         return message;
@@ -282,6 +294,12 @@ public class PlaylistDetailModel implements Parcelable {
 
         parcel.writeByte((byte) (isLikedByViewer ? 1 : 0));
         parcel.writeString(artistName);
+        parcel.writeString(collabProfile);
 
+    }
+
+    @Override
+    public int compareTo(PlaylistDetailModel o) {
+        return this.likes.compareTo(o.likes);
     }
 }

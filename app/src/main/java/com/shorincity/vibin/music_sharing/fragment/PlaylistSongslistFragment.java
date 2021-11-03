@@ -3,8 +3,6 @@ package com.shorincity.vibin.music_sharing.fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,22 +15,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.activity.SelectMusicGenreActivity;
 import com.shorincity.vibin.music_sharing.adapters.PlaylistSongsAdapter;
 import com.shorincity.vibin.music_sharing.callbackclick.PlaylistDetailCallback;
 import com.shorincity.vibin.music_sharing.databinding.FragmentPlaylistSongListBinding;
-import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistSongCollabDeleteModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
-import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.viewmodel.PlaylistDetailsViewModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.function.Predicate;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -72,6 +66,7 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
     }
 
     private void initControls() {
+        binding.setIsProgress(true);
         binding.rvSongs.setLayoutManager(new LinearLayoutManager(binding.rvSongs.getContext()));
         binding.rvSongs.setAdapter(new PlaylistSongsAdapter(mContext, viewModel.getPlaylist(), (type, position) -> {
             if (position != RecyclerView.NO_POSITION) {
@@ -96,15 +91,10 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
                             public void onResponse(Call<PlaylistDetailModel> call, Response<PlaylistDetailModel> response) {
                                 showMe.dismiss();
                                 if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
-                                    mBean.setLikedByViewer(!mBean.isLikedByViewer());
-
-                                    if (mBean.isLikedByViewer())
-                                        mBean.setLikes(mBean.getLikes() + 1);
-                                    else mBean.setLikes(mBean.getLikes() - 1);
-
-                                    playlist.set(position, mBean);
+                                    playlist.set(position, response.body());
+                                    Collections.sort(playlist, Collections.reverseOrder());
                                     if (binding.rvSongs.getAdapter() != null)
-                                        binding.rvSongs.getAdapter().notifyItemChanged(position);
+                                        binding.rvSongs.getAdapter().notifyDataSetChanged();
                                 } else {
                                     Toast.makeText(mContext,
                                             (response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!",
@@ -123,18 +113,15 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
                         break;
                     }
                     case 1: {
-
-
+                        callDeleteSong(String.valueOf(mBean.getId()));
                         break;
                     }
                     case 2: {
-
-
+                        //TODO Add song
                         break;
                     }
                     case 3: {
-
-
+                        //TODO Share
                         break;
                     }
                     default: {
@@ -162,12 +149,13 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
         viewModel.getPublicPlaylistDetail(mContext, playlistId, new PlaylistDetailCallback() {
             @Override
             public void onResponse() {
+                binding.setIsProgress(false);
                 binding.rvSongs.getAdapter().notifyDataSetChanged();
             }
 
             @Override
             public void onError() {
-
+                binding.setIsProgress(false);
             }
         });
     }
@@ -189,9 +177,24 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
             @Override
             public void onResponse(Call<PlaylistSongCollabDeleteModel> call, retrofit2.Response<PlaylistSongCollabDeleteModel> response) {
                 showMe.dismiss();
-                if (response.body() != null &&
-                        response.body().getStatus().equalsIgnoreCase("success")) {
-
+                PlaylistSongCollabDeleteModel model = response.body();
+                if (model != null &&
+                        model.getStatus().equalsIgnoreCase("success")) {
+                    ArrayList<PlaylistDetailModel> list = viewModel.getPlaylist();
+                    for (int i = 0; i < list.size(); i++) {
+                        PlaylistDetailModel mBean = list.get(i);
+                        if (model.getDeletedSongs().size() >= 1) {
+                            int id = model.getDeletedSongs().get(0);
+                            if (mBean != null && mBean.getId() == id) {
+                                list.remove(mBean);
+                                if (binding.rvSongs.getAdapter() != null)
+                                    binding.rvSongs.getAdapter().notifyItemChanged(i);
+                                break;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
                 } else {
                     Toast.makeText(mContext,
                             (response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!",

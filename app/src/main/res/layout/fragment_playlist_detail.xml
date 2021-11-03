@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -9,29 +10,26 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        android:fitsSystemWindows="true">
+        android:background="@color/white">
 
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_300sdp"
-            android:background="@android:color/transparent"
-            android:fitsSystemWindows="true">
+            android:layout_height="@dimen/_285sdp"
+            android:background="@android:color/transparent">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:id="@+id/collapsing_toolbar_layout"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_270sdp"
+                android:layout_height="@dimen/_240sdp"
                 android:background="@android:color/transparent"
-                android:fitsSystemWindows="true"
                 app:contentScrim="?attr/colorPrimary"
                 app:layout_scrollFlags="exitUntilCollapsed|scroll">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_65sdp"
+                    android:layout_marginTop="@dimen/_45sdp"
                     android:orientation="horizontal"
                     android:padding="@dimen/_16sdp">
 
@@ -61,6 +59,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_gravity="center"
                         android:paddingStart="@dimen/_16sdp"
                         android:paddingEnd="@dimen/_4sdp">
 
@@ -72,6 +72,7 @@
                             android:fontFamily="@font/font_regular"
                             android:maxLines="3"
                             android:text="@string/dummy_text"
+                            tools:text="test "
                             android:textColor="@color/textColor"
                             android:textSize="@dimen/_10sdp" />
 
@@ -174,8 +175,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:layout_above="@+id/button"
-                    android:layout_alignParentStart="true"
                     android:gravity="top"
+                    android:background="@color/white"
                     android:minHeight="?android:attr/actionBarSize"
                     app:contentInsetEnd="8dp"
                     app:contentInsetStart="8dp"
@@ -254,6 +255,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
+            android:overScrollMode="never"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

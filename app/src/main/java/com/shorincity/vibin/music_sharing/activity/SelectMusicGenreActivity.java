@@ -79,7 +79,7 @@ public class SelectMusicGenreActivity extends AppCompatActivity {
         binding.rvLanguages.setAdapter(new SelectLanguageAdapter(viewModel.getList(), position -> {
             if (position != RecyclerView.NO_POSITION) {
                 MusicLanguageModel mBean = viewModel.getList().get(position);
-                viewModel.setSelectedCounter(mBean.isSelected());
+                viewModel.setSelectedCounter(!mBean.isSelected());
 
                 mBean.setSelected(!mBean.isSelected());
                 if (binding.rvLanguages.getAdapter() != null)
@@ -266,7 +266,7 @@ public class SelectMusicGenreActivity extends AppCompatActivity {
             }
         });*/
 
-        viewModel.postUpdateProfile(token,languages,selectedGenre).observe(this, apiResponseResource -> {
+        viewModel.postUpdateProfile(token, languages, selectedGenre).observe(this, apiResponseResource -> {
             if (apiResponseResource instanceof Resource.Loading) {
                 showMe.show();
             } else if (apiResponseResource instanceof Resource.Success) {

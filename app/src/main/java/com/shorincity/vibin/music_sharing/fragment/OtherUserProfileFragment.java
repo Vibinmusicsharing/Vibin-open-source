@@ -277,7 +277,7 @@ public class OtherUserProfileFragment extends MyBaseFragment implements View.OnC
     myPlaylistAdapter.setCustomItemClickListener(new MyPlaylistAdapter.CustomItemClickListener() {
       @Override
       public void onItemClick(View v, int position) {
-        PlaylistDetailFragment fragment = PlaylistDetailFragment.getInstance(myPlaylists.get(position).getId(),
+        PlaylistDetailFragmentNew fragment = PlaylistDetailFragmentNew.getInstance(myPlaylists.get(position).getId(),
                 myPlaylists.get(position).getAdmin_id(), myPlaylists.get(position));
         ((youtube) getActivity()).onLoadFragment(fragment);
                 /*Intent intent = new Intent(mContext, PlaylistDetailActivity.class);

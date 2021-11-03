@@ -9,6 +9,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -57,13 +58,14 @@ public class PlaylistSongsAdapter extends RecyclerView.Adapter<PlaylistSongsAdap
         holder.tvDuration.setText(currentItem.getSongDuration());
         Glide.with(mContext).load(currentItem.getImage()).into(holder.ivSong);
 
+        Glide.with(mContext)
+                .load(currentItem.getCollabProfile())
+                .circleCrop()
+                .into(holder.ivCollabProfile);
+
+
         holder.ivLike.setSelected(currentItem.isLikedByViewer());
-        if (currentItem.isLikedByViewer()) {
-            holder.tvLikeCount.setVisibility(View.VISIBLE);
-            holder.tvLikeCount.setText(String.valueOf(currentItem.getLikes()));
-        } else {
-            holder.tvLikeCount.setVisibility(View.GONE);
-        }
+        holder.tvLikeCount.setText(String.valueOf(currentItem.getLikes()));
     }
 
     @Override
@@ -73,20 +75,23 @@ public class PlaylistSongsAdapter extends RecyclerView.Adapter<PlaylistSongsAdap
 
 
     public class ExampleViewHolder extends RecyclerView.ViewHolder {
-        AppCompatImageView ivSong, ivLike, ivMenu;
+        AppCompatImageView ivSong, ivLike, ivMenu, ivCollabProfile;
         AppCompatTextView tvSongName, tvArtist, tvDuration, tvLikeCount;
         FrameLayout flLike;
+        LinearLayout llMain;
 
         public ExampleViewHolder(@NonNull View itemView) {
             super(itemView);
             ivSong = itemView.findViewById(R.id.ivSong);
             ivLike = itemView.findViewById(R.id.ivLike);
             ivMenu = itemView.findViewById(R.id.ivMenu);
+            ivCollabProfile = itemView.findViewById(R.id.ivCollabProfile);
             tvSongName = itemView.findViewById(R.id.tvSongName);
             tvArtist = itemView.findViewById(R.id.tvArtist);
             tvDuration = itemView.findViewById(R.id.tvDuration);
             tvLikeCount = itemView.findViewById(R.id.tvLikeCount);
             flLike = itemView.findViewById(R.id.flLike);
+            llMain = itemView.findViewById(R.id.llMain);
 
             flLike.setOnClickListener(v -> customItemClickListener.onItemClick(0, getAdapterPosition()));
             ivMenu.setOnClickListener(v -> {
@@ -98,15 +103,24 @@ public class PlaylistSongsAdapter extends RecyclerView.Adapter<PlaylistSongsAdap
                         CommonUtils.dpToPx(300, v.getContext()),
                         ViewGroup.LayoutParams.WRAP_CONTENT);
 
-                popupView.llDeletePlaylist.setOnClickListener(v1 -> customItemClickListener.onItemClick(1, getAdapterPosition()));
-                popupView.llAddSong.setOnClickListener(v1 -> customItemClickListener.onItemClick(2, getAdapterPosition()));
-                popupView.llShare.setOnClickListener(v1 -> customItemClickListener.onItemClick(3, getAdapterPosition()));
+                popupView.llDeletePlaylist.setOnClickListener(v1 -> {
+                    popupWindow.dismiss();
+                    customItemClickListener.onItemClick(1, getAdapterPosition());
+                });
+                popupView.llAddSong.setOnClickListener(v1 -> {
+                    popupWindow.dismiss();
+                    customItemClickListener.onItemClick(2, getAdapterPosition());
+                });
+                popupView.llShare.setOnClickListener(v1 -> {
+                    popupWindow.dismiss();
+                    customItemClickListener.onItemClick(3, getAdapterPosition());
+                });
 
                 popupWindow.setBackgroundDrawable(new BitmapDrawable());
                 popupWindow.setOutsideTouchable(true);
                 popupWindow.showAsDropDown(v);
             });
-            itemView.setOnClickListener(v -> customItemClickListener.onItemClick(-1, getAdapterPosition()));
+            llMain.setOnClickListener(v -> customItemClickListener.onItemClick(-1, getAdapterPosition()));
         }
     }
 

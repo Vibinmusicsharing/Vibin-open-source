@@ -16,7 +16,7 @@ public class SelectMusicLangViewModel extends ViewModel {
     private int selectedCounter = 0;
     public MutableLiveData<String> search = new MutableLiveData<>();
 
-    SelectMusicLangViewModel() {
+    public SelectMusicLangViewModel() {
         setList();
     }
 

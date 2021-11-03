@@ -137,7 +137,7 @@ public class SearchFragment extends MyBaseFragment {
         myPlaylistAdapter.setCustomItemClickListener(new UserPlaylistAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
-                PlaylistDetailFragment fragment = PlaylistDetailFragment.getInstance(
+                PlaylistDetailFragmentNew fragment = PlaylistDetailFragmentNew.getInstance(
                         myPlaylists.get(position).getId(),
                         0, myPlaylists.get(position));
                 ((youtube) getActivity()).onLoadFragment(fragment);

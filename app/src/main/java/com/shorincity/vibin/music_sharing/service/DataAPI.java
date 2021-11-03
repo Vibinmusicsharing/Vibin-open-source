@@ -4,6 +4,7 @@ package com.shorincity.vibin.music_sharing.service;
 import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.AddSongLogModel;
+import com.shorincity.vibin.music_sharing.model.AddTrackResponse;
 import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
 import com.shorincity.vibin.music_sharing.model.CollabsList;
 import com.shorincity.vibin.music_sharing.model.GetNotifications;
@@ -242,6 +243,10 @@ public interface DataAPI {
     Call<PlaylistLikeModel> putPlaylistLike(@Header("Authorization") String token, @Field("token") String token1, @Field("playlist") int id);
 
     @FormUrlEncoded
+    @POST("/playlist/put_playlist_likes/")
+    Call<MyPlaylistModel> putPlaylistLikeNew(@Header("Authorization") String token, @Field("token") String token1, @Field("playlist") int id);
+
+    @FormUrlEncoded
     @POST("/playlist/add_collab/")
     Call<APIResponse> addCollab(@Header("Authorization") String token, @Field("playlist_id") int playlistId,
                                 @Field("customer") int customerId);
@@ -436,10 +441,10 @@ public interface DataAPI {
             @Header("Authorization") String token,
             @Field("token") String usertoken,
             @Field("name") String name,
-            @Field("password") String password,
             @Field("description") String description,
             @Field("gif_link") String gif_link,
             @Field("private") String isPrivate,
+            @Field("password") String password,
             @Field("playlist_tags") String playlistTags
     );
 
@@ -452,17 +457,21 @@ public interface DataAPI {
             @Field("playlist") Integer playListId,
             @Field("update_description") String description,
             @Field("update_gif_link") String gif_link,
-            @Field("new_tags") String playlistTags,
-            @Field("remove_tags") String removeTags
-    );
-
-    @FormUrlEncoded
-    @POST("/playlist/edit_playlist_basics/")
-    Call<MyPlaylistModel> callSetPassword(
-            @Header("Authorization") String token,
-            @Field("token") String usertoken,
+            @Field("update_tags") String playlistTags,
             @Field("update_password") String password,
             @Field("update_private") String isPrivate
     );
 
+    @FormUrlEncoded
+    @POST("/playlist/add_trak_to_playlist/")
+    Call<ResponseBody> callAddTrackApi(
+            @Header("Authorization") String token,
+            @Field("token") String usertoken,
+            @Field("playlist") String playlist,
+            @Field("type") String type,
+            @Field("track_id") String trackId,
+            @Field("name") String name,
+            @Field("image") String image,
+            @Field("song_duration") String songDuration
+    );
 }

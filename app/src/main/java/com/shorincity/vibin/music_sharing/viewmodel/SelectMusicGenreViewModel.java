@@ -26,7 +26,7 @@ public class SelectMusicGenreViewModel extends ViewModel {
     private int selectedCounter = 0;
     public MutableLiveData<String> search = new MutableLiveData<>();
 
-    SelectMusicGenreViewModel() {
+    public SelectMusicGenreViewModel() {
         setList();
     }
 
@@ -109,7 +109,7 @@ public class SelectMusicGenreViewModel extends ViewModel {
                 genderStr, dobStr, languages, genres);
     }
 
-    public LiveData<Resource<APIResponse>> postUpdateProfile(String token, String languages, String selectedGenre){
+    public LiveData<Resource<APIResponse>> postUpdateProfile(String token, String languages, String selectedGenre) {
         return loginSignUpRepository.postUpdateProfile(token, languages, selectedGenre);
     }
 }

@@ -195,7 +195,7 @@ public class YoutubeSearchFragment extends MyBaseFragment {
     }
 
 
-    public void callgetYoutubeSearchListAPI(String query) {
+    private void callgetYoutubeSearchListAPI(String query) {
         progressBar.setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getYoutubeData();
         // videos?part=contentDetails&chart=mostPopular&regionCode=IN&maxResults=25&key=AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs
@@ -255,27 +255,19 @@ public class YoutubeSearchFragment extends MyBaseFragment {
 
 
                         if (getActivity() != null) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                public void run() {
-                                    youtubeSearchRv.scrollTo(0, 0);
-                                    youtubeSearchRv.smoothScrollToPosition(0);
+                            getActivity().runOnUiThread(() -> {
+                                youtubeSearchRv.scrollTo(0, 0);
+                                youtubeSearchRv.smoothScrollToPosition(0);
 
 
-                                    try {
-                                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                                        imm.hideSoftInputFromWindow(edtsearch.getWindowToken(), 0);
-                                    } catch (Exception e) {
+                                try {
+                                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                                    imm.hideSoftInputFromWindow(edtsearch.getWindowToken(), 0);
+                                } catch (Exception e) {
 
-                                    }
                                 }
                             });
                         }
-
-                    /* youtubeSearchAdapter = new YoutubeSearchAdapter(getContext(), android.R.layout.simple_list_item_1, mangitem);
-                    progressBar.setVisibility(View.GONE);
-                    listView.setAdapter(youtubeSearchAdapter);
-                    listView.setVisibility(View.VISIBLE);
-                    */
 
                     }
                 }

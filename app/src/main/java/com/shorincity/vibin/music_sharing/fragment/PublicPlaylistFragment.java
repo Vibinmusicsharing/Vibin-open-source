@@ -108,81 +108,8 @@ public class PublicPlaylistFragment extends MyBaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (view == null) {
-            view = inflater.inflate(R.layout.fragment_youtube_playlist, container, false);
-            context = view.getContext();
-            Giphy.INSTANCE.configure(getActivity(), AppConstants.GIPHY_API_KEY, true);
-            edittext = view.findViewById(R.id.edittextSearch);
-            edittext.setOnEditorActionListener(editorActionListener);
-            progressBar = view.findViewById(R.id.progressbar);
-            requestQueue = Volley.newRequestQueue(context);
-            textView = view.findViewById(R.id.textviewplaylistfragment);
-
-            FloatingActionButton floatingActionButton = view.findViewById(R.id.fab);
-            FloatingActionButton search = view.findViewById(R.id.search);
-            getActivity().registerReceiver(broadcastReceiver, new IntentFilter("DeletePlaylist"));
-            // set Playlist Adapter
-            myPlaylists = new ArrayList<>();
-            playlistRv = view.findViewById(R.id.rv_playlist);
-            /*playlistRv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL,false));*/
-            playlistRv.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-            playlistRv.setHasFixedSize(true);
-            myPlaylistAdapter = new UserPlaylistAdapter(getActivity(), myPlaylists);
-            myPlaylistAdapter.setCustomItemClickListener(new UserPlaylistAdapter.CustomItemClickListener() {
-                @Override
-                public void onItemClick(View v, int position) {
-                    PlaylistDetailFragmentNew fragment = PlaylistDetailFragmentNew.getInstance(myPlaylists.get(position).getId(),
-                            myPlaylists.get(position).getAdmin_id(), myPlaylists.get(position));
-                    ((youtube) getActivity()).onLoadFragment(fragment);
-                    /*Intent intent = new Intent(context, PlaylistDetailActivity.class);
-                    int id = myPlaylists.get(position).getId();
-                    intent.putExtra("id", id);
-                    intent.putExtra("admin_id", myPlaylists.get(position).getAdmin_id());
-                    intent.putExtra(AppConstants.INTENT_PLAYLIST, myPlaylists.get(position));
-                    startActivity(intent);*/
-                }
-
-                @Override
-                public void onLikeClick(View view, int position) {
-                    putPublicPLaylistLike(view, myPlaylists.get(position).getId(), position);
-                }
-
-                @Override
-                public void onPlayClicked(View view, int position) {
-                    //Toast.makeText(getContext(), "Play", Toast.LENGTH_SHORT).show();
-                    int id = myPlaylists.get(position).getId();
-                    callPlaylistDetailAPI(String.valueOf(id));
-
-
-                }
-            });
-            playlistRv.setAdapter(myPlaylistAdapter);
-
-            floatingActionButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    openCreatePlaylistDialog();
-                }
-            });
-
-            search.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SearchFragment fragment = SearchFragment.getInstance("");
-                    ((youtube) getActivity()).onLoadFragment(fragment);
-                   /* Intent intent = new Intent(context, Search.class);
-                    startActivity(intent);*/
-                }
-            });
-
-            view.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    return true;
-                }
-            });
-        }
+        view = inflater.inflate(R.layout.fragment_youtube_playlist, container, false);
+        context = view.getContext();
         return view;
     }
 
@@ -190,6 +117,77 @@ public class PublicPlaylistFragment extends MyBaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         genreList = CommonUtils.getGenre();
+        Giphy.INSTANCE.configure(getActivity(), AppConstants.GIPHY_API_KEY, true);
+        edittext = view.findViewById(R.id.edittextSearch);
+        edittext.setOnEditorActionListener(editorActionListener);
+        progressBar = view.findViewById(R.id.progressbar);
+        requestQueue = Volley.newRequestQueue(context);
+        textView = view.findViewById(R.id.textviewplaylistfragment);
+
+        FloatingActionButton floatingActionButton = view.findViewById(R.id.fab);
+        FloatingActionButton search = view.findViewById(R.id.search);
+        getActivity().registerReceiver(broadcastReceiver, new IntentFilter("DeletePlaylist"));
+        // set Playlist Adapter
+        myPlaylists = new ArrayList<>();
+        playlistRv = view.findViewById(R.id.rv_playlist);
+        /*playlistRv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL,false));*/
+        playlistRv.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        playlistRv.setHasFixedSize(true);
+        myPlaylistAdapter = new UserPlaylistAdapter(getActivity(), myPlaylists);
+        myPlaylistAdapter.setCustomItemClickListener(new UserPlaylistAdapter.CustomItemClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+                PlaylistDetailFragmentNew fragment = PlaylistDetailFragmentNew.getInstance(myPlaylists.get(position).getId(),
+                        myPlaylists.get(position).getAdmin_id(), myPlaylists.get(position));
+                ((youtube) getActivity()).onLoadFragment(fragment);
+                    /*Intent intent = new Intent(context, PlaylistDetailActivity.class);
+                    int id = myPlaylists.get(position).getId();
+                    intent.putExtra("id", id);
+                    intent.putExtra("admin_id", myPlaylists.get(position).getAdmin_id());
+                    intent.putExtra(AppConstants.INTENT_PLAYLIST, myPlaylists.get(position));
+                    startActivity(intent);*/
+            }
+
+            @Override
+            public void onLikeClick(View view, int position) {
+                putPublicPLaylistLike(myPlaylists.get(position).getId(), position);
+            }
+
+            @Override
+            public void onPlayClicked(View view, int position) {
+                //Toast.makeText(getContext(), "Play", Toast.LENGTH_SHORT).show();
+                int id = myPlaylists.get(position).getId();
+                callPlaylistDetailAPI(String.valueOf(id));
+
+
+            }
+        });
+        playlistRv.setAdapter(myPlaylistAdapter);
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                openCreatePlaylistDialog();
+            }
+        });
+
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchFragment fragment = SearchFragment.getInstance("");
+                ((youtube) getActivity()).onLoadFragment(fragment);
+                   /* Intent intent = new Intent(context, Search.class);
+                    startActivity(intent);*/
+            }
+        });
+
+        view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
     }
 
     @Override
@@ -432,7 +430,7 @@ public class PublicPlaylistFragment extends MyBaseFragment {
         }
     }
 
-    public void callMyPlaylistAPI(String userToken) {
+    private void callMyPlaylistAPI(String userToken) {
         textView.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getData();
@@ -443,7 +441,7 @@ public class PublicPlaylistFragment extends MyBaseFragment {
             public void onResponse(Call<ArrayList<MyPlaylistModel>> call, retrofit2.Response<ArrayList<MyPlaylistModel>> response) {
                 progressBar.setVisibility(View.GONE);
                 myPlaylists.clear();
-                if (response != null && response.body() != null && response.body().size() > 0) {
+                if (response.body() != null && response.body().size() > 0) {
                     playlistRv.setVisibility(View.VISIBLE);
                     myPlaylists.addAll(response.body());
                     myPlaylistAdapter.notifyDataSetChanged();
@@ -469,46 +467,50 @@ public class PublicPlaylistFragment extends MyBaseFragment {
         });
     }
 
-    private void putPublicPLaylistLike(View view, int playlistId, int position) {
+    private void putPublicPLaylistLike(int playlistId, int position) {
+        ProgressDialog showMe = new ProgressDialog(context);
+        showMe.setMessage("Please wait");
+        showMe.setCancelable(true);
+        showMe.setCanceledOnTouchOutside(false);
+        showMe.show();
 
         DataAPI dataAPI = RetrofitAPI.getData();
 
         String token = AppConstants.TOKEN + SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
 
-        Call<PlaylistLikeModel> callback = dataAPI.putPlaylistLike(token,
+        Call<MyPlaylistModel> callback = dataAPI.putPlaylistLikeNew(token,
                 SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_TOKEN), playlistId);
-        callback.enqueue(new Callback<PlaylistLikeModel>() {
+        callback.enqueue(new Callback<MyPlaylistModel>() {
             @Override
-            public void onResponse(Call<PlaylistLikeModel> call, retrofit2.Response<PlaylistLikeModel> response) {
-                if (response != null && response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
-                    //ImageView likeBtn = ((ImageView) view.findViewById(R.id.like_btn));
-//                    LikeButton likeButton = ((LikeButton) view.findViewById(R.id.like_btn));
-                    myPlaylists.get(position).setLikedByUser(!myPlaylists.get(position).isLikedByUser());
-                    if (response.body().getLikeCount() > 0) {
-                        Logging.d("TEST", "putPublicPLaylistLike onResponse Called");
-                        //likeBtn.setColorFilter(ContextCompat.getColor(getActivity(), R.color.gph_white));
-//                        likeButton.setLiked(true);
-                        myPlaylists.get(position).setLikes(myPlaylists.get(position).getLikes() + 1);
-                        myPlaylistAdapter.notifyItemChanged(position);
-                    } else {
-                        Logging.d("TEST", "putPublicPLaylistLike onResponse else Called");
-                        myPlaylists.get(position).setLikes(myPlaylists.get(position).getLikes() - 1);
-//                        likeButton.setLiked(false);
-                        //likeBtn.setColorFilter(ContextCompat.getColor(getActivity(), R.color.light_gray));
-                        myPlaylistAdapter.notifyItemChanged(position);
-                    }
+            public void onResponse(Call<MyPlaylistModel> call, retrofit2.Response<MyPlaylistModel> response) {
+                showMe.dismiss();
+                if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
+                    myPlaylists.set(position, response.body());
+                    myPlaylistAdapter.notifyItemChanged(position);
                 } else {
+                    Toast.makeText(context,
+                            (response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!",
+                            Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<PlaylistLikeModel> call, Throwable t) {
+            public void onFailure(Call<MyPlaylistModel> call, Throwable t) {
+                showMe.dismiss();
+                Toast.makeText(context,
+                        "Something went wrong!",
+                        Toast.LENGTH_LONG).show();
                 Logging.d("TEST", "putPublicPLaylistLike onFailure Called");
             }
         });
     }
 
     private void callPlaylistDetailAPI(String playlistId) {
+        ProgressDialog showMe = new ProgressDialog(context);
+        showMe.setMessage("Please wait");
+        showMe.setCancelable(true);
+        showMe.setCanceledOnTouchOutside(false);
+        showMe.show();
 
         DataAPI dataAPI = RetrofitAPI.getData();
 
@@ -517,8 +519,8 @@ public class PublicPlaylistFragment extends MyBaseFragment {
         callback.enqueue(new Callback<ArrayList<PlaylistDetailModel>>() {
             @Override
             public void onResponse(Call<ArrayList<PlaylistDetailModel>> call, retrofit2.Response<ArrayList<PlaylistDetailModel>> response) {
+                showMe.dismiss();
                 Songplaylist.clear();
-
                 if (response != null && response.body() != null && response.body().size() > 0) {
 
                     Songplaylist.addAll(response.body());
@@ -548,7 +550,7 @@ public class PublicPlaylistFragment extends MyBaseFragment {
 
             @Override
             public void onFailure(Call<ArrayList<PlaylistDetailModel>> call, Throwable t) {
-
+                showMe.dismiss();
                 Log.d(TAG, "onFailure: " + t.getMessage());
             }
         });
@@ -642,9 +644,9 @@ public class PublicPlaylistFragment extends MyBaseFragment {
                 String token = AppConstants.TOKEN + SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
                 Call<MyPlaylistModel> callback = dataAPI.callCreatePlayList(token,
                         SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
-                        playlistName.getText().toString().trim(), "",
-                        playlistDesc.getText().toString().trim(), selectedGifLink[0], "flase",
-                        tagView.getSelectedTags().size() > 0 ? TextUtils.join("|", tagView.getSelectedTags()) : "# All");
+                        playlistName.getText().toString().trim(), playlistDesc.getText().toString().trim(),
+                        selectedGifLink[0], "false", "",
+                        tagView.getSelectedTags().size() > 0 ? TextUtils.join("|", tagView.getSelectedTags()) : "All");
                 callback.enqueue(new Callback<MyPlaylistModel>() {
                     @Override
                     public void onResponse(Call<MyPlaylistModel> call, retrofit2.Response<MyPlaylistModel> response) {

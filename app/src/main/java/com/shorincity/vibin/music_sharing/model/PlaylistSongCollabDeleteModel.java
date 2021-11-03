@@ -3,6 +3,7 @@ package com.shorincity.vibin.music_sharing.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlaylistSongCollabDeleteModel {
@@ -16,11 +17,11 @@ public class PlaylistSongCollabDeleteModel {
 
     @SerializedName("deleted_songs")
     @Expose
-    List<Integer> deletedSongs;
+    ArrayList<Integer> deletedSongs;
 
     @SerializedName("removed_collaborators")
     @Expose
-    List<Integer> deletedCollaborator;
+    ArrayList<Integer> deletedCollaborator;
 
     public String getMessage() {
         return message;
@@ -42,7 +43,7 @@ public class PlaylistSongCollabDeleteModel {
         return deletedSongs;
     }
 
-    public void setDeletedSongs(List<Integer> deletedSongs) {
+    public void setDeletedSongs(ArrayList<Integer> deletedSongs) {
         this.deletedSongs = deletedSongs;
     }
 
@@ -50,7 +51,7 @@ public class PlaylistSongCollabDeleteModel {
         return deletedCollaborator;
     }
 
-    public void setDeletedCollaborator(List<Integer> deletedCollaborator) {
+    public void setDeletedCollaborator(ArrayList<Integer> deletedCollaborator) {
         this.deletedCollaborator = deletedCollaborator;
     }
 }

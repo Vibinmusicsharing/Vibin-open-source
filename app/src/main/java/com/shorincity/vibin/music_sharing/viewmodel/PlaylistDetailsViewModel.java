@@ -29,6 +29,7 @@ public class PlaylistDetailsViewModel implements Parcelable {
     public PlaylistDetailsViewModel() {
         playlist = new ArrayList<>();
         viewcollabList = new ArrayList<>();
+        viewcollabList.add(null);
     }
 
     protected PlaylistDetailsViewModel(Parcel in) {
@@ -98,9 +99,9 @@ public class PlaylistDetailsViewModel implements Parcelable {
         callback.enqueue(new Callback<List<ViewCollab>>() {
             @Override
             public void onResponse(Call<List<ViewCollab>> call, retrofit2.Response<List<ViewCollab>> response) {
-                viewcollabList.clear();
                 Logging.d("Avatar response-->" + response.body());
-                if (response != null && response.body() != null && response.body().size() > 0) {
+                if (response.body() != null && response.body().size() > 0) {
+                    viewcollabList.clear();
                     viewcollabList.addAll(response.body());
                     viewcollabList.add(null);
                     detailCallback.onResponse();

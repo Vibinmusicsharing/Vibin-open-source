@@ -100,6 +100,7 @@ public class PlaylistCollaboratosAdapter extends RecyclerView.Adapter<PlaylistCo
                         CommonUtils.dpToPx(60, v.getContext()));
 
                 popupView.llRemove.setOnClickListener(v1 -> {
+                    popupWindow.dismiss();
                     callback.onItemClick(1, getAdapterPosition());
                 });
 
