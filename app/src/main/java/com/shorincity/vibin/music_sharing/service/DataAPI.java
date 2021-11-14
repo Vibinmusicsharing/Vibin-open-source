@@ -24,6 +24,7 @@ import com.shorincity.vibin.music_sharing.model.UpdatePreferPlatformModel;
 import com.shorincity.vibin.music_sharing.model.UserLikeList;
 import com.shorincity.vibin.music_sharing.model.UserProfileModel;
 import com.shorincity.vibin.music_sharing.model.UserSearchModel;
+import com.shorincity.vibin.music_sharing.model.VersionResponse;
 import com.shorincity.vibin.music_sharing.model.YoutubeChannelModel;
 import com.shorincity.vibin.music_sharing.model.YoutubeGuideCategoryModel;
 import com.shorincity.vibin.music_sharing.model.YoutubePlaylistItemModel;
@@ -363,5 +364,12 @@ public interface DataAPI {
             @Field("songs_list") String songs_list,
             @Field("collabs_list") String collabs_list);
 
+
+    @GET("/user/get_app_version/")
+    Call<VersionResponse> getVersionUpdate(
+            @Header("Authorization") String token,
+            @Query("curr_version") int version,
+            @Query("code") String code
+    );
 
 }

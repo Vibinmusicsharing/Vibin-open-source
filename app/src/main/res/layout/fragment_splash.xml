@@ -1,41 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    android:layout_gravity="center">
+    android:layout_gravity="center"
+    android:background="@color/black">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/liOne"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center">
         <ImageView
             android:id="@+id/imageView1"
             android:layout_width="@dimen/_250sdp"
             android:layout_height="@dimen/_250sdp"
-            android:src="@drawable/vibin_gif"
-            android:layout_marginStart="15dp"
-            />
-        </LinearLayout>
+            android:layout_centerInParent="true"
+            android:src="@drawable/vibin_gif" />
+
         <TextView
+            android:id="@+id/tvAppName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@id/progressBar"
+            android:layout_below="@+id/imageView1"
+            android:layout_marginBottom="@dimen/dimen_20dp"
+            android:gravity="center"
             android:text="@string/app_name"
             android:textColor="@color/white"
             android:textSize="@dimen/dimen_50sp"
-            android:textStyle="bold"
-            android:layout_alignBottom="@+id/liOne"
+            android:textStyle="bold" />
+
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/tvInstall"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvInstall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="@dimen/dimen_20dp"
             android:gravity="center"
-            android:layout_marginBottom="@dimen/dimen_20dp"/>
+            android:text="App update in progress..."
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
 
     </RelativeLayout>
 
