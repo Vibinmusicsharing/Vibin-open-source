@@ -678,7 +678,7 @@ public class PlaylistDetailFragment extends MyBaseFragment {
                         // Sending Notification to collaborators
                         sendRealTimetNotification(id, AppConstants.REAL_TIME_INVITE, myRef, realTimeModel, sessionKey);
                     } else if (response.body().getStatus().equalsIgnoreCase("already_exist") && !TextUtils.isEmpty(response.body().getMessage())) {
-                        callToDeleteSession(sessionKey);
+                        callToDeleteSession(response.body().getSessionKey());
 
                         // showErrorDialog(response.body().getMessage(), sessionKey);
                     } else
@@ -750,7 +750,7 @@ public class PlaylistDetailFragment extends MyBaseFragment {
         callback.enqueue(new Callback<APIResponse>() {
             @Override
             public void onResponse(Call<APIResponse> call, retrofit2.Response<APIResponse> response) {
-                if (response != null && response.body() != null) {
+                if (response.body() != null) {
                     Logging.d("DeleteSession Res-->" + new Gson().toJson(response.body()));
                     if (response.body().getStatus().equalsIgnoreCase("success")) {
                         sendRealTimetNotification(id, AppConstants.REAL_TIME_INVITE, myRef, realTimeModel, sessionKey);

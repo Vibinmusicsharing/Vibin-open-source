@@ -1337,7 +1337,7 @@ public class PlaylistDetailActivity extends AppCompatActivity {
                         // Sending Notification to collaborators
                         sendRealTimetNotification(id, AppConstants.REAL_TIME_INVITE, myRef, realTimeModel, sessionKey);
                     } else if (response.body().getStatus().equalsIgnoreCase("already_exist") && !TextUtils.isEmpty(response.body().getMessage())) {
-                        callToDeleteSession(sessionKey);
+                        callToDeleteSession(response.body().getSessionKey());
 
                         // showErrorDialog(response.body().getMessage(), sessionKey);
                     } else
