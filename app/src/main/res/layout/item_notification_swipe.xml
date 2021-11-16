@@ -107,6 +107,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginTop="8dp"
+                    android:rotation="180"
                     app:srcCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
 
             </RelativeLayout>
