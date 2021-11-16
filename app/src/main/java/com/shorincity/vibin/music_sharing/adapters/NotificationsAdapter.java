@@ -215,16 +215,16 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                         && currentItem.getIsAccepted().equalsIgnoreCase("PENDING")) {
                     // acceptIgnoreHldr.setVisibility(View.VISIBLE);
                     swipelayout.setLockDrag(false);
-                    arrow.setVisibility(View.GONE);
+                    arrow.setVisibility(View.VISIBLE);
                 } else if (currentItem.getIsAccepted().equalsIgnoreCase("ACCEPTED")) {
                     // acceptIgnoreHldr.setVisibility(View.GONE);
                     swipelayout.setLockDrag(true);
-                    arrow.setVisibility(View.VISIBLE);
+                    arrow.setVisibility(View.GONE);
                     notifyStatusTv.setVisibility(View.VISIBLE);
                 } else {
                     // acceptIgnoreHldr.setVisibility(View.GONE);
                     swipelayout.setLockDrag(true);
-                    arrow.setVisibility(View.VISIBLE);
+                    arrow.setVisibility(View.GONE);
                 }
 
                 if (currentItem.getReadStatus())
