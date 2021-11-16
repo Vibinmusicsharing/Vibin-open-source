@@ -152,6 +152,19 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                     customItemClickListener.onItemClick(view, position);
                 }
             });
+
+            mainCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if ((currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_REQUEST) || currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_INVITE) || currentItem.getType().equalsIgnoreCase(AppConstants.REAL_TIME_INVITE)
+                            || currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_REQUEST_RESPONDED)
+                            || currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_INVITE_RESPONDED))
+                            && currentItem.getIsAccepted().equalsIgnoreCase("PENDING")) {
+                        if (swipelayout.isClosed())
+                            swipelayout.open(true);
+                    }
+                }
+            });
             if (!TextUtils.isEmpty(currentItem.getIsAccepted()) && currentItem.getIsAccepted().equalsIgnoreCase(AppConstants.REGECTED)) {
                 mainRl.setLayoutParams(new AbsListView.LayoutParams(-1, 1));
                 mainRl.setVisibility(View.GONE);
@@ -202,15 +215,16 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                         && currentItem.getIsAccepted().equalsIgnoreCase("PENDING")) {
                     // acceptIgnoreHldr.setVisibility(View.VISIBLE);
                     swipelayout.setLockDrag(false);
+                    arrow.setVisibility(View.GONE);
                 } else if (currentItem.getIsAccepted().equalsIgnoreCase("ACCEPTED")) {
                     // acceptIgnoreHldr.setVisibility(View.GONE);
                     swipelayout.setLockDrag(true);
-                    arrow.setVisibility(View.GONE);
+                    arrow.setVisibility(View.VISIBLE);
                     notifyStatusTv.setVisibility(View.VISIBLE);
                 } else {
                     // acceptIgnoreHldr.setVisibility(View.GONE);
                     swipelayout.setLockDrag(true);
-                    arrow.setVisibility(View.GONE);
+                    arrow.setVisibility(View.VISIBLE);
                 }
 
                 if (currentItem.getReadStatus())
