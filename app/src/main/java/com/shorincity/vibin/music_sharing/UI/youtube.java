@@ -61,6 +61,7 @@ import com.giphy.sdk.core.models.enums.MediaType;
 import com.giphy.sdk.core.models.enums.RatingType;
 import com.giphy.sdk.core.models.enums.RenditionType;
 import com.giphy.sdk.ui.GPHRequestType;
+import com.giphy.sdk.ui.Giphy;
 import com.giphy.sdk.ui.pagination.GPHContent;
 import com.giphy.sdk.ui.views.GPHGridCallback;
 import com.giphy.sdk.ui.views.GifView;
@@ -226,6 +227,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_youtube_2);
 
+        Giphy.INSTANCE.configure(this, AppConstants.GIPHY_API_KEY, true);
         // Updating FCM TOKEN here
         callAddNotificationTokenAPI();
 
