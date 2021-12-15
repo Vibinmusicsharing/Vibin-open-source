@@ -7,6 +7,7 @@ import com.shorincity.vibin.music_sharing.model.AddSongLogModel;
 import com.shorincity.vibin.music_sharing.model.AddTrackResponse;
 import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
 import com.shorincity.vibin.music_sharing.model.CollabsList;
+import com.shorincity.vibin.music_sharing.model.CreateSessionModel;
 import com.shorincity.vibin.music_sharing.model.GetNotifications;
 import com.shorincity.vibin.music_sharing.model.HomeYoutubeModel;
 import com.shorincity.vibin.music_sharing.model.LogoutModel;
@@ -32,6 +33,9 @@ import com.shorincity.vibin.music_sharing.model.YoutubeGuideCategoryModel;
 import com.shorincity.vibin.music_sharing.model.YoutubePlaylistItemModel;
 import com.shorincity.vibin.music_sharing.model.YoutubeTrendingModel;
 import com.shorincity.vibin.music_sharing.model.avatar.AvatarDetails;
+import com.shorincity.vibin.music_sharing.model.coverart.CoverArtImageResponse;
+import com.shorincity.vibin.music_sharing.model.lastfm.LastFMSearchResponse;
+import com.shorincity.vibin.music_sharing.model.lastfm.trackinfo.TrackInfoResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +47,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 // youtube Data Api
@@ -200,6 +205,7 @@ public interface DataAPI {
                                         @Field("song_uri") String song_uri,
                                         @Field("song_thumbnail") String song_thumbnail,
                                         @Field("song_details") String song_details,
+                                        @Field("artist_name") String artistName,
                                         @Field("song_duration") String duration);
 
     @FormUrlEncoded
@@ -472,6 +478,36 @@ public interface DataAPI {
             @Field("track_id") String trackId,
             @Field("name") String name,
             @Field("image") String image,
+            @Field("artist_name") String artistName,
             @Field("song_duration") String songDuration
+    );
+
+
+    @GET("2.0?method=track.search")
+    Call<LastFMSearchResponse> callTrackSearch(
+            @Query("track") String track,
+            @Query("api_key") String key,
+            @Query("format") String format,
+            @Query("limit") int limit
+    );
+
+
+    @GET("2.0/?method=track.getInfo")
+    Call<TrackInfoResponse> callTrackInfoApi(
+            @Query("api_key") String key,
+            @Query("track") String track,
+            @Query("artist") String artist,
+            @Query("format") String format
+    );
+
+    @GET("/release/{mbid}")
+    Call<CoverArtImageResponse> callImagesApi(@Path("mbid") String mbid);
+
+    @FormUrlEncoded
+    @POST("/user/create_real_time_session/")
+    Call<CreateSessionModel> callCreateRTSession(
+            @Header("Authorization") String token,
+            @Field("token") String usertoken,
+            @Field("playlist") String playlist
     );
 }

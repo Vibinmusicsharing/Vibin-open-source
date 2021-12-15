@@ -33,6 +33,7 @@ import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.custom.RoundedImageView;
 import com.shorincity.vibin.music_sharing.activity.RealTimePlayer;
+import com.shorincity.vibin.music_sharing.activity.RealTimePlayerActivity;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.GetNotifications;
 import com.shorincity.vibin.music_sharing.model.UpdateNotificationModel;
@@ -422,11 +423,11 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                             getNotifications.setIsAccepted(AppConstants.ACCEPTED);
                             notifyItemChanged(position);
                             UpdateNotificationModel updateNotificationModel = response.body();
-                            mContext.startActivity(new Intent(mContext, RealTimePlayer.class)
+                            mContext.startActivity(new Intent(mContext, RealTimePlayerActivity.class)
                                     .putExtra(AppConstants.INTENT_COMING_FROM, AppConstants.NOTIFICATION)
-                                    .putExtra(AppConstants.INTENT_SESSION_KEY, updateNotificationModel.getSessionKey())
+                                    .putExtra(AppConstants.INTENT_SESSION_KEY, list.get(position).getRtSessionKey())
                                     .putExtra(AppConstants.INTENT_USER_KEY, updateNotificationModel.getUserSessionKeys())
-                                    .putExtra(AppConstants.INTENT_PLAYLIST_ID, updateNotificationModel.getPlaylistId()));
+                                    .putExtra(AppConstants.INTENT_PLAYLIST_ID, list.get(position).getPlaylist()));
                         } else if (status.equalsIgnoreCase(AppConstants.ACCEPTED)) {
                             getNotifications.setIsAccepted(AppConstants.ACCEPTED);
                             notifyItemChanged(position);

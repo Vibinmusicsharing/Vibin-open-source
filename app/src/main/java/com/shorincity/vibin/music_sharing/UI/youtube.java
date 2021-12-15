@@ -26,6 +26,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -99,10 +100,13 @@ import com.shorincity.vibin.music_sharing.fragment.UserProfileFragment;
 import com.shorincity.vibin.music_sharing.fragment.UserSearchFragment;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.AddSongLogModel;
+import com.shorincity.vibin.music_sharing.model.Item;
+import com.shorincity.vibin.music_sharing.model.ModelData;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.SongLikeModel;
 import com.shorincity.vibin.music_sharing.model.UpdatePreferPlatformModel;
+import com.shorincity.vibin.music_sharing.model.lastfm.trackinfo.TrackInfoResponse;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
@@ -519,14 +523,15 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                if ((mYouTubePlayer != null && mYouTubePlayer.isPlaying())) {
-                    mYouTubePlayer.pause();
-                    Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
-                } else {
-                    mYouTubePlayer.play();
-                    Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+                if (mYouTubePlayer != null) {
+                    if (mYouTubePlayer.isPlaying()) {
+                        mYouTubePlayer.pause();
+                        Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
+                    } else {
+                        mYouTubePlayer.play();
+                        Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+                    }
                 }
-
             }
         });
 
@@ -910,21 +915,76 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         description = bundle.getString("description");
         thumbnail = bundle.getString("thumbnail");
         videoId = bundle.getString("videoId");
-        songURI = "https://www.youtube.com/watch?v=" + videoId;
-        titlemain.setText(title);
-        titlemain.setSelected(true);
-        playerCurrentDurationTv.setText("00:00");
+        if (TextUtils.isEmpty(videoId)) {
+            String artistName = bundle.getString("artist_name");
+            String trackName = artistName + "+" + title;
+            callYoutubeSearchApi(trackName);
+//            callGetTrackInfo(artistName);
+        } else {
+            songURI = "https://www.youtube.com/watch?v=" + videoId;
+            titlemain.setText(title);
+            titlemain.setSelected(true);
+            playerCurrentDurationTv.setText("00:00");
 
-        callGetSongLikeStatusAPI(userId, videoId);
-        youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
-        isAddSongLogRecorded = false;
-        seekusedbyuser = false;
-        processSeekBar();
-        playerStateChangeListener = new MyPlayerStateChangeListener();
-        playbackEventListener = new MyPlaybackEventListener();
+            callGetSongLikeStatusAPI(userId, videoId);
+            youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
+            isAddSongLogRecorded = false;
+            seekusedbyuser = false;
+            processSeekBar();
+            playerStateChangeListener = new MyPlayerStateChangeListener();
+            playbackEventListener = new MyPlaybackEventListener();
+        }
+    }
 
+    private void callYoutubeSearchApi(String trackName) {
+        DataAPI dataAPI = RetrofitAPI.getYoutubeData();
+        Call<ModelData> callback = dataAPI.getResurt("snippet", trackName, "50", "video", "10", "true", AppConstants.YOUTUBE_KEY);
+        callback.enqueue(new Callback<ModelData>() {
+            @Override
+            public void onResponse(Call<ModelData> call, Response<ModelData> response) {
+                ModelData modelData = response.body();
+                if (modelData != null && modelData.getItems().size() > 0) {
+                    Item youTubeTrack = modelData.getItems().get(0);
+                    videoId = youTubeTrack.getId().getVideoId();
+                    songURI = "https://www.youtube.com/watch?v=" + videoId;
+                    titlemain.setText(title);
+                    titlemain.setSelected(true);
+                    playerCurrentDurationTv.setText("00:00");
+
+                    callGetSongLikeStatusAPI(userId, videoId);
+                    youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, youtube.this);
+                    isAddSongLogRecorded = false;
+                    seekusedbyuser = false;
+                    processSeekBar();
+                    playerStateChangeListener = new MyPlayerStateChangeListener();
+                    playbackEventListener = new MyPlaybackEventListener();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ModelData> call, Throwable t) {
+//                progressBar.setVisibility(View.GONE);
+            }
+        });
 
     }
+
+    private void callGetTrackInfo(String artistName) {
+        DataAPI dataAPI1 = RetrofitAPI.getLastFMData();
+        dataAPI1.callTrackInfoApi(AppConstants.LAST_FM_KEY, title, artistName, "json")
+                .enqueue(new Callback<TrackInfoResponse>() {
+                    @Override
+                    public void onResponse(Call<TrackInfoResponse> call, Response<TrackInfoResponse> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<TrackInfoResponse> call, Throwable t) {
+
+                    }
+                });
+    }
+
 
     private void setPlayerMode() {
         // 0=noActive,1=miniPlayer,2=PlayerFullScreen
@@ -977,7 +1037,8 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         //            mYouTubePlayer.seekToMillis(to);
         //        }
 
-        if (mYouTubePlayer != null && playerTotalDurationTv != null) {
+        if (mYouTubePlayer != null && playerTotalDurationTv != null && playerMode > 0) {
+            Logging.d("==> Resume method call");
             try {
                 lengthms = mYouTubePlayer.getDurationMillis();
                 float current = mYouTubePlayer.getCurrentTimeMillis();
@@ -1016,59 +1077,15 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     }
 
     private void initWebSocket() {
-//   /*     try {
-////            Logging.d("==> initWebSocket " + userId);
-//            coinbaseUri = new URI(Constants.WEB_SOCKET_URL + String.valueOf(3) + "/");
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        }
-//
-//        webSocketClient = new WebSocketClient(coinbaseUri) {
-//            @Override
-//            public void onOpen(ServerHandshake handshakedata) {
-//                Log.d(TAG, "WebSocket onOpen" + handshakedata.getHttpStatusMessage());
-//                *//*webSocketClient.send(
-//                        "{\n" +
-//                                "    \"type\": \"subscribe\",\n" +
-//                                "    \"channels\": [{ \"name\": \"ticker\", \"product_ids\": [\"BTC-EUR\"] }]\n" +
-//                                "}"
-//                );*//*
-//            }
-//
-//            @Override
-//            public void onMessage(String message) {
-//                Log.d(TAG, "WebSocket onMessage" + message);
-//            }
-//
-//            @Override
-//            public void onClose(int code, String reason, boolean remote) {
-//                Log.d(TAG, "WebSocket onClose");
-//                *//*webSocketClient.send(
-//                        "{\n" +
-//                                "    \"type\": \"unsubscribe\",\n" +
-//                                "    \"channels\": [\"ticker\"]\n" +
-//                                "}"
-//                );*//*
-//            }
-//
-//            @Override
-//            public void onError(Exception ex) {
-//                ex.printStackTrace();
-//            }
-//        };
-//
-//        SSLSocketFactory socketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-//        webSocketClient.setSocketFactory(socketFactory);
-//        webSocketClient.connect();*/
-
         try {
+            int userId = SharedPrefManager.getInstance(this).getSharedPrefInt(AppConstants.INTENT_USER_ID);
+
             WebSocketFactory factory = new WebSocketFactory();
             SSLContext context = NaiveSSLContext.getInstance("TLS");
             factory.setSSLContext(context);
             factory.setVerifyHostname(false);
             factory.setServerName("api.vibin.in");
-            //Todo need to change static id to userId
-            webSocketClient = factory.createSocket(Constants.WEB_SOCKET_URL + String.valueOf(3) + "/");
+            webSocketClient = factory.createSocket(Constants.WEB_SOCKET_URL + String.valueOf(userId) + "/");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
@@ -1234,6 +1251,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
     @Override
     public void onTransitionCompleted(MotionLayout motionLayout, int i) {
+        Logging.d("==> onTransitionCompleted");
         if (i == R.id.end) {
             imgMinimize.setBackgroundDrawable(ContextCompat.getDrawable(youtube.this, R.drawable.background_cornerradius));
             imgMinimize.setImageDrawable(ContextCompat.getDrawable(youtube.this, R.drawable.ic_arrow_primary));
@@ -2003,7 +2021,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         String userToken = SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
         String timeDuration = "T" + Utility.millisIntoHHMMSS(Long.valueOf(duration));
         Call<ResponseBody> callback = dataAPI.callAddTrackApi(token, userToken,
-                String.valueOf(id), "youtube", videoId, title, thumbnail, timeDuration);
+                String.valueOf(id), "youtube", videoId, title, thumbnail, "artistName", timeDuration);
         callback.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
@@ -2083,7 +2101,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
         String token = AppConstants.TOKEN + SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
 
-        Call<AddSongLogModel> addLogCallback = dataAPI.addSongLogAPI(token, userId, songType, songName, songId, songURI, songThumbnail, detail, duration);
+        Call<AddSongLogModel> addLogCallback = dataAPI.addSongLogAPI(token, userId, songType, songName, songId, songURI, songThumbnail, detail, "artistName", duration);
         addLogCallback.enqueue(new Callback<AddSongLogModel>() {
             @Override
             public void onResponse(Call<AddSongLogModel> call, Response<AddSongLogModel> response) {

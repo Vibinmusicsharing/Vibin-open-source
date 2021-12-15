@@ -26,6 +26,10 @@ public class UpdateNotificationModel {
     @SerializedName("user_session_keys")
     @Expose
     private String userSessionKeys;
+    @SerializedName("notes")
+    @Expose
+    private String rtSessionKey;
+
 
     public String getStatus() {
         return status;
@@ -83,4 +87,11 @@ public class UpdateNotificationModel {
         this.userSessionKeys = userSessionKeys;
     }
 
+    public String getRtSessionKey() {
+        return rtSessionKey;
+    }
+
+    public void setRtSessionKey(String rtSessionKey) {
+        this.rtSessionKey = rtSessionKey;
+    }
 }

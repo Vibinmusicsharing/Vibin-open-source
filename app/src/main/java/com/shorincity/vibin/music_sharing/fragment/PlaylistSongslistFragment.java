@@ -66,9 +66,10 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
     }
 
     private void initControls() {
+        binding.setIsRealTime(false);
         binding.setIsProgress(true);
         binding.rvSongs.setLayoutManager(new LinearLayoutManager(binding.rvSongs.getContext()));
-        binding.rvSongs.setAdapter(new PlaylistSongsAdapter(mContext, viewModel.getPlaylist(), (type, position) -> {
+        binding.rvSongs.setAdapter(new PlaylistSongsAdapter(mContext, viewModel.getPlaylist(), false, (type, position) -> {
             if (position != RecyclerView.NO_POSITION) {
                 ArrayList<PlaylistDetailModel> playlist = viewModel.getPlaylist();
                 PlaylistDetailModel mBean = playlist.get(position);
@@ -150,7 +151,8 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
             @Override
             public void onResponse() {
                 binding.setIsProgress(false);
-                binding.rvSongs.getAdapter().notifyDataSetChanged();
+                if (binding.rvSongs.getAdapter() != null)
+                    binding.rvSongs.getAdapter().notifyDataSetChanged();
             }
 
             @Override

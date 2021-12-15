@@ -1462,7 +1462,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
 
         String token = AppConstants.TOKEN + SharedPrefManager.getInstance(PlayYoutubeVideoActivity.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
 
-        Call<AddSongLogModel> addLogCallback = dataAPI.addSongLogAPI(token, userId, songType, songName, songId, songURI, songThumbnail, detail, duration);
+        Call<AddSongLogModel> addLogCallback = dataAPI.addSongLogAPI(token, userId, songType, songName, songId, songURI, songThumbnail, detail, "artistName", duration);
         addLogCallback.enqueue(new Callback<AddSongLogModel>() {
             @Override
             public void onResponse(Call<AddSongLogModel> call, retrofit2.Response<AddSongLogModel> response) {

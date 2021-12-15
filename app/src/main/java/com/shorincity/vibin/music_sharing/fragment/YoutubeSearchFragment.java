@@ -22,16 +22,23 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.adapters.YoutubeSearchAdapter;
 import com.shorincity.vibin.music_sharing.model.Item;
 import com.shorincity.vibin.music_sharing.model.ModelData;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
+import com.shorincity.vibin.music_sharing.model.lastfm.LastFMSearchResponse;
+import com.shorincity.vibin.music_sharing.model.lastfm.Results;
+import com.shorincity.vibin.music_sharing.model.lastfm.Track;
+import com.shorincity.vibin.music_sharing.model.lastfm.Trackmatches;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.Logging;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,12 +55,11 @@ public class YoutubeSearchFragment extends MyBaseFragment {
     RecyclerView youtubeSearchRv;
 
     ArrayList<Item> youtubeSearchList;
-    YoutubeSearchAdapter youtubeSearchAdapter;
+    private YoutubeSearchAdapter youtubeSearchAdapter;
 
 
     EditText edtsearch;
     ImageView btnsearch;
-    ListView listView;
     ArrayList<Item> mangitem;
     public static String idvideo;
     String title;
@@ -61,6 +67,7 @@ public class YoutubeSearchFragment extends MyBaseFragment {
     TextView noresults;
 
     TextView searchsomething;
+    private ArrayList<Track> trackList;
 
 
     public YoutubeSearchFragment() {
@@ -74,6 +81,7 @@ public class YoutubeSearchFragment extends MyBaseFragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_youtube_search1, container, false);
         mContext = view.getContext();
+        trackList = new ArrayList<>();
 
         inItviews();
 
@@ -81,11 +89,11 @@ public class YoutubeSearchFragment extends MyBaseFragment {
         if (!text.equals("")) {
 
             edtsearch.setText(text);
-            listView.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
             String tukhoa = text;
             //tukhoa =tukhoa.replace(" ","%20");
-            Docdulieu(tukhoa);
+            callTrackSearchApi(tukhoa);
+//            Docdulieu(tukhoa);
         }
 
         //edtsearch.setText("laung lanchi");
@@ -97,43 +105,11 @@ public class YoutubeSearchFragment extends MyBaseFragment {
         btnsearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listView.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
                 String tukhoa = edtsearch.getText().toString();
                 //tukhoa =tukhoa.replace(" ","%20");
-                Docdulieu(tukhoa);
-            }
-        });
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    ArrayList<PlaylistDetailModel> playlist;
-                    playlist = new ArrayList<>();
-                    for (int i = 0; i < mangitem.size(); i++) {
-                        playlist.add(new PlaylistDetailModel(
-                                mangitem.get(i).getSnippet().getTitle(),
-                                mangitem.get(i).getSnippet().getThumbnails().getMedium().getUrl(),
-                                mangitem.get(i).getId().getVideoId()
-                        ));
-                    }
-                    Item currentItem = mangitem.get(position);
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("position", position);
-                    bundle.putString("title", currentItem.getSnippet().getTitle());
-                    bundle.putString("description", "");
-                    bundle.putString("thumbnail", currentItem.getSnippet().getThumbnails().getMedium().getUrl());
-                    bundle.putString("videoId", currentItem.getId().getVideoId());
-//                    bundle.putString("from", "channel");
-                    bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
-                    onMusicPlay(bundle);
-
-                    /*Intent intent = new Intent(getActivity(), PlayYoutubeVideoActivity.class);
-                    intent.putExtra("data", bundle);
-                    startActivity(intent);*/
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                callTrackSearchApi(tukhoa);
+//                Docdulieu(tukhoa);
             }
         });
         setTrendingAdapter();
@@ -147,27 +123,29 @@ public class YoutubeSearchFragment extends MyBaseFragment {
         youtubeSearchRv.setLayoutManager(new LinearLayoutManager(getActivity()));
         youtubeSearchRv.setHasFixedSize(true);
 
-        youtubeSearchAdapter = new YoutubeSearchAdapter(getActivity(), youtubeSearchList);
+        youtubeSearchAdapter = new YoutubeSearchAdapter(getActivity(), trackList);
         youtubeSearchAdapter.setCustomItemClickListener(new YoutubeSearchAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
                 try {
                     ArrayList<PlaylistDetailModel> playlist;
                     playlist = new ArrayList<>();
-                    for (int i = 0; i < youtubeSearchList.size(); i++) {
+                    for (int i = 0; i < trackList.size(); i++) {
                         playlist.add(new PlaylistDetailModel(
-                                youtubeSearchList.get(i).getSnippet().getTitle(),
-                                youtubeSearchList.get(i).getSnippet().getThumbnails().getMedium().getUrl(),
-                                youtubeSearchList.get(i).getId().getVideoId()
+                                trackList.get(i).getName(),
+                                trackList.get(i).getArtist(),
+                                trackList.get(i).getImage().size() > 0 ? trackList.get(i).getImage().get(0).getText() : "",
+                                ""
                         ));
                     }
-                    Item currentItem = mangitem.get(position);
+                    Track currentItem = trackList.get(position);
                     Bundle bundle = new Bundle();
                     bundle.putInt("position", position);
-                    bundle.putString("title", currentItem.getSnippet().getTitle());
+                    bundle.putString("title", currentItem.getName() + " - " + currentItem.getArtist());
                     bundle.putString("description", "");
-                    bundle.putString("thumbnail", currentItem.getSnippet().getThumbnails().getMedium().getUrl());
-                    bundle.putString("videoId", currentItem.getId().getVideoId());
+                    bundle.putString("thumbnail", currentItem.getImage().size() > 0 ? currentItem.getImage().get(0).getText() : "");
+                    bundle.putString("videoId", "");
+                    bundle.putString("artist_name", currentItem.getArtist());
 //                    bundle.putString("from", "channel");
                     bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
                     onMusicPlay(bundle);
@@ -190,7 +168,6 @@ public class YoutubeSearchFragment extends MyBaseFragment {
         searchsomething = view.findViewById(R.id.searchidy);
         edtsearch = view.findViewById(R.id.edittextSearch);
         btnsearch = view.findViewById(R.id.ic_magnify);
-        listView = view.findViewById(R.id.listview);
         youtubeSearchRv = view.findViewById(R.id.youtube_search_rv);
     }
 
@@ -248,7 +225,6 @@ public class YoutubeSearchFragment extends MyBaseFragment {
                     } else {
                         noresults.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
-                        listView.setVisibility(View.GONE);
                         youtubeSearchList.clear();
                         youtubeSearchList.addAll(mangitem);
                         youtubeSearchAdapter.notifyDataSetChanged();
@@ -282,6 +258,61 @@ public class YoutubeSearchFragment extends MyBaseFragment {
 
     }
 
+    private void callTrackSearchApi(String tukhoa) {
+
+        DataAPI dataAPI1 = RetrofitAPI.getLastFMData();
+        dataAPI1.callTrackSearch(tukhoa, AppConstants.LAST_FM_KEY, "json",50).enqueue(new Callback<LastFMSearchResponse>() {
+            @Override
+            public void onResponse(Call<LastFMSearchResponse> call, Response<LastFMSearchResponse> response) {
+                LastFMSearchResponse response1 = response.body();
+                if (response1 != null && response1.getResults() != null) {
+                    Results results = response1.getResults();
+                    if (results != null && results.getTrackmatches() != null) {
+                        Trackmatches trackmatches = results.getTrackmatches();
+                        trackList.clear();
+                        trackList.addAll(trackmatches.getTrack());
+
+                        if (trackList.size() > 0) {
+                            noresults.setVisibility(View.GONE);
+                            progressBar.setVisibility(View.GONE);
+                            youtubeSearchAdapter.notifyDataSetChanged();
+
+                            if (getActivity() != null) {
+                                getActivity().runOnUiThread(() -> {
+                                    youtubeSearchRv.scrollTo(0, 0);
+                                    youtubeSearchRv.smoothScrollToPosition(0);
+
+
+                                    try {
+                                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                                        imm.hideSoftInputFromWindow(edtsearch.getWindowToken(), 0);
+                                    } catch (Exception e) {
+
+                                    }
+                                });
+                            }
+                        } else {
+                            progressBar.setVisibility(View.GONE);
+                            noresults.setVisibility(View.VISIBLE);
+                        }
+                    } else {
+                        progressBar.setVisibility(View.GONE);
+                        noresults.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    noresults.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LastFMSearchResponse> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                noresults.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
     private TextView.OnEditorActionListener editorActionListener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -289,17 +320,16 @@ public class YoutubeSearchFragment extends MyBaseFragment {
                 case EditorInfo.IME_ACTION_SEARCH:
 
                     if (edtsearch.getText().toString().isEmpty()) {
-                        listView.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
                         searchsomething.setVisibility(View.VISIBLE);
                     } else {
                         noresults.setVisibility(View.GONE);
                         searchsomething.setVisibility(View.GONE);
-                        listView.setVisibility(View.GONE);
                         progressBar.setVisibility(View.VISIBLE);
                         String tukhoa = edtsearch.getText().toString();
                         //tukhoa = tukhoa.replace(" ", "%20");
-                        Docdulieu(tukhoa);
+//                        Docdulieu(tukhoa);
+                        callTrackSearchApi(tukhoa);
                     }
                     break;
             }

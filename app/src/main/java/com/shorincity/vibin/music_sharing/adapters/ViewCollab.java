@@ -28,6 +28,12 @@ public class ViewCollab implements Parcelable {
     @SerializedName("avatar_link")
     @Expose
     private String avatarLink;
+
+    @SerializedName("is_admin")
+    @Expose
+    private Boolean isAdmin;
+
+
     boolean isSelected = false;
 
     boolean isEditable = false;
@@ -48,6 +54,7 @@ public class ViewCollab implements Parcelable {
         avatarLink = in.readString();
         isSelected = in.readByte() != 0;
         isEditable = in.readByte() != 0;
+        isAdmin = in.readByte() != 0;
     }
 
     @Override
@@ -64,6 +71,7 @@ public class ViewCollab implements Parcelable {
         dest.writeString(avatarLink);
         dest.writeByte((byte) (isSelected ? 1 : 0));
         dest.writeByte((byte) (isEditable ? 1 : 0));
+        dest.writeByte((byte) (isAdmin ? 1 : 0));
     }
 
     @Override
@@ -147,5 +155,9 @@ public class ViewCollab implements Parcelable {
 
     public void setAvatarLink(String avatarLink) {
         this.avatarLink = avatarLink;
+    }
+
+    public Boolean isAdmin() {
+        return isAdmin;
     }
 }

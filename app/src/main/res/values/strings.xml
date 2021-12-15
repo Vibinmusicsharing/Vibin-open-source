@@ -25,8 +25,8 @@
     <string name="logout_button_label">Logout</string>
 
 
-    <string name="play_mono_track_button_label">Play mono track</string>
-    <string name="play_48khz_track_button_label">Play 48kHz track</string>
+    <string name="play_mono_track_button_label">Play mono trackInfo</string>
+    <string name="play_48khz_track_button_label">Play 48kHz trackInfo</string>
 
     <string name="pause_button_label_toggle">Pause/Resume</string>
     <string name="skip_next_button_label">Next</string>
@@ -154,7 +154,7 @@
     <!--
     <string name="spotify_premium_error_msg">Sorry, Your account is not premium, Please continue with YouTube</string>
 -->
-    <string name="spotify_premium_error_msg">Spotify Premium lets you play any track, ad-free and with better audio quality. Go to spotify.com/premium to try it for free.</string>
+    <string name="spotify_premium_error_msg">Spotify Premium lets you play any trackInfo, ad-free and with better audio quality. Go to spotify.com/premium to try it for free.</string>
     <string name="spotify_acc_error_msg">Please continue with YouTube</string>
     <string name="continue_with_youtube">Continue with YOUTUBE</string>
     <string name="cancel">Cancel</string>
@@ -221,8 +221,8 @@
     <string name="label_play">Play</string>
     <string name="label_play_pause">Play and pause toggle</string>
     <string name="label_pause">Pause</string>
-    <string name="label_previous">Previous track</string>
-    <string name="label_next">Next track</string>
+    <string name="label_previous">Previous trackInfo</string>
+    <string name="label_next">Next trackInfo</string>
     <string name="with_all_songs">with All Songs</string>
     <string name="only_leave">Only Leave</string>
     <string name="lbl_verification">Verification</string>

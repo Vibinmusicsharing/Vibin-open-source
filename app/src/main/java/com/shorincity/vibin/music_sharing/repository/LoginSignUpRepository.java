@@ -39,30 +39,30 @@ public class LoginSignUpRepository {
     public LiveData<Resource<AdditionalSignUpModel>> callLoginApi(String email, String password) {
         final MutableLiveData<Resource<AdditionalSignUpModel>> data = new MutableLiveData<>();
         data.setValue(new Resource.Loading<>());
-        dataAPI.login(AppConstants.LOGIN_SIGNUP_HEADER, email, password, AppConstants.SIGNUP_BY_APP)
-                .enqueue(new Callback<AdditionalSignUpModel>() {
-                    @Override
-                    public void onResponse(Call<AdditionalSignUpModel> call, retrofit2.Response<AdditionalSignUpModel> response) {
+        Call<AdditionalSignUpModel> call = dataAPI.login(AppConstants.LOGIN_SIGNUP_HEADER, email, password, AppConstants.SIGNUP_BY_APP);
+        call.enqueue(new Callback<AdditionalSignUpModel>() {
+            @Override
+            public void onResponse(Call<AdditionalSignUpModel> call, retrofit2.Response<AdditionalSignUpModel> response) {
 
-                        Log.d("resp", String.valueOf(response));
+                Log.d("resp", String.valueOf(response));
 
-                        if (response.body() != null) {
-                            if ((response.body().getStatus().equalsIgnoreCase("error") || response.body().getStatus().equalsIgnoreCase("failed"))
-                                    && !TextUtils.isEmpty(response.body().getMessage())) {
-                                data.setValue(new Resource.Error<>(response.body().getMessage()));
-                            } else {
-                                data.setValue(new Resource.Success<>(response.body()));
-                            }
-                        } else {
-                            data.setValue(new Resource.Error<>("Something went wrong!"));
-                        }
+                if (response.body() != null) {
+                    if ((response.body().getStatus().equalsIgnoreCase("error") || response.body().getStatus().equalsIgnoreCase("failed"))
+                            && !TextUtils.isEmpty(response.body().getMessage())) {
+                        data.setValue(new Resource.Error<>(response.body().getMessage()));
+                    } else {
+                        data.setValue(new Resource.Success<>(response.body()));
                     }
+                } else {
+                    data.setValue(new Resource.Error<>("Something went wrong!"));
+                }
+            }
 
-                    @Override
-                    public void onFailure(Call<AdditionalSignUpModel> call, Throwable t) {
-                        data.setValue(new Resource.Error<>("Something went wrong!"));
-                    }
-                });
+            @Override
+            public void onFailure(Call<AdditionalSignUpModel> call, Throwable t) {
+                data.setValue(new Resource.Error<>("Something went wrong!"));
+            }
+        });
         return data;
     }
 

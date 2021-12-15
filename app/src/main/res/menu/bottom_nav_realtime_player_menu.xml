@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/navigation_listener"
+        android:icon="@drawable/ic_listener_unselected"
+        android:title="" />
+
+    <item
+        android:id="@+id/navigation_playlist"
+        android:icon="@drawable/ic_admin_player_unselected"
+        android:title="" />
+    <item
+        android:id="@+id/navigation_chat"
+        android:icon="@drawable/ic_chat_unselected"
+        android:title="" />
+
+</menu>

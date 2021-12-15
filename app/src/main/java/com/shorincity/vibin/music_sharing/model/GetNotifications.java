@@ -35,6 +35,9 @@ public class GetNotifications implements Comparable<GetNotifications> {
     @SerializedName("sender_avatar")
     @Expose
     private String avatarLink;
+    @SerializedName("notes")
+    @Expose
+    private String rtSessionKey;
 
 
     public Integer getId() {
@@ -115,6 +118,14 @@ public class GetNotifications implements Comparable<GetNotifications> {
 
     public void setAvatarLink(String avatarLink) {
         this.avatarLink = avatarLink;
+    }
+
+    public String getRtSessionKey() {
+        return rtSessionKey;
+    }
+
+    public void setRtSessionKey(String rtSessionKey) {
+        this.rtSessionKey = rtSessionKey;
     }
 
     @Override

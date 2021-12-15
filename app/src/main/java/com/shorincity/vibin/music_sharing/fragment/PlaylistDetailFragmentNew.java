@@ -50,6 +50,7 @@ import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.activity.RealTimePlayer;
+import com.shorincity.vibin.music_sharing.activity.RealTimePlayerActivity;
 import com.shorincity.vibin.music_sharing.adapters.AutoCompleteAdapter;
 import com.shorincity.vibin.music_sharing.adapters.PlaylistDetailsViewPagerAdapter;
 import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
@@ -57,6 +58,7 @@ import com.shorincity.vibin.music_sharing.databinding.BottomsheetPlaylistPassowr
 import com.shorincity.vibin.music_sharing.databinding.FragmentPlaylistDetailBinding;
 import com.shorincity.vibin.music_sharing.databinding.PlaylistDetailsMenuBinding;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
+import com.shorincity.vibin.music_sharing.model.CreateSessionModel;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlayListDeleteModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
@@ -95,8 +97,6 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
     private Context context;
     private ArrayList<String> genreList;
     private PlaylistDetailsViewModel viewModel;
-    private RealTimeModel realTimeModel;
-    private DatabaseReference myRef;
     private ProgressDialog mProgressDialog;
 
     public static PlaylistDetailFragmentNew getInstance(int id, int admin_id, MyPlaylistModel myPlaylistModel) {
@@ -128,6 +128,8 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
 
     private void initControls() {
         if (myPlaylistModel != null) {
+            int userId = SharedPrefManager.getInstance(context).getSharedPrefInt(AppConstants.INTENT_USER_ID);
+            viewModel.setAdmin(myPlaylistModel.getAdmin_id() == userId);
             setPlaylistDetails();
             ArrayList<String> titles = new ArrayList<>();
             titles.add("List");
@@ -191,59 +193,13 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
                 }
             });
             binding.llLiveShare.setOnClickListener(v -> {
+
                 processLiveSharing();
             });
             binding.ivBack.setOnClickListener(v -> {
                 getActivity().onBackPressed();
             });
             binding.ivLike.setOnClickListener(v -> putPublicPLaylistLike(myPlaylistModel.getId()));
-
-            // Initializing REAL TIME Firebase DB variable.............
-
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-            myRef = database.getReference(AppConstants.SESSION);
-
-            myRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    // This method is called once with the initial value and again
-                    // whenever data at this location is updated.
-                    try {
-                        dataSnapshot.child("sessions");
-                        HashMap<String, RealTimeSession> sessionHashMap = new HashMap<>();
-                        HashMap<String, RealTimeUser> userHashMap = new HashMap<>();
-
-                        for (DataSnapshot ds : dataSnapshot.child("sessions").getChildren()) {
-                            RealTimeSession realTimeSession = ds.getValue(RealTimeSession.class);
-                            sessionHashMap.put(ds.getKey(), realTimeSession);
-                        }
-
-                        for (DataSnapshot ds : dataSnapshot.child("users").getChildren()) {
-                            RealTimeUser realTimeUser = ds.getValue(RealTimeUser.class);
-                            userHashMap.put(ds.getKey(), realTimeUser);
-                        }
-
-                        realTimeModel = new RealTimeModel();
-                        realTimeModel.setSessions(sessionHashMap);
-                        realTimeModel.setUsers(userHashMap);
-
-                        Log.i(TAG, realTimeModel.toString());
-
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError error) {
-                    // Failed to read value
-                    Log.w(TAG, "Failed to read value.", error.toException());
-                }
-            });
         }
     }
 
@@ -530,6 +486,7 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
     private void processLiveSharing() {
         ArrayList<PlaylistDetailModel> playlist = viewModel.getPlaylist();
         ArrayList<ViewCollab> viewcollabList = viewModel.getViewcollabList();
+        int userId = SharedPrefManager.getInstance(context).getSharedPrefInt(AppConstants.INTENT_USER_ID);
 
         if (playlist == null || playlist.size() == 0) {
             Toast.makeText(context, "Please create a playlist first!", Toast.LENGTH_LONG).show();
@@ -537,84 +494,33 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
         } else if (viewcollabList == null || viewcollabList.size() == 0) {
             Toast.makeText(context, "Please create a collaborator first!", Toast.LENGTH_LONG).show();
             return;
+        } else if (userId != myPlaylistModel.getAdmin_id()) {
+            Toast.makeText(context, "You are not an admin of this playlist.", Toast.LENGTH_LONG).show();
+            return;
         }
-
-        RealTimeSession realTimeSession = new RealTimeSession();
-
-        String token = AppConstants.TOKEN + SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-        int userId = SharedPrefManager.getInstance(context).getSharedPrefInt(AppConstants.INTENT_USER_ID);
-
-        long sesionTimeStamp = System.currentTimeMillis();
-        String sessionKey = AppConstants.SESSION_CHILD + userId + "_" + sesionTimeStamp;
-
-        NumberFormat formatter = new DecimalFormat("00");
-        String duration = "";
-
-        duration = formatter.format(myPlaylistModel.getPlaylistDurationHours()) + ":" + formatter.format(myPlaylistModel.getPlaylistDurationMinutes()) + ":" + formatter.format(myPlaylistModel.getPlaylistDurationSeconds());
-
-        realTimeSession.setSession_token(token);
-        realTimeSession.setAdminId(userId);
-        realTimeSession.setPlaylist_id(myPlaylistModel.getId());
-        realTimeSession.setPlaylist_time(duration);
-        realTimeSession.setInvited(viewcollabList.size());
-        realTimeSession.setJoined(0);
-        realTimeSession.setStatus(AppConstants.WAIT);
-        realTimeSession.setStart_in(0);
-        realTimeSession.setElapsed_time(0);
-        realTimeSession.setRead_elapsed(false);
-        realTimeSession.setSongID(playlist.get(0).getTrackId());
-        realTimeSession.setSongPosiionInList(0);
-        realTimeSession.setSongType(playlist.get(0).getType());
-        realTimeSession.setSong_changed(false);
-
-
-        if (realTimeModel.getSessions() != null)
-            realTimeModel.getSessions().put(sessionKey, realTimeSession);
-
-        String userIds = "", userKeys = "";
-
-        for (int i = 0; i < viewcollabList.size(); i++) {
-            ViewCollab collab = viewcollabList.get(i);
-            if (collab != null) {
-                String userKey = AppConstants.USER_CHILD + userId + "_" + collab.getId();//+"_"+sesionTimeStamp;
-
-                userIds = TextUtils.isEmpty(userIds) ? "" + collab.getId() : userIds + ":" + collab.getId();
-                userKeys = TextUtils.isEmpty(userKeys) ? userKey : userKeys + ":" + userKey;
-
-
-                RealTimeUser realTimeUser = new RealTimeUser(sessionKey, token, collab.getId(), AppConstants.WAIT);
-                realTimeModel.getUsers().put(userKey, realTimeUser);
-            }
-        }
-
-        callAddRealTimeInfo(sessionKey, token, userIds, userKeys, myRef, realTimeModel);
+        callCreateSessionApi();
     }
 
-    // Creating Session
-    private void callAddRealTimeInfo(String sessionKey, String sessionToken, String userIds, String userKeys, DatabaseReference myRef, RealTimeModel realTimeModel) {
+    private void callCreateSessionApi() {
         showProgressDialog();
-
         DataAPI dataAPI = RetrofitAPI.getData();
         String headerToken = AppConstants.TOKEN + SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-        int userId = SharedPrefManager.getInstance(context).getSharedPrefInt(AppConstants.INTENT_USER_ID);
-
-        Call<APIResponse> callback = dataAPI.addRealTimeInfo(headerToken, myPlaylistModel.getId(), userId, sessionKey, sessionToken, userIds, userKeys);
-        callback.enqueue(new Callback<APIResponse>() {
+        String userToken = SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
+        Call<CreateSessionModel> callback = dataAPI.callCreateRTSession(headerToken, userToken, String.valueOf(myPlaylistModel.getId()));
+        callback.enqueue(new Callback<CreateSessionModel>() {
             @Override
-            public void onResponse(Call<APIResponse> call, retrofit2.Response<APIResponse> response) {
+            public void onResponse(Call<CreateSessionModel> call, retrofit2.Response<CreateSessionModel> response) {
                 hideProgressDialog();
 
                 if (response.body() != null) {
                     Logging.d("Add Info Res-->" + new Gson().toJson(response.body()));
-
-                    if (response.body().getStatus().equalsIgnoreCase("success")) {
+                    CreateSessionModel model = response.body();
+                    if (model != null && model.getStatus().equalsIgnoreCase("success")) {
                         // Sending Notification to collaborators
-                        sendRealTimetNotification(myPlaylistModel.getId(), AppConstants.REAL_TIME_INVITE, myRef, realTimeModel, sessionKey);
-                    } else if (response.body().getStatus().equalsIgnoreCase("already_exist") &&
-                            !TextUtils.isEmpty(response.body().getMessage()) &&
-                            !TextUtils.isEmpty(response.body().getSessionKey())) {
-                        callToDeleteSession(response.body().getSessionKey());
-                        // showErrorDialog(response.body().getMessage(), sessionKey);
+                        startActivity(new Intent(context, RealTimePlayerActivity.class).putExtra(AppConstants.INTENT_SESSION_KEY, model.getSessionKey()).putExtra(AppConstants.INTENT_USER_KEY, "")
+                                .putExtra(AppConstants.INTENT_PLAYLIST_ID, myPlaylistModel.getId())
+                                .putExtra("admin_id", myPlaylistModel.getAdmin_id())
+                                .putExtra(AppConstants.INTENT_IS_ADMIN, true));
                     } else
                         Toast.makeText(context, "Something went wrong!", Toast.LENGTH_LONG).show();
                 } else {
@@ -622,109 +528,11 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
             }
 
             @Override
-            public void onFailure(Call<APIResponse> call, Throwable t) {
+            public void onFailure(Call<CreateSessionModel> call, Throwable t) {
                 Log.i("Error: ", "ADD NOTIFICATION " + t.getMessage());
                 hideProgressDialog();
             }
         });
-    }
-
-    private void sendRealTimetNotification(int playlistId, String notifyType, DatabaseReference myRef, RealTimeModel realTimeModel, String sessionKey) {
-
-        showProgressDialog();
-        DataAPI dataAPI = RetrofitAPI.getData();
-        String headerToken = AppConstants.TOKEN + SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-        int userId = SharedPrefManager.getInstance(context).getSharedPrefInt(AppConstants.INTENT_USER_ID);
-
-        Call<APIResponse> callback = dataAPI.sendNotificationRealTimeUpdate(headerToken, userId, playlistId, notifyType);
-        callback.enqueue(new Callback<APIResponse>() {
-            @Override
-            public void onResponse(Call<APIResponse> call, retrofit2.Response<APIResponse> response) {
-                hideProgressDialog();
-                if (response != null && response.body() != null) {
-
-                    if (response.body().getStatus().equalsIgnoreCase("success")) {
-
-                        myRef.setValue(realTimeModel).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Toast.makeText(context, "Success", Toast.LENGTH_LONG).show();
-                                //startActivity(new Intent(context, RealTimeYoutubePlayler.class)
-                                startActivity(new Intent(context, RealTimePlayer.class).putExtra(AppConstants.INTENT_SESSION_KEY, sessionKey).putExtra(AppConstants.INTENT_USER_KEY, "")
-                                        .putExtra(AppConstants.INTENT_PLAYLIST_ID, myPlaylistModel.getId())
-                                        .putExtra("admin_id", myPlaylistModel.getAdmin_id()));
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                e.printStackTrace();
-                            }
-                        });
-
-                    } else {
-                    }
-                } else {
-                }
-            }
-
-            @Override
-            public void onFailure(Call<APIResponse> call, Throwable t) {
-                Log.i("Error: ", "ADD NOTIFICATION " + t.getMessage());
-                hideProgressDialog();
-            }
-        });
-    }
-
-    // API call to delete session
-    private void callToDeleteSession(String sessionKey) {
-
-        DataAPI dataAPI = RetrofitAPI.getData();
-
-        String token = AppConstants.TOKEN + SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-
-        Call<APIResponse> callback = dataAPI.deleteRealTimeSession(token, sessionKey);
-        callback.enqueue(new Callback<APIResponse>() {
-            @Override
-            public void onResponse(Call<APIResponse> call, retrofit2.Response<APIResponse> response) {
-                if (response != null && response.body() != null) {
-                    Logging.d("DeleteSession Res-->" + new Gson().toJson(response.body()));
-                    if (response.body().getStatus().equalsIgnoreCase("success")) {
-                        sendRealTimetNotification(myPlaylistModel.getId(), AppConstants.REAL_TIME_INVITE, myRef, realTimeModel, sessionKey);
-//                        try {
-//                            realTimeModel.getSessions().remove(sessionKey);
-//
-//                            if (viewcollabList != null && viewcollabList.size() > 0) {
-//
-//                                int i = 0;
-//
-//                                while (i < viewcollabList.size()) {
-//                                    String userKey = AppConstants.USER_CHILD + SharedPrefManager.getInstance(context).getSharedPrefInt(AppConstants.INTENT_USER_ID) + "_" + viewcollabList.get(i).getId();
-//                                    if (realTimeModel.getUsers().get(userKey).getSession_id().equalsIgnoreCase(sessionKey)) {
-//                                        realTimeModel.getUsers().remove(userKey);
-//                                    }
-//                                    i++;
-//                                }
-//                            }
-//                            myRef.setValue(realTimeModel);
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-                        //processLiveSharing();
-
-                        // Toast.makeText(context, "Hurray! You con go with RealTime Player", Toast.LENGTH_LONG).show();
-                    } else if (response.body().getStatus().equalsIgnoreCase("failed") && !TextUtils.isEmpty(response.body().getMessage()))
-                        Log.i(TAG, "Session Ending Failed");
-                    else
-                        Log.i(TAG, "Session Ending Error");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<APIResponse> call, Throwable t) {
-                Toast.makeText(context, "Something went wrong!", Toast.LENGTH_LONG).show();
-            }
-        });
-
     }
 
     private void putPublicPLaylistLike(int playlistId) {

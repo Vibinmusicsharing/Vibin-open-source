@@ -34,11 +34,15 @@ public class PlaylistCollaboratosAdapter extends RecyclerView.Adapter<PlaylistCo
     private Context mContext;
     private ArrayList<ViewCollab> mExampleList;
     private CustomItemClickListener callback;
+    private boolean isAdmin;
+    private int userId;
 
-    public PlaylistCollaboratosAdapter(Context context, ArrayList<ViewCollab> exampleList, CustomItemClickListener callback) {
+    public PlaylistCollaboratosAdapter(Context context, ArrayList<ViewCollab> exampleList, boolean isAdmin, int userId, CustomItemClickListener callback) {
         mContext = context;
         mExampleList = exampleList;
         this.callback = callback;
+        this.isAdmin = isAdmin;
+        this.userId = userId;
     }
 
 
@@ -65,13 +69,16 @@ public class PlaylistCollaboratosAdapter extends RecyclerView.Adapter<PlaylistCo
                     e.printStackTrace();
                 }
             }
+            holder.ivAdminBorder.setVisibility(currentItem.isAdmin() ? View.VISIBLE : View.INVISIBLE);
         } else {
             Glide.with(mContext)
                     .load(ContextCompat.getDrawable(holder.ivProfile.getContext(), R.drawable.ic_add_collab))
                     .circleCrop()
                     .into(holder.ivProfile);
             holder.tvName.setText("Add friend");
+            holder.ivAdminBorder.setVisibility(View.GONE);
         }
+
     }
 
     @Override
@@ -81,32 +88,36 @@ public class PlaylistCollaboratosAdapter extends RecyclerView.Adapter<PlaylistCo
 
 
     public class ExampleViewHolder extends RecyclerView.ViewHolder {
-        AppCompatImageView ivProfile;
+        AppCompatImageView ivProfile, ivAdminBorder;
         AppCompatTextView tvName;
 
         public ExampleViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
             ivProfile = itemView.findViewById(R.id.ivProfile);
+            ivAdminBorder = itemView.findViewById(R.id.ivAdminBorder);
 
             ivProfile.setOnClickListener(v -> callback.onItemClick(0, getAdapterPosition()));
             ivProfile.setOnLongClickListener(v -> {
-                LayoutInflater layoutInflater = (LayoutInflater) ivProfile.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                PlaylistCollabMenuBinding popupView = DataBindingUtil.inflate(layoutInflater, R.layout.playlist_collab_menu, null, false);
+                if (isAdmin && mExampleList.get(getAdapterPosition()) != null && mExampleList.get(getAdapterPosition()).getId() != userId) {
 
-                PopupWindow popupWindow = new PopupWindow(
-                        popupView.getRoot(),
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        CommonUtils.dpToPx(60, v.getContext()));
+                    LayoutInflater layoutInflater = (LayoutInflater) ivProfile.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    PlaylistCollabMenuBinding popupView = DataBindingUtil.inflate(layoutInflater, R.layout.playlist_collab_menu, null, false);
 
-                popupView.llRemove.setOnClickListener(v1 -> {
-                    popupWindow.dismiss();
-                    callback.onItemClick(1, getAdapterPosition());
-                });
+                    PopupWindow popupWindow = new PopupWindow(
+                            popupView.getRoot(),
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            CommonUtils.dpToPx(60, v.getContext()));
 
-                popupWindow.setBackgroundDrawable(new BitmapDrawable());
-                popupWindow.setOutsideTouchable(true);
-                popupWindow.showAsDropDown(v);
+                    popupView.llRemove.setOnClickListener(v1 -> {
+                        popupWindow.dismiss();
+                        callback.onItemClick(1, getAdapterPosition());
+                    });
+
+                    popupWindow.setBackgroundDrawable(new BitmapDrawable());
+                    popupWindow.setOutsideTouchable(true);
+                    popupWindow.showAsDropDown(v);
+                }
                 return false;
             });
         }

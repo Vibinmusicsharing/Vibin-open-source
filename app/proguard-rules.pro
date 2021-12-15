@@ -71,6 +71,10 @@
 
 -dontwarn okhttp3.**
 
+-keep class com.shorincity.vibin.music_sharing.model.** { *; }
+-keepclassmembers class com.shorincity.vibin.music_sharing.model.** {
+ *;
+}
 -keep class com.shorincity.vibin.music_sharing.model.firebase.** { *; }
 -keepclassmembers class com.shorincity.vibin.music_sharing.model.firebase.** {
  *;

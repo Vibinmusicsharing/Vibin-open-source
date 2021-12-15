@@ -34,10 +34,12 @@ public class PlaylistSongsAdapter extends RecyclerView.Adapter<PlaylistSongsAdap
     private Context mContext;
     private ArrayList<PlaylistDetailModel> list;
     private CustomItemClickListener customItemClickListener;
+    private boolean isRealTime;
 
-    public PlaylistSongsAdapter(Context context, ArrayList<PlaylistDetailModel> exampleList, CustomItemClickListener customItemClickListener) {
+    public PlaylistSongsAdapter(Context context, ArrayList<PlaylistDetailModel> exampleList, boolean isRealTime, CustomItemClickListener customItemClickListener) {
         mContext = context;
         list = exampleList;
+        this.isRealTime = isRealTime;
         this.customItemClickListener = customItemClickListener;
     }
 
@@ -66,6 +68,14 @@ public class PlaylistSongsAdapter extends RecyclerView.Adapter<PlaylistSongsAdap
 
         holder.ivLike.setSelected(currentItem.isLikedByViewer());
         holder.tvLikeCount.setText(String.valueOf(currentItem.getLikes()));
+
+        if (isRealTime) {
+            holder.flLike.setVisibility(View.GONE);
+            holder.ivMenu.setVisibility(View.GONE);
+        } else {
+            holder.flLike.setVisibility(View.VISIBLE);
+            holder.ivMenu.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

@@ -16,7 +16,7 @@
     <string name="play_album_button_label">Play album</string>
     <string name="play_artist_button_label">Play artist</string>
     <string name="play_playlist_button_label">Play playlist</string>
-    <string name="play_track_button_label">Play track</string>
+    <string name="play_track_button_label">Play trackInfo</string>
     <string name="get_collection_state">Get Collection state</string>
     <string name="save_uri">Save to Collection</string>
     <string name="remove_uri">Remove from Collection</string>

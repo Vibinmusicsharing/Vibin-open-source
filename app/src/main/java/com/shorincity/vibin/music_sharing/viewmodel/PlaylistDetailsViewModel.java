@@ -25,6 +25,7 @@ public class PlaylistDetailsViewModel implements Parcelable {
     private static final String TAG = PlaylistDetailsViewModel.class.getName();
     private ArrayList<PlaylistDetailModel> playlist;
     private ArrayList<ViewCollab> viewcollabList;
+    private boolean isAdmin = false;
 
     public PlaylistDetailsViewModel() {
         playlist = new ArrayList<>();
@@ -103,7 +104,8 @@ public class PlaylistDetailsViewModel implements Parcelable {
                 if (response.body() != null && response.body().size() > 0) {
                     viewcollabList.clear();
                     viewcollabList.addAll(response.body());
-                    viewcollabList.add(null);
+                    if (isAdmin)
+                        viewcollabList.add(null);
                     detailCallback.onResponse();
                 } else {
                     detailCallback.onError();
@@ -125,5 +127,13 @@ public class PlaylistDetailsViewModel implements Parcelable {
 
     public ArrayList<ViewCollab> getViewcollabList() {
         return viewcollabList;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
     }
 }

@@ -11,7 +11,7 @@ making sure you search for existing issues and adding your voice to those rather
 
 The Spotify App Remote SDK allows your application to interact with the Spotify app running in the
 background as a service. The capabilities of this SDK include getting metadata for the currently
-playing track and context, issuing basic playback commands and initiating playback of tracks.
+playing trackInfo and context, issuing basic playback commands and initiating playback of tracks.
 
 ![Spotify App Remote](img/ipc.png)
 
@@ -28,7 +28,7 @@ The Spotify App Remote SDK is a set of lightweight objects that connect with t
  * Playback always in sync with Spotify app
  * Processing of playback and caching as well as network traffic is accounted for by the Spotify app
  * Handles system integration such as audio focus, lockscreen controls and incoming calls
- * Automatically handles track relinking for different regions
+ * Automatically handles trackInfo relinking for different regions
  * Works offline and online and does not require Web API calls to get metadata for PlayerState
  
  **Note**: While certain playback controls work offline and playback can happen offline for offlined
@@ -59,10 +59,10 @@ Some of the models in the Spotify App Remote SDK are
 #### The PlayerState
 It could answer the following questions
 
-* what track is being played now?
+* what trackInfo is being played now?
 * is the player playing/paused?
 * what is current playback position?
-* is the track saved to the user's library?
+* is the trackInfo saved to the user's library?
 
 #### The PlayerContext
 Get metadata like the title of the current context that is playing - such as an album or a playlist.
@@ -88,8 +88,8 @@ You can also subscribe to the following events:
 * PlayerState updates
 * PlayerContext updates
 
-**Note**: A **Spotify Premium** account is required to play a single track uri. You should make a 
-call to the UserApi to get the on-demand capabilities of a user before attempting to play a single track uri.
+**Note**: A **Spotify Premium** account is required to play a single trackInfo uri. You should make a
+call to the UserApi to get the on-demand capabilities of a user before attempting to play a single trackInfo uri.
 
 #### UserApi
 Get user-related data and perform actions such as:

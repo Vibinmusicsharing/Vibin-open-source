@@ -63,8 +63,8 @@ public class PlaylistCollaboratosFragment extends MyBaseFragment {
         PlaylistCollaboratosFragment fragment = new PlaylistCollaboratosFragment();
         Bundle bundle = new Bundle();
         bundle.putString(PLAYLIST_ID, playlistId);
-        fragment.setArguments(bundle);
         bundle.putParcelable(VIEW_MODEL, viewModel);
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -84,9 +84,10 @@ public class PlaylistCollaboratosFragment extends MyBaseFragment {
     }
 
     private void initControls() {
+        int userId = SharedPrefManager.getInstance(mContext).getSharedPrefInt(AppConstants.INTENT_USER_ID);
         playlistId = getArguments().getString(PLAYLIST_ID);
         binding.rvSongs.setLayoutManager(new GridLayoutManager(binding.rvSongs.getContext(), 4));
-        binding.rvSongs.setAdapter(new PlaylistCollaboratosAdapter(mContext, viewModel.getViewcollabList(), (type, position) -> {
+        binding.rvSongs.setAdapter(new PlaylistCollaboratosAdapter(mContext, viewModel.getViewcollabList(), viewModel.isAdmin(), userId, (type, position) -> {
             if (type == 0) {
                 ViewCollab collab = viewModel.getViewcollabList().get(position);
                 if (collab == null) {

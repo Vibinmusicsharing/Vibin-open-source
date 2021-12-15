@@ -12,9 +12,9 @@ public class AppConstants {
 
     // QA
     public static String URL = "https://harshkant882.pythonanywhere.com/user/login/";
-    public static String BASE_URL = "https://harshkant882.pythonanywhere.com/";
+    public static String BASE_URL = "https://staging.vibin.in/";
 
-    public static String LOGIN_SIGNUP_HEADER = "Token bcaf92fdbf70d0e6bd42c0d718d2d33ceaff53a0";
+    public static String LOGIN_SIGNUP_HEADER = "Token 774bf546e87365cade61170bcc9398707994d377";
 
     // FPRGOT PASS URL
     public static String FORGOT_PASS_URL = BASE_URL + "user/password_reset/";
@@ -24,6 +24,7 @@ public class AppConstants {
 
     // Youtube Keys
     public static String YOUTUBE_KEY = "AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok";
+    public static String LAST_FM_KEY = "1199ebd8c3b8ff51e042a8df41e99485";
 
     // some static Keys
     public static final String KEY_PASSWORD = "password";
@@ -73,7 +74,8 @@ public class AppConstants {
     public static final String INTENT_NOTIFICATION_UNREAD_COUNT = "intent_notification_unread_count";
     public static final String INTENT_LANGUAGE = "intentLanguages";
     public static final String INTENT_GENRES = "intentGenres";
-    public static final String INTENT_IS_FROM_GOOGLE="is_from_google";
+    public static final String INTENT_IS_FROM_GOOGLE = "is_from_google";
+    public static final String INTENT_IS_ADMIN="is_admin";
 
 
     public static final String TERMS_COND_KEY = "terms_cond_key";
@@ -125,6 +127,12 @@ public class AppConstants {
     public static String JOINED = "JOINED";
     public static String ENDED = "ENDED";
     public static String PAUSE = "PAUSE";
+    public static String PLAY = "PLAY";
+    public static String CHANGED = "CHANGED";
+    public static String REPEAT = "REPEAT";
+    public static String SUFFLE = "SUFFLE";
+    public static String SEEKSONG="SEEKSONG";
+
     public static String ACCEPTED = "ACCEPTED";
     public static String REGECTED = "REGECTED";
     public static String GET = "get";

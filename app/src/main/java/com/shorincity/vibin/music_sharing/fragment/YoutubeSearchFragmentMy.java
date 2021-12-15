@@ -146,7 +146,7 @@ public class YoutubeSearchFragmentMy extends MyBaseFragment {
         youtubeSearchRv.setLayoutManager(new LinearLayoutManager(getActivity()));
         youtubeSearchRv.setHasFixedSize(true);
 
-        youtubeSearchAdapter = new YoutubeSearchAdapter(getActivity(), youtubeSearchList);
+//        youtubeSearchAdapter = new YoutubeSearchAdapter(getActivity(), youtubeSearchList);
         youtubeSearchAdapter.setCustomItemClickListener(new YoutubeSearchAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
