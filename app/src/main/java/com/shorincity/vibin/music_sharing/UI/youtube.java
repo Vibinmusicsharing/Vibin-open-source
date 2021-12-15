@@ -64,6 +64,7 @@ import com.giphy.sdk.core.models.enums.MediaType;
 import com.giphy.sdk.core.models.enums.RatingType;
 import com.giphy.sdk.core.models.enums.RenditionType;
 import com.giphy.sdk.ui.GPHRequestType;
+import com.giphy.sdk.ui.Giphy;
 import com.giphy.sdk.ui.pagination.GPHContent;
 import com.giphy.sdk.ui.views.GPHGridCallback;
 import com.giphy.sdk.ui.views.GifView;
@@ -114,6 +115,8 @@ import com.shorincity.vibin.music_sharing.utils.CustomSlidePanLayout;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.websocket.NaiveSSLContext;
 import com.shorincity.vibin.music_sharing.utils.Utility;
+import com.shorincity.vibin.music_sharing.websocket.NaiveSSLContext;
+import com.shorincity.vibin.music_sharing.model.RealTimeNotificationCount;
 import com.shorincity.vibin.music_sharing.websocket.RealTimeNotificationCount;
 import com.shorincity.vibin.music_sharing.youtube_files.YoutubeHomeFragment;
 import com.shorincity.vibin.music_sharing.youtube_files.floating.AsyncTask.Constants;
@@ -233,6 +236,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_youtube_2);
 
+        Giphy.INSTANCE.configure(this, AppConstants.GIPHY_API_KEY, true);
         // Updating FCM TOKEN here
         callAddNotificationTokenAPI();
 
@@ -1288,6 +1292,69 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (webSocketClient != null)
+            webSocketClient.disconnect();
+    }
+
+    private void initWebSocket() {
+        try {
+            WebSocketFactory factory = new WebSocketFactory();
+            SSLContext context = NaiveSSLContext.getInstance("TLS");
+            factory.setSSLContext(context);
+            factory.setVerifyHostname(false);
+            factory.setServerName("api.vibin.in");
+            userId = SharedPrefManager.getInstance(youtube.this).getSharedPrefInt(AppConstants.INTENT_USER_ID);
+            webSocketClient = factory.createSocket(Constants.WEB_SOCKET_URL + String.valueOf(userId) + "/");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        webSocketClient.addListener(new WebSocketAdapter() {
+            @Override
+            public void onTextMessage(WebSocket websocket, String message) {
+                // Received a text message.
+                RealTimeNotificationCount response = new Gson().fromJson(message, RealTimeNotificationCount.class);
+                showBadge(youtube.this, bottomNavigationView, R.id.navigation_notification,
+                        response.getNotificationCount(), response.getNotificationCount() > 0);
+                SharedPrefManager.getInstance(youtube.this).setSharedPrefInt(AppConstants.INTENT_NOTIFICATION_UNREAD_COUNT, response.getNotificationCount());
+
+            }
+        });
+
+
+        class WebSocketTask extends AsyncTask<Void, Void, Void> {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    // Connect to the server and perform an opening handshake.
+                    // This method blocks until the opening handshake is finished.
+                    webSocketClient.connect();
+
+                }  // The certificate of the peer does not match the expected hostname.
+                catch (WebSocketException e) {
+                    // A violation against the WebSocket protocol was detected
+                    // during the opening handshake.
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void unused) {
+                super.onPostExecute(unused);
+                Log.d("Log tag", "onPostExecute");
+            }
+        }
+
+        new WebSocketTask().execute();
+    }
 
     private final class MyPlaybackEventListener implements YouTubePlayer.PlaybackEventListener {
 

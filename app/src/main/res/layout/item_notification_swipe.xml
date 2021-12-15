@@ -4,10 +4,10 @@
     android:id="@+id/item_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:elevation="@dimen/_20sdp"
-    android:layout_marginTop="@dimen/_10sdp"
     android:layout_marginStart="@dimen/_10sdp"
-    android:layout_marginEnd="@dimen/_10sdp">
+    android:layout_marginTop="@dimen/_10sdp"
+    android:layout_marginEnd="@dimen/_10sdp"
+    app:elevation="@dimen/_20sdp">
 
     <com.chauthai.swipereveallayout.SwipeRevealLayout
         android:id="@+id/swipelayout"
@@ -27,9 +27,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/_50sdp"
                 android:background="@color/btnBackground"
+                android:drawableTop="@drawable/ic_baseline_check_24"
                 android:gravity="center"
                 android:text="@string/accept"
-                android:drawableTop="@drawable/ic_baseline_check_24"
                 android:textColor="@color/white" />
 
             <Button
@@ -37,9 +37,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@color/color3"
+                android:drawableTop="@drawable/ic_close_white"
                 android:gravity="center"
                 android:text="@string/reject"
-                android:drawableTop="@drawable/ic_close_white"
                 android:textColor="@color/white" />
 
         </LinearLayout>
@@ -51,9 +51,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_margin="@dimen/_10sdp"
-            app:elevation="@dimen/_5sdp"
             android:gravity="center_vertical"
-            app:cardCornerRadius="2dip">
+            app:cardCornerRadius="2dip"
+            app:elevation="@dimen/_5sdp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -77,6 +77,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_toStartOf="@id/arrow_icon"
                     android:layout_toEndOf="@+id/avatar_image"
                     android:gravity="center_vertical"
                     android:text="@string/app_name"
@@ -90,6 +91,7 @@
                     android:layout_below="@+id/item_title"
                     android:layout_gravity="left"
                     android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_toStartOf="@id/arrow_icon"
                     android:layout_toEndOf="@+id/avatar_image"
                     android:gravity="center_vertical"
                     android:text="Accepted"
@@ -98,14 +100,15 @@
                     android:textSize="@dimen/_10sdp"
                     android:visibility="visible" />
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/arrow_icon"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="8dp"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    app:srcCompat="@drawable/ic_baseline_arrow_forward_ios_24"/>
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="8dp"
+                    android:rotation="180"
+                    app:srcCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
 
             </RelativeLayout>
 

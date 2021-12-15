@@ -15,6 +15,7 @@ public class AppConstants {
     public static String BASE_URL = "https://staging.vibin.in/";
 
     public static String LOGIN_SIGNUP_HEADER = "Token 774bf546e87365cade61170bcc9398707994d377";
+    public static String KEY_CODE="uVqLxiHDKIirly75dk9yr5sk097DsmYW1Abj2dh7746dggf";
 
     // FPRGOT PASS URL
     public static String FORGOT_PASS_URL = BASE_URL + "user/password_reset/";
@@ -23,7 +24,7 @@ public class AppConstants {
 
 
     // Youtube Keys
-    public static String YOUTUBE_KEY = "AIzaSyA_CMrJoKWFhOT0FpBshCAEKx0ueoBbyok";
+    public static String YOUTUBE_KEY = "";
     public static String LAST_FM_KEY = "1199ebd8c3b8ff51e042a8df41e99485";
 
     // some static Keys
@@ -97,8 +98,7 @@ public class AppConstants {
     // API STATUS KEYS
     public static String STATUS_UPDATED = "Updated";
 
-    public static String GIPHY_API_KEY = "uUa7R7I1gxSG1R05kYpTrEYbXwQD7Jlp";
-    public static String SPOTIFY_KEY = "d97e6af9d329405d997632c60fe79a16";
+    public static String GIPHY_API_KEY = "";
 
 
     // NOTIFICATION TYPE
