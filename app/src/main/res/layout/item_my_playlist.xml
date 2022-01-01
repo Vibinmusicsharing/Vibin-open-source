@@ -286,8 +286,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/play_btn"
-        android:layout_width="@dimen/_40sdp"
-        android:layout_height="@dimen/_40sdp"
+        android:layout_width="@dimen/btn_round_size"
+        android:layout_height="@dimen/btn_round_size"
         android:layout_gravity="end|bottom"
         android:elevation="@dimen/_4sdp"
         android:src="@drawable/ic_playlist_play"

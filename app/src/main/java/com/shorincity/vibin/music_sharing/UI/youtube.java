@@ -26,7 +26,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -105,6 +104,7 @@ import com.shorincity.vibin.music_sharing.model.Item;
 import com.shorincity.vibin.music_sharing.model.ModelData;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
+import com.shorincity.vibin.music_sharing.model.RealTimeNotificationCount;
 import com.shorincity.vibin.music_sharing.model.SongLikeModel;
 import com.shorincity.vibin.music_sharing.model.UpdatePreferPlatformModel;
 import com.shorincity.vibin.music_sharing.model.lastfm.trackinfo.TrackInfoResponse;
@@ -113,11 +113,8 @@ import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.CustomSlidePanLayout;
 import com.shorincity.vibin.music_sharing.utils.Logging;
-import com.shorincity.vibin.music_sharing.websocket.NaiveSSLContext;
 import com.shorincity.vibin.music_sharing.utils.Utility;
 import com.shorincity.vibin.music_sharing.websocket.NaiveSSLContext;
-import com.shorincity.vibin.music_sharing.model.RealTimeNotificationCount;
-import com.shorincity.vibin.music_sharing.websocket.RealTimeNotificationCount;
 import com.shorincity.vibin.music_sharing.youtube_files.YoutubeHomeFragment;
 import com.shorincity.vibin.music_sharing.youtube_files.floating.AsyncTask.Constants;
 import com.shorincity.vibin.music_sharing.youtube_files.floating.PlayerService;
@@ -184,7 +181,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     private int lengthms = 270000;
     private int position = 0;
 
-    private String createnewplaylist = AppConstants.BASE_URL + "playlist/create_new_playlist/";
+    private String createnewplaylist = AppConstants.BASE_URL + "playlist/v1/create_new_playlist/";
     private MyPlayerStateChangeListener playerStateChangeListener;
     private MyPlaybackEventListener playbackEventListener;
     private TextView titlemain;
@@ -205,8 +202,8 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     private RecyclerView youtubePlayListRecyclerView;
     private PlaylistRecyclerView adapter;
     private ArrayList<Playlist> playlistList;
-    private String url1 = AppConstants.BASE_URL + "playlist/my_playlists/";
-    private String url2 = AppConstants.BASE_URL + "playlist/add_trak_to_playlist/";
+    private String url1 = AppConstants.BASE_URL + "playlist/v1/my_playlists/";
+    private String url2 = AppConstants.BASE_URL + "playlist/v1/add_trak_to_playlist/";
 
     private String title, thumbnail, description;
     private int userId;
@@ -547,7 +544,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
                 String duration = mYouTubePlayer.getDurationMillis() > 0 ? String.valueOf(mYouTubePlayer.getDurationMillis()) : "";
                 if (duration.equalsIgnoreCase("")) {
-                    dialog("00:00:00");
+                    dialog("0");
                 } else {
                     dialog(duration);
 
@@ -798,7 +795,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
             @Override
             public void onFailure(Call<UpdatePreferPlatformModel> call, Throwable t) {
-                Toast.makeText(youtube.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(youtube.this,  getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -806,6 +803,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
     // API to post fcmToken to Vibin Server
     String fcmToken = "";
+    private String artistName = "";
 
     private void callAddNotificationTokenAPI() {
 
@@ -919,11 +917,11 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         description = bundle.getString("description");
         thumbnail = bundle.getString("thumbnail");
         videoId = bundle.getString("videoId");
+        if (bundle.containsKey("artist_name"))
+            artistName = bundle.getString("artist_name");
         if (TextUtils.isEmpty(videoId)) {
-            String artistName = bundle.getString("artist_name");
             String trackName = artistName + "+" + title;
             callYoutubeSearchApi(trackName);
-//            callGetTrackInfo(artistName);
         } else {
             songURI = "https://www.youtube.com/watch?v=" + videoId;
             titlemain.setText(title);
@@ -1080,66 +1078,6 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
             webSocketClient.disconnect();
     }
 
-    private void initWebSocket() {
-        try {
-            int userId = SharedPrefManager.getInstance(this).getSharedPrefInt(AppConstants.INTENT_USER_ID);
-
-            WebSocketFactory factory = new WebSocketFactory();
-            SSLContext context = NaiveSSLContext.getInstance("TLS");
-            factory.setSSLContext(context);
-            factory.setVerifyHostname(false);
-            factory.setServerName("api.vibin.in");
-            webSocketClient = factory.createSocket(Constants.WEB_SOCKET_URL + String.valueOf(userId) + "/");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
-        webSocketClient.addListener(new WebSocketAdapter() {
-            @Override
-            public void onTextMessage(WebSocket websocket, String message) {
-                // Received a text message.
-                Log.d("LOGTAG", "==>" + message);
-                RealTimeNotificationCount response = new Gson().fromJson(message, RealTimeNotificationCount.class);
-                showBadge(youtube.this, bottomNavigationView, R.id.navigation_notification,
-                        response.getNotificationCount(), response.getNotificationCount() > 0);
-
-                SharedPrefManager.getInstance(youtube.this).setSharedPrefInt(AppConstants.INTENT_NOTIFICATION_UNREAD_COUNT, response.getNotificationCount());
-
-            }
-        });
-
-
-        class WebSocketTask extends AsyncTask<Void, Void, Void> {
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                try {
-                    // Connect to the server and perform an opening handshake.
-                    // This method blocks until the opening handshake is finished.
-                    webSocketClient.connect();
-
-                }  // The certificate of the peer does not match the expected hostname.
-                catch (WebSocketException e) {
-                    // A violation against the WebSocket protocol was detected
-                    // during the opening handshake.
-                    e.printStackTrace();
-                }
-
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void unused) {
-                super.onPostExecute(unused);
-                Log.d("Log tag", "onPostExecute");
-            }
-        }
-
-        new WebSocketTask().execute();
-    }
-
     private void stopFloatingService() {
         try {
             if (isServiceRunning(PlayerService.class)) {
@@ -1292,20 +1230,13 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (webSocketClient != null)
-            webSocketClient.disconnect();
-    }
-
     private void initWebSocket() {
         try {
             WebSocketFactory factory = new WebSocketFactory();
             SSLContext context = NaiveSSLContext.getInstance("TLS");
             factory.setSSLContext(context);
             factory.setVerifyHostname(false);
-            factory.setServerName("api.vibin.in");
+            factory.setServerName("staging.vibin.in");
             userId = SharedPrefManager.getInstance(youtube.this).getSharedPrefInt(AppConstants.INTENT_USER_ID);
             webSocketClient = factory.createSocket(Constants.WEB_SOCKET_URL + String.valueOf(userId) + "/");
         } catch (IOException e) {
@@ -1860,15 +1791,12 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         youtubePlayListRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         parseData();
         addToPlaylistAdapter = new AddToPlaylistAdapter(this, playlistList);
-        addToPlaylistAdapter.setCustomItemClickListener(new AddToPlaylistAdapter.CustomItemClickListener() {
-            @Override
-            public void onItemClick(View v, int position) {
-                Playlist currentItem = playlistList.get(position);
+        addToPlaylistAdapter.setCustomItemClickListener((v, position) -> {
+            Playlist currentItem = playlistList.get(position);
 
-                String videoId = youtube.this.videoId;
-                int id = currentItem.getId();
-                callAddTrackApi(videoId, id, title, thumbnail, duration);
-            }
+            String videoId = youtube.this.videoId;
+            int id = currentItem.getId();
+            callAddTrackApi(videoId, id, title, thumbnail, duration);
         });
         youtubePlayListRecyclerView.setAdapter(addToPlaylistAdapter);
 
@@ -2088,7 +2016,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         String userToken = SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
         String timeDuration = "T" + Utility.millisIntoHHMMSS(Long.valueOf(duration));
         Call<ResponseBody> callback = dataAPI.callAddTrackApi(token, userToken,
-                String.valueOf(id), "youtube", videoId, title, thumbnail, "artistName", timeDuration);
+                String.valueOf(id), "youtube", videoId, title, thumbnail, artistName, timeDuration);
         callback.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
@@ -2168,7 +2096,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
         String token = AppConstants.TOKEN + SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
 
-        Call<AddSongLogModel> addLogCallback = dataAPI.addSongLogAPI(token, userId, songType, songName, songId, songURI, songThumbnail, detail, "artistName", duration);
+        Call<AddSongLogModel> addLogCallback = dataAPI.addSongLogAPI(token, userId, songType, songName, songId, songURI, songThumbnail, detail, artistName, duration);
         addLogCallback.enqueue(new Callback<AddSongLogModel>() {
             @Override
             public void onResponse(Call<AddSongLogModel> call, Response<AddSongLogModel> response) {

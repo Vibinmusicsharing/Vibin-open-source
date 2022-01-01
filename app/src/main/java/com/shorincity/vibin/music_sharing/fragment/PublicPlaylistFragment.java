@@ -81,7 +81,7 @@ import retrofit2.Callback;
 public class PublicPlaylistFragment extends MyBaseFragment {
 
     RequestQueue requestQueue;
-    String url = AppConstants.BASE_URL + "playlist/create_new_playlist/";
+    String url = AppConstants.BASE_URL + "playlist/v1/create_new_playlist/";
     View view;
     Context context;
     ProgressBar progressBar;

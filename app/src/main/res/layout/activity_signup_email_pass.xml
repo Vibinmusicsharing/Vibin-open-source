@@ -252,8 +252,8 @@
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/google_sign_up_btn"
-                    android:layout_width="@dimen/_70sdp"
-                    android:layout_height="@dimen/_70sdp"
+                    android:layout_width="@dimen/btn_round_size_70"
+                    android:layout_height="@dimen/btn_round_size_70"
                     android:layout_gravity="center"
                     android:background="@drawable/btn_google"
                     android:onClick="@{(view) -> signUpCallback.onGoogleClick()}"
@@ -267,7 +267,7 @@
                     android:fontFamily="@font/font_regular"
                     android:gravity="center"
                     android:onClick="@{(view) -> signUpCallback.onGoogleClick()}"
-                    android:text="Sign in with google"
+                    android:text="Google Signup"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="@id/google_sign_up_btn"
                     app:layout_constraintStart_toStartOf="@id/google_sign_up_btn"
@@ -287,8 +287,8 @@
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_submit"
-                    android:layout_width="@dimen/_60sdp"
-                    android:layout_height="@dimen/_60sdp"
+                    android:layout_width="@dimen/btn_round_size_60"
+                    android:layout_height="@dimen/btn_round_size_60"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/_16sdp"
                     android:background="@drawable/ic_round_btn"

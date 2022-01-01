@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     app:clickToClose="true"
     app:drag_edge="left">
 
@@ -36,8 +36,8 @@
             android:id="@+id/ivSong"
             android:layout_width="@dimen/_60sdp"
             android:layout_height="@dimen/_46sdp"
-            tools:background="@drawable/background_fill"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            tools:background="@drawable/background_fill" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -53,9 +53,9 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:fontFamily="@font/font_semi_bold"
-                android:singleLine="true"
+                android:maxLines="2"
                 android:text="Kiss somebody"
-                android:textColor="@color/textColor"
+                android:textColor="@color/nav_realtime_color_selector"
                 android:textSize="16sp" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -66,7 +66,7 @@
                 android:fontFamily="@font/font_regular"
                 android:singleLine="true"
                 android:text="Julie Bergan"
-                android:textColor="@color/textColor"
+                android:textColor="@color/nav_realtime_color_selector"
                 android:textSize="12sp" />
 
         </LinearLayout>
@@ -82,9 +82,9 @@
 
         <FrameLayout
             android:id="@+id/flLike"
-            tools:visibility="gone"
             android:layout_width="@dimen/_40sdp"
-            android:layout_height="@dimen/_40sdp">
+            android:layout_height="@dimen/_40sdp"
+            tools:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivLike"
@@ -109,8 +109,8 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivMenu"
             android:layout_width="@dimen/_25sdp"
-            tools:visibility="gone"
             android:layout_height="@dimen/_25sdp"
-            app:srcCompat="@drawable/ic_menu" />
+            app:srcCompat="@drawable/ic_menu"
+            tools:visibility="gone" />
     </LinearLayout>
 </com.daimajia.swipe.SwipeLayout>

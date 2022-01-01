@@ -124,38 +124,35 @@ public class YoutubeSearchFragment extends MyBaseFragment {
         youtubeSearchRv.setHasFixedSize(true);
 
         youtubeSearchAdapter = new YoutubeSearchAdapter(getActivity(), trackList);
-        youtubeSearchAdapter.setCustomItemClickListener(new YoutubeSearchAdapter.CustomItemClickListener() {
-            @Override
-            public void onItemClick(View v, int position) {
-                try {
-                    ArrayList<PlaylistDetailModel> playlist;
-                    playlist = new ArrayList<>();
-                    for (int i = 0; i < trackList.size(); i++) {
-                        playlist.add(new PlaylistDetailModel(
-                                trackList.get(i).getName(),
-                                trackList.get(i).getArtist(),
-                                trackList.get(i).getImage().size() > 0 ? trackList.get(i).getImage().get(0).getText() : "",
-                                ""
-                        ));
-                    }
-                    Track currentItem = trackList.get(position);
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("position", position);
-                    bundle.putString("title", currentItem.getName() + " - " + currentItem.getArtist());
-                    bundle.putString("description", "");
-                    bundle.putString("thumbnail", currentItem.getImage().size() > 0 ? currentItem.getImage().get(0).getText() : "");
-                    bundle.putString("videoId", "");
-                    bundle.putString("artist_name", currentItem.getArtist());
+        youtubeSearchAdapter.setCustomItemClickListener((v, position) -> {
+            try {
+                ArrayList<PlaylistDetailModel> playlist;
+                playlist = new ArrayList<>();
+                for (int i = 0; i < trackList.size(); i++) {
+                    playlist.add(new PlaylistDetailModel(
+                            trackList.get(i).getName(),
+                            trackList.get(i).getArtist(),
+                            trackList.get(i).getModelData() != null && trackList.get(i).getModelData().getItems().size() > 0 ? trackList.get(i).getModelData().getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl() : "",
+                            trackList.get(i).getModelData() != null && trackList.get(i).getModelData().getItems().size() > 0 ? trackList.get(i).getModelData().getItems().get(0).getId().getVideoId() : ""
+                    ));
+                }
+                Track currentItem = trackList.get(position);
+                Bundle bundle = new Bundle();
+                bundle.putInt("position", position);
+                bundle.putString("title", currentItem.getName() + " - " + currentItem.getArtist());
+                bundle.putString("description", "");
+                bundle.putString("thumbnail", currentItem.getModelData() != null && currentItem.getModelData().getItems().size() > 0 ? currentItem.getModelData().getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl() : (currentItem.getImage().size() > 0 ? currentItem.getImage().get(0).getText() : ""));
+                bundle.putString("videoId", currentItem.getModelData() != null && currentItem.getModelData().getItems().size() > 0 ? currentItem.getModelData().getItems().get(0).getId().getVideoId() : "");
+                bundle.putString("artist_name", currentItem.getArtist());
 //                    bundle.putString("from", "channel");
-                    bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
-                    onMusicPlay(bundle);
+                bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
+                onMusicPlay(bundle);
 
 /*                    Intent intent = new Intent(getActivity(), PlayYoutubeVideoActivity.class);
-                    intent.putExtra("data", bundle);
-                    startActivity(intent);*/
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                intent.putExtra("data", bundle);
+                startActivity(intent);*/
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
         youtubeSearchRv.setAdapter(youtubeSearchAdapter);
@@ -201,7 +198,7 @@ public class YoutubeSearchFragment extends MyBaseFragment {
             @Override
             public void onFailure(Call<ModelData> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(),  getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -261,7 +258,7 @@ public class YoutubeSearchFragment extends MyBaseFragment {
     private void callTrackSearchApi(String tukhoa) {
 
         DataAPI dataAPI1 = RetrofitAPI.getLastFMData();
-        dataAPI1.callTrackSearch(tukhoa, AppConstants.LAST_FM_KEY, "json",50).enqueue(new Callback<LastFMSearchResponse>() {
+        dataAPI1.callTrackSearch(tukhoa, AppConstants.LAST_FM_KEY, "json", 5).enqueue(new Callback<LastFMSearchResponse>() {
             @Override
             public void onResponse(Call<LastFMSearchResponse> call, Response<LastFMSearchResponse> response) {
                 LastFMSearchResponse response1 = response.body();

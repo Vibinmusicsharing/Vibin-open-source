@@ -44,7 +44,7 @@
                 android:layout_marginTop="@dimen/_24sdp"
                 android:fontFamily="@font/font_regular"
                 android:hint="playlist name"
-                android:inputType="textPersonName"
+                android:inputType="textPersonName|textCapWords"
                 android:textSize="@dimen/_14sdp" />
 
             <EditText
@@ -55,7 +55,7 @@
                 android:fontFamily="@font/font_regular"
                 android:gravity="top"
                 android:hint="Description"
-                android:inputType="text"
+                android:inputType="text|textCapWords"
                 android:lines="2"
                 android:maxLines="5"
                 android:singleLine="false"

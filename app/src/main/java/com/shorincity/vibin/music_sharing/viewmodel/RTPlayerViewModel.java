@@ -25,8 +25,9 @@ public class RTPlayerViewModel {
     private int currentIndex = 0;
     private int lengthms = 270000;
     private int elapsedSongTime = 0;
-    private String songName;
-    private boolean isStart = false;
+    private String songName, trackId = "";
+    private boolean isStart = false, isNewMsg = false;
+    private int userId;
 
     public RTPlayerViewModel() {
         playlist = new ArrayList<>();
@@ -126,5 +127,29 @@ public class RTPlayerViewModel {
 
     public void setStart(boolean start) {
         isStart = start;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public boolean isNewMsg() {
+        return isNewMsg;
+    }
+
+    public void setNewMsg(boolean newMsg) {
+        isNewMsg = newMsg;
+    }
+
+    public String getTrackId() {
+        return trackId;
+    }
+
+    public void setTrackId(String trackId) {
+        this.trackId = trackId;
     }
 }

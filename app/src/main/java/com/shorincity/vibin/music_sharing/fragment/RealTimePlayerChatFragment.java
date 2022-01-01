@@ -1,10 +1,12 @@
 package com.shorincity.vibin.music_sharing.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
@@ -53,10 +55,18 @@ public class RealTimePlayerChatFragment extends MyBaseFragment implements RealTi
             if (!TextUtils.isEmpty(binding.etMsg.getText())) {
                 ((RealTimePlayerActivity) getActivity()).sendChatMessage(binding.etMsg.getText().toString());
                 binding.etMsg.setText("");
+                hideKeyboard();
             }
         });
         binding.rvSongs.scrollToPosition(list.size() - 1);
         binding.tvName.setText(songName);
+    }
+
+    private void hideKeyboard() {
+        if (getView() != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+        }
     }
 
     public void setChatList(ArrayList<Object> list) {

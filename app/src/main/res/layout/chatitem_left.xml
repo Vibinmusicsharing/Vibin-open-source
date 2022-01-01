@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="@dimen/_8sdp"
-    android:paddingBottom="@dimen/_8sdp">
+    android:paddingTop="@dimen/_4sdp"
+    android:paddingEnd="@dimen/_20sdp"
+    android:paddingBottom="@dimen/_4sdp">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -17,25 +18,48 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            android:layout_marginTop="7dp">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivProfile"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:background="@drawable/bg_chat_editbox" />
         </FrameLayout>
 
-        <TextView
-            android:id="@+id/chatItem_right_text"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/font_medium"
-            android:padding="7dp"
-            android:textColor="@color/textColor"
-            android:textSize="16sp"
-            tools:text="test msg one" />
+            android:layout_weight="1"
+            android:background="@drawable/bg_chat_left"
+            android:orientation="vertical"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:paddingStart="@dimen/_20sdp"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_20sdp"
+            android:paddingBottom="@dimen/_10sdp">
 
+
+            <TextView
+                android:id="@+id/tvSenderName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/font_extra_bold"
+                android:textColor="@color/counterColor"
+                android:textSize="12sp"
+                tools:text="Name" />
+
+            <TextView
+                android:id="@+id/chatItem_right_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/font_medium"
+                android:textColor="@color/textColor"
+                android:textSize="14sp"
+                android:text="1231"/>
+
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>

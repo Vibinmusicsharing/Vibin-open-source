@@ -8,9 +8,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.activity.SelectMusicGenreActivity;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
-import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
 import com.shorincity.vibin.music_sharing.model.MusicLanguageModel;
 import com.shorincity.vibin.music_sharing.model.Resource;
 import com.shorincity.vibin.music_sharing.model.SignUpResponse;
@@ -31,18 +29,31 @@ public class SelectMusicGenreViewModel extends ViewModel {
     }
 
     private void setList() {
-        list.add(new MusicLanguageModel(R.drawable.blues, R.drawable.selected_blues, "Blues", false));
-        list.add(new MusicLanguageModel(R.drawable.classical, R.drawable.selected_classical, "Classical", false));
-        list.add(new MusicLanguageModel(R.drawable.country_side, R.drawable.selected_country_side, "Country side", false));
-        list.add(new MusicLanguageModel(R.drawable.disco, R.drawable.selected_disco, "Disco", false));
-        list.add(new MusicLanguageModel(R.drawable.hiphop, R.drawable.selected_hiphop, "Hiphop", false));
-        list.add(new MusicLanguageModel(R.drawable.jazz, R.drawable.selected_jazz, "Jazz", false));
-        list.add(new MusicLanguageModel(R.drawable.k_pop, R.drawable.selected_k_pop, "K pop", false));
-        list.add(new MusicLanguageModel(R.drawable.metal, R.drawable.selected_metal, "Metal", false));
-        list.add(new MusicLanguageModel(R.drawable.rock, R.drawable.selected_rock, "Rock", false));
-        list.add(new MusicLanguageModel(R.drawable.romantic, R.drawable.selected_romantic, "Romantic", false));
-        list.add(new MusicLanguageModel(R.drawable.urban, R.drawable.selected_urban, "Urban", false));
-        list.add(new MusicLanguageModel(R.drawable.workout, R.drawable.selected_workout, "Workout", false));
+        list.add(new MusicLanguageModel(R.drawable.acoustic, R.drawable.acoustic_selected, "Acoustic", false));
+        list.add(new MusicLanguageModel(R.drawable.alternative, R.drawable.alternative_selected, "Alternative", false));
+        list.add(new MusicLanguageModel(R.drawable.blues, R.drawable.blues_selected, "Blues", false));
+        list.add(new MusicLanguageModel(R.drawable.chillout, R.drawable.chillout_selected, "Chillout", false));
+        list.add(new MusicLanguageModel(R.drawable.dance, R.drawable.dance_selected, "Dance", false));
+        list.add(new MusicLanguageModel(R.drawable.electronic, R.drawable.electronic_selected, "Electronic", false));
+        list.add(new MusicLanguageModel(R.drawable.electronica, R.drawable.electronica_selected, "Electronica", false));
+        list.add(new MusicLanguageModel(R.drawable.folk, R.drawable.folk_selected, "Folk", false));
+        list.add(new MusicLanguageModel(R.drawable.funk, R.drawable.funk_selected, "Funk", false));
+        list.add(new MusicLanguageModel(R.drawable.heavy_metal, R.drawable.heavy_metal_selected, "Heavy Metal", false));
+        list.add(new MusicLanguageModel(R.drawable.hiphop, R.drawable.hiphop_selected, "Hiphop", false));
+        list.add(new MusicLanguageModel(R.drawable.house, R.drawable.house_selected, "House", false));
+        list.add(new MusicLanguageModel(R.drawable.indie, R.drawable.indie_selected, "Indie", false));
+        list.add(new MusicLanguageModel(R.drawable.jazz, R.drawable.jazz_selected, "Jazz", false));
+        list.add(new MusicLanguageModel(R.drawable.metal, R.drawable.metal_selected, "Metal", false));
+        list.add(new MusicLanguageModel(R.drawable.pop, R.drawable.pop_selected, "Pop", false));
+        list.add(new MusicLanguageModel(R.drawable.rock, R.drawable.rock_selected, "Rock", false));
+
+//        list.add(new MusicLanguageModel(R.drawable.classical, R.drawable.selected_classical, "Classical", false));
+//        list.add(new MusicLanguageModel(R.drawable.country_side, R.drawable.selected_country_side, "Country side", false));
+//        list.add(new MusicLanguageModel(R.drawable.disco, R.drawable.selected_disco, "Disco", false));
+//        list.add(new MusicLanguageModel(R.drawable.k_pop, R.drawable.selected_k_pop, "K pop", false));
+//        list.add(new MusicLanguageModel(R.drawable.romantic, R.drawable.selected_romantic, "Romantic", false));
+//        list.add(new MusicLanguageModel(R.drawable.urban, R.drawable.selected_urban, "Urban", false));
+//        list.add(new MusicLanguageModel(R.drawable.workout, R.drawable.selected_workout, "Workout", false));
         copyList.addAll(list);
     }
 

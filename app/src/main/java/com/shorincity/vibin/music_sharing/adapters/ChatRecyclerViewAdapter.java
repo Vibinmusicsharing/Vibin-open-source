@@ -67,6 +67,12 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
     @Override
     public void onBindViewHolder(ChatViewHolder holder, int position) {
         Object obj = chatMessages.get(position);
+        int lastPos = position - 1;
+
+        Object lastObj = null;
+        if (lastPos > 0) {
+            lastObj = chatMessages.get(lastPos);
+        }
 
         try {
             if (holder instanceof JoinChatViewHolder) {
@@ -74,11 +80,25 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
             } else if (holder instanceof RightChatViewHolder) {
                 ChatResponse chatResponse = (ChatResponse) obj;
                 ((RightChatViewHolder) holder).contents.setText(chatResponse.getMessageData().getSenderMessage());
+                ((RightChatViewHolder) holder).tvSenderName.setText(chatResponse.getMessageData().getSenderName());
                 Glide.with(mContext).load(chatResponse.getMessageData().getSenderAvatar()).circleCrop().into(((RightChatViewHolder) holder).ivProfile);
+                if (lastObj instanceof ChatResponse &&
+                        ((ChatResponse) lastObj).getMessageData().getSenderId().equals(((ChatResponse) obj).getMessageData().getSenderId())) {
+                    ((RightChatViewHolder) holder).ivProfile.setVisibility(View.INVISIBLE);
+                } else {
+                    ((RightChatViewHolder) holder).ivProfile.setVisibility(View.VISIBLE);
+                }
             } else if (holder instanceof LeftChatViewHolder) {
                 ChatResponse chatResponse = (ChatResponse) obj;
                 ((LeftChatViewHolder) holder).contents.setText(chatResponse.getMessageData().getSenderMessage());
+                ((LeftChatViewHolder) holder).tvSenderName.setText(chatResponse.getMessageData().getSenderName());
                 Glide.with(mContext).load(chatResponse.getMessageData().getSenderAvatar()).circleCrop().into(((LeftChatViewHolder) holder).ivProfile);
+                if (lastObj instanceof ChatResponse &&
+                        ((ChatResponse) lastObj).getMessageData().getSenderId().equals(((ChatResponse) obj).getMessageData().getSenderId())) {
+                    ((LeftChatViewHolder) holder).ivProfile.setVisibility(View.INVISIBLE);
+                } else {
+                    ((LeftChatViewHolder) holder).ivProfile.setVisibility(View.VISIBLE);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,23 +118,25 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
     }
 
     static class LeftChatViewHolder extends ChatViewHolder {
-        TextView contents;
+        TextView contents, tvSenderName;
         AppCompatImageView ivProfile;
 
         public LeftChatViewHolder(View itemView) {
             super(itemView);
             contents = itemView.findViewById(R.id.chatItem_right_text);
+            tvSenderName = itemView.findViewById(R.id.tvSenderName);
             ivProfile = itemView.findViewById(R.id.ivProfile);
         }
     }
 
     static class RightChatViewHolder extends ChatViewHolder {
-        TextView contents;
+        TextView contents, tvSenderName;
         AppCompatImageView ivProfile;
 
         public RightChatViewHolder(View itemView) {
             super(itemView);
-            contents = (TextView) itemView.findViewById(R.id.chatItem_right_text);
+            contents = itemView.findViewById(R.id.chatItem_right_text);
+            tvSenderName = itemView.findViewById(R.id.tvSenderName);
             ivProfile = itemView.findViewById(R.id.ivProfile);
         }
     }

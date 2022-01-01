@@ -10,7 +10,7 @@ public class RTConnect {
     @SerializedName("status")
     private String mStatus;
     @SerializedName("type")
-    private String type;
+    private String mType;
 
     public Data getData() {
         return mData;
@@ -29,10 +29,11 @@ public class RTConnect {
     }
 
     public String getType() {
-        return type;
+        return mType;
     }
 
     public void setType(String type) {
-        this.type = type;
+        mType = type;
     }
+
 }

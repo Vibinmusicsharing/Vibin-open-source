@@ -97,7 +97,7 @@ public class PlaylistDetailFragment extends MyBaseFragment {
 
     private View view;
     private Context mContext;
-    private String view_collabUrl = AppConstants.BASE_URL + "playlist/view_collab/";
+    private String view_collabUrl = AppConstants.BASE_URL + "playlist/v1/view_collab/";
     private int id;
     private PopupWindow popupWindow = null;
     private ArrayList<ViewCollab> viewcollabList;

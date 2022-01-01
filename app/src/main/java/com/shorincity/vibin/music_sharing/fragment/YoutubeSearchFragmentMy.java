@@ -222,7 +222,7 @@ public class YoutubeSearchFragmentMy extends MyBaseFragment {
             @Override
             public void onFailure(Call<ModelData> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(),  getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
 

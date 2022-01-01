@@ -51,9 +51,9 @@
             android:layout_marginEnd="@dimen/_12sdp"
             android:drawableEnd="@drawable/ic_search"
             android:hint="Search"
-            android:text="@={viewModel.search}"
             android:paddingTop="@dimen/_16sdp"
             android:paddingBottom="16dp"
+            android:text="@={viewModel.search}"
             android:textColor="@color/black" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -89,8 +89,8 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/flNext"
-                android:layout_width="@dimen/_60sdp"
-                android:layout_height="@dimen/_60sdp"
+                android:layout_width="@dimen/btn_round_size_60"
+                android:layout_height="@dimen/btn_round_size_60"
                 android:layout_gravity="center"
                 android:background="@drawable/ic_round_btn"
                 android:clickable="@{isNextButtonEnable}"

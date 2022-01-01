@@ -6,12 +6,14 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -39,6 +41,7 @@ import com.shorincity.vibin.music_sharing.fragment.RealTimeListnerFragment;
 import com.shorincity.vibin.music_sharing.fragment.RealTimeListnerSongsFragment;
 import com.shorincity.vibin.music_sharing.fragment.RealTimePlayerChatFragment;
 import com.shorincity.vibin.music_sharing.fragment.RealTimePlayerFragment;
+import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.realtime.ChatResponse;
 import com.shorincity.vibin.music_sharing.model.realtime.RTConnect;
 import com.shorincity.vibin.music_sharing.model.realtime.RTJoinUpdate;
@@ -55,6 +58,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Random;
 
 import javax.net.ssl.SSLContext;
@@ -76,10 +80,28 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
     private int suffleNo;
     private boolean isConnected = true;
 
+    private ViewTreeObserver.OnGlobalLayoutListener keyboardLayoutListener = () -> {
+        Rect r = new Rect();
+        binding.llMain.getWindowVisibleDisplayFrame(r);
+        int screenHeight = binding.llMain.getRootView().getHeight();
+        int keypadHeight = screenHeight - r.bottom;
+
+//        int heightDiff = binding.llMain.getRootView().getHeight() - binding.llMain.getHeight();
+//        int contentViewTop = getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
+        if (keypadHeight > screenHeight * 0.15) {
+            binding.setIsBottomNavVisible(false);
+            Logging.d("==> Key board open");
+        } else {
+            binding.setIsBottomNavVisible(true);
+            Logging.d("==> Key board close");
+        }
+    };
+
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_real_time_player);
+        binding.setIsBottomNavVisible(true);
         statusBarColorChange();
         getIntentData();
         initWebSocket();
@@ -93,6 +115,44 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.flMain);
+        if (fragment instanceof RealTimePlayerFragment) {
+            ((RealTimePlayerFragment) fragment).setPlayPause(player != null && player.isPlaying());
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isAdmin) {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("update_type", "broadcast_update_playback");
+                jsonObject.put("session_playback", AppConstants.PAUSE);
+                jsonObject.put("song_playing", viewModel.getCurrentIndex());
+                jsonObject.put("elapsed_song_time", String.valueOf(viewModel.getElapsedSongTime()));
+                if (rtConnect != null && rtConnect.getData() != null) {
+                    jsonObject.put("is_repeat", rtConnect.getData().isRepeat());
+                    jsonObject.put("is_shuffle", rtConnect.getData().isShuffle());
+                } else {
+                    jsonObject.put("is_repeat", false);
+                    jsonObject.put("is_shuffle", false);
+                }
+
+                if (!viewModel.isStart())
+                    viewModel.setStart(true);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Logging.d("==>" + jsonObject.toString());
+            webSocketClient.sendText(jsonObject.toString());
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (webSocketClient != null)
@@ -103,11 +163,15 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
 
         if (pollUpdateHandler != null && pollUpdateRunnable != null)
             pollUpdateHandler.removeCallbacks(pollUpdateRunnable);
+
+        binding.llMain.getViewTreeObserver().removeGlobalOnLayoutListener(keyboardLayoutListener);
     }
 
     private void initWebSocket() {
         try {
             int userId = SharedPrefManager.getInstance(this).getSharedPrefInt(AppConstants.INTENT_USER_ID);
+            viewModel.setUserId(userId);
+
             WebSocketFactory factory = new WebSocketFactory();
             SSLContext context = NaiveSSLContext.getInstance("TLS");
             factory.setSSLContext(context);
@@ -123,20 +187,27 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
             @Override
             public void onTextMessage(WebSocket websocket, String message) {
                 // Received a text message.
-                Log.d("LOGTAG", "==>" + message);
                 try {
 
                     JSONObject object = new JSONObject(message);
-                    if (object.has("status")) {
+                    if (object.has("status") &&
+                            !object.getString("type").equalsIgnoreCase("poll_update"))
+                        Log.d("LOGTAG", "==>WebSocket" + message);
+
+                    if (object.has("status") &&
+                            object.getString("status").equalsIgnoreCase("connected")) {
                         rtConnect = new Gson().fromJson(message, RTConnect.class);
                     } else if (object.has("type")) {
+
                         String type = object.getString("type");
                         switch (type) {
+                            case "poll_update":
+                                return;
                             case "joining_update":
                             case "leaving_update": {
                                 RTJoinUpdate rtJoinUpdate = new Gson().fromJson(message, RTJoinUpdate.class);
                                 showBadge(binding.navView, R.id.navigation_listener, rtJoinUpdate.getTotalJoined().intValue(),
-                                        rtJoinUpdate.getTotalJoined() > 0L);
+                                        rtJoinUpdate.getTotalJoined() > 0L, true);
                                 viewModel.addChatResponse(rtJoinUpdate);
                                 if (rtJoinUpdate.getUserIdLeft() != null) {
                                     for (int i = 0; i < viewModel.getRtListnersList().size(); i++) {
@@ -148,10 +219,8 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
                                     }
                                 }
 
-                                int userId = SharedPrefManager
-                                        .getInstance(RealTimePlayerActivity.this)
-                                        .getSharedPrefInt(AppConstants.INTENT_USER_ID);
-                                if (rtJoinUpdate.getUserIdLeft() == userId) {
+                                if (rtJoinUpdate.getUserIdLeft() != null &&
+                                        rtJoinUpdate.getUserIdLeft().intValue() == viewModel.getUserId()) {
                                     runOnUiThread(() -> {
                                         alertDialogShow("You are removed by admin.");
                                     });
@@ -170,6 +239,13 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
                             }
                             case "broadcast_update_playback": {
                                 rtConnect = new Gson().fromJson(message, RTConnect.class);
+                                runOnUiThread(() -> {
+                                    Fragment fragment = getFragmentManager().findFragmentById(R.id.flMain);
+                                    if (fragment instanceof RealTimePlayerFragment && rtConnect != null
+                                            && rtConnect.getData() != null) {
+                                        ((RealTimePlayerFragment) fragment).setRepeatAndShuffle(rtConnect.getData().isRepeat(), rtConnect.getData().isShuffle());
+                                    }
+                                });
                                 break;
                             }
                             case "send_chat": {
@@ -179,6 +255,11 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
                                     Fragment fragment = getFragmentManager().findFragmentById(R.id.flMain);
                                     if (fragment instanceof RealTimePlayerChatFragment) {
                                         ((RealTimePlayerChatFragment) fragment).notifyItemAdded();
+                                    } else {
+                                        viewModel.setNewMsg(true);
+                                        if (chatResponse.getMessageData().getSenderId() != viewModel.getUserId())
+                                            showBadge(binding.navView, R.id.navigation_chat, 0,
+                                                    true, false);
                                     }
                                 });
                                 return;
@@ -224,6 +305,7 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
                         } else if (rtConnect.getData().getSessionPlayback().equalsIgnoreCase(AppConstants.SEEKSONG)) {
                             player.seekToMillis(viewModel.getElapsedSongTime());
                         } else {
+                            player.seekToMillis(viewModel.getElapsedSongTime());
                             player.play();
                             runOnUiThread(() -> {
                                 Fragment fragment = getFragmentManager().findFragmentById(R.id.flMain);
@@ -285,7 +367,7 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
             }
             Logging.d("==>" + jsonObject.toString());
             webSocketClient.sendText(jsonObject.toString());
-//            pollUpdateHandler.postDelayed(pollUpdateRunnable, 500);
+            pollUpdateHandler.postDelayed(pollUpdateRunnable, 200);
         };
 
     }
@@ -296,18 +378,21 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
         binding.myYoutube.initialize(AppConstants.YOUTUBE_KEY, this);
 
         binding.tvEnd.setOnClickListener(v -> {
-            if (isAdmin) {
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("update_type", "end_session");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Logging.d("==>" + jsonObject.toString());
-                webSocketClient.sendText(jsonObject.toString());
-            }
-            webSocketClient.disconnect();
-            finish();
+
+            String msg = isAdmin ? "Are you sure you want to end session?" : "Are you sure you want to leave session?";
+            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+            alertDialog.setTitle(getResources().getString(R.string.app_name));
+            alertDialog.setMessage(msg);
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+                    (dialog, which) -> {
+                        dialog.dismiss();
+                        endSession();
+                    });
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
+                    (dialog, which) -> {
+                        dialog.dismiss();
+                    });
+            alertDialog.show();
         });
 
         binding.navView.setOnItemSelectedListener(item -> {
@@ -322,18 +407,7 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
 
                 case R.id.navigation_playlist: {
                     binding.llMain.setBackgroundColor(ContextCompat.getColor(RealTimePlayerActivity.this, R.color.white));
-                    if (isAdmin) {
-                        RealTimePlayerFragment fragment = RealTimePlayerFragment.getInstance(playlistId);
-                        setFragment(fragment);
-                        fragment.setSongName(viewModel.getSongName());
-                        fragment.setPlaylistList(viewModel.getPlaylist());
-                        fragment.setPlayPause(player != null && player.isPlaying());
-                    } else {
-                        RealTimeListnerSongsFragment fragment = RealTimeListnerSongsFragment.getInstance();
-                        setFragment(fragment);
-                        fragment.setSongName(viewModel.getSongName());
-                        fragment.setPlaylistList(viewModel.getPlaylist());
-                    }
+                    loadPlayerFragment();
                     return true;
                 }
                 case R.id.navigation_chat:
@@ -342,6 +416,8 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
                     chatFragment.setSongName(viewModel.getSongName());
                     chatFragment.setChatList(viewModel.getChatList());
                     setFragment(chatFragment);
+                    showBadge(binding.navView, R.id.navigation_chat, 0,
+                            false, false);
                     return true;
 
                 default:
@@ -373,8 +449,45 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
 
             }
         });
+        binding.llMain.getViewTreeObserver().addOnGlobalLayoutListener(keyboardLayoutListener);
 
         processSeekBar();
+    }
+
+    private void loadPlayerFragment() {
+        if (isAdmin) {
+            RealTimePlayerFragment fragment = RealTimePlayerFragment.getInstance(playlistId);
+            setFragment(fragment);
+            fragment.setSongName(viewModel.getSongName());
+            fragment.setPlaylistList(viewModel.getPlaylist());
+            fragment.setPlayPause(player != null && player.isPlaying());
+            fragment.setTrackId(viewModel.getTrackId());
+            if (player != null) {
+                float current = player.getCurrentTimeMillis();
+                float wowInt = ((current / viewModel.getLengthms()) * 100);
+                fragment.setProgress((int) wowInt, (int) current, player.getDurationMillis());
+            }
+        } else {
+            RealTimeListnerSongsFragment fragment = RealTimeListnerSongsFragment.getInstance();
+            setFragment(fragment);
+            fragment.setSongName(viewModel.getSongName());
+            fragment.setPlaylistList(viewModel.getPlaylist());
+        }
+    }
+
+    private void endSession() {
+        if (isAdmin) {
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("update_type", "end_session");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Logging.d("==>" + jsonObject.toString());
+            webSocketClient.sendText(jsonObject.toString());
+        }
+        webSocketClient.disconnect();
+        finish();
     }
 
     private void setFragment(Fragment fragment) {
@@ -399,11 +512,12 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
         }
     }
 
-    private void showBadge(BottomNavigationView
-                                   bottomNavigationView, @IdRes int itemId, int value, boolean isShow) {
+    private void showBadge(BottomNavigationView bottomNavigationView, @IdRes int itemId,
+                           int value, boolean isShow, boolean showNumber) {
 
         BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(itemId);
-        badgeDrawable.setNumber(value);
+        if (showNumber)
+            badgeDrawable.setNumber(value);
         badgeDrawable.setVisible(isShow);
     }
 
@@ -412,10 +526,26 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle(getResources().getString(R.string.app_name));
         alertDialog.setMessage(message);
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Ok",
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Ok",
                 (dialog, which) -> {
                     dialog.dismiss();
                     finish();
+                });
+        alertDialog.show();
+    }
+
+    private void repeatOrExitDialog() {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle(getResources().getString(R.string.app_name));
+        alertDialog.setMessage("Would you like to start from first song or want to exit?");
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Restart",
+                (dialog, which) -> {
+                    viewModel.setCurrentIndex(0);
+                    callBroadcastUpdate(AppConstants.CHANGED);
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Exit",
+                (dialog, which) -> {
+                    endSession();
                 });
         alertDialog.show();
     }
@@ -454,6 +584,9 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
     public void callBroadcastUpdate(String status) {
         JSONObject jsonObject = new JSONObject();
         try {
+            if (status.equalsIgnoreCase(AppConstants.CHANGED)) {
+                viewModel.setElapsedSongTime(0);
+            }
             jsonObject.put("update_type", "broadcast_update_playback");
             jsonObject.put("session_playback", status);
             jsonObject.put("song_playing", viewModel.getCurrentIndex());
@@ -587,8 +720,10 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
         if (viewModel.getPlaylist() == null || viewModel.getPlaylist().size() == 0)
             return;
 
-        viewModel.setSongName(viewModel.getPlaylist().get(songPosition).getName());
-        player.loadVideo(viewModel.getPlaylist().get(songPosition).getTrackId());
+        PlaylistDetailModel model = viewModel.getPlaylist().get(songPosition);
+        viewModel.setSongName(model.getName());
+        viewModel.setTrackId(model.getTrackId());
+        player.loadVideo(model.getTrackId());
         player.seekToMillis(viewModel.getElapsedSongTime());
 
         runOnUiThread(() -> {
@@ -599,6 +734,7 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
 
             if (fragment instanceof RealTimePlayerFragment) {
                 ((RealTimePlayerFragment) fragment).setPlayPause(player.isPlaying());
+                ((RealTimePlayerFragment) fragment).setTrackId(viewModel.getTrackId());
             }
         });
 
@@ -609,7 +745,7 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
             youTubePlayer, boolean b) {
 
         this.player = youTubePlayer;
-        youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
+        youTubePlayer.setPlayerStyle(isAdmin ? YouTubePlayer.PlayerStyle.DEFAULT : YouTubePlayer.PlayerStyle.CHROMELESS);
         youTubePlayer.setPlayerStateChangeListener(playerStateChangeListener);
         youTubePlayer.setPlaybackEventListener(playbackEventListener);
     }
@@ -628,17 +764,68 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
 
         @Override
         public void onPlaying() {
+            Logging.d("==>youtubePlayer  onPlaying()");
             Fragment fragment = getFragmentManager().findFragmentById(R.id.flMain);
             if (fragment instanceof RealTimePlayerFragment) {
                 ((RealTimePlayerFragment) fragment).setPlayPause(true);
+            }
+
+            if (isAdmin && rtConnect != null && !rtConnect.getData().getSessionPlayback().equalsIgnoreCase(AppConstants.PLAY)) {
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("update_type", "broadcast_update_playback");
+                    jsonObject.put("session_playback", AppConstants.PLAY);
+                    jsonObject.put("song_playing", viewModel.getCurrentIndex());
+                    jsonObject.put("elapsed_song_time", String.valueOf(viewModel.getElapsedSongTime()));
+                    if (rtConnect != null && rtConnect.getData() != null) {
+                        jsonObject.put("is_repeat", rtConnect.getData().isRepeat());
+                        jsonObject.put("is_shuffle", rtConnect.getData().isShuffle());
+                    } else {
+                        jsonObject.put("is_repeat", false);
+                        jsonObject.put("is_shuffle", false);
+                    }
+
+                    if (!viewModel.isStart())
+                        viewModel.setStart(true);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Logging.d("==>" + jsonObject.toString());
+                webSocketClient.sendText(jsonObject.toString());
             }
         }
 
         @Override
         public void onPaused() {
+            Logging.d("==>youtubePlayer  onPaused()");
             Fragment fragment = getFragmentManager().findFragmentById(R.id.flMain);
             if (fragment instanceof RealTimePlayerFragment) {
                 ((RealTimePlayerFragment) fragment).setPlayPause(false);
+            }
+            if (isAdmin && rtConnect != null && !rtConnect.getData().getSessionPlayback().equalsIgnoreCase(AppConstants.PAUSE)) {
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("update_type", "broadcast_update_playback");
+                    jsonObject.put("session_playback", AppConstants.PAUSE);
+                    jsonObject.put("song_playing", viewModel.getCurrentIndex());
+                    jsonObject.put("elapsed_song_time", String.valueOf(viewModel.getElapsedSongTime()));
+                    if (rtConnect != null && rtConnect.getData() != null) {
+                        jsonObject.put("is_repeat", rtConnect.getData().isRepeat());
+                        jsonObject.put("is_shuffle", rtConnect.getData().isShuffle());
+                    } else {
+                        jsonObject.put("is_repeat", false);
+                        jsonObject.put("is_shuffle", false);
+                    }
+
+                    if (!viewModel.isStart())
+                        viewModel.setStart(true);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Logging.d("==>" + jsonObject.toString());
+                webSocketClient.sendText(jsonObject.toString());
             }
         }
 
@@ -706,7 +893,7 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
                     viewModel.setCurrentIndex(songPosition);
                     callBroadcastUpdate(AppConstants.CHANGED);
                 } else {
-                    binding.tvEnd.callOnClick();
+                    repeatOrExitDialog();
                 }
             }
         }
@@ -718,7 +905,7 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
 
     }
 
-    public int suffleNo(int currentPos) {
+    private int suffleNo(int currentPos) {
         Random random = new Random();
         suffleNo = random.nextInt(viewModel.getPlaylist().size() - 1);
         if (suffleNo == currentPos)
@@ -741,16 +928,9 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
                 fragment instanceof RealTimeListnerSongsFragment) {
             alertDialogShow("Are you sure you want to leave?");
 //            super.onBackPressed();
-        } else if (isAdmin) {
-            binding.navView.getMenu().getItem(1).setChecked(true);
-            RealTimePlayerFragment fragmentPlayer = RealTimePlayerFragment.getInstance(playlistId);
-            setFragment(fragmentPlayer);
-            fragmentPlayer.setPlaylistList(viewModel.getPlaylist());
         } else {
             binding.navView.getMenu().getItem(1).setChecked(true);
-            RealTimeListnerSongsFragment fragmentSong = RealTimeListnerSongsFragment.getInstance();
-            setFragment(fragmentSong);
-            fragmentSong.setPlaylistList(viewModel.getPlaylist());
+            loadPlayerFragment();
         }
     }
 }

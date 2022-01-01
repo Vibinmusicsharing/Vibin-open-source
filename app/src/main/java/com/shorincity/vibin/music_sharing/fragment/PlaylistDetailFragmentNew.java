@@ -1,9 +1,12 @@
 package com.shorincity.vibin.music_sharing.fragment;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Editable;
@@ -15,14 +18,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SearchView;
@@ -41,6 +47,7 @@ import com.giphy.sdk.ui.views.GiphyGridView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -56,12 +63,14 @@ import com.shorincity.vibin.music_sharing.adapters.PlaylistDetailsViewPagerAdapt
 import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
 import com.shorincity.vibin.music_sharing.databinding.BottomsheetPlaylistPassowrdBinding;
 import com.shorincity.vibin.music_sharing.databinding.FragmentPlaylistDetailBinding;
+import com.shorincity.vibin.music_sharing.databinding.LayoutPlaylistListnerMenuBinding;
 import com.shorincity.vibin.music_sharing.databinding.PlaylistDetailsMenuBinding;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.CreateSessionModel;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlayListDeleteModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
+import com.shorincity.vibin.music_sharing.model.PlaylistSongCollabDeleteModel;
 import com.shorincity.vibin.music_sharing.model.firebase.RealTimeModel;
 import com.shorincity.vibin.music_sharing.model.firebase.RealTimeSession;
 import com.shorincity.vibin.music_sharing.model.firebase.RealTimeUser;
@@ -141,33 +150,80 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
 
             binding.ivMenu.setOnClickListener(v -> {
                 LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                PlaylistDetailsMenuBinding popupView = DataBindingUtil.inflate(layoutInflater, R.layout.playlist_details_menu, null, false);
+                PopupWindow popupWindow;
+                if (viewModel.isAdmin()) {
+                    PlaylistDetailsMenuBinding popupView = DataBindingUtil.inflate(layoutInflater, R.layout.playlist_details_menu, null, false);
 
-                PopupWindow popupWindow = new PopupWindow(
-                        popupView.getRoot(),
-                        CommonUtils.dpToPx(300, context),
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
+                    popupWindow = new PopupWindow(
+                            popupView.getRoot(),
+                            CommonUtils.dpToPx(300, context),
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
 
-                popupView.llEditPlaylist.setOnClickListener(v1 -> {
-                    popupWindow.dismiss();
-                    openEditPlaylistBottomsheet();
-                });
-                popupView.llDeletePlaylist.setOnClickListener(v1 -> {
-                    popupWindow.dismiss();
-                    deletePlayList();
-                });
-                popupView.llShare.setOnClickListener(v1 -> {
-                    popupWindow.dismiss();
-                });
-                popupView.llPrivate.setOnClickListener(v12 -> {
-                    popupWindow.dismiss();
-                    if (myPlaylistModel.getPrivate().equalsIgnoreCase("true")) {
-                        callUpdateDetails("", "false", null);
-                    } else
-                        openSetPassword();
-                });
+                    popupView.llEditPlaylist.setOnClickListener(v1 -> {
+                        popupWindow.dismiss();
+                        openEditPlaylistBottomsheet();
+                    });
+                    popupView.llDeletePlaylist.setOnClickListener(v1 -> {
+                        popupWindow.dismiss();
+                        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+                        View view1 = LayoutInflater.from(context).inflate(R.layout.dialog_delete_playlist, null, false);
+                        alertDialog.setView(view1);
+                        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        alertDialog.setCancelable(false);
 
-                popupView.ivSwitch.setSelected(myPlaylistModel.getPrivate().equalsIgnoreCase("true"));
+                        TextView tvTitle = view1.findViewById(R.id.tvTitle);
+                        MaterialButton btnCancel = view1.findViewById(R.id.btnCancel);
+                        MaterialButton btnDelete = view1.findViewById(R.id.btnDelete);
+
+                        tvTitle.setText(String.format("Are you sure you want to delete \"%s\" playlist?", myPlaylistModel.getName()));
+                        btnCancel.setOnClickListener(v2 -> alertDialog.dismiss());
+                        btnDelete.setOnClickListener(v2 -> {
+                            deletePlayList();
+                            alertDialog.dismiss();
+                        });
+                        alertDialog.show();
+                    });
+                    popupView.llShare.setOnClickListener(v1 -> {
+                        popupWindow.dismiss();
+                    });
+                    popupView.llPrivate.setOnClickListener(v12 -> {
+                        popupWindow.dismiss();
+                        if (myPlaylistModel.getPrivate().equalsIgnoreCase("true")) {
+                            callUpdateDetails("", "false", null);
+                        } else
+                            openSetPassword();
+                    });
+
+                    popupView.ivSwitch.setSelected(myPlaylistModel.getPrivate().equalsIgnoreCase("true"));
+                } else {
+                    LayoutPlaylistListnerMenuBinding popupView = DataBindingUtil.inflate(layoutInflater, R.layout.layout_playlist_listner_menu, null, false);
+                    popupWindow = new PopupWindow(
+                            popupView.getRoot(),
+                            CommonUtils.dpToPx(300, context),
+                            CommonUtils.dpToPx(110, context));
+                    popupView.llLeave.setOnClickListener(v13 -> {
+                        popupWindow.dismiss();
+                        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+                        View view1 = LayoutInflater.from(context).inflate(R.layout.dialog_leave_playlist, null, false);
+                        alertDialog.setView(view1);
+                        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        alertDialog.setCancelable(false);
+
+                        TextView tvTitle = view1.findViewById(R.id.tvTitle);
+                        MaterialButton btnCancel = view1.findViewById(R.id.btnCancel);
+                        MaterialButton btnDelete = view1.findViewById(R.id.btnDelete);
+                        AppCompatCheckBox cbDeleteSongs = view1.findViewById(R.id.cbRemoveSongs);
+
+                        tvTitle.setText("Are you sure you want to Leave playlist?");
+                        btnCancel.setOnClickListener(v1 -> alertDialog.dismiss());
+                        btnDelete.setOnClickListener(v2 -> {
+                            alertDialog.dismiss();
+                            int userId1 = SharedPrefManager.getInstance(context).getSharedPrefInt(AppConstants.INTENT_USER_ID);
+                            callDeleteCollab(String.valueOf(userId1), cbDeleteSongs.isChecked());
+                        });
+                        alertDialog.show();
+                    });
+                }
                 popupWindow.setBackgroundDrawable(new BitmapDrawable());
                 popupWindow.setOutsideTouchable(true);
                 popupWindow.showAsDropDown(v);
@@ -292,6 +348,43 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
 
             @Override
             public void onFailure(Call<MyPlaylistModel> call, Throwable t) {
+                showMe.dismiss();
+                Toast.makeText(context,
+                        t.getLocalizedMessage(),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void callDeleteCollab(String collabId, boolean isDeleteSongs) {
+        ProgressDialog showMe = new ProgressDialog(context);
+        showMe.setMessage("Please wait");
+        showMe.setCancelable(true);
+        showMe.setCanceledOnTouchOutside(false);
+        showMe.show();
+
+        DataAPI dataAPI = RetrofitAPI.getData();
+        String token = AppConstants.TOKEN + SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+        Call<PlaylistSongCollabDeleteModel> callback = dataAPI.callDeleteSongsOrCollabApi(token,
+                SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
+                myPlaylistModel.getId(),
+                isDeleteSongs ? "all" : "", collabId);
+        callback.enqueue(new Callback<PlaylistSongCollabDeleteModel>() {
+            @Override
+            public void onResponse(Call<PlaylistSongCollabDeleteModel> call, retrofit2.Response<PlaylistSongCollabDeleteModel> response) {
+                showMe.dismiss();
+                if (response.body() != null &&
+                        response.body().getStatus().equalsIgnoreCase("success")) {
+                    binding.ivBack.callOnClick();
+                } else {
+                    Toast.makeText(context,
+                            (response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PlaylistSongCollabDeleteModel> call, Throwable t) {
                 showMe.dismiss();
                 Toast.makeText(context,
                         t.getLocalizedMessage(),
@@ -489,7 +582,7 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
         int userId = SharedPrefManager.getInstance(context).getSharedPrefInt(AppConstants.INTENT_USER_ID);
 
         if (playlist == null || playlist.size() == 0) {
-            Toast.makeText(context, "Please create a playlist first!", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Please add a song in playlist to start Live Sharing", Toast.LENGTH_LONG).show();
             return;
         } else if (viewcollabList == null || viewcollabList.size() == 0) {
             Toast.makeText(context, "Please create a collaborator first!", Toast.LENGTH_LONG).show();
@@ -522,7 +615,9 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
                                 .putExtra("admin_id", myPlaylistModel.getAdmin_id())
                                 .putExtra(AppConstants.INTENT_IS_ADMIN, true));
                     } else
-                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context,
+                                (response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!",
+                                Toast.LENGTH_LONG).show();
                 } else {
                 }
             }

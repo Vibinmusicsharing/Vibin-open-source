@@ -13,6 +13,10 @@ public class Data {
     private Long mId;
     @SerializedName("invited")
     private Long mInvited;
+    @SerializedName("is_repeat")
+    private Boolean mIsRepeat;
+    @SerializedName("is_shuffle")
+    private Boolean mIsShuffle;
     @SerializedName("joined")
     private Long mJoined;
     @SerializedName("playlist_id")
@@ -27,11 +31,6 @@ public class Data {
     private String mSessionToken;
     @SerializedName("song_playing")
     private Long mSongPlaying;
-    @SerializedName("is_repeat")
-    private Boolean isRepeat;
-    @SerializedName("is_shuffle")
-    private Boolean isShuffle;
-
 
     public Long getAdminId() {
         return mAdminId;
@@ -63,6 +62,22 @@ public class Data {
 
     public void setInvited(Long invited) {
         mInvited = invited;
+    }
+
+    public Boolean isRepeat() {
+        return mIsRepeat;
+    }
+
+    public void setIsRepeat(Boolean isRepeat) {
+        mIsRepeat = isRepeat;
+    }
+
+    public Boolean isShuffle() {
+        return mIsShuffle;
+    }
+
+    public void setIsShuffle(Boolean isShuffle) {
+        mIsShuffle = isShuffle;
     }
 
     public Long getJoined() {
@@ -121,19 +136,4 @@ public class Data {
         mSongPlaying = songPlaying;
     }
 
-    public Boolean isRepeat() {
-        return isRepeat;
-    }
-
-    public void setRepeat(Boolean repeat) {
-        isRepeat = repeat;
-    }
-
-    public Boolean isShuffle() {
-        return isShuffle;
-    }
-
-    public void setShuffle(Boolean shuffle) {
-        isShuffle = shuffle;
-    }
 }

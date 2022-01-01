@@ -74,7 +74,7 @@ import retrofit2.Callback;
 // RealTime Player
 public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener, View.OnClickListener {
     private static final String TAG = RealTimePlayer.class.getName();
-    private final String view_collab = AppConstants.BASE_URL + "playlist/view_collab/";
+    private final String view_collab = AppConstants.BASE_URL + "playlist/v1/view_collab/";
 
     private RealTimeModel realTimeModel;
 

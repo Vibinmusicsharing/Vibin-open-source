@@ -44,6 +44,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.shorincity.vibin.music_sharing.R;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.ContentApi;
@@ -682,7 +683,7 @@ public class RemotePlayerActivity extends FragmentActivity {
     }
 
     private void logError(Throwable throwable, String msg) {
-        Toast.makeText(this, "Error: " + msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,  getString(R.string.msg_network_failed), Toast.LENGTH_SHORT).show();
         Log.e(TAG, msg, throwable);
     }
 

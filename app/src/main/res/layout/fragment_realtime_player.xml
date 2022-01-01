@@ -96,7 +96,7 @@
                     android:layout_weight="1"
                     android:paddingTop="@dimen/_20sdp"
                     android:paddingBottom="@dimen/_20sdp"
-                    app:srcCompat="@drawable/ic_player_repeat" />
+                    app:srcCompat="@drawable/btn_repeat_selector" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivPrev"
@@ -130,7 +130,7 @@
                     android:layout_weight="1"
                     android:paddingTop="@dimen/_22sdp"
                     android:paddingBottom="@dimen/_22sdp"
-                    app:srcCompat="@drawable/ic_player_suffle" />
+                    app:srcCompat="@drawable/btn_shuffle_selector" />
             </LinearLayout>
 
         </LinearLayout>

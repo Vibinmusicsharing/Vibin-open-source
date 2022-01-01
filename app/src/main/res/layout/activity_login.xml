@@ -132,12 +132,12 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/google_sign_up_btn"
-            android:layout_width="@dimen/_70sdp"
-            android:layout_height="@dimen/_70sdp"
+            android:layout_width="@dimen/btn_round_size_70"
+            android:layout_height="@dimen/btn_round_size_70"
             android:layout_gravity="center"
-            android:layout_marginStart="@dimen/_20sdp"
-            android:onClick="@{(view) -> loginCallback.onGoogleClick()}"
+            android:layout_marginStart="@dimen/_30sdp"
             android:background="@drawable/btn_google"
+            android:onClick="@{(view) -> loginCallback.onGoogleClick()}"
             app:layout_constraintBottom_toBottomOf="@id/btnlogin_login"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/btnlogin_login" />
@@ -147,7 +147,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/font_regular"
             android:gravity="center"
-            android:text="Login with google"
+            android:text="Google login"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="@id/google_sign_up_btn"
             app:layout_constraintStart_toStartOf="@id/google_sign_up_btn"
@@ -167,13 +167,13 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnlogin_login"
-            android:layout_width="@dimen/_60sdp"
-            android:layout_height="@dimen/_60sdp"
+            android:layout_width="@dimen/btn_round_size_60"
+            android:layout_height="@dimen/btn_round_size_60"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/_20sdp"
-            android:layout_marginEnd="@dimen/_20sdp"
-            android:onClick="@{(view) -> loginCallback.onLoginClick()}"
+            android:layout_marginEnd="@dimen/_30sdp"
             android:background="@drawable/ic_round_btn"
+            android:onClick="@{(view) -> loginCallback.onLoginClick()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_forgot" />
 

@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -86,7 +87,7 @@ public class PlaylistCollaboratosFragment extends MyBaseFragment {
     private void initControls() {
         int userId = SharedPrefManager.getInstance(mContext).getSharedPrefInt(AppConstants.INTENT_USER_ID);
         playlistId = getArguments().getString(PLAYLIST_ID);
-        binding.rvSongs.setLayoutManager(new GridLayoutManager(binding.rvSongs.getContext(), 4));
+        binding.rvSongs.setLayoutManager(new GridLayoutManager(binding.rvSongs.getContext(), 5));
         binding.rvSongs.setAdapter(new PlaylistCollaboratosAdapter(mContext, viewModel.getViewcollabList(), viewModel.isAdmin(), userId, (type, position) -> {
             if (type == 0) {
                 ViewCollab collab = viewModel.getViewcollabList().get(position);
@@ -100,16 +101,29 @@ public class PlaylistCollaboratosFragment extends MyBaseFragment {
                 }
             }
         }));
+        binding.swipelayout.setRefreshing(true);
+
+        binding.swipelayout.setColorSchemeColors(
+                ContextCompat.getColor(binding.swipelayout.getContext(), R.color.counterColor),
+                ContextCompat.getColor(binding.swipelayout.getContext(), R.color.btn_bkgnd),
+                ContextCompat.getColor(binding.swipelayout.getContext(), R.color.orange));
+
+        binding.swipelayout.setOnRefreshListener(this::callCollabApi);
+        callCollabApi();
+    }
+
+    private void callCollabApi() {
         viewModel.getCollaboratorsList(mContext, playlistId, new PlaylistDetailCallback() {
             @Override
             public void onResponse() {
+                binding.swipelayout.setRefreshing(false);
                 if (binding.rvSongs.getAdapter() != null)
                     binding.rvSongs.getAdapter().notifyDataSetChanged();
             }
 
             @Override
             public void onError() {
-
+                binding.swipelayout.setRefreshing(false);
             }
         });
     }

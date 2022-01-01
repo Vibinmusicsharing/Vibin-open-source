@@ -5,23 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.util.Log;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
-import com.google.android.gms.auth.api.identity.BeginSignInResult;
 import com.google.android.gms.auth.api.identity.Identity;
 import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.auth.api.identity.SignInCredential;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.activity.SignUpDobActivity;
 import com.shorincity.vibin.music_sharing.model.SignUpResponse;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
@@ -34,6 +25,7 @@ public class OneTapLoginHelper {
     private SignInClient oneTapClient;
     private BeginSignInRequest signInRequest;
     public static final int REQ_ONE_TAP = 999;
+    private boolean isSignInClickable = true;
 
     public OneTapLoginHelper(Context context) {
         initOneTapClient(context);
@@ -58,21 +50,26 @@ public class OneTapLoginHelper {
     }
 
     public void signInClick(Activity activity) {
-        oneTapClient.beginSignIn(signInRequest)
-                .addOnSuccessListener(activity, result -> {
-                    try {
-                        activity.startIntentSenderForResult(
-                                result.getPendingIntent().getIntentSender(), REQ_ONE_TAP,
-                                null, 0, 0, 0);
-                    } catch (IntentSender.SendIntentException e) {
-                        Logging.d("Couldn't start One Tap UI: " + e.getLocalizedMessage());
-                    }
-                })
-                .addOnFailureListener(activity, e -> {
-                    // No saved credentials found. Launch the One Tap sign-up flow, or
-                    // do nothing and continue presenting the signed-out UI.
-                    Logging.d(e.getLocalizedMessage());
-                });
+        if (isSignInClickable) {
+            oneTapClient.beginSignIn(signInRequest)
+                    .addOnSuccessListener(activity, result -> {
+                        isSignInClickable = true;
+                        try {
+                            activity.startIntentSenderForResult(
+                                    result.getPendingIntent().getIntentSender(), REQ_ONE_TAP,
+                                    null, 0, 0, 0);
+                        } catch (IntentSender.SendIntentException e) {
+                            Logging.d("Couldn't start One Tap UI: " + e.getLocalizedMessage());
+                        }
+                    })
+                    .addOnFailureListener(activity, e -> {
+                        // No saved credentials found. Launch the One Tap sign-up flow, or
+                        // do nothing and continue presenting the signed-out UI.
+                        Logging.d(e.getLocalizedMessage());
+                        isSignInClickable = true;
+                    });
+            isSignInClickable = false;
+        }
     }
 
     public void handleResponse(Intent data, GoogleSignupCallback googleSignupCallback) {

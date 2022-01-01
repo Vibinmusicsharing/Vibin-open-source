@@ -66,8 +66,8 @@ public class SearchFragment extends MyBaseFragment {
     private View view;
     private Context mContext;
     private String key = "s";
-    private String url = AppConstants.BASE_URL + "playlist/search_playlist/";
-    private String addCollab = AppConstants.BASE_URL + "playlist/add_collab/";
+    private String url = AppConstants.BASE_URL + "playlist/v1/search_playlist/";
+    private String addCollab = AppConstants.BASE_URL + "playlist/v1/add_collab/";
     private Button searchButton;
     private ArrayList<searchItem> exampleItemList;
     private SearchAdapter exampleAdapter;

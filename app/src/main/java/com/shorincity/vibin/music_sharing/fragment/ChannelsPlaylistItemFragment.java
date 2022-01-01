@@ -198,7 +198,7 @@ public class ChannelsPlaylistItemFragment extends MyBaseFragment {
             @Override
             public void onFailure(Call<YoutubePlaylistItemModel> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(mContext, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext,  getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
 

@@ -15,7 +15,7 @@ public class AppConstants {
     public static String BASE_URL = "https://staging.vibin.in/";
 
     public static String LOGIN_SIGNUP_HEADER = "Token 774bf546e87365cade61170bcc9398707994d377";
-    public static String KEY_CODE="uVqLxiHDKIirly75dk9yr5sk097DsmYW1Abj2dh7746dggf";
+    public static String KEY_CODE = "uVqLxiHDKIirly75dk9yr5sk097DsmYW1Abj2dh7746dggf";
 
     // FPRGOT PASS URL
     public static String FORGOT_PASS_URL = BASE_URL + "user/password_reset/";
@@ -25,7 +25,8 @@ public class AppConstants {
 
     // Youtube Keys
     public static String YOUTUBE_KEY = "";
-    public static String LAST_FM_KEY = "1199ebd8c3b8ff51e042a8df41e99485";
+
+    public static String LAST_FM_KEY = "";
 
     // some static Keys
     public static final String KEY_PASSWORD = "password";
@@ -76,7 +77,7 @@ public class AppConstants {
     public static final String INTENT_LANGUAGE = "intentLanguages";
     public static final String INTENT_GENRES = "intentGenres";
     public static final String INTENT_IS_FROM_GOOGLE = "is_from_google";
-    public static final String INTENT_IS_ADMIN="is_admin";
+    public static final String INTENT_IS_ADMIN = "is_admin";
 
 
     public static final String TERMS_COND_KEY = "terms_cond_key";
@@ -131,7 +132,7 @@ public class AppConstants {
     public static String CHANGED = "CHANGED";
     public static String REPEAT = "REPEAT";
     public static String SUFFLE = "SUFFLE";
-    public static String SEEKSONG="SEEKSONG";
+    public static String SEEKSONG = "SEEKSONG";
 
     public static String ACCEPTED = "ACCEPTED";
     public static String REGECTED = "REGECTED";

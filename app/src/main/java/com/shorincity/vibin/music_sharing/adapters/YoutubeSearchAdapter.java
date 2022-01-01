@@ -47,7 +47,7 @@ public class YoutubeSearchAdapter extends RecyclerView.Adapter<YoutubeSearchAdap
     public YoutubeSearchAdapter(Context context, ArrayList<Track> exampleList) {
         mContext = context;
         list = exampleList;
-        apiService = RetrofitAPI.getLastFMData();
+        apiService = RetrofitAPI.getYoutubeData();
     }
 
     @NonNull
@@ -83,31 +83,27 @@ public class YoutubeSearchAdapter extends RecyclerView.Adapter<YoutubeSearchAdap
 
         if (currentItem.getModelData() == null) {
             if (!TextUtils.isEmpty(currentItem.getArtist()) && !TextUtils.isEmpty(currentItem.getName())) {
-                /*apiService.getResurt("snippet", currentItem.getArtist() + "+" + currentItem.getName(),
-                        "1", "video", "10", "true", AppConstants.YOUTUBE_KEY)*/
-                apiService.callTrackInfoApi(AppConstants.LAST_FM_KEY, currentItem.getName(), currentItem.getArtist(), "json")
-                        .enqueue(new Callback<TrackInfoResponse>() {
+                apiService.getResurt("snippet", currentItem.getArtist() + "+" + currentItem.getName(),
+                        "1", "video", "10", "true", AppConstants.YOUTUBE_KEY)
+                        .enqueue(new Callback<ModelData>() {
                             @Override
-                            public void onResponse(Call<TrackInfoResponse> call, Response<TrackInfoResponse> response) {
-                                TrackInfoResponse imageResponse = response.body();
-//                                currentItem.setModelData(imageResponse);
+                            public void onResponse(Call<ModelData> call, Response<ModelData> response) {
+                                ModelData imageResponse = response.body();
+                                currentItem.setModelData(imageResponse);
 //                                Logging.d("==>" + new Gson().toJson(imageResponse));
-                                if (imageResponse != null && imageResponse.getTrack() != null && imageResponse.getTrack().getAlbum() != null) {
-                                    Album trackInfo = imageResponse.getTrack().getAlbum();
-                                    if (trackInfo.getImage().size() > 0) {
-                                        String thumb = trackInfo.getImage().get(trackInfo.getImage().size() - 1).getText();
-                                        Glide.with(mContext)
-                                                .load(thumb)
-                                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                                .into(holder.mImageView);
-                                    }
+                                if (imageResponse != null && imageResponse.getItems() != null && imageResponse.getItems().size() > 0) {
+                                    String thumb = imageResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl();
+                                    Glide.with(mContext)
+                                            .load(thumb)
+                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                            .into(holder.mImageView);
                                 } else {
                                     Glide.with(mContext).load(imageUrl).into(holder.mImageView);
                                 }
                             }
 
                             @Override
-                            public void onFailure(Call<TrackInfoResponse> call, Throwable t) {
+                            public void onFailure(Call<ModelData> call, Throwable t) {
                                 Glide.with(mContext).load(imageUrl).into(holder.mImageView);
                             }
                         });
@@ -115,12 +111,14 @@ public class YoutubeSearchAdapter extends RecyclerView.Adapter<YoutubeSearchAdap
                 holder.mImageView.setImageResource(R.drawable.music_placeholder);
             }
         } else {
-           /* ModelData imageResponse = currentItem.getModelData();
-            String thumb = imageResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl();
-            Glide.with(mContext)
-                    .load(thumb)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(holder.mImageView);*/
+            ModelData imageResponse = currentItem.getModelData();
+            if (imageResponse != null && imageResponse.getItems() != null && imageResponse.getItems().size() > 0) {
+                String thumb = imageResponse.getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl();
+                Glide.with(mContext)
+                        .load(thumb)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(holder.mImageView);
+            }
         }
     }
 

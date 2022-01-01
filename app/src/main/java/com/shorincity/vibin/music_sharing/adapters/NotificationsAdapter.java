@@ -167,6 +167,24 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             if (!TextUtils.isEmpty(currentItem.getIsAccepted()) && currentItem.getIsAccepted().equalsIgnoreCase(AppConstants.REGECTED)) {
                 mainRl.setLayoutParams(new AbsListView.LayoutParams(-1, 1));
                 mainRl.setVisibility(View.GONE);
+            } else if (currentItem.getType().equalsIgnoreCase("playlist_deleted") ||
+                    currentItem.getType().equalsIgnoreCase("collab_removed")) {
+
+                String avatarUrl = currentItem.getAvatarLink();
+
+                if (!TextUtils.isEmpty(avatarUrl)) {
+                    try {
+                        Glide.with(mContext).load(avatarUrl).into(mImageView);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                mainRl.setVisibility(View.VISIBLE);
+                titleTv.setText(currentItem.getMessage());
+                notifyStatusTv.setVisibility(View.GONE);
+                swipelayout.setLockDrag(true);
+                arrow.setVisibility(View.GONE);
+                mainCardView.setAlpha(1f);
             } else {
 
                 String avatarUrl = currentItem.getAvatarLink();

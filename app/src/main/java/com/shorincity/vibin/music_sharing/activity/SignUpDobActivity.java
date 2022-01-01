@@ -521,7 +521,7 @@ public class SignUpDobActivity extends AppCompatActivity implements View.OnClick
 
             @Override
             public void onFailure(Call<AdditionalSignUpModel> call, Throwable t) {
-                Toast.makeText(SignUpDobActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(SignUpDobActivity.this,  getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
                 // resetButtonState();
             }
         });

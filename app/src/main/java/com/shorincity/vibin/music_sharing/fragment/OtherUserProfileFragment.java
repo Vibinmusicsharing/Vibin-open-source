@@ -96,7 +96,7 @@ public class OtherUserProfileFragment extends MyBaseFragment implements View.OnC
   private MyPlaylistAdapter myPlaylistAdapter;
   private CircularProgressButton likeBtn;
   private RelativeLayout likeRl;
-  private String createnewplaylist = AppConstants.BASE_URL + "playlist/create_new_playlist/";
+  private String createnewplaylist = AppConstants.BASE_URL + "playlist/v1/create_new_playlist/";
   private RippleButton collaborateBtn;
   private ArrayList<Playlist> collabPlaylist;
   private AddToPlaylistAdapter addToPlaylistAdapter;

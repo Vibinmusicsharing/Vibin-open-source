@@ -1,5 +1,6 @@
 package com.shorincity.vibin.music_sharing.UI;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -242,44 +243,55 @@ public class LoginAct extends AppCompatActivity {
                 @Override
                 public void onResponse(SignUpResponse signUpResponse) {
                     showMe.dismiss();
-                    if (signUpResponse.getUserCreated().equalsIgnoreCase("true")) {
-                        SharedPrefManager.getInstance(LoginAct.this).setSharedPrefBoolean(AppConstants.INTENT_IS_USER_LOGGEDIN, true); // response.body().getUserLoggedIn()
-                        SharedPrefManager.getInstance(LoginAct.this).setSharedPrefInt(AppConstants.INTENT_USER_ID, signUpResponse.getUserId());
-                        SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_TOKEN, signUpResponse.getToken());
-                        SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_API_TOKEN, signUpResponse.getApiToken());
-                        SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_PREFERRED_PLATFORM, signUpResponse.getPreferredPlatform());
-                        SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_NAME, signUpResponse.getUsername());
-                        SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_FULL_NAME, signUpResponse.getFullname());
+                    if (signUpResponse.getStatus().equalsIgnoreCase("success")) {
+                        if (signUpResponse.getUserCreated().equalsIgnoreCase("true")) {
+                            SharedPrefManager.getInstance(LoginAct.this).setSharedPrefBoolean(AppConstants.INTENT_IS_USER_LOGGEDIN, true); // response.body().getUserLoggedIn()
+                            SharedPrefManager.getInstance(LoginAct.this).setSharedPrefInt(AppConstants.INTENT_USER_ID, signUpResponse.getUserId());
+                            SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_TOKEN, signUpResponse.getToken());
+                            SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_API_TOKEN, signUpResponse.getApiToken());
+                            SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_PREFERRED_PLATFORM, signUpResponse.getPreferredPlatform());
+                            SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_NAME, signUpResponse.getUsername());
+                            SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_FULL_NAME, signUpResponse.getFullname());
 
-                        Intent k = new Intent(LoginAct.this, SelectMusicLanguageActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putBoolean(AppConstants.INTENT_IS_FROM_GOOGLE, true);
-                        k.putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle);
-                        k.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(k);
-                        finishAffinity();
-
-                    } else {
-                        SharedPrefManager.getInstance(LoginAct.this).setSharedPrefBoolean(AppConstants.INTENT_IS_USER_LOGGEDIN, signUpResponse.getUserLoggedIn());
-                        SharedPrefManager.getInstance(LoginAct.this).setSharedPrefInt(AppConstants.INTENT_USER_ID, signUpResponse.getUserId());
-                        SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_TOKEN, signUpResponse.getToken());
-                        SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_API_TOKEN, signUpResponse.getApiToken());
-                        SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_PREFERRED_PLATFORM, signUpResponse.getPreferredPlatform());
-                        SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_NAME, signUpResponse.getUsername());
-                        SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_FULL_NAME, signUpResponse.getFullname());
-
-                        Intent k;
-                        if (signUpResponse.isAddedPreferences()) {
-                            k = new Intent(LoginAct.this, youtube.class);
-                        } else {
-                            k = new Intent(LoginAct.this, SelectMusicLanguageActivity.class);
+                            Intent k = new Intent(LoginAct.this, SelectMusicLanguageActivity.class);
                             Bundle bundle = new Bundle();
                             bundle.putBoolean(AppConstants.INTENT_IS_FROM_GOOGLE, true);
                             k.putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle);
                             k.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(k);
+
+                        } else {
+                            SharedPrefManager.getInstance(LoginAct.this).setSharedPrefBoolean(AppConstants.INTENT_IS_USER_LOGGEDIN, signUpResponse.getUserLoggedIn());
+                            if (signUpResponse.getUserId() != null)
+                                SharedPrefManager.getInstance(LoginAct.this).setSharedPrefInt(AppConstants.INTENT_USER_ID, signUpResponse.getUserId());
+                            SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_TOKEN, signUpResponse.getToken());
+                            SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_API_TOKEN, signUpResponse.getApiToken());
+                            SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_PREFERRED_PLATFORM, signUpResponse.getPreferredPlatform());
+                            SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_USER_NAME, signUpResponse.getUsername());
+                            SharedPrefManager.getInstance(LoginAct.this).setSharedPrefString(AppConstants.INTENT_FULL_NAME, signUpResponse.getFullname());
+
+                            Intent k;
+                            if (signUpResponse.isAddedPreferences()) {
+                                k = new Intent(LoginAct.this, youtube.class);
+                            } else {
+                                k = new Intent(LoginAct.this, SelectMusicLanguageActivity.class);
+                                Bundle bundle = new Bundle();
+                                bundle.putBoolean(AppConstants.INTENT_IS_FROM_GOOGLE, true);
+                                k.putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle);
+                                k.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            }
+                            startActivity(k);
                         }
-                        startActivity(k);
                         finishAffinity();
+                    } else {
+                        AlertDialog alertDialog = new AlertDialog.Builder(LoginAct.this).create();
+                        alertDialog.setTitle(getResources().getString(R.string.app_name));
+                        alertDialog.setMessage(signUpResponse.getMessage());
+                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Ok",
+                                (dialog, which) -> {
+                                    alertDialog.dismiss();
+                                });
+                        alertDialog.show();
                     }
                 }
 

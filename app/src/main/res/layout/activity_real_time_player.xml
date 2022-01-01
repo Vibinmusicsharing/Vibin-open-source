@@ -4,6 +4,11 @@
 
     <data>
 
+        <import type="android.view.View" />
+
+        <variable
+            name="isBottomNavVisible"
+            type="Boolean" />
     </data>
 
     <LinearLayout
@@ -83,6 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
+            android:visibility="@{isBottomNavVisible ? View.VISIBLE : View.GONE}"
             app:elevation="4dp"
             app:itemIconTint="@color/nav_realtime_color_selector"
             app:itemTextColor="@color/nav_realtime_color_selector"

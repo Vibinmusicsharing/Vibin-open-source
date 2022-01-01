@@ -9,9 +9,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
@@ -67,7 +69,8 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
 
     private void initControls() {
         binding.setIsRealTime(false);
-        binding.setIsProgress(true);
+        binding.setIsProgress(false);
+        binding.swipelayout.setRefreshing(true);
         binding.rvSongs.setLayoutManager(new LinearLayoutManager(binding.rvSongs.getContext()));
         binding.rvSongs.setAdapter(new PlaylistSongsAdapter(mContext, viewModel.getPlaylist(), false, (type, position) -> {
             if (position != RecyclerView.NO_POSITION) {
@@ -76,21 +79,20 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
                 // Type=0:Like,1:DeleteSong, 2:AddSong, 3:Share
                 switch (type) {
                     case 0: {
-                        ProgressDialog showMe = new ProgressDialog(mContext);
-                        showMe.setMessage("Please wait");
-                        showMe.setCancelable(true);
-                        showMe.setCanceledOnTouchOutside(false);
-                        showMe.show();
-
+                        PlaylistDetailModel mSongLike = playlist.get(position);
+                        boolean isLike=mBean.isLikedByViewer();
+                        mSongLike.setLikedByViewer(!isLike);
+                        playlist.set(position, mSongLike);
+                        if (binding.rvSongs.getAdapter() != null)
+                            binding.rvSongs.getAdapter().notifyItemChanged(position);
                         DataAPI dataAPI = RetrofitAPI.getData();
                         String token = AppConstants.TOKEN + SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
                         Call<PlaylistDetailModel> callback = dataAPI.callPlaylistLike(token,
                                 SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
-                                Integer.parseInt(playlistId), mBean.getId(), mBean.isLikedByViewer() ? "" : "True");
+                                Integer.parseInt(playlistId), mBean.getId(), isLike ? "" : "True");
                         callback.enqueue(new Callback<PlaylistDetailModel>() {
                             @Override
                             public void onResponse(Call<PlaylistDetailModel> call, Response<PlaylistDetailModel> response) {
-                                showMe.dismiss();
                                 if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
                                     playlist.set(position, response.body());
                                     Collections.sort(playlist, Collections.reverseOrder());
@@ -105,7 +107,6 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
 
                             @Override
                             public void onFailure(Call<PlaylistDetailModel> call, Throwable t) {
-                                showMe.dismiss();
                                 Toast.makeText(mContext,
                                         t.getLocalizedMessage(),
                                         Toast.LENGTH_LONG).show();
@@ -147,17 +148,29 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
             }
         }));
         playlistId = getArguments().getString(PLAYLIST_ID);
+        binding.swipelayout.setColorSchemeColors(
+                ContextCompat.getColor(binding.swipelayout.getContext(), R.color.counterColor),
+                ContextCompat.getColor(binding.swipelayout.getContext(), R.color.btn_bkgnd),
+                ContextCompat.getColor(binding.swipelayout.getContext(), R.color.orange));
+
+        binding.swipelayout.setOnRefreshListener(this::callPlaylistApi);
+        callPlaylistApi();
+    }
+
+    private void callPlaylistApi() {
         viewModel.getPublicPlaylistDetail(mContext, playlistId, new PlaylistDetailCallback() {
             @Override
             public void onResponse() {
-                binding.setIsProgress(false);
+//                binding.setIsProgress(false);
+                binding.swipelayout.setRefreshing(false);
                 if (binding.rvSongs.getAdapter() != null)
                     binding.rvSongs.getAdapter().notifyDataSetChanged();
             }
 
             @Override
             public void onError() {
-                binding.setIsProgress(false);
+//                binding.setIsProgress(false);
+                binding.swipelayout.setRefreshing(false);
             }
         });
     }

@@ -77,6 +77,9 @@
     <dimen name="dimen_40dp">40dp</dimen>
     <dimen name="dimen_45dp">45dp</dimen>
     <dimen name="dimen_50dp">50dp</dimen>
+    <dimen name="btn_round_size">50dp</dimen>
+    <dimen name="btn_round_size_60">60dp</dimen>
+    <dimen name="btn_round_size_70">70dp</dimen>
 
 
 </resources>

@@ -37,7 +37,11 @@ public class RealTimePlayerFragment extends MyBaseFragment implements RealTimeBa
     private int playlistId;
     private ArrayList<PlaylistDetailModel> playlistList = new ArrayList<>();
     private String songName = "";
+    private String trackId = "";
     private boolean isPlay = false;
+    private boolean isRepeat = false, isShuffle = false;
+    private int progress = 0, currentProgress = 0, totalTime = 0;
+
 
     public static RealTimePlayerFragment getInstance(int playlistId) {
         RealTimePlayerFragment fragment = new RealTimePlayerFragment();
@@ -106,6 +110,9 @@ public class RealTimePlayerFragment extends MyBaseFragment implements RealTimeBa
         });
         binding.tvName.setText(songName);
         setPlayPause(isPlay);
+        setTrackId(trackId);
+        setRepeatAndShuffle(isRepeat, isShuffle);
+        setProgress(progress, currentProgress, totalTime);
     }
 
     public void setPlaylistList(ArrayList<PlaylistDetailModel> list) {
@@ -116,9 +123,14 @@ public class RealTimePlayerFragment extends MyBaseFragment implements RealTimeBa
     }
 
     public void setProgress(int progress, int currentProgress, int totalTime) {
-        binding.tvTime.setText(Utility.convertDuration(Long.valueOf(currentProgress)));
-        binding.tvTotalTime.setText(Utility.convertDuration(Long.valueOf(totalTime)));
-        binding.seekBar.setProgress(progress);
+        this.progress = progress;
+        this.currentProgress = currentProgress;
+        this.totalTime = totalTime;
+        if (binding != null) {
+            binding.tvTime.setText(Utility.convertDuration(Long.valueOf(currentProgress)));
+            binding.tvTotalTime.setText(Utility.convertDuration(Long.valueOf(totalTime)));
+            binding.seekBar.setProgress(progress);
+        }
     }
 
     public void setPlayPause(boolean isPlay) {
@@ -129,6 +141,23 @@ public class RealTimePlayerFragment extends MyBaseFragment implements RealTimeBa
             } else {
                 binding.ivPlayPause.setImageResource(R.drawable.ic_player_play);
             }
+        }
+    }
+
+    public void setTrackId(String trackId) {
+        this.trackId = trackId;
+        if (binding != null && binding.rvSongs.getAdapter() != null) {
+            ((PlaylistSongsAdapter) binding.rvSongs.getAdapter()).setTrackId(trackId);
+            binding.rvSongs.getAdapter().notifyDataSetChanged();
+        }
+    }
+
+    public void setRepeatAndShuffle(boolean isRepeat, boolean isShuffle) {
+        this.isRepeat = isRepeat;
+        this.isShuffle = isShuffle;
+        if (binding != null) {
+            binding.ivRepeat.setSelected(isRepeat);
+            binding.ivSuffle.setSelected(isShuffle);
         }
     }
 

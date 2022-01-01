@@ -39,7 +39,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:clipToPadding="true"
+                android:clipToPadding="false"
                 android:paddingStart="@dimen/_10sdp"
                 android:paddingTop="@dimen/_16sdp"
                 android:paddingEnd="@dimen/_10sdp"
@@ -77,6 +77,7 @@
                         android:layout_weight="1"
                         android:background="@android:color/transparent"
                         android:hint="Type any message"
+                        android:inputType="text|textCapSentences"
                         android:padding="@dimen/_8sdp" />
 
                     <androidx.appcompat.widget.AppCompatImageView

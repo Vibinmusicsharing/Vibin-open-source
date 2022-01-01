@@ -38,11 +38,33 @@
         app:layout_constraintTop_toBottomOf="@id/ivBg" />
 
     <EditText
-        android:id="@+id/tv_username"
+        android:id="@+id/cust_full_name"
         android:layout_width="match_parent"
         android:layout_height="58dp"
         android:layout_marginStart="@dimen/_20sdp"
         android:layout_marginTop="@dimen/_16sdp"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:hint="Enter full Name"
+        android:imeOptions="actionNext"
+        android:inputType="text"
+        android:maxLines="1"
+        android:paddingLeft="@dimen/_5sdp"
+        android:paddingTop="10dp"
+        android:paddingRight="@dimen/_5sdp"
+        android:paddingBottom="10dp"
+        android:singleLine="true"
+        android:textColor="@android:color/black"
+        android:textColorHint="@color/appHintClr"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        android:digits="QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm " />
+
+    <EditText
+        android:id="@+id/tv_username"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:layout_marginStart="@dimen/_20sdp"
         android:layout_marginEnd="@dimen/_20sdp"
         android:digits="QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm0123456789-_."
         android:hint="@string/hint_username"
@@ -58,7 +80,7 @@
         android:textColorHint="@color/appHintClr"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+        app:layout_constraintTop_toBottomOf="@id/cust_full_name" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvDob"
@@ -146,8 +168,8 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/flNext"
-            android:layout_width="@dimen/_60sdp"
-            android:layout_height="@dimen/_60sdp"
+            android:layout_width="@dimen/btn_round_size_60"
+            android:layout_height="@dimen/btn_round_size_60"
             android:layout_gravity="center"
             android:background="@drawable/ic_round_btn" />
 

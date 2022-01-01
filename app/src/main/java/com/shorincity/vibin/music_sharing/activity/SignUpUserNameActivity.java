@@ -95,7 +95,7 @@ public class SignUpUserNameActivity extends AppCompatActivity implements View.On
     }
 
     private void inItViews() {
-//        cust_full_name = (EditText) findViewById(R.id.cust_full_name);
+        cust_full_name = findViewById(R.id.cust_full_name);
         usernameEdt = findViewById(R.id.tv_username);
         rgGender = findViewById(R.id.rgGender);
         nextBtn = findViewById(R.id.flNext);
@@ -157,7 +157,7 @@ public class SignUpUserNameActivity extends AppCompatActivity implements View.On
     private void gotoNextActivity() {
 
         String userName = usernameEdt.getText().toString();
-//        String fullName = cust_full_name.getText().toString();
+        String fullName = cust_full_name.getText().toString();
         int selectedId = rgGender.getCheckedRadioButtonId();
         String gender = "";
         if (selectedId == R.id.rbMale) {
@@ -169,7 +169,10 @@ public class SignUpUserNameActivity extends AppCompatActivity implements View.On
         }
         String dob = tvDob.getText().toString();
 
-        if (TextUtils.isEmpty(userName)) {
+        if (TextUtils.isEmpty(fullName)) {
+            Toast.makeText(this, "Please enter Full name", Toast.LENGTH_LONG).show();
+            return;
+        } else if (TextUtils.isEmpty(userName)) {
             Toast.makeText(this, "Please enter username", Toast.LENGTH_LONG).show();
             return;
         } else if (TextUtils.isEmpty(gender)) {

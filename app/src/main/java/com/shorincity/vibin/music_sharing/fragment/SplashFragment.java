@@ -6,25 +6,22 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -33,7 +30,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
-import com.google.android.play.core.install.InstallState;
 import com.google.android.play.core.install.InstallStateUpdatedListener;
 import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.InstallStatus;
@@ -47,22 +43,15 @@ import com.shorincity.vibin.music_sharing.activity.LoginSignUpActivity;
 import com.shorincity.vibin.music_sharing.activity.SelectMusicGenreActivity;
 import com.shorincity.vibin.music_sharing.activity.SelectMusicLanguageActivity;
 import com.shorincity.vibin.music_sharing.activity.SignUpEmailPassActivity;
-import com.shorincity.vibin.music_sharing.activity.SignUpPreferPlatformActivity;
 import com.shorincity.vibin.music_sharing.activity.SplashActivity;
-import com.shorincity.vibin.music_sharing.model.VersionResponse;
-import com.shorincity.vibin.music_sharing.service.DataAPI;
-import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.activity.TermsAndConditionsActivity;
 import com.shorincity.vibin.music_sharing.model.SignUpResponse;
+import com.shorincity.vibin.music_sharing.model.VersionResponse;
 import com.shorincity.vibin.music_sharing.model.YoutubeTrendingModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -80,33 +69,11 @@ public class SplashFragment extends Fragment {
     private Intent intent;
     private Runnable runnable;
     private SignUpResponse signUpResponse;
-    private boolean isTimerOver = false, isApiCallDone = false;
-    private int RESULT_CODE_TERMS = 100;
     private VersionResponse versionResponse;
     private boolean isTimerOver = false, isApiCallDone = false;
-    private static int APP_UPDATE_REQUEST_CODE = 100;
+    private static int RESULT_CODE_TERMS = 100;
+    private static int APP_UPDATE_REQUEST_CODE = 101;
     private AppUpdateManager appUpdateManager;
-
-    public SplashFragment() {
-    }
-
-    public static SplashFragment newInstance() {
-        return new SplashFragment();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof Activity) {
-            mActivity = (SplashActivity) context;
-        }
-    }
-
-    private Runnable runnable = () -> {
-        isTimerOver = true;
-        if (isApiCallDone)
-            redirectScreen();
-    };
 
     private InstallStateUpdatedListener listener = state -> {
         if (state.installStatus() == InstallStatus.DOWNLOADED) {
@@ -117,6 +84,22 @@ public class SplashFragment extends Fragment {
             }
         }
     };
+
+    public SplashFragment() {
+    }
+
+    public static SplashFragment newInstance() {
+        SplashFragment splashFragment = new SplashFragment();
+        return splashFragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity) {
+            mActivity = (SplashActivity) context;
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -134,23 +117,46 @@ public class SplashFragment extends Fragment {
         return mView;
     }
 
-
     private void init() {
         mContext = getActivity();
-        //For Toolbar
         appUpdateManager = AppUpdateManagerFactory.create(mContext);
-        mActivity.toolbarInitialization(false, "", "", true);
         appUpdateManager.registerListener(listener);
-        callVersionCheckApi();
+        //For Toolbar
+        mActivity.toolbarInitialization(false, "", "", true);
         onNextCheck();
     }
 
     private void onNextCheck() {
         runnable = () -> {
+            if (isApiCallDone && isTimerOver) {
+                redirectScreen();
+            }
+        };
+        new Handler().postDelayed(() -> {
             isTimerOver = true;
-            if (SharedPrefManager.getInstance(mContext).getSharedPrefBoolean
-                    (AppConstants.INTENT_SESSION_KEY)) {
+            runnable.run();
+        }, AppConstants.SPLASH_DELAY);
+        callVersionCheckApi();
+    }
 
+    private void redirectScreen() {
+        if (SharedPrefManager.getInstance(mContext).getSharedPrefBoolean
+                (AppConstants.INTENT_SESSION_KEY)) {
+
+            if (isApiCallDone) {
+                if (signUpResponse != null && signUpResponse.isAddedPreferences()) {
+                    intent = new Intent(mContext, youtube.class);
+                } else {
+                    intent = new Intent(mContext, SelectMusicLanguageActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean(AppConstants.INTENT_IS_FROM_GOOGLE, true);
+                    intent.putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent = new Intent(mContext, youtube.class);
+                }
+            }
+        } else {
+            if (SharedPrefManager.getInstance(mContext).getSharedPrefBoolean(AppConstants.INTENT_IS_USER_LOGGEDIN)) {
                 if (isApiCallDone) {
                     if (signUpResponse != null && signUpResponse.isAddedPreferences())
                         intent = new Intent(mContext, youtube.class);
@@ -160,101 +166,29 @@ public class SplashFragment extends Fragment {
                         bundle.putBoolean(AppConstants.INTENT_IS_FROM_GOOGLE, true);
                         intent.putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent = new Intent(mContext, youtube.class);
                     }
                 }
             } else {
-                if (SharedPrefManager.getInstance(mContext).getSharedPrefBoolean(AppConstants.INTENT_IS_USER_LOGGEDIN)) {
-                    if (isApiCallDone) {
-                        if (signUpResponse != null && signUpResponse.isAddedPreferences())
-                            intent = new Intent(mContext, youtube.class);
-                        else {
-                            intent = new Intent(mContext, SelectMusicLanguageActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putBoolean(AppConstants.INTENT_IS_FROM_GOOGLE, true);
-                            intent.putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        }
-                    }
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+                boolean isAccepted = prefs.getBoolean(AppConstants.TERMS_COND_KEY, false);
+                if (isAccepted) {
+                    intent = new Intent(mContext, SignUpEmailPassActivity.class);
                 } else {
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-                    boolean isAccepted = prefs.getBoolean(AppConstants.TERMS_COND_KEY, false);
-                    if (isAccepted) {
-                        intent = new Intent(mContext, SignUpEmailPassActivity.class);
-                    } else {
-                        navigateTnCActivity(RESULT_CODE_TERMS);
-                    }
+                    navigateTnCActivity(RESULT_CODE_TERMS);
                 }
             }
-            if (intent != null && isVisible()) {
-                startActivity(intent);
-                if (getActivity() != null)
-                    getActivity().finish();
-            }
-        };
-        new Handler().postDelayed(runnable, AppConstants.SPLASH_DELAY);
-
-        if (SharedPrefManager.getInstance(mContext).getSharedPrefBoolean(AppConstants.INTENT_IS_USER_LOGGEDIN)) {
-            DataAPI dataAPI = RetrofitAPI.getData();
-            String token = SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
-            Call<SignUpResponse> callback = dataAPI.getUserDetail(AppConstants.LOGIN_SIGNUP_HEADER, token);
-            callback.enqueue(new Callback<SignUpResponse>() {
-                @Override
-                public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
-                    isApiCallDone = true;
-                    if (response.body() != null &&
-                            response.body().getStatus().equalsIgnoreCase("success")) {
-                        signUpResponse = response.body();
-                    } else {
-                        Toast.makeText(mContext, response.message(), Toast.LENGTH_LONG).show();
-                    }
-
-                    if (isApiCallDone && isTimerOver) {
-                        runnable.run();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<SignUpResponse> call, Throwable t) {
-                    Logging.dLong("SignUp res:" + Log.getStackTraceString(t));
-                    Toast.makeText(mContext, "Something went wrong!", Toast.LENGTH_LONG).show();
-                }
-            });
         }
-
+        if (intent != null && isVisible()) {
+            startActivity(intent);
+            if (getActivity() != null)
+                getActivity().finish();
+        }
     }
 
     private void navigateTnCActivity(int resultCode) {
         Intent intent = new Intent(mContext, TermsAndConditionsActivity.class);
         startActivityForResult(intent, resultCode);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_CODE_TERMS) {
-            if (resultCode == Activity.RESULT_OK) {
-                runnable.run();
-            } else {
-                if (getActivity() != null)
-                    getActivity().finish();
-            }
-        }
-        new Handler().postDelayed(runnable, AppConstants.SPLASH_DELAY);
-    }
-
-    private void redirectScreen() {
-
-        if (SharedPrefManager.getInstance(mContext).getSharedPrefBoolean
-                (AppConstants.INTENT_SESSION_KEY)) {
-            intent = new Intent(mContext, youtube.class);
-        } else {
-            intent = new Intent(mContext, LoginSignUpActivity.class);
-        }
-        if (isVisible() == true) {
-            startActivity(intent);
-            if (getActivity() != null)
-                getActivity().finish();
-        }
     }
 
     private void callVersionCheckApi() {
@@ -267,11 +201,11 @@ public class SplashFragment extends Fragment {
                 if (response.body() != null &&
                         !TextUtils.isEmpty(response.body().getStatus()) &&
                         response.body().getStatus().equalsIgnoreCase("success")) {
-                    isApiCallDone = true;
                     versionResponse = response.body();
 
                     AppConstants.YOUTUBE_KEY = versionResponse.getYoutube();
                     AppConstants.GIPHY_API_KEY = versionResponse.getGiphy();
+                    AppConstants.LAST_FM_KEY = versionResponse.getLastFm();
 
                     if (versionResponse.isUpdateRequired()) {
                         Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
@@ -289,33 +223,60 @@ public class SplashFragment extends Fragment {
                                             APP_UPDATE_REQUEST_CODE);
                                 } catch (IntentSender.SendIntentException e) {
                                     e.printStackTrace();
-                                    if (isApiCallDone && isTimerOver) {
-                                        runnable.run();
-                                    }
+                                    callUserApi();
                                 }
+                            } else {
+                                callUserApi();
                             }
                         });
                     } else {
-                        if (isApiCallDone && isTimerOver) {
-                            runnable.run();
-                        }
+                        callUserApi();
                     }
                 } else {
                     Toast.makeText(mContext, "Something went wrong!", Toast.LENGTH_LONG).show();
-                    if (isApiCallDone && isTimerOver) {
-                        runnable.run();
-                    }
+                    callUserApi();
                 }
             }
 
             @Override
             public void onFailure(Call<VersionResponse> call, Throwable t) {
-                Toast.makeText(mContext, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                if (isApiCallDone && isTimerOver) {
-                    runnable.run();
-                }
+                Toast.makeText(mContext, getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
+                callUserApi();
             }
         });
+    }
+
+    private void callUserApi() {
+        if (SharedPrefManager.getInstance(mContext).getSharedPrefBoolean(AppConstants.INTENT_IS_USER_LOGGEDIN)) {
+            DataAPI dataAPI = RetrofitAPI.getData();
+            String token = SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
+            Call<SignUpResponse> callback = dataAPI.getUserDetail(AppConstants.LOGIN_SIGNUP_HEADER, token);
+            callback.enqueue(new Callback<SignUpResponse>() {
+                @Override
+                public void onResponse(Call<SignUpResponse> call, Response<SignUpResponse> response) {
+                    isApiCallDone = true;
+                    if (response.body() != null &&
+                            response.body().getStatus().equalsIgnoreCase("success")) {
+                        signUpResponse = response.body();
+                    } else {
+                        Toast.makeText(mContext, response.message(), Toast.LENGTH_LONG).show();
+                    }
+                    runnable.run();
+                }
+
+                @Override
+                public void onFailure(Call<SignUpResponse> call, Throwable t) {
+                    isApiCallDone = true;
+                    Logging.dLong("SignUp res:" + Log.getStackTraceString(t));
+                    Toast.makeText(mContext, "Something went wrong!", Toast.LENGTH_LONG).show();
+                    runnable.run();
+                }
+            });
+        } else {
+            isApiCallDone = true;
+            runnable.run();
+        }
+
     }
 
     private int getVersion() {
@@ -325,28 +286,6 @@ public class SplashFragment extends Fragment {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
             return 0;
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == APP_UPDATE_REQUEST_CODE) {
-            if (resultCode != Activity.RESULT_OK) {
-                Log.d("LOG_TAG", "Update flow failed! Result code: " + resultCode);
-                // If the update is cancelled or fails,
-                // you can request to start the update again.
-                if (isApiCallDone && isTimerOver) {
-                    runnable.run();
-                }
-            } else {
-                ProgressBar prg = mView.findViewById(R.id.progressBar);
-                TextView tvInstall = mView.findViewById(R.id.tvInstall);
-
-                prg.setVisibility(View.VISIBLE);
-                tvInstall.setVisibility(View.VISIBLE);
-            }
         }
     }
 
@@ -363,26 +302,31 @@ public class SplashFragment extends Fragment {
         snackbar.show();
     }
 
-    /*SharedPreferences sharedpreferences = mContext.getSharedPreferences(AppConstants.TERMS_COND,
-                Context.MODE_PRIVATE);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if(SharedPrefManager.getInstance(mContext).getSharedPrefBoolean
-                        (AppConstants.INTENT_SESSION_KEY)) {
-                    intent = new Intent(mContext, spotify.class);
-                    startActivity(intent);
-                    getActivity().finish();
-
-                } else if (sharedpreferences.contains(AppConstants.TERMS_COND_ACCEPTED)){
-                    intent = new Intent(mContext, LoginSignUpActivity.class);
-                    startActivity(intent);
-                    getActivity().finish();
-
-                }else {
-                    mActivity.navigateToFragment(TermsAndConditionsFragment.newInstance(), TermsAndConditionsFragment.class.getName(), null,
-                            false);
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == APP_UPDATE_REQUEST_CODE) {
+            if (resultCode != Activity.RESULT_OK) {
+                Log.d("LOG_TAG", "Update flow failed! Result code: " + resultCode);
+                // If the update is cancelled or fails,
+                // you can request to start the update again.
+                if (isApiCallDone && isTimerOver) {
+                    runnable.run();
                 }
+            } else {
+                ProgressBar prg = mView.findViewById(R.id.progressBar);
+                TextView tvInstall = mView.findViewById(R.id.tvInstall);
+
+                prg.setVisibility(View.VISIBLE);
+                tvInstall.setVisibility(View.VISIBLE);
             }
-        },AppConstants.SPLASH_DELAY);*/
+        } else if (requestCode == RESULT_CODE_TERMS) {
+            if (resultCode == Activity.RESULT_OK) {
+                runnable.run();
+            } else {
+                if (getActivity() != null)
+                    getActivity().finish();
+            }
+        }
+    }
 }

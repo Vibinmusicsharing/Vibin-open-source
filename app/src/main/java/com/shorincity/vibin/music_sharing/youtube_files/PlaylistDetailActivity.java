@@ -4,17 +4,6 @@ package com.shorincity.vibin.music_sharing.youtube_files;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.cursoradapter.widget.CursorAdapter;
-import androidx.cursoradapter.widget.SimpleCursorAdapter;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -32,6 +21,16 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.cursoradapter.widget.CursorAdapter;
+import androidx.cursoradapter.widget.SimpleCursorAdapter;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -39,45 +38,43 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.giphy.sdk.core.models.enums.RenditionType;
+import com.giphy.sdk.ui.views.GifView;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.like.LikeButton;
+import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.activity.RealTimePlayer;
+import com.shorincity.vibin.music_sharing.adapters.UserSearchAdapter;
+import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
 import com.shorincity.vibin.music_sharing.adapters.ViewCollabAdapter;
+import com.shorincity.vibin.music_sharing.fragment.ErrorDailogFragment;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlayListDeleteModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistLikeModel;
 import com.shorincity.vibin.music_sharing.model.PublicPlaylistItemAdapter;
+import com.shorincity.vibin.music_sharing.model.UserSearchModel;
 import com.shorincity.vibin.music_sharing.model.firebase.RealTimeModel;
 import com.shorincity.vibin.music_sharing.model.firebase.RealTimeSession;
 import com.shorincity.vibin.music_sharing.model.firebase.RealTimeUser;
-import com.shorincity.vibin.music_sharing.model.UserSearchModel;
-import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.activity.OtherUserProfileActivity;
-import com.shorincity.vibin.music_sharing.activity.RealTimePlayer;
-import com.shorincity.vibin.music_sharing.adapters.UserSearchAdapter;
-import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
-import com.shorincity.vibin.music_sharing.fragment.ErrorDailogFragment;
 import com.shorincity.vibin.music_sharing.ripples.RippleButton;
 import com.shorincity.vibin.music_sharing.ripples.listener.OnRippleCompleteListener;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
-
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
-import com.giphy.sdk.core.models.enums.RenditionType;
-import com.giphy.sdk.ui.views.GifView;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -98,7 +95,7 @@ public class PlaylistDetailActivity extends AppCompatActivity {
 
     private static String TAG = PlaylistDetailActivity.class.getName();
 
-    String view_collabUrl = AppConstants.BASE_URL + "playlist/view_collab/";
+    String view_collabUrl = AppConstants.BASE_URL + "playlist/v1/view_collab/";
     int id;
     PopupWindow popupWindow = null;
     ArrayList<ViewCollab> viewcollabList;
@@ -713,7 +710,7 @@ public class PlaylistDetailActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View v, int position) {
 
-                startActivity(new Intent(PlaylistDetailActivity.this, OtherUserProfileActivity.class).putExtra(AppConstants.INTENT_SEARCHED_USER_ID, viewcollabList.get(position).getId()).putExtra(AppConstants.INTENT_SEARCHED_USER_NAME, viewcollabList.get(position).getUsername()).putExtra(AppConstants.INTENT_SEARCHED_FULL_NAME, viewcollabList.get(position).getFullname()));
+//                startActivity(new Intent(PlaylistDetailActivity.this, OtherUserProfileActivity.class).putExtra(AppConstants.INTENT_SEARCHED_USER_ID, viewcollabList.get(position).getId()).putExtra(AppConstants.INTENT_SEARCHED_USER_NAME, viewcollabList.get(position).getUsername()).putExtra(AppConstants.INTENT_SEARCHED_FULL_NAME, viewcollabList.get(position).getFullname()));
             }
 
             @Override
@@ -1101,12 +1098,12 @@ public class PlaylistDetailActivity extends AppCompatActivity {
                 if (v.getId() == R.id.add_collab_btn) {
                     //sendCollabRequestNotification(id, usersList.get(position).getId(), AppConstants.COLLAB_REQUEST);
                 } else {
-                    startActivity(new Intent(PlaylistDetailActivity.this, OtherUserProfileActivity.class)
+                    /*startActivity(new Intent(PlaylistDetailActivity.this, OtherUserProfileActivity.class)
                             .putExtra(AppConstants.INTENT_SEARCHED_USER_ID, usersList.get(position).getId())
                             .putExtra(AppConstants.INTENT_SEARCHED_USER_NAME, usersList.get(position).getUsername())
                             .putExtra(AppConstants.INTENT_SEARCHED_FULL_NAME, usersList.get(position).getFullname())
                             .putExtra(AppConstants.INTENT_PLAYLIST_ID, id)
-                            .putExtra(AppConstants.INTENT_COMING_FROM, PlaylistDetailActivity.class.getName()));
+                            .putExtra(AppConstants.INTENT_COMING_FROM, PlaylistDetailActivity.class.getName()));*/
                 }
             }
         });

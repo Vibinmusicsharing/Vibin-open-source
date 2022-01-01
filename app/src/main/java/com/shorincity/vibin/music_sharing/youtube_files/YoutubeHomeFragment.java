@@ -933,7 +933,7 @@ public class YoutubeHomeFragment extends MyBaseFragment {
             public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
                 if (mContext != null)
-                    Toast.makeText(mContext, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext, getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -1044,7 +1044,7 @@ public class YoutubeHomeFragment extends MyBaseFragment {
             @Override
             public void onFailure(Call<HomeYoutubeModel> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(mContext, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -1078,7 +1078,8 @@ public class YoutubeHomeFragment extends MyBaseFragment {
             @Override
             public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                if (mContext != null && isVisible())
+                    Toast.makeText(mContext, getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -1110,7 +1111,8 @@ public class YoutubeHomeFragment extends MyBaseFragment {
             @Override
             public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                if (mContext != null && isVisible())
+                    Toast.makeText(mContext, getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -1142,7 +1144,7 @@ public class YoutubeHomeFragment extends MyBaseFragment {
             @Override
             public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -1174,7 +1176,7 @@ public class YoutubeHomeFragment extends MyBaseFragment {
             @Override
             public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -1206,7 +1208,7 @@ public class YoutubeHomeFragment extends MyBaseFragment {
             @Override
             public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getActivity(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -1290,7 +1292,7 @@ public class YoutubeHomeFragment extends MyBaseFragment {
             public void onFailure(Call<YoutubeChannelModel> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
                 if (mContext != null)
-                    Toast.makeText(mContext, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext, getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -103,7 +103,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
 
     private Context mContext;
     int position = 0;
-    String createnewplaylist = AppConstants.BASE_URL + "playlist/create_new_playlist/";
+    String createnewplaylist = AppConstants.BASE_URL + "playlist/v1/create_new_playlist/";
     private MyPlayerStateChangeListener playerStateChangeListener;
     private MyPlaybackEventListener playbackEventListener;
     TextView titlemain;
@@ -124,8 +124,8 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
     RecyclerView youtubePlayListRecyclerView;
     PlaylistRecyclerView adapter;
     ArrayList<Playlist> playlistList;
-    String url1 = AppConstants.BASE_URL + "playlist/my_playlists/";
-    String url2 = AppConstants.BASE_URL + "playlist/add_trak_to_playlist/";
+    String url1 = AppConstants.BASE_URL + "playlist/v1/my_playlists/";
+    String url2 = AppConstants.BASE_URL + "playlist/v1/add_trak_to_playlist/";
 
     String title, thumbnail, description;
     int userId;

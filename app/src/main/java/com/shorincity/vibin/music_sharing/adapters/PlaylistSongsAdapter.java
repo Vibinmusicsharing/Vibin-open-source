@@ -35,6 +35,7 @@ public class PlaylistSongsAdapter extends RecyclerView.Adapter<PlaylistSongsAdap
     private ArrayList<PlaylistDetailModel> list;
     private CustomItemClickListener customItemClickListener;
     private boolean isRealTime;
+    private String trackId = "";
 
     public PlaylistSongsAdapter(Context context, ArrayList<PlaylistDetailModel> exampleList, boolean isRealTime, CustomItemClickListener customItemClickListener) {
         mContext = context;
@@ -65,9 +66,11 @@ public class PlaylistSongsAdapter extends RecyclerView.Adapter<PlaylistSongsAdap
                 .circleCrop()
                 .into(holder.ivCollabProfile);
 
-
         holder.ivLike.setSelected(currentItem.isLikedByViewer());
         holder.tvLikeCount.setText(String.valueOf(currentItem.getLikes()));
+        holder.tvSongName.setSelected(currentItem.getTrackId().equalsIgnoreCase(trackId));
+        holder.tvArtist.setSelected(currentItem.getTrackId().equalsIgnoreCase(trackId));
+        holder.tvArtist.setVisibility(View.GONE);
 
         if (isRealTime) {
             holder.flLike.setVisibility(View.GONE);
@@ -111,7 +114,7 @@ public class PlaylistSongsAdapter extends RecyclerView.Adapter<PlaylistSongsAdap
                 PopupWindow popupWindow = new PopupWindow(
                         popupView.getRoot(),
                         CommonUtils.dpToPx(300, v.getContext()),
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
+                        CommonUtils.dpToPx(110, v.getContext()));
 
                 popupView.llDeletePlaylist.setOnClickListener(v1 -> {
                     popupWindow.dismiss();
@@ -134,6 +137,9 @@ public class PlaylistSongsAdapter extends RecyclerView.Adapter<PlaylistSongsAdap
         }
     }
 
+    public void setTrackId(String trackId) {
+        this.trackId = trackId;
+    }
 
     public interface CustomItemClickListener {
         void onItemClick(int type, int position);

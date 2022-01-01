@@ -44,7 +44,7 @@ public class SharedPrefManager {
     }
 
     //this method will store the user data in shared preferences
-     public void userLogin(String token,String email) {
+    public void userLogin(String token,String email) {
         TokenMain = token;
         SharedPreferences sharedPreferences = ctx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -98,7 +98,7 @@ public class SharedPrefManager {
 
     private void logOutfromServer(String userToken, String userApiToken) {
 
-        String URL= AppConstants.BASE_URL+"user/logout/";
+        String URL= AppConstants.BASE_URL+"user/v1/logout/";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
