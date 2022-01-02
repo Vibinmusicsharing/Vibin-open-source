@@ -52,6 +52,9 @@
             android:layout_marginEnd="@dimen/_12sdp"
             android:drawableEnd="@drawable/ic_search"
             android:hint="Search"
+            android:text="@={viewmodel.search}"
+            android:singleLine="true"
+            android:imeOptions="actionDone"
             android:paddingTop="@dimen/_16sdp"
             android:paddingBottom="16dp"
             android:textColor="@color/black" />

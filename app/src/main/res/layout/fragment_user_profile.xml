@@ -61,7 +61,7 @@
                     android:textColor="@color/nav_white"
                     android:textSize="@dimen/_18sdp" />
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/setting_img"
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_20sdp"
@@ -69,7 +69,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_margin="@dimen/_8sdp"
                     android:src="@drawable/setting_icon"
-                    android:tint="@color/white"/>
+                    app:tint="@color/white"/>
 
                 <TextView
                     android:id="@+id/tv_fullname"

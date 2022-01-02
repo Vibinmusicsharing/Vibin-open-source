@@ -1135,7 +1135,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
             //youTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
             youTubePlayer.setPlayerStateChangeListener(playerStateChangeListener);
             youTubePlayer.setPlaybackEventListener(playbackEventListener);
-            if (videoId != null) {
+            if (!TextUtils.isEmpty(videoId)) {
                 youTubePlayer.cueVideo(videoId);
             }
             youTubePlayer.setShowFullscreenButton(false);
