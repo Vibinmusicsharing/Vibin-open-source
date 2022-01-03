@@ -203,7 +203,7 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
                             if (mBean != null && mBean.getId() == id) {
                                 list.remove(mBean);
                                 if (binding.rvSongs.getAdapter() != null)
-                                    binding.rvSongs.getAdapter().notifyItemChanged(i);
+                                    binding.rvSongs.getAdapter().notifyDataSetChanged();
                                 break;
                             }
                         } else {

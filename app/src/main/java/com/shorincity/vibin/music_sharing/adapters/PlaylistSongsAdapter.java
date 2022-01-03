@@ -20,6 +20,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.daimajia.swipe.SwipeLayout;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.databinding.PlaylistCollabMenuBinding;
 import com.shorincity.vibin.music_sharing.databinding.PlaylistSongMenuBinding;
@@ -92,6 +93,7 @@ public class PlaylistSongsAdapter extends RecyclerView.Adapter<PlaylistSongsAdap
         AppCompatTextView tvSongName, tvArtist, tvDuration, tvLikeCount;
         FrameLayout flLike;
         LinearLayout llMain;
+        SwipeLayout swipeLayout;
 
         public ExampleViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -105,6 +107,7 @@ public class PlaylistSongsAdapter extends RecyclerView.Adapter<PlaylistSongsAdap
             tvLikeCount = itemView.findViewById(R.id.tvLikeCount);
             flLike = itemView.findViewById(R.id.flLike);
             llMain = itemView.findViewById(R.id.llMain);
+            swipeLayout = itemView.findViewById(R.id.swipeLayout);
 
             flLike.setOnClickListener(v -> customItemClickListener.onItemClick(0, getAdapterPosition()));
             ivMenu.setOnClickListener(v -> {
