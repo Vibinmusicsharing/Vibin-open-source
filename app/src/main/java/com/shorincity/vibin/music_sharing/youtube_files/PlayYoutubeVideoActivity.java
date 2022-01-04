@@ -65,12 +65,14 @@ import com.google.android.youtube.player.YouTubePlayerView;
 import com.jackandphantom.androidlikebutton.AndroidLikeButton;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.adapters.AddToPlaylistAdapter;
 import com.shorincity.vibin.music_sharing.adapters.PlayListDetailsAdapter;
 import com.shorincity.vibin.music_sharing.adapters.Playlist;
 import com.shorincity.vibin.music_sharing.adapters.PlaylistRecyclerView;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.AddSongLogModel;
+import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.SongLikeModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
@@ -123,7 +125,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
     RecyclerView recyclerView_bottom;
     RecyclerView youtubePlayListRecyclerView;
     PlaylistRecyclerView adapter;
-    ArrayList<Playlist> playlistList;
+    ArrayList<MyPlaylistModel> playlistList;
     String url1 = AppConstants.BASE_URL + "playlist/v1/my_playlists/";
     String url2 = AppConstants.BASE_URL + "playlist/v1/add_trak_to_playlist/";
 
@@ -875,7 +877,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
         addToPlaylistAdapter.setCustomItemClickListener(new AddToPlaylistAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
-                Playlist currentItem = playlistList.get(position);
+                MyPlaylistModel currentItem = playlistList.get(position);
 
                 String videoId = PlayYoutubeVideoActivity.this.videoId;
                 int id = currentItem.getId();
@@ -1149,54 +1151,38 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
 
     // parse data to recycler view
     private void parseData() {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url1, new Response.Listener<String>() {
+        DataAPI dataAPI = RetrofitAPI.getData();
+        String token = AppConstants.TOKEN + SharedPrefManager.getInstance(PlayYoutubeVideoActivity.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+        String userToken = SharedPrefManager.getInstance(PlayYoutubeVideoActivity.this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
+        Call<ArrayList<MyPlaylistModel>> callback = dataAPI.getMyPlaylist(token, userToken);
+        callback.enqueue(new Callback<ArrayList<MyPlaylistModel>>() {
             @Override
-            public void onResponse(String response) {
-                try {
-                    JSONArray jsonArray = new JSONArray(response);
+            public void onResponse(Call<ArrayList<MyPlaylistModel>> call, retrofit2.Response<ArrayList<MyPlaylistModel>> response) {
+                progressBar.setVisibility(View.GONE);
+                if (response != null && response.body() != null && response.body().size() > 0) {
                     playlistList.clear();
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        String name = jsonObject.getString("name");
-                        int id = jsonObject.getInt("id");
-                        playlistList.add(new Playlist(name, id));
-                        addToPlaylistAdapter.notifyDataSetChanged();
-                    }
+                    playlistList.addAll(response.body());
+                    addToPlaylistAdapter.notifyDataSetChanged();
                     progressBar.setVisibility(View.GONE);
-
                     if (playlistList.size() == 0) {
                         textVieww.setVisibility(View.VISIBLE);
                     } else {
                         textVieww.setVisibility(View.GONE);
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+
+                    Logging.d("TEST", "callMyPlaylistAPI Called");
+                } else {
+                    Logging.d("TEST", "callMyPlaylistAPI Else Called");
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
 
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                String token = SharedPrefManager.getInstance(PlayYoutubeVideoActivity.this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
-                params.put("token", token);
-                return params;
             }
 
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                String token = AppConstants.TOKEN + SharedPrefManager.getInstance(PlayYoutubeVideoActivity.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-                params.put("Authorization", token);
-                return params;
+            public void onFailure(Call<ArrayList<MyPlaylistModel>> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                Logging.d("TEST", "callMyPlaylistAPI onFailure Called");
             }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
+        });
     }
 
     // youtube functions

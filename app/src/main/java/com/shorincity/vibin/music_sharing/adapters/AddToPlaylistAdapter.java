@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -20,9 +21,9 @@ import java.util.Random;
 public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdapter.ExampleViewHolder> {
 
     private Context mContext;
-    private ArrayList<Playlist> mExampleList;
+    private ArrayList<MyPlaylistModel> mExampleList;
 
-    public AddToPlaylistAdapter(Context context, ArrayList<Playlist> exampleList){
+    public AddToPlaylistAdapter(Context context, ArrayList<MyPlaylistModel> exampleList){
         mContext = context;
         mExampleList = exampleList;
     }
@@ -44,7 +45,7 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
 
     @Override
     public void onBindViewHolder(@NonNull ExampleViewHolder holder, int position) {
-        Playlist currentItem = mExampleList.get(position);
+        MyPlaylistModel currentItem = mExampleList.get(position);
 //        String imageUrl = currentItem.getImageUrl();
         String name = currentItem.getName();
 

@@ -5,6 +5,7 @@ import android.app.AppOpsManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -42,6 +43,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SearchView;
@@ -89,6 +91,7 @@ import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.adapters.AddToPlaylistAdapter;
+import com.shorincity.vibin.music_sharing.adapters.AutoCompleteAdapter;
 import com.shorincity.vibin.music_sharing.adapters.PlayListDetailsAdapter;
 import com.shorincity.vibin.music_sharing.adapters.Playlist;
 import com.shorincity.vibin.music_sharing.adapters.PlaylistRecyclerView;
@@ -111,10 +114,12 @@ import com.shorincity.vibin.music_sharing.model.lastfm.trackinfo.TrackInfoRespon
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.CommonUtils;
 import com.shorincity.vibin.music_sharing.utils.CustomSlidePanLayout;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
 import com.shorincity.vibin.music_sharing.websocket.NaiveSSLContext;
+import com.shorincity.vibin.music_sharing.widgets.TagView;
 import com.shorincity.vibin.music_sharing.youtube_files.YoutubeHomeFragment;
 import com.shorincity.vibin.music_sharing.youtube_files.floating.AsyncTask.Constants;
 import com.shorincity.vibin.music_sharing.youtube_files.floating.PlayerService;
@@ -201,7 +206,8 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     private RecyclerView recyclerView_bottom;
     private RecyclerView youtubePlayListRecyclerView;
     private PlaylistRecyclerView adapter;
-    private ArrayList<Playlist> playlistList;
+    private ArrayList<MyPlaylistModel> playlistList;
+    private ArrayList<String> genreList;
     private String url1 = AppConstants.BASE_URL + "playlist/v1/my_playlists/";
     private String url2 = AppConstants.BASE_URL + "playlist/v1/add_trak_to_playlist/";
 
@@ -315,6 +321,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     }
 
     private void init() {
+        genreList = CommonUtils.getGenre();
 
         isSuffleOn = SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefBoolean(AppConstants.IS_SUFFLEON);
         isRepeatOn = SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefBoolean(AppConstants.IS_REPEATON);
@@ -795,7 +802,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
             @Override
             public void onFailure(Call<UpdatePreferPlatformModel> call, Throwable t) {
-                Toast.makeText(youtube.this,  getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
+                Toast.makeText(youtube.this, getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -1792,7 +1799,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         parseData();
         addToPlaylistAdapter = new AddToPlaylistAdapter(this, playlistList);
         addToPlaylistAdapter.setCustomItemClickListener((v, position) -> {
-            Playlist currentItem = playlistList.get(position);
+            MyPlaylistModel currentItem = playlistList.get(position);
 
             String videoId = youtube.this.videoId;
             int id = currentItem.getId();
@@ -1828,7 +1835,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
     // dialog to add playlist
     private void openDialog() {
-        final AlertDialog.Builder mb = new AlertDialog.Builder(youtube.this);
+       /* final AlertDialog.Builder mb = new AlertDialog.Builder(youtube.this);
         final View dialog = LayoutInflater.from(this).inflate(R.layout.layout_dialog, null, false);
         final EditText playlistName = dialog.findViewById(R.id.dialog_playlistname);
         final SearchView playlistGif = dialog.findViewById(R.id.dialog_playlist_gif);
@@ -1949,63 +1956,129 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 });
         mb.setView(dialog);
         final AlertDialog ass = mb.create();
-        ass.show();
+        ass.show();*/
+        openCreatePlaylistBottomsheet();
     }
 
-    //  add text to server
-    public void addTexts(final String playlistname, final String gifLink,
-                         final String description, final String password, final Boolean[] checking) {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, createnewplaylist, new com.android.volley.Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
+    private void openCreatePlaylistBottomsheet() {
+        BottomSheetDialog bottomSheet = new BottomSheetDialog(this);
+        View bottom_sheet = LayoutInflater.from(this).inflate(R.layout.bottomsheet_create_playlist, null);
+        bottomSheet.setContentView(bottom_sheet);
 
-                    Boolean PlaylistCreated = jsonObject.getBoolean("Playlist Created");
-                    if (PlaylistCreated) {
-                        Toast.makeText(youtube.this, "playlist created", Toast.LENGTH_SHORT).show();
+        EditText playlistName = bottom_sheet.findViewById(R.id.dialog_playlistname);
+        SearchView playlistGif = bottom_sheet.findViewById(R.id.dialog_playlist_gif);
+        GifView selectedGifIv = bottom_sheet.findViewById(R.id.selected_gif_iv);
+        EditText playlistDesc = bottom_sheet.findViewById(R.id.dialog_playlist_desc);
+        GiphyGridView giphyGridView = bottom_sheet.findViewById(R.id.gifsGridView);
+        TagView tagView = bottom_sheet.findViewById(R.id.tag_view_test);
+        AppCompatImageView ivClose = bottom_sheet.findViewById(R.id.ivClose);
+        Button btnCreate = bottom_sheet.findViewById(R.id.btnCreate);
+
+        AppCompatAutoCompleteTextView autoCompleteTextView = bottom_sheet.findViewById(R.id.actTags);
+        AutoCompleteAdapter adapter = new AutoCompleteAdapter(this, android.R.layout.simple_dropdown_item_1line, android.R.id.text1, genreList);
+        autoCompleteTextView.setAdapter(adapter);
+
+        autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
+            String tag = parent.getItemAtPosition(position).toString();
+            tagView.addTag(tag);
+            autoCompleteTextView.setText("");
+        });
+
+        final String[] selectedGifLink = {""};
+        // setting Giphy GridView
+        giphyGridView.setDirection(GiphyGridView.HORIZONTAL);
+        giphyGridView.setSpanCount(2);
+        giphyGridView.setCellPadding(0);
+        giphyGridView.setCallback(new GPHGridCallback() {
+            @Override
+            public void contentDidUpdate(int i) {
+                Log.i("GifURL", "Position " + i);
+            }
+
+            @Override
+            public void didSelectMedia(@NotNull Media media) {
+                Log.i("GifURL", "BitlyGifURL " + media.getBitlyGifUrl());
+                Log.i("GifURL", "BitlyURL " + media.getBitlyUrl());
+                Log.i("GifURL", "Content " + media.getContentUrl());
+                Log.i("GifURL", "EmbededUrl " + media.getEmbedUrl());
+                Log.i("GifURL", "SourceUrl " + media.getSourcePostUrl());
+
+                selectedGifLink[0] = media.getEmbedUrl();
+                selectedGifIv.setVisibility(View.VISIBLE);
+                selectedGifIv.setMedia(media, RenditionType.preview, ContextCompat.getDrawable(youtube.this, R.color.light_gray));
+            }
+        });
+        playlistGif.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                GPHContent gphContent = new GPHContent();
+                gphContent.setMediaType(MediaType.gif);
+                gphContent.setRating(RatingType.pg13);
+                gphContent.setRequestType(GPHRequestType.search);
+                gphContent.setSearchQuery(query);
+                giphyGridView.setContent(gphContent);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        ivClose.setOnClickListener(v -> bottomSheet.dismiss());
+
+        btnCreate.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(playlistName.getText().toString().trim())) {
+                Toast.makeText(this, "please give playlist some name", Toast.LENGTH_SHORT).show();
+            } else if (TextUtils.isEmpty(selectedGifLink[0])) {
+                Toast.makeText(this, "please choose a GIF", Toast.LENGTH_SHORT).show();
+            } else if (!Utility.isWebUrl(selectedGifLink[0])) {
+                Toast.makeText(this, "please choose a valid GIF", Toast.LENGTH_SHORT).show();
+            } else if (TextUtils.isEmpty(playlistDesc.getText().toString().trim())) {
+                Toast.makeText(this, "please enter playlist's description", Toast.LENGTH_SHORT).show();
+            } else {
+
+                ProgressDialog showMe = new ProgressDialog(this);
+                showMe.setMessage("Please wait");
+                showMe.setCancelable(true);
+                showMe.setCanceledOnTouchOutside(false);
+                showMe.show();
+
+                DataAPI dataAPI = RetrofitAPI.getData();
+                String token = AppConstants.TOKEN + SharedPrefManager.getInstance(this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+                Call<MyPlaylistModel> callback = dataAPI.callCreatePlayList(token,
+                        SharedPrefManager.getInstance(this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
+                        playlistName.getText().toString().trim(), playlistDesc.getText().toString().trim(),
+                        selectedGifLink[0], "false", "",
+                        tagView.getSelectedTags().size() > 0 ? TextUtils.join("|", tagView.getSelectedTags()) : "All");
+                callback.enqueue(new Callback<MyPlaylistModel>() {
+                    @Override
+                    public void onResponse(Call<MyPlaylistModel> call, retrofit2.Response<MyPlaylistModel> response) {
+                        showMe.dismiss();
+                        if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
+                            bottomSheet.dismiss();
+                            playlistList.add(response.body());
+                            addToPlaylistAdapter.notifyItemInserted(playlistList.size());
+                        } else {
+                            Toast.makeText(youtube.this,
+                                    (response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!",
+                                    Toast.LENGTH_LONG).show();
+                        }
                     }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(youtube.this, "you cannot create playlist of same name again", Toast.LENGTH_SHORT).show();
-                }
+                    @Override
+                    public void onFailure(Call<MyPlaylistModel> call, Throwable t) {
+                        showMe.dismiss();
+                        Toast.makeText(youtube.this,
+                                t.getLocalizedMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
             }
-        }, new com.android.volley.Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(youtube.this, "this playlist already exists", Toast.LENGTH_SHORT).show();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                String token = SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
-                params.put("token", token);
-                params.put("name", playlistname);
-                params.put("description", description);
-                params.put("gif_link", gifLink);
-                if (checking[0]) {
-                    params.put("private", "true");
-                    params.put("password", password);
-                } else {
-                    params.put("password", "");
-                    params.put("private", "false");
-                }
+        });
 
-                return params;
-            }
+        bottomSheet.show();
 
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                String token = AppConstants.TOKEN + SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-                params.put("Authorization", token);
-                return params;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(youtube.this);
-        requestQueue.add(stringRequest);
     }
 
     // add video to server
@@ -2063,9 +2136,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 progressBar.setVisibility(View.GONE);
                 if (response != null && response.body() != null && response.body().size() > 0) {
                     playlistList.clear();
-                    for (MyPlaylistModel mBean : response.body()) {
-                        playlistList.add(new Playlist(mBean.getName(), mBean.getId()));
-                    }
+                    playlistList.addAll(response.body());
                     addToPlaylistAdapter.notifyDataSetChanged();
                     progressBar.setVisibility(View.GONE);
                     if (playlistList.size() == 0) {

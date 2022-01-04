@@ -184,7 +184,18 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 notifyStatusTv.setVisibility(View.GONE);
                 swipelayout.setLockDrag(true);
                 arrow.setVisibility(View.GONE);
-                mainCardView.setAlpha(1f);
+                if (currentItem.getReadStatus())
+                    mainCardView.setAlpha(1f);
+                else {
+                    mainCardView.setAlpha(1f);
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            callMarkAllNotificationReadAPI(mainCardView, position);
+                        }
+                    }, 1000);
+                }
             } else {
 
                 String avatarUrl = currentItem.getAvatarLink();
@@ -226,7 +237,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 notifyStatusTv.setVisibility(View.GONE);
 
                 Logging.d("==>" + currentItem.getIsAccepted());
-                if ((currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_REQUEST) || currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_INVITE) || currentItem.getType().equalsIgnoreCase(AppConstants.REAL_TIME_INVITE)
+                if ((currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_REQUEST)
+                        || currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_INVITE)
+                        || currentItem.getType().equalsIgnoreCase(AppConstants.REAL_TIME_INVITE)
                         || currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_REQUEST_RESPONDED)
                         || currentItem.getType().equalsIgnoreCase(AppConstants.COLLAB_INVITE_RESPONDED))
                         && currentItem.getIsAccepted().equalsIgnoreCase("PENDING")) {

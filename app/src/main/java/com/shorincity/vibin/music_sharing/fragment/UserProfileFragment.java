@@ -129,7 +129,7 @@ public class UserProfileFragment extends MyBaseFragment {
             public void onItemClick(View v, int position) {
                 try {
                     if (recentSongList.get(position).getSongType().equalsIgnoreCase(AppConstants.YOUTUBE)) {
-                        Intent intent = new Intent(getActivity(), PlayYoutubeVideoActivity.class);
+//                        Intent intent = new Intent(getActivity(), PlayYoutubeVideoActivity.class);
                         ArrayList<PlaylistDetailModel> playlist;
                         playlist = new ArrayList<>();
                         for (int i = 0; i < recentSongList.size(); i++) {
@@ -169,7 +169,7 @@ public class UserProfileFragment extends MyBaseFragment {
 
                 try {
                     if (likedSongList.get(position).getSongType().equalsIgnoreCase(AppConstants.YOUTUBE)) {
-                        Intent intent = new Intent(getActivity(), PlayYoutubeVideoActivity.class);
+//                        Intent intent = new Intent(getActivity(), PlayYoutubeVideoActivity.class);
                         ArrayList<PlaylistDetailModel> playlist;
                         playlist = new ArrayList<>();
                         for (int i = 0; i < likedSongList.size(); i++) {

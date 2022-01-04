@@ -631,11 +631,7 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
     }
 
     private void putPublicPLaylistLike(int playlistId) {
-        ProgressDialog showMe = new ProgressDialog(context);
-        showMe.setMessage("Please wait");
-        showMe.setCancelable(true);
-        showMe.setCanceledOnTouchOutside(false);
-        showMe.show();
+        binding.ivLike.setSelected(!myPlaylistModel.isLikedByUser());
 
         DataAPI dataAPI = RetrofitAPI.getData();
 
@@ -646,7 +642,6 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
         callback.enqueue(new Callback<MyPlaylistModel>() {
             @Override
             public void onResponse(Call<MyPlaylistModel> call, retrofit2.Response<MyPlaylistModel> response) {
-                showMe.dismiss();
                 if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
                     myPlaylistModel = response.body();
                     setPlaylistDetails();
@@ -659,7 +654,6 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
 
             @Override
             public void onFailure(Call<MyPlaylistModel> call, Throwable t) {
-                showMe.dismiss();
                 Toast.makeText(context,
                         "Something went wrong!",
                         Toast.LENGTH_LONG).show();
