@@ -27,6 +27,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -1210,7 +1211,10 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
             }
             bottom_sheet_detail.setVisibility(View.VISIBLE);
-
+            if (youtubeHomeFragment != null && youtubeHomeFragment.getView() != null) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(youtubeHomeFragment.getView().getWindowToken(), 0);
+            }
         } else {
             imgMinimize.setBackgroundDrawable(ContextCompat.getDrawable(youtube.this, R.drawable.bg_mini_player));
             imgMinimize.setImageDrawable(ContextCompat.getDrawable(youtube.this, R.drawable.ic_arrow_up_24));

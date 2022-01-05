@@ -75,7 +75,7 @@ public class RealTimePlayerChatFragment extends MyBaseFragment implements RealTi
 
     public void notifyItemAdded() {
         if (binding.rvSongs.getAdapter() != null) {
-            binding.rvSongs.getAdapter().notifyItemInserted(list.size() - 1);
+            binding.rvSongs.getAdapter().notifyDataSetChanged();
             binding.rvSongs.scrollToPosition(list.size() - 1);
         }
     }

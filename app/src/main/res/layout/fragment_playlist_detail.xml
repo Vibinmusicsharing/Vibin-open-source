@@ -193,6 +193,7 @@
                             android:layout_height="match_parent"
                             android:paddingStart="@dimen/_8sdp"
                             android:paddingEnd="@dimen/_8sdp"
+                            android:visibility="gone"
                             app:srcCompat="@drawable/ic_back_button" />
 
                         <LinearLayout

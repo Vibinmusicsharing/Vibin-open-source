@@ -3,7 +3,9 @@ package com.shorincity.vibin.music_sharing.fragment;
 import static com.shorincity.vibin.music_sharing.utils.AppConstants.KEY_CODE;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
@@ -118,7 +120,7 @@ public class SplashFragment extends Fragment {
     }
 
     private void init() {
-        mContext = getActivity();
+        mContext = getContext();
         appUpdateManager = AppUpdateManagerFactory.create(mContext);
         appUpdateManager.registerListener(listener);
         //For Toolbar
@@ -187,7 +189,8 @@ public class SplashFragment extends Fragment {
     }
 
     private void navigateTnCActivity(int resultCode) {
-        Intent intent = new Intent(mContext, TermsAndConditionsActivity.class);
+
+        Intent intent = new Intent(getContext(), TermsAndConditionsActivity.class);
         startActivityForResult(intent, resultCode);
     }
 
@@ -233,17 +236,36 @@ public class SplashFragment extends Fragment {
                         callUserApi();
                     }
                 } else {
-                    Toast.makeText(mContext, "Something went wrong!", Toast.LENGTH_LONG).show();
-                    callUserApi();
+//                    Toast.makeText(mContext, "Something went wrong!", Toast.LENGTH_LONG).show();
+                    showRetryDialog("Something went wrong!");
+//                    callUserApi();
                 }
             }
 
             @Override
             public void onFailure(Call<VersionResponse> call, Throwable t) {
-                Toast.makeText(mContext, getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
-                callUserApi();
+                /*Toast.makeText(mContext, getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
+                callUserApi();*/
+                showRetryDialog(getString(R.string.msg_network_failed));
+
             }
         });
+    }
+
+    private void showRetryDialog(String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(msg)
+                .setCancelable(false)
+                .setPositiveButton("Retry", (dialog, id) -> {
+                    callVersionCheckApi();
+                })
+                .setNegativeButton("Cancel", (dialog, id) -> {
+                    dialog.cancel();
+                    getActivity().finish();
+                });
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     private void callUserApi() {

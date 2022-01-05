@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -249,6 +250,7 @@ public class YoutubeHomeFragment extends MyBaseFragment {
 
             @Override
             public void onMoreClick(String title, ArrayList<HomeYoutubeModel.YoutubeCustomModel> list) {
+                hideKeyboard();
                 YoutubeViewMoreArtistFragment fragment = YoutubeViewMoreArtistFragment.getInstance(title, list);
                 ((youtube) getActivity()).onLoadFragment(fragment);
             }
@@ -276,6 +278,7 @@ public class YoutubeHomeFragment extends MyBaseFragment {
 
             @Override
             public void onMoreClick(String title, ArrayList<HomeYoutubeModel.YoutubeCustomModel> list) {
+                hideKeyboard();
                 YoutubeViewMoreArtistFragment fragment = YoutubeViewMoreArtistFragment.getInstance(title, list);
                 ((youtube) getActivity()).onLoadFragment(fragment);
             }
@@ -303,6 +306,7 @@ public class YoutubeHomeFragment extends MyBaseFragment {
 
             @Override
             public void onMoreClick(String title, ArrayList<HomeYoutubeModel.YoutubeCustomModel> list) {
+                hideKeyboard();
                 YoutubeViewMoreArtistFragment fragment = YoutubeViewMoreArtistFragment.getInstance(title, list);
                 ((youtube) getActivity()).onLoadFragment(fragment);
             }
@@ -695,6 +699,8 @@ public class YoutubeHomeFragment extends MyBaseFragment {
         youtubeIndianTrendingAdapter.setCustomItemClickListener(new YoutubeChannelAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
+                hideKeyboard();
+
                 YoutubeTrendingModel.Item currentItem = youtubeIndianTrendingList.get(position);
                 String idvideo = currentItem.getId();
                 String title = currentItem.getSnippet().getTitle();
@@ -770,6 +776,7 @@ public class YoutubeHomeFragment extends MyBaseFragment {
         youtubeChannelAdapter.setCustomItemClickListener(new YoutubeArtistChannelAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
+                hideKeyboard();
                 YoutubeChannelModel.Item currentItem = youtubeCannelsList.get(position);
                 String idvideo = currentItem.getId();
                 String title = currentItem.getSnippet().getTitle();
@@ -841,6 +848,7 @@ public class YoutubeHomeFragment extends MyBaseFragment {
     }
 
     private void setChannelPlaylistFrg(YoutubeTrendingModel.Item currentItem) {
+        hideKeyboard();
         ChannelsPlaylistFragment fragment = ChannelsPlaylistFragment.getInstance(
                 currentItem, currentItem.getSnippet().getChannelId(),
                 currentItem.getSnippet().getThumbnails().getMedium().getUrl()
@@ -849,10 +857,18 @@ public class YoutubeHomeFragment extends MyBaseFragment {
     }
 
     private void setChannelListItemFrg(HomeYoutubeModel.YoutubeCustomModel youtubeChannelData, String title, String mThumbnail) {
+        hideKeyboard();
         ChannelsPlaylistItemFragment fragment = ChannelsPlaylistItemFragment.getInstance(
                 youtubeChannelData, title, mThumbnail
         );
         ((youtube) getActivity()).onLoadFragment(fragment);
+    }
+
+    private void hideKeyboard(){
+        if (getView() != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+        }
     }
 
     private void inItviews() {
