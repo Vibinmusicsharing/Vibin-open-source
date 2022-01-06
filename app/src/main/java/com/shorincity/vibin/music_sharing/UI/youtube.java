@@ -548,14 +548,15 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         addToPlayList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mYouTubePlayer.pause();
-                Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
-                String duration = mYouTubePlayer.getDurationMillis() > 0 ? String.valueOf(mYouTubePlayer.getDurationMillis()) : "";
-                if (duration.equalsIgnoreCase("")) {
-                    dialog("0");
-                } else {
-                    dialog(duration);
-
+                if (mYouTubePlayer != null) {
+                    mYouTubePlayer.pause();
+                    Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
+                    String duration = mYouTubePlayer.getDurationMillis() > 0 ? String.valueOf(mYouTubePlayer.getDurationMillis()) : "";
+                    if (duration.equalsIgnoreCase("")) {
+                        dialog("0");
+                    } else {
+                        dialog(duration);
+                    }
                 }
             }
         });
@@ -1211,9 +1212,14 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
             }
             bottom_sheet_detail.setVisibility(View.VISIBLE);
-            if (youtubeHomeFragment != null && youtubeHomeFragment.getView() != null) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(youtubeHomeFragment.getView().getWindowToken(), 0);
+            Fragment frg = fragmentManager.findFragmentById(R.id.youtube_frame);
+            try {
+                if (frg != null && frg.getView() != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(frg.getView().getWindowToken(), 0);
+                }
+            } catch (Exception e) {
+                Logging.d(e.getMessage());
             }
         } else {
             imgMinimize.setBackgroundDrawable(ContextCompat.getDrawable(youtube.this, R.drawable.bg_mini_player));
@@ -1544,30 +1550,32 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     }
 
     public void repeatOneSongChange() {
-        if (handler != null) {
-            handler.removeCallbacksAndMessages(my);
-        }
-        isKillMe = false;
-        if (mYouTubePlayer != null) {
-            mYouTubePlayer.release();
-            mYouTubePlayer = null;
-        }
+        if (position < playlist.size()) {
+            if (handler != null) {
+                handler.removeCallbacksAndMessages(my);
+            }
+            isKillMe = false;
+            if (mYouTubePlayer != null) {
+                mYouTubePlayer.release();
+                mYouTubePlayer = null;
+            }
 
-        title = playlist.get(position).getName();
-        description = "";
-        thumbnail = playlist.get(position).getImage();
-        videoId = playlist.get(position).getTrackId();
-        songURI = "https://www.youtube.com/watch?v=" + videoId;
-        youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
-        titlemain.setText(title);
-        titlemain.setSelected(true);
-        playerCurrentDurationTv.setText("00:00");
-        isAddSongLogRecorded = false;
-        seekusedbyuser = false;
-        processSeekBar();
-        playerStateChangeListener = new MyPlayerStateChangeListener();
-        playbackEventListener = new MyPlaybackEventListener();
-        callGetSongLikeStatusAPI(userId, videoId);
+            title = playlist.get(position).getName();
+            description = "";
+            thumbnail = playlist.get(position).getImage();
+            videoId = playlist.get(position).getTrackId();
+            songURI = "https://www.youtube.com/watch?v=" + videoId;
+            youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
+            titlemain.setText(title);
+            titlemain.setSelected(true);
+            playerCurrentDurationTv.setText("00:00");
+            isAddSongLogRecorded = false;
+            seekusedbyuser = false;
+            processSeekBar();
+            playerStateChangeListener = new MyPlayerStateChangeListener();
+            playbackEventListener = new MyPlaybackEventListener();
+            callGetSongLikeStatusAPI(userId, videoId);
+        }
     }
 
     private void suffleSongChange() {
