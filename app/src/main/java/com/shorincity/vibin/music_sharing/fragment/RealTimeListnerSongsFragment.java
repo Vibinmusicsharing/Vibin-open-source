@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.adapters.PlaylistSongsAdapter;
@@ -44,6 +45,7 @@ public class RealTimeListnerSongsFragment extends MyBaseFragment implements Real
         binding.rvSongs.setAdapter(new PlaylistSongsAdapter(binding.rvSongs.getContext(), playlistList, true, (type, position) -> {
 
         }));
+        binding.swipelayout.setOnRefreshListener(() -> binding.swipelayout.setRefreshing(false));
         binding.tvName.setText(songName);
         binding.setIsRealTime(true);
     }

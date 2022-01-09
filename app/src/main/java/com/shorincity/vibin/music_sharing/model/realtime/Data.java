@@ -31,6 +31,9 @@ public class Data {
     private String mSessionToken;
     @SerializedName("song_playing")
     private Long mSongPlaying;
+    @SerializedName("playlist_name")
+    private String mPlaylistName;
+
 
     public Long getAdminId() {
         return mAdminId;
@@ -136,4 +139,11 @@ public class Data {
         mSongPlaying = songPlaying;
     }
 
+    public void setmPlaylistName(String mPlaylistName) {
+        this.mPlaylistName = mPlaylistName;
+    }
+
+    public String getPlaylistName() {
+        return mPlaylistName;
+    }
 }

@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -190,7 +191,7 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
                 try {
 
                     JSONObject object = new JSONObject(message);
-                    if (object.has("status") &&
+                    if (object.has("status") && object.has("type") &&
                             !object.getString("type").equalsIgnoreCase("poll_update"))
                         Log.d("LOGTAG", "==>WebSocket" + message);
 
@@ -290,27 +291,38 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
                     }
 
                     if (rtConnect != null && rtConnect.getData() != null) {
+                        runOnUiThread(() -> binding.tvName.setText(rtConnect.getData().getPlaylistName()));
                         viewModel.setElapsedSongTime(Integer.parseInt(rtConnect.getData().getElapsedSongTime()));
-                        if ((rtConnect.getData().getSessionPlayback().equalsIgnoreCase(AppConstants.CHANGED)
-                                || rtConnect.getData().getSessionPlayback().equalsIgnoreCase(AppConstants.START))) {
+                        if (rtConnect.getData().getSessionPlayback().equalsIgnoreCase(AppConstants.CHANGED)
+                                || rtConnect.getData().getSessionPlayback().equalsIgnoreCase(AppConstants.START)) {
+                            setPlayerView(rtConnect.getData().getSongPlaying().intValue());
+                        } else if (object.has("status") &&
+                                object.getString("status").equalsIgnoreCase("connected") &&
+                                rtConnect.getData().getSessionPlayback().equalsIgnoreCase(AppConstants.PLAY)) {
                             setPlayerView(rtConnect.getData().getSongPlaying().intValue());
                         } else if (rtConnect.getData().getSessionPlayback().equalsIgnoreCase(AppConstants.PAUSE)) {
-                            player.pause();
                             runOnUiThread(() -> {
+                                player.pause();
                                 Fragment fragment = getFragmentManager().findFragmentById(R.id.flMain);
                                 if (fragment instanceof RealTimePlayerFragment) {
                                     ((RealTimePlayerFragment) fragment).setPlayPause(false);
                                 }
                             });
                         } else if (rtConnect.getData().getSessionPlayback().equalsIgnoreCase(AppConstants.SEEKSONG)) {
-                            player.seekToMillis(viewModel.getElapsedSongTime());
-                        } else {
-                            player.seekToMillis(viewModel.getElapsedSongTime());
-                            player.play();
                             runOnUiThread(() -> {
-                                Fragment fragment = getFragmentManager().findFragmentById(R.id.flMain);
-                                if (fragment instanceof RealTimePlayerFragment) {
-                                    ((RealTimePlayerFragment) fragment).setPlayPause(true);
+                                player.seekToMillis(viewModel.getElapsedSongTime());
+                            });
+                        } else {
+                            runOnUiThread(() -> {
+                                if (TextUtils.isEmpty(viewModel.getTrackId())) {
+                                    setPlayerView(rtConnect.getData().getSongPlaying().intValue());
+                                } else {
+                                    player.seekToMillis(viewModel.getElapsedSongTime());
+                                    player.play();
+                                    Fragment fragment = getFragmentManager().findFragmentById(R.id.flMain);
+                                    if (fragment instanceof RealTimePlayerFragment) {
+                                        ((RealTimePlayerFragment) fragment).setPlayPause(true);
+                                    }
                                 }
                             });
                         }
@@ -522,16 +534,19 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
     }
 
     private void alertDialogShow(String message) {
-
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle(getResources().getString(R.string.app_name));
-        alertDialog.setMessage(message);
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Ok",
-                (dialog, which) -> {
-                    dialog.dismiss();
-                    finish();
-                });
-        alertDialog.show();
+        runOnUiThread(() -> {
+            if (!isFinishing()) {
+                AlertDialog alertDialog = new AlertDialog.Builder(RealTimePlayerActivity.this).create();
+                alertDialog.setTitle(getResources().getString(R.string.app_name));
+                alertDialog.setMessage(message);
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Ok",
+                        (dialog, which) -> {
+                            dialog.dismiss();
+                            finish();
+                        });
+                alertDialog.show();
+            }
+        });
     }
 
     private void repeatOrExitDialog() {
@@ -723,10 +738,10 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
         PlaylistDetailModel model = viewModel.getPlaylist().get(songPosition);
         viewModel.setSongName(model.getName());
         viewModel.setTrackId(model.getTrackId());
-        player.loadVideo(model.getTrackId());
-        player.seekToMillis(viewModel.getElapsedSongTime());
 
         runOnUiThread(() -> {
+            player.loadVideo(model.getTrackId());
+            player.seekToMillis(viewModel.getElapsedSongTime());
             Fragment fragment = getFragmentManager().findFragmentById(R.id.flMain);
             if (fragment instanceof RealTimeBaseFragment) {
                 ((RealTimeBaseFragment) fragment).setSongName(viewModel.getSongName());

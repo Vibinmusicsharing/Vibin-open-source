@@ -44,11 +44,16 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_name"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:fontFamily="@font/font_extra_bold"
                     android:gravity="center"
+                    android:paddingStart="@dimen/_50sdp"
+                    android:paddingEnd="0dp"
+                    android:layout_gravity="center"
+                    android:singleLine="true"
+                    android:ellipsize="end"
                     android:text="My Vibes"
                     android:textColor="@color/textColor"
                     android:textSize="@dimen/_18sdp" />
@@ -57,6 +62,7 @@
                     android:id="@+id/tvEnd"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="end|center"
                     android:background="@drawable/bg_end_realtime_player"
                     android:fontFamily="@font/font_medium"
                     android:paddingStart="@dimen/_16sdp"

@@ -7,7 +7,7 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cvImage"
-        android:layout_width="146dp"
+        android:layout_width="match_parent"
         android:layout_height="204dp"
         android:layout_marginLeft="@dimen/_8sdp"
         android:layout_marginTop="@dimen/_10sdp"

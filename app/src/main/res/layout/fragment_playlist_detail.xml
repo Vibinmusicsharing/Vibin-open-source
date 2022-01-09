@@ -182,7 +182,7 @@
                     app:contentInsetStart="8dp"
                     app:layout_collapseMode="pin">
 
-                    <LinearLayout
+                    <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
@@ -197,9 +197,9 @@
                             app:srcCompat="@drawable/ic_back_button" />
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
+                            android:layout_gravity="center"
                             android:gravity="center"
                             android:orientation="vertical">
 
@@ -208,6 +208,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/font_extra_bold"
+                                android:maxEms="10"
+                                android:singleLine="true"
                                 android:text="My Vibes"
                                 android:textColor="@color/textColor"
                                 android:textSize="@dimen/_18sdp" />
@@ -217,6 +219,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/font_regular"
+                                android:maxEms="10"
+                                android:singleLine="true"
                                 android:text="by Kenzi"
                                 android:textColor="@color/textColor"
                                 android:textSize="@dimen/_12sdp" />
@@ -226,11 +230,12 @@
                             android:id="@+id/ivMenu"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
+                            android:layout_gravity="end"
                             android:paddingStart="@dimen/_8sdp"
                             android:paddingEnd="@dimen/_8sdp"
                             app:srcCompat="@drawable/ic_menu" />
 
-                    </LinearLayout>
+                    </FrameLayout>
                 </androidx.appcompat.widget.Toolbar>
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
