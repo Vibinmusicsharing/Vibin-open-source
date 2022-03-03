@@ -29,6 +29,10 @@ public class VersionResponse {
     @Expose
     private String lastFm;
 
+    @SerializedName("message")
+    @Expose
+    private String message;
+
 
     public String getStatus() {
         return status;
@@ -52,5 +56,9 @@ public class VersionResponse {
 
     public String getLastFm() {
         return lastFm;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

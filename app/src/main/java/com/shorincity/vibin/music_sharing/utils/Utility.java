@@ -10,6 +10,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
 
+import com.giphy.sdk.ui.Giphy;
 import com.shorincity.vibin.music_sharing.BuildConfig;
 
 import java.text.DecimalFormat;
@@ -22,14 +23,13 @@ public class Utility {
 
     public static void setViewEnable(View view, Boolean isEnable) {
 
-        Float alphaValue = isEnable?1.0f:0.5f;
+        Float alphaValue = isEnable ? 1.0f : 0.5f;
 
         view.setEnabled(isEnable);
         view.setAlpha(alphaValue);
     }
 
-    public static  String getVersionName(Context context)
-    {
+    public static String getVersionName(Context context) {
         String versionName = "";
         try {
             versionName = BuildConfig.VERSION_NAME;
@@ -39,7 +39,7 @@ public class Utility {
 
         if (TextUtils.isEmpty(versionName)) {
             try {
-                PackageInfo pInfo =   context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+                PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
                 versionName = pInfo.versionName;
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
@@ -48,8 +48,7 @@ public class Utility {
         return versionName;
     }
 
-    public static void shareMyApp(Context context)
-    {
+    public static void shareMyApp(Context context) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT,
@@ -58,8 +57,7 @@ public class Utility {
         context.startActivity(sendIntent);
     }
 
-    public static void emailUs(Activity context)
-    {
+    public static void emailUs(Activity context) {
                 /*ShareCompat.IntentBuilder.from(context)
                         .setType("message/rfc822")
                         .addEmailTo("vibinmusicsharing@gmail.com")
@@ -69,15 +67,15 @@ public class Utility {
                         .setChooserTitle("Report Us")
                         .startChooser();*/
 
-        Intent intent = new Intent (Intent.ACTION_SEND);
+        Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("message/rfc822");
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"vibinmusicsharing@gmail.com"});
         intent.putExtra(Intent.EXTRA_SUBJECT, "Any subject if you want");
         intent.setPackage("com.google.android.gm");
-        if (intent.resolveActivity(context.getPackageManager())!=null)
+        if (intent.resolveActivity(context.getPackageManager()) != null)
             context.startActivity(intent);
         else
-            Toast.makeText(context,"Gmail App is not installed",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Gmail App is not installed", Toast.LENGTH_SHORT).show();
     }
 
     public static String prettyCount(Number number) {
@@ -92,13 +90,12 @@ public class Utility {
         }
     }
 
-    public static boolean isWebUrl(String linkTxt)
-    {
+    public static boolean isWebUrl(String linkTxt) {
         return Patterns.WEB_URL.matcher(linkTxt).matches();
 
     }
 
-    public static String millisIntoHHMMSS(long millis){
+    public static String millisIntoHHMMSS(long millis) {
         String timeDutation = "00:00:00";
         try {
             timeDutation = String.format("%02d:%02d:%02d",
@@ -148,9 +145,10 @@ public class Utility {
             return timeDutation;
         }
     }
+
     public static String convertSongDuration(long duration) {
         String out = null;
-        long hours=0;
+        long hours = 0;
         try {
             hours = (duration / 3600000);
         } catch (Exception e) {
@@ -178,6 +176,10 @@ public class Utility {
         }
 
         return out;
+    }
+
+    public static void configGiphy(Context context) {
+        Giphy.INSTANCE.configure(context, AppConstants.GIPHY_API_KEY, true, 100 * 1024 * 1024);
     }
 
 }

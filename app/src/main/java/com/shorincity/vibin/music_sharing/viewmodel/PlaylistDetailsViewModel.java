@@ -4,12 +4,16 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
 import com.shorincity.vibin.music_sharing.callbackclick.PlaylistDetailCallback;
 import com.shorincity.vibin.music_sharing.fragment.PlaylistDetailFragmentNew;
+import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
+import com.shorincity.vibin.music_sharing.model.shareplaylist.PlaylistDetailResponse;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
@@ -26,6 +30,11 @@ public class PlaylistDetailsViewModel implements Parcelable {
     private ArrayList<PlaylistDetailModel> playlist;
     private ArrayList<ViewCollab> viewcollabList;
     private boolean isAdmin = false;
+    private boolean isCollaborator = false;
+    private String playlistID = "";
+    private String sourceType = AppConstants.SOURCE_TYPE_IN_APP;
+    private PlaylistDetailResponse playlistDetailResponse;
+    private int searchUserId = -1;
 
     public PlaylistDetailsViewModel() {
         playlist = new ArrayList<>();
@@ -36,12 +45,22 @@ public class PlaylistDetailsViewModel implements Parcelable {
     protected PlaylistDetailsViewModel(Parcel in) {
         playlist = in.createTypedArrayList(PlaylistDetailModel.CREATOR);
         viewcollabList = in.createTypedArrayList(ViewCollab.CREATOR);
+        isAdmin = in.readByte() != 0;
+        isCollaborator = in.readByte() != 0;
+        playlistID = in.readString();
+        sourceType = in.readString();
+        searchUserId = in.readInt();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeTypedList(playlist);
         dest.writeTypedList(viewcollabList);
+        dest.writeByte((byte) (isAdmin ? 1 : 0));
+        dest.writeByte((byte) (isCollaborator ? 1 : 0));
+        dest.writeString(playlistID);
+        dest.writeString(sourceType);
+        dest.writeInt(searchUserId);
     }
 
     @Override
@@ -61,32 +80,62 @@ public class PlaylistDetailsViewModel implements Parcelable {
         }
     };
 
-    public void getPublicPlaylistDetail(Context context, String playlistID, PlaylistDetailCallback detailCallback) {
+    public void getPublicPlaylistDetail(Context context, PlaylistDetailCallback detailCallback) {
 
         DataAPI dataAPI = RetrofitAPI.getData();
 
         String token = AppConstants.TOKEN + SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-        Call<ArrayList<PlaylistDetailModel>> callback = dataAPI.getPublicPlaylistDetail(token,
+        Call<PlaylistDetailResponse> callback = dataAPI.getPublicPlaylistDetail(token,
                 SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
-                playlistID);
-        callback.enqueue(new Callback<ArrayList<PlaylistDetailModel>>() {
+                playlistID, sourceType);
+        callback.enqueue(new Callback<PlaylistDetailResponse>() {
             @Override
-            public void onResponse(Call<ArrayList<PlaylistDetailModel>> call, retrofit2.Response<ArrayList<PlaylistDetailModel>> response) {
+            public void onResponse(Call<PlaylistDetailResponse> call, retrofit2.Response<PlaylistDetailResponse> response) {
                 playlist.clear();
-                Logging.d("Avatar response-->" + response.body());
-                if (response != null && response.body() != null && response.body().size() > 0) {
-                    playlist.addAll(response.body());
+                if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
+                    playlistDetailResponse = response.body();
+                    playlist.addAll(response.body().getTracks());
+                    isCollaborator = response.body().isIsCollaborator();
                     detailCallback.onResponse();
                 } else {
-                    detailCallback.onError();
+                    detailCallback.onError((response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!");
                 }
             }
 
             @Override
-            public void onFailure(Call<ArrayList<PlaylistDetailModel>> call, Throwable t) {
+            public void onFailure(Call<PlaylistDetailResponse> call, Throwable t) {
 //                more_image.setVisibility(View.GONE);
                 Log.d(TAG, "onFailure: " + t.getMessage());
-                detailCallback.onError();
+                detailCallback.onError("Something went wrong!");
+            }
+        });
+    }
+
+    public void callAddCollabFromQR(Context context, String qrCode, PlaylistDetailCallback detailCallback) {
+        DataAPI dataAPI = RetrofitAPI.getData();
+        String token = AppConstants.TOKEN + SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+
+        Call<PlaylistDetailResponse> callback = dataAPI.callAddCollabFromQR(token,
+                SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
+                qrCode);
+        callback.enqueue(new Callback<PlaylistDetailResponse>() {
+            @Override
+            public void onResponse(Call<PlaylistDetailResponse> call, retrofit2.Response<PlaylistDetailResponse> response) {
+                playlist.clear();
+                if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
+                    playlist.addAll(response.body().getTracks());
+                    isCollaborator = response.body().isIsCollaborator();
+                    detailCallback.onResponse();
+                } else {
+                    detailCallback.onError((response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PlaylistDetailResponse> call, Throwable t) {
+//                more_image.setVisibility(View.GONE);
+                Log.d(TAG, "onFailure: " + t.getMessage());
+                detailCallback.onError("Something went wrong!");
             }
         });
     }
@@ -108,18 +157,50 @@ public class PlaylistDetailsViewModel implements Parcelable {
                         viewcollabList.add(null);
                     detailCallback.onResponse();
                 } else {
-                    detailCallback.onError();
+                    detailCallback.onError("Something went wrong!");
                 }
             }
 
             @Override
             public void onFailure(Call<List<ViewCollab>> call, Throwable t) {
 //                more_image.setVisibility(View.GONE);
-                detailCallback.onError();
+                detailCallback.onError("Something went wrong!");
                 Log.d(TAG, "onFailure: " + t.getMessage());
             }
         });
     }
+
+    public void sendCollabRequestNotification(Context mContext, int playlistId, int searchedUserId) {
+
+        DataAPI dataAPI = RetrofitAPI.getData();
+        String headerToken = AppConstants.TOKEN + SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+        int userId = SharedPrefManager.getInstance(mContext).getSharedPrefInt(AppConstants.INTENT_USER_ID);
+
+        Call<APIResponse> callback = dataAPI.sendNotification(headerToken, userId, searchedUserId, playlistId, AppConstants.COLLAB_REQUEST);
+        callback.enqueue(new Callback<APIResponse>() {
+            @Override
+            public void onResponse(Call<APIResponse> call, retrofit2.Response<APIResponse> response) {
+
+                if (response.body() != null) {
+
+                    if (response.body().getStatus().equalsIgnoreCase("success")) {
+                        Toast.makeText(mContext, response.body().getMessage(), Toast.LENGTH_LONG).show();
+                    } else if (response.body().getStatus().equalsIgnoreCase("failed")) {
+                        Toast.makeText(mContext, response.body().getMessage(),
+                                Toast.LENGTH_LONG).show();
+
+                    }
+                } else {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<APIResponse> call, Throwable t) {
+                Log.d(TAG, "onFailure: " + t.getMessage());
+            }
+        });
+    }
+
 
     public ArrayList<PlaylistDetailModel> getPlaylist() {
         return playlist;
@@ -135,5 +216,37 @@ public class PlaylistDetailsViewModel implements Parcelable {
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    public boolean isCollaborator() {
+        return isCollaborator;
+    }
+
+    public String getPlaylistID() {
+        return playlistID;
+    }
+
+    public void setPlaylistID(String playlistID) {
+        this.playlistID = playlistID;
+    }
+
+    public String getSourceType() {
+        return sourceType;
+    }
+
+    public void setSourceType(String sourceType) {
+        this.sourceType = sourceType;
+    }
+
+    public PlaylistDetailResponse getPlaylistDetailResponse() {
+        return playlistDetailResponse;
+    }
+
+    public int getSearchUserId() {
+        return searchUserId;
+    }
+
+    public void setSearchUserId(int searchUserId) {
+        this.searchUserId = searchUserId;
     }
 }

@@ -74,7 +74,7 @@ public class UserProfileFragment extends MyBaseFragment {
         // Inflate the layout for this fragment
         if (view == null) {
             view = inflater.inflate(R.layout.fragment_user_profile, container, false);
-            Giphy.INSTANCE.configure(getActivity(), AppConstants.GIPHY_API_KEY, true);
+            Utility.configGiphy(getActivity());
             userId = SharedPrefManager.getInstance(getActivity()).getSharedPrefInt(AppConstants.INTENT_USER_ID);
             userName = SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_NAME);
             fullName = SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_FULL_NAME);

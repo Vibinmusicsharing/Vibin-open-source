@@ -70,17 +70,20 @@
                     android:gravity="center"
                     android:orientation="horizontal">
 
-                    <androidx.appcompat.widget.AppCompatEditText
+                    <com.vanniktech.emoji.EmojiEditText
                         android:id="@+id/etMsg"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="@android:color/transparent"
                         android:hint="Type any message"
-                        android:inputType="text|textCapSentences"
+                        android:imeOptions="actionSend"
+                        android:inputType="textCapSentences|textMultiLine|textCapSentences"
+                        android:maxLines="3"
                         android:padding="@dimen/_8sdp" />
 
                     <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/ivEmoji"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/_8sdp"

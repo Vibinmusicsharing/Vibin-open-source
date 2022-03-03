@@ -8,11 +8,11 @@
     </data>
 
     <LinearLayout
-        android:layout_width="300dp"
+        android:layout_width="230dp"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_playlist_detail_menu"
         android:orientation="vertical"
-        android:padding="@dimen/_16sdp">
+        android:padding="@dimen/_12sdp">
 
         <LinearLayout
             android:id="@+id/llEditPlaylist"
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal"
-            android:padding="@dimen/_16sdp">
+            android:padding="@dimen/_12sdp">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="20dp"
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal"
-            android:padding="@dimen/_16sdp">
+            android:padding="@dimen/_12sdp">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="20dp"
@@ -73,9 +73,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:visibility="gone"
             android:orientation="horizontal"
-            android:padding="@dimen/_16sdp">
+            android:padding="@dimen/_12sdp">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="20dp"
@@ -90,7 +89,7 @@
                 android:fontFamily="@font/font_semi_bold"
                 android:paddingStart="@dimen/_16sdp"
                 android:paddingEnd="0dp"
-                android:text="Share"
+                android:text="Invite"
                 android:textColor="@color/textColor"
                 android:textSize="16sp" />
 
@@ -99,6 +98,8 @@
         <View
             android:layout_width="@dimen/_50sdp"
             android:layout_height="1dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center"
             android:background="@color/btnSearchColor" />
 
@@ -109,9 +110,9 @@
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingStart="@dimen/_16sdp"
-            android:paddingTop="@dimen/_10sdp"
+            android:paddingTop="@dimen/_6sdp"
             android:paddingEnd="@dimen/_16sdp"
-            android:paddingBottom="@dimen/_10sdp">
+            android:paddingBottom="@dimen/_6sdp">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="0dp"

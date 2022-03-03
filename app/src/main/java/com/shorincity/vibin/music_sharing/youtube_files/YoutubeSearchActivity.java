@@ -93,7 +93,8 @@ public class YoutubeSearchActivity extends AppCompatActivity {
                         playlist.add(new PlaylistDetailModel(
                                 mangitem.get(i).getSnippet().getTitle(),
                                 mangitem.get(i).getSnippet().getThumbnails().getMedium().getUrl(),
-                                mangitem.get(i).getId().getVideoId()
+                                mangitem.get(i).getId().getVideoId(),
+                                mangitem.get(i).getSnippet().getSongDuration(),""
                         ));
                     }
                     Bundle bundle = new Bundle();

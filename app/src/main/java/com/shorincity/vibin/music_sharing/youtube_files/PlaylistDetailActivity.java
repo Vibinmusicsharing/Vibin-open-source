@@ -68,6 +68,7 @@ import com.shorincity.vibin.music_sharing.model.UserSearchModel;
 import com.shorincity.vibin.music_sharing.model.firebase.RealTimeModel;
 import com.shorincity.vibin.music_sharing.model.firebase.RealTimeSession;
 import com.shorincity.vibin.music_sharing.model.firebase.RealTimeUser;
+import com.shorincity.vibin.music_sharing.model.shareplaylist.PlaylistDetailResponse;
 import com.shorincity.vibin.music_sharing.ripples.RippleButton;
 import com.shorincity.vibin.music_sharing.ripples.listener.OnRippleCompleteListener;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
@@ -715,7 +716,7 @@ public class PlaylistDetailActivity extends AppCompatActivity {
 
             @Override
             public void onSelectedcollabsID(int ids, boolean selected) {
-                selectedcollabsID(ids,selected);
+                selectedcollabsID(ids, selected);
             }
         });
 
@@ -874,7 +875,7 @@ public class PlaylistDetailActivity extends AppCompatActivity {
             String gifArraySplit[] = currentItem.getGifLink().split("/");
             String mediaId = gifArraySplit[gifArraySplit.length - 1];
 
-            gifView.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(this, R.color.light_gray));
+            gifView.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(this, R.color.light_gray), null);
 
 
             String fullName = SharedPrefManager.getInstance(PlaylistDetailActivity.this).getSharedPrefString(AppConstants.INTENT_FULL_NAME);
@@ -1002,15 +1003,17 @@ public class PlaylistDetailActivity extends AppCompatActivity {
         DataAPI dataAPI = RetrofitAPI.getData();
 
         String token = AppConstants.TOKEN + SharedPrefManager.getInstance(PlaylistDetailActivity.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-        Call<ArrayList<PlaylistDetailModel>> callback = dataAPI.getPublicPlaylistDetail(token, SharedPrefManager.getInstance(PlaylistDetailActivity.this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN), playlistId);
-        callback.enqueue(new Callback<ArrayList<PlaylistDetailModel>>() {
+        Call<PlaylistDetailResponse> callback = dataAPI.getPublicPlaylistDetail(token,
+                SharedPrefManager.getInstance(PlaylistDetailActivity.this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
+                playlistId, AppConstants.SOURCE_TYPE_IN_APP);
+        callback.enqueue(new Callback<PlaylistDetailResponse>() {
             @Override
-            public void onResponse(Call<ArrayList<PlaylistDetailModel>> call, retrofit2.Response<ArrayList<PlaylistDetailModel>> response) {
+            public void onResponse(Call<PlaylistDetailResponse> call, retrofit2.Response<PlaylistDetailResponse> response) {
                 playlist.clear();
-                if (response != null && response.body() != null && response.body().size() > 0) {
+                if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
 
                     playlistRv.setVisibility(View.VISIBLE);
-                    playlist.addAll(response.body());
+                    playlist.addAll(response.body().getTracks());
 //                    if (playlist.size() > 0) {
 //                        more_image.setVisibility(View.VISIBLE);
 //                    } else {
@@ -1039,7 +1042,7 @@ public class PlaylistDetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<PlaylistDetailModel>> call, Throwable t) {
+            public void onFailure(Call<PlaylistDetailResponse> call, Throwable t) {
                 more_image.setVisibility(View.GONE);
                 Log.d(TAG, "onFailure: " + t.getMessage());
             }

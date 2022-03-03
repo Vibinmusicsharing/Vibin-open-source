@@ -45,6 +45,7 @@ import com.shorincity.vibin.music_sharing.adapters.searchItem;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistLikeModel;
+import com.shorincity.vibin.music_sharing.model.shareplaylist.PlaylistDetailResponse;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
@@ -450,15 +451,17 @@ public class SearchFragment extends MyBaseFragment {
         DataAPI dataAPI = RetrofitAPI.getData();
 
         String token = AppConstants.TOKEN + SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-        Call<ArrayList<PlaylistDetailModel>> callback = dataAPI.getPublicPlaylistDetail(token, SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_TOKEN), playlistId);
-        callback.enqueue(new Callback<ArrayList<PlaylistDetailModel>>() {
+        Call<PlaylistDetailResponse> callback = dataAPI.getPublicPlaylistDetail(token,
+                SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
+                playlistId, AppConstants.SOURCE_TYPE_IN_APP);
+        callback.enqueue(new Callback<PlaylistDetailResponse>() {
             @Override
-            public void onResponse(Call<ArrayList<PlaylistDetailModel>> call, retrofit2.Response<ArrayList<PlaylistDetailModel>> response) {
+            public void onResponse(Call<PlaylistDetailResponse> call, retrofit2.Response<PlaylistDetailResponse> response) {
                 Songplaylist.clear();
 
-                if (response != null && response.body() != null && response.body().size() > 0) {
+                if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
 
-                    Songplaylist.addAll(response.body());
+                    Songplaylist.addAll(response.body().getTracks());
                     Collections.reverse(Songplaylist);
                     int pos = 0;
 
@@ -483,7 +486,7 @@ public class SearchFragment extends MyBaseFragment {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<PlaylistDetailModel>> call, Throwable t) {
+            public void onFailure(Call<PlaylistDetailResponse> call, Throwable t) {
 
                 Log.d(TAG, "onFailure: " + t.getMessage());
             }

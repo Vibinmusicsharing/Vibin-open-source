@@ -429,7 +429,8 @@ public class YoutubeHomeFragment extends MyBaseFragment {
                                 playlist.add(new PlaylistDetailModel(
                                         youtubeUKTrendingList.get(i).getSnippet().getTitle(),
                                         youtubeUKTrendingList.get(i).getSnippet().getThumbnails().getHigh().getUrl(),
-                                        idvideo
+                                        idvideo,
+                                        youtubeUKTrendingList.get(i).getSnippet().getSongDuration(), ""
                                 ));
                             } else {
                                 String splitrl[] = defaultThumbnail.split("/");
@@ -437,7 +438,8 @@ public class YoutubeHomeFragment extends MyBaseFragment {
                                 playlist.add(new PlaylistDetailModel(
                                         youtubeUKTrendingList.get(i).getSnippet().getTitle(),
                                         defaultThumbnail,
-                                        idvideo
+                                        idvideo,
+                                        youtubeUKTrendingList.get(i).getSnippet().getSongDuration(), ""
                                 ));
                             }
                         }
@@ -484,7 +486,8 @@ public class YoutubeHomeFragment extends MyBaseFragment {
                                 playlist.add(new PlaylistDetailModel(
                                         youtubeUSTrendingList.get(i).getSnippet().getTitle(),
                                         youtubeUSTrendingList.get(i).getSnippet().getThumbnails().getHigh().getUrl(),
-                                        idvideo
+                                        idvideo,
+                                        youtubeUKTrendingList.get(i).getSnippet().getSongDuration(), ""
                                 ));
                             } else {
                                 String splitrl[] = defaultThumbnail.split("/");
@@ -492,7 +495,8 @@ public class YoutubeHomeFragment extends MyBaseFragment {
                                 playlist.add(new PlaylistDetailModel(
                                         youtubeUSTrendingList.get(i).getSnippet().getTitle(),
                                         defaultThumbnail,
-                                        idvideo
+                                        idvideo,
+                                        youtubeUKTrendingList.get(i).getSnippet().getSongDuration(), ""
                                 ));
                             }
                         }
@@ -539,7 +543,8 @@ public class YoutubeHomeFragment extends MyBaseFragment {
                                 playlist.add(new PlaylistDetailModel(
                                         youtubeCanadaTrendingList.get(i).getSnippet().getTitle(),
                                         youtubeCanadaTrendingList.get(i).getSnippet().getThumbnails().getHigh().getUrl(),
-                                        idvideo
+                                        idvideo,
+                                        youtubeUKTrendingList.get(i).getSnippet().getSongDuration(), ""
                                 ));
                             } else {
                                 String splitrl[] = defaultThumbnail.split("/");
@@ -547,7 +552,8 @@ public class YoutubeHomeFragment extends MyBaseFragment {
                                 playlist.add(new PlaylistDetailModel(
                                         youtubeCanadaTrendingList.get(i).getSnippet().getTitle(),
                                         defaultThumbnail,
-                                        idvideo
+                                        idvideo,
+                                        youtubeUKTrendingList.get(i).getSnippet().getSongDuration(), ""
                                 ));
                             }
                         }
@@ -594,7 +600,8 @@ public class YoutubeHomeFragment extends MyBaseFragment {
                                 playlist.add(new PlaylistDetailModel(
                                         youtubeJapanTrendingList.get(i).getSnippet().getTitle(),
                                         youtubeJapanTrendingList.get(i).getSnippet().getThumbnails().getHigh().getUrl(),
-                                        idvideo
+                                        idvideo,
+                                        youtubeUKTrendingList.get(i).getSnippet().getSongDuration(), ""
                                 ));
                             } else {
                                 String splitrl[] = defaultThumbnail.split("/");
@@ -602,7 +609,8 @@ public class YoutubeHomeFragment extends MyBaseFragment {
                                 playlist.add(new PlaylistDetailModel(
                                         youtubeJapanTrendingList.get(i).getSnippet().getTitle(),
                                         defaultThumbnail,
-                                        idvideo
+                                        idvideo,
+                                        youtubeUKTrendingList.get(i).getSnippet().getSongDuration(), ""
                                 ));
                             }
                         }
@@ -649,7 +657,8 @@ public class YoutubeHomeFragment extends MyBaseFragment {
                                 playlist.add(new PlaylistDetailModel(
                                         youtubeAusTrendingList.get(i).getSnippet().getTitle(),
                                         youtubeAusTrendingList.get(i).getSnippet().getThumbnails().getHigh().getUrl(),
-                                        idvideo
+                                        idvideo,
+                                        youtubeUKTrendingList.get(i).getSnippet().getSongDuration(), ""
                                 ));
                             } else {
                                 String splitrl[] = defaultThumbnail.split("/");
@@ -657,7 +666,8 @@ public class YoutubeHomeFragment extends MyBaseFragment {
                                 playlist.add(new PlaylistDetailModel(
                                         youtubeAusTrendingList.get(i).getSnippet().getTitle(),
                                         defaultThumbnail,
-                                        idvideo
+                                        idvideo,
+                                        youtubeUKTrendingList.get(i).getSnippet().getSongDuration(), ""
                                 ));
                             }
                         }
@@ -864,7 +874,7 @@ public class YoutubeHomeFragment extends MyBaseFragment {
         ((youtube) getActivity()).onLoadFragment(fragment);
     }
 
-    private void hideKeyboard(){
+    private void hideKeyboard() {
         if (getView() != null) {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
@@ -1060,7 +1070,8 @@ public class YoutubeHomeFragment extends MyBaseFragment {
             @Override
             public void onFailure(Call<HomeYoutubeModel> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(mContext, getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
+                if (isVisible())
+                    Toast.makeText(mContext, getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
 

@@ -92,12 +92,13 @@ public class PlaylistDetailModel implements Parcelable, Comparable<PlaylistDetai
         isSelected = selected;
     }
 
-    /*public PlaylistDetailModel(String name, String image, String trackId, String songDuration) {
+    public PlaylistDetailModel(String name, String image, String trackId, String songDuration,String artistName) {
         this.name = name;
         this.image = image;
         this.trackId = trackId;
         this.songDuration = songDuration;
-    }*/
+        this.artistName = artistName;
+    }
 
     public PlaylistDetailModel(String name, String image, String trackId) {
         this.name = name;

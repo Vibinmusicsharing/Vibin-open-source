@@ -24,13 +24,15 @@ import java.util.Map;
 // shared prefrences
 public class SharedPrefManager {
     private static final String SHARED_PREF_NAME = "volleyregisterlogin";
-    private static final String KEY_USERNAME ="name";
+    private static final String SHARED_PREF_KEY = "vibin_keys";
+    private static final String KEY_USERNAME = "name";
     private static final String KEY_EMAIL = "email";
     private static final String KEY_Password = "password";
     private static final String TOKEN = "token";
     private static SharedPrefManager mInstance;
     private static Context ctx;
-    public static String TokenMain ;
+    public static String TokenMain;
+
     public SharedPrefManager(Context context) {
         ctx = context;
     }
@@ -44,22 +46,24 @@ public class SharedPrefManager {
     }
 
     //this method will store the user data in shared preferences
-    public void userLogin(String token,String email) {
+    public void userLogin(String token, String email) {
         TokenMain = token;
         SharedPreferences sharedPreferences = ctx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(TOKEN,token);
-        editor.putString(KEY_EMAIL,email);
+        editor.putString(TOKEN, token);
+        editor.putString(KEY_EMAIL, email);
         editor.apply();
     }
-    public String loadToken(){
-        SharedPreferences sharedPreferences = ctx.getSharedPreferences(SHARED_PREF_NAME,Context.MODE_PRIVATE);
-        String token = sharedPreferences.getString(TOKEN,"");
+
+    public String loadToken() {
+        SharedPreferences sharedPreferences = ctx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString(TOKEN, "");
         return token.toString();
     }
-    public String loadEmail(){
-        SharedPreferences sharedPreferences = ctx.getSharedPreferences(SHARED_PREF_NAME,Context.MODE_PRIVATE);
-        String email =  sharedPreferences.getString(KEY_EMAIL,"");
+
+    public String loadEmail() {
+        SharedPreferences sharedPreferences = ctx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        String email = sharedPreferences.getString(KEY_EMAIL, "");
         return email;
     }
 
@@ -73,7 +77,7 @@ public class SharedPrefManager {
     public User getUser() {
         SharedPreferences sharedPreferences = ctx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return new User(
-                sharedPreferences.getString(TOKEN,null)
+                sharedPreferences.getString(TOKEN, null)
 
         );
     }
@@ -98,7 +102,7 @@ public class SharedPrefManager {
 
     private void logOutfromServer(String userToken, String userApiToken) {
 
-        String URL= AppConstants.BASE_URL+"user/v1/logout/";
+        String URL = AppConstants.BASE_URL + "user/v1/logout/";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
@@ -107,11 +111,11 @@ public class SharedPrefManager {
                     JSONObject jsonObject = new JSONObject(response);
                     Boolean Logged_Out = jsonObject.getBoolean("Logged_Out");
 
-                    if(Logged_Out) {
-                    }else {
+                    if (Logged_Out) {
+                    } else {
                         Toast.makeText(ctx, "Something went wrong!", Toast.LENGTH_SHORT).show();
                     }
-                }catch (JSONException e){
+                } catch (JSONException e) {
                     e.printStackTrace();
                     Toast.makeText(ctx, "Something went wrong!", Toast.LENGTH_SHORT).show();
                 }
@@ -124,15 +128,15 @@ public class SharedPrefManager {
             }
         }) {
             @Override
-            protected Map<String, String> getParams(){
-                Map<String,String> params = new HashMap<>();
-                params.put("token",userToken);
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("token", userToken);
                 return params;
             }
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String>  params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<String, String>();
                 params.put("Authorization", userApiToken);
                 return params;
             }
@@ -146,24 +150,35 @@ public class SharedPrefManager {
     public void setSharedPrefString(String key, String string) {
         SharedPreferences sharedPreferences = ctx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(key,string).apply();
+        editor.putString(key, string).apply();
+    }
+
+    public void setVibinKeys(String key, String value) {
+        SharedPreferences sharedPreferences = ctx.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(key, value).apply();
+    }
+
+    public String getVibinKey(String key) {
+        SharedPreferences sharedPreferences = ctx.getSharedPreferences(SHARED_PREF_KEY, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(key, "");
     }
 
     public String getSharedPrefString(String key) {
         SharedPreferences sharedPreferences = ctx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(key,"");
+        return sharedPreferences.getString(key, "");
     }
 
     public void setSharedPrefBoolean(String key, Boolean value) {
         SharedPreferences sharedPreferences = ctx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(key,value).apply();
+        editor.putBoolean(key, value).apply();
     }
 
     public Boolean getSharedPrefBoolean(String key) {
         SharedPreferences sharedPreferences = ctx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        if(sharedPreferences.contains(key))
-            return sharedPreferences.getBoolean(key,false);
+        if (sharedPreferences.contains(key))
+            return sharedPreferences.getBoolean(key, false);
         else
             return false;
     }
@@ -171,12 +186,12 @@ public class SharedPrefManager {
     public void setSharedPrefInt(String key, Integer value) {
         SharedPreferences sharedPreferences = ctx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(key,value).apply();
+        editor.putInt(key, value).apply();
     }
 
     public Integer getSharedPrefInt(String key) {
         SharedPreferences sharedPreferences = ctx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getInt(key,-1);
+        return sharedPreferences.getInt(key, -1);
     }
 
     public void clearAllSharedPref() {
@@ -185,5 +200,6 @@ public class SharedPrefManager {
         editor.clear();
         editor.apply();
     }
+
 
 }

@@ -1,6 +1,10 @@
 package com.shorincity.vibin.music_sharing.fragment;
 
 import static com.shorincity.vibin.music_sharing.utils.AppConstants.KEY_CODE;
+import static com.shorincity.vibin.music_sharing.utils.AppConstants.PREF_GIPHY_KEY;
+import static com.shorincity.vibin.music_sharing.utils.AppConstants.PREF_LAST_FM_KEY;
+import static com.shorincity.vibin.music_sharing.utils.AppConstants.PREF_YOUTUBE_KEY;
+import static com.shorincity.vibin.music_sharing.utils.AppConstants.YOUTUBE_KEY;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -77,13 +81,17 @@ public class SplashFragment extends Fragment {
     private static int APP_UPDATE_REQUEST_CODE = 101;
     private AppUpdateManager appUpdateManager;
 
-    private InstallStateUpdatedListener listener = state -> {
+    private final InstallStateUpdatedListener listener = state -> {
         if (state.installStatus() == InstallStatus.DOWNLOADED) {
             popupSnackbarForCompleteUpdate();
         } else if (state.installStatus() == InstallStatus.FAILED) {
-            if (isApiCallDone && isTimerOver) {
-                runnable.run();
-            }
+            callUserApi();
+        }else if (state.installStatus() == InstallStatus.DOWNLOADING){
+            ProgressBar prg = mView.findViewById(R.id.progressBar);
+            TextView tvInstall = mView.findViewById(R.id.tvInstall);
+
+            prg.setVisibility(View.VISIBLE);
+            tvInstall.setVisibility(View.VISIBLE);
         }
     };
 
@@ -123,6 +131,12 @@ public class SplashFragment extends Fragment {
         mContext = getContext();
         appUpdateManager = AppUpdateManagerFactory.create(mContext);
         appUpdateManager.registerListener(listener);
+
+        SharedPrefManager pref = SharedPrefManager.getInstance(mContext);
+        AppConstants.YOUTUBE_KEY = pref.getVibinKey(PREF_YOUTUBE_KEY);
+        AppConstants.GIPHY_API_KEY = pref.getVibinKey(PREF_GIPHY_KEY);
+        AppConstants.LAST_FM_KEY = pref.getVibinKey(PREF_LAST_FM_KEY);
+
         //For Toolbar
         mActivity.toolbarInitialization(false, "", "", true);
         onNextCheck();
@@ -189,9 +203,10 @@ public class SplashFragment extends Fragment {
     }
 
     private void navigateTnCActivity(int resultCode) {
-
-        Intent intent = new Intent(getContext(), TermsAndConditionsActivity.class);
-        startActivityForResult(intent, resultCode);
+        if (getContext() != null) {
+            Intent intent = new Intent(getContext(), TermsAndConditionsActivity.class);
+            startActivityForResult(intent, resultCode);
+        }
     }
 
     private void callVersionCheckApi() {
@@ -206,14 +221,17 @@ public class SplashFragment extends Fragment {
                         response.body().getStatus().equalsIgnoreCase("success")) {
                     versionResponse = response.body();
 
-                    AppConstants.YOUTUBE_KEY = versionResponse.getYoutube();
-                    AppConstants.GIPHY_API_KEY = versionResponse.getGiphy();
-                    AppConstants.LAST_FM_KEY = versionResponse.getLastFm();
+                    SharedPrefManager pref = SharedPrefManager.getInstance(mContext);
+                    pref.setVibinKeys(PREF_YOUTUBE_KEY, versionResponse.getYoutube());
+                    pref.setVibinKeys(PREF_LAST_FM_KEY, versionResponse.getLastFm());
+                    pref.setVibinKeys(PREF_GIPHY_KEY, versionResponse.getGiphy());
 
                     if (versionResponse.isUpdateRequired()) {
+                        System.out.println("Version==>isUpdateRequired");
                         Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
                         appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
                             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
+                                System.out.println("Version==>UPDATE_AVAILABLE");
                                 try {
                                     appUpdateManager.startUpdateFlowForResult(
                                             // Pass the intent that is returned by 'getAppUpdateInfo()'.
@@ -225,10 +243,12 @@ public class SplashFragment extends Fragment {
                                             // Include a request code to later monitor this update request.
                                             APP_UPDATE_REQUEST_CODE);
                                 } catch (IntentSender.SendIntentException e) {
+                                    System.out.println("Version==>" + e.getMessage());
                                     e.printStackTrace();
                                     callUserApi();
                                 }
                             } else {
+                                System.out.println("Version==>UPDATE_AVAILABLE false");
                                 callUserApi();
                             }
                         });
@@ -332,9 +352,7 @@ public class SplashFragment extends Fragment {
                 Log.d("LOG_TAG", "Update flow failed! Result code: " + resultCode);
                 // If the update is cancelled or fails,
                 // you can request to start the update again.
-                if (isApiCallDone && isTimerOver) {
-                    runnable.run();
-                }
+                callUserApi();
             } else {
                 ProgressBar prg = mView.findViewById(R.id.progressBar);
                 TextView tvInstall = mView.findViewById(R.id.tvInstall);

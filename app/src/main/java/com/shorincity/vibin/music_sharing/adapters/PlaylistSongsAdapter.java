@@ -37,6 +37,7 @@ public class PlaylistSongsAdapter extends RecyclerView.Adapter<PlaylistSongsAdap
     private CustomItemClickListener customItemClickListener;
     private boolean isRealTime;
     private String trackId = "";
+    private PopupWindow popupWindow;
 
     public PlaylistSongsAdapter(Context context, ArrayList<PlaylistDetailModel> exampleList, boolean isRealTime, CustomItemClickListener customItemClickListener) {
         mContext = context;
@@ -114,10 +115,10 @@ public class PlaylistSongsAdapter extends RecyclerView.Adapter<PlaylistSongsAdap
                 LayoutInflater layoutInflater = (LayoutInflater) v.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 PlaylistSongMenuBinding popupView = DataBindingUtil.inflate(layoutInflater, R.layout.playlist_song_menu, null, false);
 
-                PopupWindow popupWindow = new PopupWindow(
+                popupWindow = new PopupWindow(
                         popupView.getRoot(),
-                        CommonUtils.dpToPx(300, v.getContext()),
-                        CommonUtils.dpToPx(110, v.getContext()));
+                        CommonUtils.dpToPx(200, v.getContext()),
+                        CommonUtils.dpToPx(75, v.getContext()));
 
                 popupView.llDeletePlaylist.setOnClickListener(v1 -> {
                     popupWindow.dismiss();
@@ -142,6 +143,15 @@ public class PlaylistSongsAdapter extends RecyclerView.Adapter<PlaylistSongsAdap
 
     public void setTrackId(String trackId) {
         this.trackId = trackId;
+    }
+
+    public boolean isBackPress(){
+        if (popupWindow != null && popupWindow.isShowing()) {
+            popupWindow.dismiss();
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public interface CustomItemClickListener {

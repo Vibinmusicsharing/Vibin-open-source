@@ -114,7 +114,8 @@ public class YoutubeSearchFragmentMy extends MyBaseFragment {
                         playlist.add(new PlaylistDetailModel(
                                 mangitem.get(i).getSnippet().getTitle(),
                                 mangitem.get(i).getSnippet().getThumbnails().getMedium().getUrl(),
-                                mangitem.get(i).getId().getVideoId()
+                                mangitem.get(i).getId().getVideoId(),
+                                mangitem.get(i).getSnippet().getSongDuration(),""
                         ));
                     }
                     Item currentItem = mangitem.get(position);
@@ -157,7 +158,8 @@ public class YoutubeSearchFragmentMy extends MyBaseFragment {
                         playlist.add(new PlaylistDetailModel(
                                 youtubeSearchList.get(i).getSnippet().getTitle(),
                                 youtubeSearchList.get(i).getSnippet().getThumbnails().getMedium().getUrl(),
-                                youtubeSearchList.get(i).getId().getVideoId()
+                                youtubeSearchList.get(i).getId().getVideoId(),
+                                youtubeSearchList.get(i).getSnippet().getSongDuration(),""
                         ));
                     }
                     Item currentItem = mangitem.get(position);

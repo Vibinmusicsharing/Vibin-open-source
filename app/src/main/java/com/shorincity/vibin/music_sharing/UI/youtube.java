@@ -1,5 +1,11 @@
 package com.shorincity.vibin.music_sharing.UI;
 
+import static com.shorincity.vibin.music_sharing.utils.AppConstants.PLAYLIST_UID;
+import static com.shorincity.vibin.music_sharing.utils.AppConstants.PREF_GIPHY_KEY;
+import static com.shorincity.vibin.music_sharing.utils.AppConstants.PREF_LAST_FM_KEY;
+import static com.shorincity.vibin.music_sharing.utils.AppConstants.PREF_YOUTUBE_KEY;
+import static com.shorincity.vibin.music_sharing.youtube_files.PlayYoutubeVideoActivity.INTENT_PIP_MODE;
+
 import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.Fragment;
@@ -9,6 +15,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.net.Uri;
@@ -72,6 +80,7 @@ import com.giphy.sdk.ui.views.GPHGridCallback;
 import com.giphy.sdk.ui.views.GifView;
 import com.giphy.sdk.ui.views.GiphyGridView;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
@@ -83,6 +92,8 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.jackandphantom.androidlikebutton.AndroidLikeButton;
@@ -91,6 +102,9 @@ import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.VibinApplication;
+import com.shorincity.vibin.music_sharing.activity.AllRecntSongsActivity;
+import com.shorincity.vibin.music_sharing.activity.SplashActivity;
 import com.shorincity.vibin.music_sharing.adapters.AddToPlaylistAdapter;
 import com.shorincity.vibin.music_sharing.adapters.AutoCompleteAdapter;
 import com.shorincity.vibin.music_sharing.adapters.PlayListDetailsAdapter;
@@ -121,6 +135,7 @@ import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
 import com.shorincity.vibin.music_sharing.websocket.NaiveSSLContext;
 import com.shorincity.vibin.music_sharing.widgets.TagView;
+import com.shorincity.vibin.music_sharing.youtube_files.PlayYoutubeVideoActivity;
 import com.shorincity.vibin.music_sharing.youtube_files.YoutubeHomeFragment;
 import com.shorincity.vibin.music_sharing.youtube_files.floating.AsyncTask.Constants;
 import com.shorincity.vibin.music_sharing.youtube_files.floating.PlayerService;
@@ -144,6 +159,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.logging.Logger;
 
 import javax.net.ssl.SSLContext;
 
@@ -175,7 +191,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     String preferPlatformIntent;
     public CustomSlidePanLayout mSlidingLayout;
     private BottomNavigationView bottomNavigationView;
-    ConstraintLayout container;
+    private ConstraintLayout container;
     private int playerMode = 0; // 0=noActive,1=miniPlayer,2=PlayerFullScreen
     private Group playerGrp;
     private ConstraintLayout miniPlayer;
@@ -199,7 +215,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     private ArrayList<PlaylistDetailModel> playlist;
     private boolean seekusedbyuser = false;
     private SeekBar mSeekBar;
-    private Button addToPlayList;
+    private AppCompatImageView addToPlayList;
     private PlayListDetailsAdapter playListDetailsAdapter;
     private BottomSheetBehavior behavior;
     private BottomSheetDialog bottomSheetDialog;
@@ -209,13 +225,13 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     private PlaylistRecyclerView adapter;
     private ArrayList<MyPlaylistModel> playlistList;
     private ArrayList<String> genreList;
-    private String url1 = AppConstants.BASE_URL + "playlist/v1/my_playlists/";
-    private String url2 = AppConstants.BASE_URL + "playlist/v1/add_trak_to_playlist/";
 
     private String title, thumbnail, description;
     private int userId;
     private String videoId, songURI, playId;
     private AppCompatImageView heartIv, forward, rewind, shuffle, repeatone;
+    private AppCompatTextView tvRepeat, tvShuffle, tvArtist;
+    private LinearLayout llShuffle, llRepeat, llAddPlayList, llLike, llArtistName;
     private Boolean isAddSongLogRecorded = false;
     private AndroidLikeButton likeButton;
 
@@ -223,9 +239,10 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     private TextView textVieww;
     private AddToPlaylistAdapter addToPlaylistAdapter;
     private TextView playerCurrentDurationTv, playerTotalDurationTv;
-    private Button Play_Pause;
+    private AppCompatImageView Play_Pause;
     private TextView tvCreateNewPlaylist;
     private AppCompatTextView arrow;
+    private FrameLayout flBottomSheet;
     private Animation anim;
 
     private boolean isSuffleOn = false;
@@ -234,17 +251,25 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
     private WebSocket webSocketClient;
+    private String playlistUid = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_youtube_2);
 
-        Giphy.INSTANCE.configure(this, AppConstants.GIPHY_API_KEY, true);
+        SharedPrefManager pref = SharedPrefManager.getInstance(this);
+        AppConstants.YOUTUBE_KEY = pref.getVibinKey(PREF_YOUTUBE_KEY);
+        AppConstants.GIPHY_API_KEY = pref.getVibinKey(PREF_GIPHY_KEY);
+        AppConstants.LAST_FM_KEY = pref.getVibinKey(PREF_LAST_FM_KEY);
+
+
+        Utility.configGiphy(this);
         // Updating FCM TOKEN here
         callAddNotificationTokenAPI();
 
         getIntentData();
+
         playlist = new ArrayList<>();
 
         bottomNavigationView = findViewById(R.id.nav_view);
@@ -253,6 +278,9 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         imgMinimize = findViewById(R.id.imgMinimize);
         miniPlayer = findViewById(R.id.miniPlayer);
         motionLayout = findViewById(R.id.motionLayout);
+        flBottomSheet = findViewById(R.id.flBottomSheet);
+        tvArtist = findViewById(R.id.tvArtist);
+        llArtistName = findViewById(R.id.llArtistName);
         arrow = findViewById(R.id.arrow_up);
         anim = AnimationUtils.loadAnimation(this, R.anim.bounce);
         arrow.startAnimation(anim);
@@ -276,6 +304,10 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
             bottomNavigationView.getMenu().getItem(3).setChecked(true);
             setFragment(userNotificationFragment, 0, 0);
+        } else if (!TextUtils.isEmpty(playlistUid)) {
+            bottomNavigationView.getMenu().getItem(1).setChecked(true);
+            setFragment(youtubeHomeFragment, 0, 0);
+            setFragment(PlaylistDetailFragmentNew.getInstance(playlistUid), 0, 0);
         } else {
             setFragment(youtubeHomeFragment, 0, 0);
         }
@@ -327,13 +359,13 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         isSuffleOn = SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefBoolean(AppConstants.IS_SUFFLEON);
         isRepeatOn = SharedPrefManager.getInstance(getApplicationContext()).getSharedPrefBoolean(AppConstants.IS_REPEATON);
         if (isSuffleOn) {
-            shuffle.setColorFilter(getResources().getColor(R.color.yt_red));
+            shuffle.setSelected(true);
+            tvShuffle.setSelected(true);
             SharedPrefManager.getInstance(getApplicationContext()).setSharedPrefBoolean(AppConstants.IS_REPEATON, false);
             isRepeatOn = false;
         } else if (isRepeatOn) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                repeatone.setImageTintList(getResources().getColorStateList(R.color.yt_red));
-            }
+            repeatone.setSelected(true);
+            tvRepeat.setSelected(true);
             SharedPrefManager.getInstance(getApplicationContext()).setSharedPrefBoolean(AppConstants.IS_SUFFLEON, false);
             isSuffleOn = false;
         }
@@ -374,6 +406,22 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getBooleanExtra(INTENT_PIP_MODE, false)) {
+            Intent pipModeOn = new Intent(this, PlayYoutubeVideoActivity.class);
+            pipModeOn.putExtra(PlayYoutubeVideoActivity.INTENT_PIP_MODE, true);
+            startActivity(pipModeOn);
+        } else if (intent.hasExtra(PLAYLIST_UID)) {
+            playlistUid = intent.getStringExtra(PLAYLIST_UID);
+            if (!TextUtils.isEmpty(playlistUid)) {
+                bottomNavigationView.getMenu().getItem(1).setChecked(true);
+                setFragment(PlaylistDetailFragmentNew.getInstance(playlistUid), 0, 0);
+            }
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         Logging.d("onBackPressed");
         Fragment f = fragmentManager.findFragmentById(R.id.youtube_frame);
@@ -383,6 +431,9 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
             motionLayout.transitionToStart();
         } else if ((playerMode > 0 || (mYouTubePlayer != null && mYouTubePlayer.isPlaying())) && f instanceof YoutubeHomeFragment) {
             imgPlayerClose.performClick();
+        } else if (f instanceof PlaylistDetailFragmentNew) {
+            if (((PlaylistDetailFragmentNew) f).isBackPress())
+                super.onBackPressed();
         } else {
             super.onBackPressed();
         }
@@ -398,6 +449,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
         titlemain.setText(title);
         titlemain.setSelected(true);
+        setArtistName();
 
 
         playerCurrentDurationTv = findViewById(R.id.playerCurrentTimeText);
@@ -406,7 +458,11 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         forward = findViewById(R.id.fastforward);
         rewind = findViewById(R.id.fastrewind);
         shuffle = findViewById(R.id.shuffle);
+        tvShuffle = findViewById(R.id.tvShuffle);
+        llShuffle = findViewById(R.id.llShuffle);
+        llRepeat = findViewById(R.id.llRepeat);
         repeatone = findViewById(R.id.repeatonce);
+        tvRepeat = findViewById(R.id.tvRepeat);
         mSeekBar = (SeekBar) findViewById(R.id.seekBar);
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -439,7 +495,8 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
         youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
 
-        heartIv.setOnClickListener(this);
+        llLike = findViewById(R.id.llLike);
+        llLike.setOnClickListener(this);
 
         arrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -485,20 +542,23 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
             }
         });
-        shuffle.setOnClickListener(new View.OnClickListener() {
+        llShuffle.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View view) {
                 if (isSuffleOn) {
                     SharedPrefManager.getInstance(getApplicationContext()).setSharedPrefBoolean(AppConstants.IS_SUFFLEON, false);
                     isSuffleOn = false;
-                    shuffle.setColorFilter(Color.parseColor("#5D14F8"));
+                    shuffle.setSelected(false);
+                    tvShuffle.setSelected(false);
                     Toast.makeText(getApplicationContext(), "Suffle Off", +2000).show();
                 } else {
                     SharedPrefManager.getInstance(getApplicationContext()).setSharedPrefBoolean(AppConstants.IS_SUFFLEON, true);
                     isSuffleOn = true;
-                    shuffle.setColorFilter(Color.parseColor("#E20A0A"));
-                    repeatone.setImageTintList(getResources().getColorStateList(R.color.toolbarColor));
+                    shuffle.setSelected(true);
+                    tvShuffle.setSelected(true);
+                    repeatone.setSelected(false);
+                    tvRepeat.setSelected(false);
                     Toast.makeText(getApplicationContext(), "Suffle On", +2000).show();
                     SharedPrefManager.getInstance(getApplicationContext()).setSharedPrefBoolean(AppConstants.IS_REPEATON, false);
                     isRepeatOn = false;
@@ -506,20 +566,24 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 }
             }
         });
-        repeatone.setOnClickListener(new View.OnClickListener() {
+        llRepeat.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View view) {
                 if (isRepeatOn) {
                     SharedPrefManager.getInstance(getApplicationContext()).setSharedPrefBoolean(AppConstants.IS_REPEATON, false);
                     isRepeatOn = false;
-                    repeatone.setImageTintList(getResources().getColorStateList(R.color.toolbarColor));
+                    repeatone.setSelected(false);
+                    tvRepeat.setSelected(false);
                     Toast.makeText(getApplicationContext(), "Repeat Off", +2000).show();
                 } else {
                     SharedPrefManager.getInstance(getApplicationContext()).setSharedPrefBoolean(AppConstants.IS_REPEATON, true);
                     isRepeatOn = true;
-                    shuffle.setColorFilter(Color.parseColor("#5D14F8"));
-                    repeatone.setImageTintList(getResources().getColorStateList(R.color.yt_red));
+                    shuffle.setSelected(false);
+                    tvShuffle.setSelected(false);
+
+                    repeatone.setSelected(true);
+                    tvRepeat.setSelected(true);
                     Toast.makeText(getApplicationContext(), "Repeat On", +2000).show();
                     SharedPrefManager.getInstance(getApplicationContext()).setSharedPrefBoolean(AppConstants.IS_SUFFLEON, false);
                     isSuffleOn = false;
@@ -527,7 +591,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 }
             }
         });
-        Play_Pause = (Button) findViewById(R.id.button2);
+        Play_Pause = (AppCompatImageView) findViewById(R.id.button2);
         Play_Pause.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
@@ -535,22 +599,25 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 if (mYouTubePlayer != null) {
                     if (mYouTubePlayer.isPlaying()) {
                         mYouTubePlayer.pause();
-                        Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
+                        Play_Pause.setImageResource(R.drawable.ic_player_play);
+                        ;
                     } else {
                         mYouTubePlayer.play();
-                        Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+                        Play_Pause.setImageResource(R.drawable.ic_player_pause);
                     }
                 }
             }
         });
 
         addToPlayList = findViewById(R.id.addToPlayList);
-        addToPlayList.setOnClickListener(new View.OnClickListener() {
+        llAddPlayList = findViewById(R.id.llAddPlayList);
+
+        llAddPlayList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mYouTubePlayer != null) {
                     mYouTubePlayer.pause();
-                    Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
+                    Play_Pause.setImageResource(R.drawable.ic_player_play);
                     String duration = mYouTubePlayer.getDurationMillis() > 0 ? String.valueOf(mYouTubePlayer.getDurationMillis()) : "";
                     if (duration.equalsIgnoreCase("")) {
                         dialog("0");
@@ -617,6 +684,9 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
         preferPlatformIntent = getIntent().getStringExtra(AppConstants.INTENT_UPDATE_PLATFORM);
 
+        if (getIntent().hasExtra(PLAYLIST_UID)) {
+            playlistUid = getIntent().getStringExtra(PLAYLIST_UID);
+        }
         if (!TextUtils.isEmpty(preferPlatformIntent) &&
                 preferPlatformIntent.equalsIgnoreCase(AppConstants.YOUTUBE)) {
             callUpdatePlatformAPI();
@@ -667,12 +737,19 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         if (handler != null) {
             handler.removeCallbacksAndMessages(my);
         }
+        Logging.d("==>onStop youtube");
+        if (((VibinApplication) getApplication()).isPipEnable) {
+            Intent killPlayer = new Intent(this, PlayYoutubeVideoActivity.class);
+            killPlayer.putExtra(PlayYoutubeVideoActivity.INTENT_KILL_PLAYER, true);
+            startActivity(killPlayer);
+        }
         //  isKillMe = true;
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
         if (requestCode == REQUEST_VIDEO) {
             youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
 
@@ -707,12 +784,17 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 });
             }
         }
-        super.onActivityResult(requestCode, resultCode, intent);
     }
 
     @Override
     protected void onDestroy() {
         Spotify.destroyPlayer(this);
+        if (((VibinApplication) getApplication()).isPipEnable) {
+            Intent killPlayer = new Intent(this, PlayYoutubeVideoActivity.class);
+            killPlayer.putExtra(PlayYoutubeVideoActivity.INTENT_KILL_PLAYER, true);
+            startActivity(killPlayer);
+        }
+
         super.onDestroy();
 
         if (handler != null) {
@@ -826,13 +908,22 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
                         // Get new Instance ID token
                         fcmToken = task.getResult();
+                        String currentVersion = "";
+                        try {
+                            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                            currentVersion = pInfo.versionName;
+                        } catch (PackageManager.NameNotFoundException e) {
+                            e.printStackTrace();
+                        }
+
                         Log.i("FCM Token", "" + fcmToken);
+                        Logging.d("==>CurrentVersion" + currentVersion);
 
                         DataAPI dataAPI = RetrofitAPI.getData();
                         String headerToken = AppConstants.TOKEN + SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
                         String userToken = SharedPrefManager.getInstance(youtube.this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
 
-                        Call<APIResponse> callback = dataAPI.addNotificationToken(headerToken, userToken, fcmToken);
+                        Call<APIResponse> callback = dataAPI.addNotificationToken(headerToken, userToken, fcmToken, currentVersion);
                         callback.enqueue(new Callback<APIResponse>() {
                             @Override
                             public void onResponse(Call<APIResponse> call, Response<APIResponse> response) {
@@ -899,7 +990,12 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     }
 
     public void onPlayMusic(Bundle bundle) {
-        if (mYouTubePlayer != null) {
+        ((VibinApplication) getApplication()).isPipEnable = false;
+        Intent intent = new Intent(this, PlayYoutubeVideoActivity.class);
+        intent.putExtra("data", bundle);
+        startActivity(intent);
+
+        /*if (mYouTubePlayer != null) {
             mYouTubePlayer.release();
             mYouTubePlayer = null;
         }
@@ -928,12 +1024,15 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         videoId = bundle.getString("videoId");
         if (bundle.containsKey("artist_name"))
             artistName = bundle.getString("artist_name");
+        else
+            artistName = "";
         if (TextUtils.isEmpty(videoId)) {
             String trackName = artistName + "+" + title;
             callYoutubeSearchApi(trackName);
         } else {
             songURI = "https://www.youtube.com/watch?v=" + videoId;
             titlemain.setText(title);
+            setArtistName();
             titlemain.setSelected(true);
             playerCurrentDurationTv.setText("00:00");
 
@@ -944,7 +1043,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
             processSeekBar();
             playerStateChangeListener = new MyPlayerStateChangeListener();
             playbackEventListener = new MyPlaybackEventListener();
-        }
+        }*/
     }
 
     private void callYoutubeSearchApi(String trackName) {
@@ -959,6 +1058,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                     videoId = youTubeTrack.getId().getVideoId();
                     songURI = "https://www.youtube.com/watch?v=" + videoId;
                     titlemain.setText(title);
+                    setArtistName();
                     titlemain.setSelected(true);
                     playerCurrentDurationTv.setText("00:00");
 
@@ -1003,11 +1103,17 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
             case 1: {
                 imgPlayerClose.setVisibility(View.VISIBLE);
                 youTubePlayerView.setVisibility(View.VISIBLE);
+                imgMinimize.setBackgroundDrawable(ContextCompat.getDrawable(youtube.this, R.drawable.bg_mini_player));
+                imgMinimize.setImageDrawable(ContextCompat.getDrawable(youtube.this, R.drawable.ic_arrow_up_24));
+                flBottomSheet.setVisibility(View.GONE);
+                bottom_sheet_detail.setVisibility(View.GONE);
                 motionLayout.setTransition(R.id.end, R.id.start);
                 motionLayout.transitionToStart();
                 break;
             }
             case 2: {
+                imgMinimize.setBackgroundDrawable(null);
+                imgMinimize.setImageDrawable(ContextCompat.getDrawable(youtube.this, R.drawable.ic_back_white));
                 imgPlayerClose.setVisibility(View.GONE);
                 youTubePlayerView.setVisibility(View.VISIBLE);
                 motionLayout.setTransition(R.id.start, R.id.end);
@@ -1021,6 +1127,9 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 }
                 youTubePlayerView.setVisibility(View.GONE);
                 imgPlayerClose.setVisibility(View.GONE);
+                imgMinimize.setBackgroundDrawable(null);
+                imgMinimize.setImageDrawable(ContextCompat.getDrawable(youtube.this, R.drawable.ic_back_white));
+                flBottomSheet.setVisibility(View.GONE);
                 bottom_sheet_detail.setVisibility(View.GONE);
                 miniPlayer.setVisibility(View.GONE);
 
@@ -1029,6 +1138,16 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 break;
             }
         }
+    }
+
+    private void setArtistName() {
+        if (TextUtils.isEmpty(artistName)) {
+            llArtistName.setVisibility(View.INVISIBLE);
+        } else {
+            llArtistName.setVisibility(View.VISIBLE);
+        }
+
+        tvArtist.setText(artistName);
     }
 
     @Override
@@ -1049,7 +1168,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         //        }
 
         if (mYouTubePlayer != null && playerTotalDurationTv != null && playerMode > 0) {
-            Logging.d("==> Resume method call");
+            Logging.d("==> Resume method call playerMode" + playerMode);
             try {
                 lengthms = mYouTubePlayer.getDurationMillis();
                 float current = mYouTubePlayer.getCurrentTimeMillis();
@@ -1066,11 +1185,12 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                     if (mYouTubePlayer.isPlaying()) {
                         playerMode = 0;
                         mYouTubePlayer.pause();
-                        Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
+                        Play_Pause.setImageResource(R.drawable.ic_player_play);
+                        ;
                     } else {
                         playerMode = 1;
                         mYouTubePlayer.play();
-                        Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+                        Play_Pause.setImageResource(R.drawable.ic_player_pause);
                     }
                     setPlayerMode();
                 }
@@ -1122,7 +1242,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     public void onClick(View v) {
 
         switch (v.getId()) {
-            case R.id.heart_iv:
+            case R.id.llLike:
                 if (!isLiked)
                     putSongLikeAPI(userId, videoId, "True");
                 else
@@ -1192,6 +1312,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     @Override
     public void onTransitionStarted(MotionLayout motionLayout, int i, int i1) {
         Logging.d("onTransitionStarted");
+        flBottomSheet.setVisibility(View.GONE);
         bottom_sheet_detail.setVisibility(View.GONE);
     }
 
@@ -1204,13 +1325,14 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     public void onTransitionCompleted(MotionLayout motionLayout, int i) {
         Logging.d("==> onTransitionCompleted");
         if (i == R.id.end) {
-            imgMinimize.setBackgroundDrawable(ContextCompat.getDrawable(youtube.this, R.drawable.background_cornerradius));
-            imgMinimize.setImageDrawable(ContextCompat.getDrawable(youtube.this, R.drawable.ic_arrow_primary));
+            imgMinimize.setBackgroundDrawable(null);
+            imgMinimize.setImageDrawable(ContextCompat.getDrawable(youtube.this, R.drawable.ic_back_white));
 
             playerMode = 2;
             if (mYouTubePlayer != null) {
                 mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
             }
+            flBottomSheet.setVisibility(View.VISIBLE);
             bottom_sheet_detail.setVisibility(View.VISIBLE);
             Fragment frg = fragmentManager.findFragmentById(R.id.youtube_frame);
             try {
@@ -1225,6 +1347,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
             imgMinimize.setBackgroundDrawable(ContextCompat.getDrawable(youtube.this, R.drawable.bg_mini_player));
             imgMinimize.setImageDrawable(ContextCompat.getDrawable(youtube.this, R.drawable.ic_arrow_up_24));
 
+            flBottomSheet.setVisibility(View.GONE);
             bottom_sheet_detail.setVisibility(View.GONE);
             if (mYouTubePlayer != null && mYouTubePlayer.isPlaying()) {
                 playerMode = 1;
@@ -1309,19 +1432,18 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         @Override
         public void onPlaying() {
             Logging.d("onPlaying");
-            Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+            Play_Pause.setImageResource(R.drawable.ic_player_pause);
             if (!isAddSongLogRecorded) {
 
                 String timeDuration = "T00:00:00";
 
                 try {
                     timeDuration = "T" + Utility.millisIntoHHMMSS(Long.valueOf(mYouTubePlayer.getDurationMillis()));
-
+                    playerTotalDurationTv.setText(Utility.convertDuration(Long.valueOf(mYouTubePlayer.getDurationMillis())));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                playerTotalDurationTv.setText(Utility.convertDuration(Long.valueOf(mYouTubePlayer.getDurationMillis())));
                 callAddSongLogAPI(userId, AppConstants.YOUTUBE, title, videoId, songURI, thumbnail, description, timeDuration);
             }
         }
@@ -1332,7 +1454,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
             // Called when playback is paused, either due to user action or call to pause().
             //            showMessage("Paused");
             Logging.d("onPaused video");
-            Play_Pause.setBackgroundResource(R.drawable.ic_baseline_play_arrow_24);
+            Play_Pause.setImageResource(R.drawable.ic_player_play);
         }
 
         @Override
@@ -1370,7 +1492,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         public void onLoaded(String s) {
             // Called when a video is done loading.
             mYouTubePlayer.play();
-            Play_Pause.setBackgroundResource(R.drawable.ic_baseline_pause_24);
+            Play_Pause.setImageResource(R.drawable.ic_player_pause);
             // Playback methods such as play(), pause() or seekToMillis(int) may be called after this callback.
         }
 
@@ -1394,6 +1516,8 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 automaticNextSong();
                 if (position < playlist.size() - 1)
                     position = position + 1;
+
+                processSeekBar();
 
             }
 
@@ -1431,12 +1555,12 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                     } else {
                         Log.i(TAG, "unliked");
                         isLiked = false;
-                        heartIv.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                        heartIv.setImageResource(R.drawable.ic_unlike_grey);
                     }
 
                 } else {
                     isLiked = false;
-                    heartIv.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                    heartIv.setImageResource(R.drawable.ic_unlike_grey);
                 }
             }
 
@@ -1448,7 +1572,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     }
 
     private void setBottomSheetForPlaylist() {
-        View bottomSheet = findViewById(R.id.bottom_sheet_detail);
+        View bottomSheet = findViewById(R.id.flBottomSheet);
         behavior = BottomSheetBehavior.from(bottomSheet);
         behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -1533,12 +1657,14 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
             }
         }
         title = item.getName();
+        artistName = item.getArtistName();
         description = "";
         thumbnail = item.getImage();
         videoId = item.getTrackId();
         songURI = "https://www.youtube.com/watch?v=" + videoId;
         youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
         titlemain.setText(title);
+        setArtistName();
         titlemain.setSelected(true);
         playerCurrentDurationTv.setText("00:00");
         isAddSongLogRecorded = false;
@@ -1561,12 +1687,14 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
             }
 
             title = playlist.get(position).getName();
+            artistName = playlist.get(position).getArtistName();
             description = "";
             thumbnail = playlist.get(position).getImage();
             videoId = playlist.get(position).getTrackId();
             songURI = "https://www.youtube.com/watch?v=" + videoId;
             youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
             titlemain.setText(title);
+            setArtistName();
             titlemain.setSelected(true);
             playerCurrentDurationTv.setText("00:00");
             isAddSongLogRecorded = false;
@@ -1597,11 +1725,13 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                     mYouTubePlayer = null;
                 }
                 title = playlist.get(randPos).getName();
+                artistName = playlist.get(position).getArtistName();
                 description = "";
                 thumbnail = playlist.get(randPos).getImage();
                 videoId = playlist.get(randPos).getTrackId();
                 songURI = "https://www.youtube.com/watch?v=" + videoId;
                 titlemain.setText(title);
+                setArtistName();
                 titlemain.setSelected(true);
                 playerCurrentDurationTv.setText("00:00");
                 youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
@@ -1627,11 +1757,13 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                     mYouTubePlayer = null;
                 }
                 title = playlist.get(position - 1).getName();
+                artistName = playlist.get(position - 1).getArtistName();
                 description = "";
                 thumbnail = playlist.get(position - 1).getImage();
                 videoId = playlist.get(position - 1).getTrackId();
                 songURI = "https://www.youtube.com/watch?v=" + videoId;
                 titlemain.setText(title);
+                setArtistName();
                 titlemain.setSelected(true);
                 playerCurrentDurationTv.setText("00:00");
                 youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
@@ -1648,7 +1780,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     }
 
     private void automaticNextSong() {
-        if (position > -1 && position < playlist.size()) {
+        if (position > -1 && (position + 1) < playlist.size()) {
             if (handler != null) {
                 handler.removeCallbacksAndMessages(my);
             }
@@ -1658,11 +1790,13 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 mYouTubePlayer = null;
             }
             title = playlist.get(position + 1).getName();
+            artistName = playlist.get(position + 1).getArtistName();
             description = "";
             thumbnail = playlist.get(position + 1).getImage();
             videoId = playlist.get(position + 1).getTrackId();
             songURI = "https://www.youtube.com/watch?v=" + videoId;
             titlemain.setText(title);
+            setArtistName();
             titlemain.setSelected(true);
             playerCurrentDurationTv.setText("00:00");
             youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
@@ -1689,11 +1823,13 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                     mYouTubePlayer = null;
                 }
                 title = playlist.get(position + 1).getName();
+                artistName = playlist.get(position + 1).getArtistName();
                 description = "";
                 thumbnail = playlist.get(position + 1).getImage();
                 videoId = playlist.get(position + 1).getTrackId();
                 songURI = "https://www.youtube.com/watch?v=" + videoId;
                 titlemain.setText(title);
+                tvArtist.setText(artistName);
                 titlemain.setSelected(true);
                 playerCurrentDurationTv.setText("00:00");
                 youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
@@ -2001,6 +2137,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         giphyGridView.setDirection(GiphyGridView.HORIZONTAL);
         giphyGridView.setSpanCount(2);
         giphyGridView.setCellPadding(0);
+        giphyGridView.setContent(GPHContent.Companion.getTrendingGifs());
         giphyGridView.setCallback(new GPHGridCallback() {
             @Override
             public void contentDidUpdate(int i) {
@@ -2218,11 +2355,11 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                         heartIv.setImageResource(R.drawable.like);
                     } else {
                         isLiked = false;
-                        heartIv.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                        heartIv.setImageResource(R.drawable.ic_unlike_grey);
                     }
                 } else {
                     isLiked = false;
-                    heartIv.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                    heartIv.setImageResource(R.drawable.ic_unlike_grey);
                 }
             }
 
@@ -2237,7 +2374,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
             heartIv.setImageResource(R.drawable.like);
         } else {
             isLiked = false;
-            heartIv.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+            heartIv.setImageResource(R.drawable.ic_unlike_grey);
         }
     }
 
@@ -2279,5 +2416,14 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
     public void onLoadProfile() {
         setFragment(userProfileFragment, R.animator.fragment_slide_up_enter, R.animator.fragment_slide_down_enter);
+    }
+
+    public void showFailerDialog(String msg) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setMessage(msg);
+        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+        builder.setCancelable(false);
+        onBackPressed();
+        builder.show();
     }
 }

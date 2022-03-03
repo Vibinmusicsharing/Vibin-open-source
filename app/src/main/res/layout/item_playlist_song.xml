@@ -55,7 +55,7 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/font_semi_bold"
                 android:maxLines="2"
-                android:text="Kiss somebody"
+                android:text="Kiss somebodytesl  askdf aksdfj klajsdlkfj lkajsdfk "
                 android:textColor="@color/nav_realtime_color_selector"
                 android:textSize="16sp" />
 

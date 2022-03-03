@@ -457,7 +457,7 @@ public class RealTimePlayerActivity extends YouTubeBaseActivity implements YouTu
             }
 
             @Override
-            public void onError() {
+            public void onError(String msg) {
 
             }
         });

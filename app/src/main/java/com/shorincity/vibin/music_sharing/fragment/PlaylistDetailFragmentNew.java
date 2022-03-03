@@ -1,31 +1,32 @@
 package com.shorincity.vibin.music_sharing.fragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.PopupMenu;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 import androidx.appcompat.widget.AppCompatCheckBox;
@@ -44,53 +45,39 @@ import com.giphy.sdk.ui.pagination.GPHContent;
 import com.giphy.sdk.ui.views.GPHGridCallback;
 import com.giphy.sdk.ui.views.GifView;
 import com.giphy.sdk.ui.views.GiphyGridView;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.activity.RealTimePlayer;
+import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.activity.RealTimePlayerActivity;
+import com.shorincity.vibin.music_sharing.activity.SharePlaylistActivity;
 import com.shorincity.vibin.music_sharing.adapters.AutoCompleteAdapter;
 import com.shorincity.vibin.music_sharing.adapters.PlaylistDetailsViewPagerAdapter;
-import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
+import com.shorincity.vibin.music_sharing.callbackclick.PlaylistDetailCallback;
 import com.shorincity.vibin.music_sharing.databinding.BottomsheetPlaylistPassowrdBinding;
 import com.shorincity.vibin.music_sharing.databinding.FragmentPlaylistDetailBinding;
 import com.shorincity.vibin.music_sharing.databinding.LayoutPlaylistListnerMenuBinding;
 import com.shorincity.vibin.music_sharing.databinding.PlaylistDetailsMenuBinding;
-import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.CreateSessionModel;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlayListDeleteModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistSongCollabDeleteModel;
-import com.shorincity.vibin.music_sharing.model.firebase.RealTimeModel;
-import com.shorincity.vibin.music_sharing.model.firebase.RealTimeSession;
-import com.shorincity.vibin.music_sharing.model.firebase.RealTimeUser;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.CommonUtils;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
-import com.shorincity.vibin.music_sharing.viewmodel.LoginViewModel;
 import com.shorincity.vibin.music_sharing.viewmodel.PlaylistDetailsViewModel;
 import com.shorincity.vibin.music_sharing.widgets.TagView;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -100,13 +87,19 @@ import retrofit2.Callback;
 public class PlaylistDetailFragmentNew extends MyBaseFragment {
     private static final String TAG = PlaylistDetailFragmentNew.class.getName();
     private static final String BUNDLE_ID = "id";
+    private static final String BUNDLE_UID = "uid";
     private static final String BUNDLE_ADMIN_ID = "admin_id";
+    private static final String BUNDLE_SEARCH_USER_ID = "search_user_id";
     private FragmentPlaylistDetailBinding binding;
     private MyPlaylistModel myPlaylistModel;
     private Context context;
     private ArrayList<String> genreList;
     private PlaylistDetailsViewModel viewModel;
     private ProgressDialog mProgressDialog;
+    private static final int REQUEST_SHARE_PLAYLIST = 100;
+    private ArrayList<Fragment> playListFrg = new ArrayList<>();
+    private PopupWindow popupWindow;
+
 
     public static PlaylistDetailFragmentNew getInstance(int id, int admin_id, MyPlaylistModel myPlaylistModel) {
         PlaylistDetailFragmentNew fragment = new PlaylistDetailFragmentNew();
@@ -114,6 +107,25 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
         bundle.putInt(BUNDLE_ID, id);
         bundle.putInt(BUNDLE_ADMIN_ID, admin_id);
         bundle.putSerializable(AppConstants.INTENT_PLAYLIST, myPlaylistModel);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    public static PlaylistDetailFragmentNew getInstance(int id, int admin_id, MyPlaylistModel myPlaylistModel, int userId) {
+        PlaylistDetailFragmentNew fragment = new PlaylistDetailFragmentNew();
+        Bundle bundle = new Bundle();
+        bundle.putInt(BUNDLE_ID, id);
+        bundle.putInt(BUNDLE_ADMIN_ID, admin_id);
+        bundle.putInt(BUNDLE_SEARCH_USER_ID, userId);
+        bundle.putSerializable(AppConstants.INTENT_PLAYLIST, myPlaylistModel);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+    public static PlaylistDetailFragmentNew getInstance(String uid) {
+        PlaylistDetailFragmentNew fragment = new PlaylistDetailFragmentNew();
+        Bundle bundle = new Bundle();
+        bundle.putString(BUNDLE_UID, uid);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -129,10 +141,37 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = binding.getRoot().getContext();
-        myPlaylistModel = (MyPlaylistModel) getArguments().getSerializable(AppConstants.INTENT_PLAYLIST);
-        genreList = CommonUtils.getGenre();
-        viewModel = new PlaylistDetailsViewModel();
-        initControls();
+        if (getArguments().containsKey(AppConstants.INTENT_PLAYLIST)) {
+            myPlaylistModel = (MyPlaylistModel) getArguments().getSerializable(AppConstants.INTENT_PLAYLIST);
+            genreList = CommonUtils.getGenre();
+            viewModel = new PlaylistDetailsViewModel();
+            setIsCollab(true);
+            viewModel.setPlaylistID(String.valueOf(myPlaylistModel.getId()));
+            viewModel.setSourceType(AppConstants.SOURCE_TYPE_IN_APP);
+            if (getArguments().containsKey(BUNDLE_SEARCH_USER_ID)) {
+                viewModel.setSearchUserId(getArguments().getInt(BUNDLE_SEARCH_USER_ID, -1));
+            }
+            initControls();
+        } else if (getArguments().containsKey(BUNDLE_UID)) {
+            String uid = getArguments().getString(BUNDLE_UID);
+            genreList = CommonUtils.getGenre();
+            viewModel = new PlaylistDetailsViewModel();
+            viewModel.setPlaylistID(uid);
+            viewModel.setSourceType(AppConstants.SOURCE_TYPE_DYNAMIC_LINK);
+            setIsCollab(true);
+            viewModel.getPublicPlaylistDetail(context, new PlaylistDetailCallback() {
+                @Override
+                public void onResponse() {
+                    myPlaylistModel = viewModel.getPlaylistDetailResponse().getMyPlaylistModel();
+                    initControls();
+                }
+
+                @Override
+                public void onError(String msg) {
+                    ((youtube)getActivity()).showFailerDialog(msg);
+                }
+            });
+        }
     }
 
     private void initControls() {
@@ -143,20 +182,22 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
             ArrayList<String> titles = new ArrayList<>();
             titles.add("List");
             titles.add("Collaborators");
+            playListFrg.clear();
+            playListFrg.add(PlaylistSongslistFragment.getInstance(String.valueOf(myPlaylistModel.getId()), viewModel));
+            playListFrg.add(PlaylistCollaboratosFragment.getInstance(String.valueOf(myPlaylistModel.getId()), viewModel));
             PlaylistDetailsViewPagerAdapter adapter = new PlaylistDetailsViewPagerAdapter(getChildFragmentManager(),
-                    titles, String.valueOf(myPlaylistModel.getId()), viewModel);
+                    titles, playListFrg);
             binding.viewPager.setAdapter(adapter);
             binding.tabs.setupWithViewPager(binding.viewPager);
 
             binding.ivMenu.setOnClickListener(v -> {
                 LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                PopupWindow popupWindow;
                 if (viewModel.isAdmin()) {
                     PlaylistDetailsMenuBinding popupView = DataBindingUtil.inflate(layoutInflater, R.layout.playlist_details_menu, null, false);
 
                     popupWindow = new PopupWindow(
                             popupView.getRoot(),
-                            CommonUtils.dpToPx(300, context),
+                            CommonUtils.dpToPx(230, context),
                             ViewGroup.LayoutParams.WRAP_CONTENT);
 
                     popupView.llEditPlaylist.setOnClickListener(v1 -> {
@@ -185,6 +226,9 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
                     });
                     popupView.llShare.setOnClickListener(v1 -> {
                         popupWindow.dismiss();
+                        Intent intent = new Intent(context, SharePlaylistActivity.class);
+                        intent.putExtra(AppConstants.INTENT_PLAYLIST, myPlaylistModel);
+                        startActivityForResult(intent, REQUEST_SHARE_PLAYLIST);
                     });
                     popupView.llPrivate.setOnClickListener(v12 -> {
                         popupWindow.dismiss();
@@ -199,8 +243,8 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
                     LayoutPlaylistListnerMenuBinding popupView = DataBindingUtil.inflate(layoutInflater, R.layout.layout_playlist_listner_menu, null, false);
                     popupWindow = new PopupWindow(
                             popupView.getRoot(),
-                            CommonUtils.dpToPx(300, context),
-                            CommonUtils.dpToPx(110, context));
+                            CommonUtils.dpToPx(230, context),
+                            CommonUtils.dpToPx(135, context));
                     popupView.llLeave.setOnClickListener(v13 -> {
                         popupWindow.dismiss();
                         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
@@ -222,6 +266,12 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
                             callDeleteCollab(String.valueOf(userId1), cbDeleteSongs.isChecked());
                         });
                         alertDialog.show();
+                    });
+                    popupView.llShare.setOnClickListener(v1 -> {
+                        popupWindow.dismiss();
+                        Intent intent = new Intent(context, SharePlaylistActivity.class);
+                        intent.putExtra(AppConstants.INTENT_PLAYLIST, myPlaylistModel);
+                        startActivityForResult(intent, REQUEST_SHARE_PLAYLIST);
                     });
                 }
                 popupWindow.setBackgroundDrawable(new BitmapDrawable());
@@ -249,7 +299,6 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
                 }
             });
             binding.llLiveShare.setOnClickListener(v -> {
-
                 processLiveSharing();
             });
             binding.ivBack.setOnClickListener(v -> {
@@ -257,6 +306,18 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
             });
             binding.ivLike.setOnClickListener(v -> putPublicPLaylistLike(myPlaylistModel.getId()));
         }
+        binding.btnCollab.setOnClickListener(v -> {
+            if (viewModel.getSearchUserId() != -1) {
+                viewModel.sendCollabRequestNotification(context, myPlaylistModel.getId(), viewModel.getSearchUserId());
+            } else {
+                if (playListFrg.size() > 0) {
+                    Fragment fragment = playListFrg.get(0);
+                    if (fragment instanceof PlaylistSongslistFragment) {
+                        ((PlaylistSongslistFragment) fragment).callAddCollabFromQrApi(viewModel.getPlaylistID());
+                    }
+                }
+            }
+        });
     }
 
     private void setPlaylistDetails() {
@@ -272,7 +333,7 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
             String[] gifArraySplit = myPlaylistModel.getGifLink().split("/");
             String mediaId = gifArraySplit[gifArraySplit.length - 1];
 
-            binding.gifIv.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(binding.gifIv.getContext(), R.color.light_gray));
+            binding.gifIv.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(binding.gifIv.getContext(), R.color.light_gray), null);
             binding.ivLike.setSelected(myPlaylistModel.isLikedByUser());
         }
     }
@@ -432,6 +493,8 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
         giphyGridView.setDirection(GiphyGridView.HORIZONTAL);
         giphyGridView.setSpanCount(2);
         giphyGridView.setCellPadding(0);
+        giphyGridView.setContent(GPHContent.Companion.getTrendingGifs());
+
         giphyGridView.setCallback(new GPHGridCallback() {
             @Override
             public void contentDidUpdate(int i) {
@@ -471,7 +534,7 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
 
         String[] gifArraySplit = myPlaylistModel.getGifLink().split("/");
         String mediaId = gifArraySplit[gifArraySplit.length - 1];
-        selectedGifIv.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(selectedGifIv.getContext(), R.color.light_gray));
+        selectedGifIv.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(selectedGifIv.getContext(), R.color.light_gray), null);
         selectedGifIv.setVisibility(View.VISIBLE);
 
         ivClose.setOnClickListener(v -> bottomSheet.dismiss());
@@ -577,7 +640,7 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
     }
 
     private void processLiveSharing() {
-        ArrayList<PlaylistDetailModel> playlist = viewModel.getPlaylist();
+        /*ArrayList<PlaylistDetailModel> playlist = viewModel.getPlaylist();
         ArrayList<ViewCollab> viewcollabList = viewModel.getViewcollabList();
         int userId = SharedPrefManager.getInstance(context).getSharedPrefInt(AppConstants.INTENT_USER_ID);
 
@@ -590,7 +653,7 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
         } else if (userId != myPlaylistModel.getAdmin_id()) {
             Toast.makeText(context, "You are not an admin of this playlist.", Toast.LENGTH_LONG).show();
             return;
-        }
+        }*/
         callCreateSessionApi();
     }
 
@@ -677,6 +740,50 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
     private void hideProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
+        }
+    }
+
+    public void setIsCollab(boolean isCollab) {
+        binding.setIsCollab(isCollab);
+        binding.viewPager.setPagingEnabled(isCollab);
+        LinearLayout tabLayout = ((LinearLayout) binding.tabs.getChildAt(0));
+        if (tabLayout.getChildCount() >= 1) {
+            View collabTab = tabLayout.getChildAt(1);
+            if (collabTab != null) {
+                collabTab.setEnabled(isCollab);
+                collabTab.setClickable(isCollab);
+            }
+        }
+    }
+
+    public void callCollabApi() {
+        if (playListFrg.size() > 1) {
+            Fragment fragment = playListFrg.get(1);
+            if (fragment instanceof PlaylistCollaboratosFragment) {
+                ((PlaylistCollaboratosFragment) fragment).callCollabApi();
+            }
+        }
+    }
+
+    public boolean isBackPress() {
+        if (popupWindow != null && popupWindow.isShowing()) {
+            popupWindow.dismiss();
+            return false;
+        } else if (playListFrg.size() > 0 && playListFrg.get(0) instanceof PlaylistSongslistFragment) {
+            return ((PlaylistSongslistFragment) playListFrg.get(0)).isBackPress();
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_SHARE_PLAYLIST && resultCode == Activity.RESULT_OK) {
+            if (data.hasExtra(AppConstants.PLAYLIST_UID)) {
+                String uid = data.getStringExtra(AppConstants.PLAYLIST_UID);
+                ((youtube) getActivity()).onLoadFragment(PlaylistDetailFragmentNew.getInstance(uid));
+            }
         }
     }
 }

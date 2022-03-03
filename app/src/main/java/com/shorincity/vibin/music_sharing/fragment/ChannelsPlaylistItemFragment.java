@@ -159,7 +159,7 @@ public class ChannelsPlaylistItemFragment extends MyBaseFragment {
 
         //https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&key=AIzaSyDn7GZfot4NowEcGPzRYv7h80s7LUT_vcs&maxResults=50&playlistId=PLldRXoeaXPNm2wL1iy2fBMc55c1T8ZLhp
 
-        Call<YoutubePlaylistItemModel> callback = dataAPI.getYoutubePlayListItem("snippet", AppConstants.YOUTUBE_KEY, "50", playlistId);
+        Call<YoutubePlaylistItemModel> callback = dataAPI.getYoutubePlayListItem("snippet,contentDetails", AppConstants.YOUTUBE_KEY, "50", playlistId);
         callback.enqueue(new Callback<YoutubePlaylistItemModel>() {
             @Override
             public void onResponse(Call<YoutubePlaylistItemModel> call, Response<YoutubePlaylistItemModel> response) {
@@ -235,13 +235,15 @@ public class ChannelsPlaylistItemFragment extends MyBaseFragment {
                                 playlist.add(new PlaylistDetailModel(
                                         playlistItemModel.getItems().get(i).getSnippet().getTitle(),
                                         playlistItemModel.getItems().get(i).getSnippet().getThumbnails().getHigh().getUrl(),
-                                        playlistItemModel.getItems().get(i).getSnippet().getResourceId().getVideoId()
+                                        playlistItemModel.getItems().get(i).getSnippet().getResourceId().getVideoId(),
+                                        playlistItemModel.getItems().get(i).getContentDetails().getEndTime(),""
                                 ));
                             } else {
                                 playlist.add(new PlaylistDetailModel(
                                         playlistItemModel.getItems().get(i).getSnippet().getTitle(),
                                         defaultThumbnail,
-                                        playlistItemModel.getItems().get(i).getSnippet().getResourceId().getVideoId()
+                                        playlistItemModel.getItems().get(i).getSnippet().getResourceId().getVideoId(),
+                                        playlistItemModel.getItems().get(i).getContentDetails().getEndTime(),""
                                 ));
                             }
                         }

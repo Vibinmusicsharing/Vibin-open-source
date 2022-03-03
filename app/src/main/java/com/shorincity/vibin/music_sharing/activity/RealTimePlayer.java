@@ -53,6 +53,7 @@ import com.shorincity.vibin.music_sharing.model.PublicPlaylistItemAdapter;
 import com.shorincity.vibin.music_sharing.model.firebase.RealTimeModel;
 import com.shorincity.vibin.music_sharing.model.firebase.RealTimeSession;
 import com.shorincity.vibin.music_sharing.model.firebase.RealTimeUser;
+import com.shorincity.vibin.music_sharing.model.shareplaylist.PlaylistDetailResponse;
 import com.shorincity.vibin.music_sharing.ripples.RippleButton;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
@@ -734,15 +735,15 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
 
         String token = AppConstants.TOKEN + SharedPrefManager.getInstance(RealTimePlayer.this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
 
-        Call<ArrayList<PlaylistDetailModel>> callback = dataAPI.getPublicPlaylistDetail(token,
-                SharedPrefManager.getInstance(RealTimePlayer.this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN), playlistId);
-        callback.enqueue(new Callback<ArrayList<PlaylistDetailModel>>() {
+        Call<PlaylistDetailResponse> callback = dataAPI.getPublicPlaylistDetail(token,
+                SharedPrefManager.getInstance(RealTimePlayer.this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN), playlistId, AppConstants.SOURCE_TYPE_IN_APP);
+        callback.enqueue(new Callback<PlaylistDetailResponse>() {
             @Override
-            public void onResponse(Call<ArrayList<PlaylistDetailModel>> call, retrofit2.Response<ArrayList<PlaylistDetailModel>> response) {
+            public void onResponse(Call<PlaylistDetailResponse> call, retrofit2.Response<PlaylistDetailResponse> response) {
                 playlist.clear();
-                if (response != null && response.body() != null && response.body().size() > 0) {
+                if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
                     playlistRv.setVisibility(View.VISIBLE);
-                    playlist.addAll(response.body());
+                    playlist.addAll(response.body().getTracks());
                     publicPlaylistItemAdapter.notifyDataSetChanged();
 
                     if (!isControlledByUser) {
@@ -770,7 +771,7 @@ public class RealTimePlayer extends YouTubeBaseActivity implements YouTubePlayer
             }
 
             @Override
-            public void onFailure(Call<ArrayList<PlaylistDetailModel>> call, Throwable t) {
+            public void onFailure(Call<PlaylistDetailResponse> call, Throwable t) {
 
             }
         });

@@ -17,6 +17,7 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/llBackground"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/_4sdp"
@@ -38,7 +39,7 @@
                 android:textSize="12sp"
                 tools:text="Name" />
 
-            <TextView
+            <com.vanniktech.emoji.EmojiTextView
                 android:id="@+id/chatItem_right_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

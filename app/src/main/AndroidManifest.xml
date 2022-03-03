@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <queries>
         <intent>
@@ -40,11 +41,28 @@
             android:name=".activity.SelectMusicGenreActivity"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.SplashActivity">
+        <activity
+            android:name=".activity.SplashActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="collab.vibin.in"
+                    android:scheme="http" />
+                <data
+                    android:host="collab.vibin.in"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
         <activity android:name=".activity.PrivacyPolicyActivity" />
@@ -103,15 +121,26 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".youtube_files.PlayYoutubeVideoActivity"
-            android:screenOrientation="portrait" />
+            android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
+            android:excludeFromRecents="true"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:resizeableActivity="true"
+            android:screenOrientation="portrait"
+            android:supportsPictureInPicture="true" />
+
         <activity
             android:name=".UI.LoginAct"
             android:screenOrientation="portrait" /> <!-- android:noHistory="true" -->
 
         <activity
             android:name=".UI.youtube"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize">
+
+        </activity>
         <activity
             android:name=".UI.Platform_choose"
             android:screenOrientation="portrait" />
@@ -126,7 +155,11 @@
         <activity
             android:name=".activity.RealTimePlayerActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".activity.SharePlaylistActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".service.MyFirebaseMessagingService"
@@ -157,12 +190,16 @@
             </intent-filter>
         </service>-->
 
-        <receiver android:name="androidx.media.session.MediaButtonReceiver">
+        <receiver
+            android:name="androidx.media.session.MediaButtonReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".youtube_files.floating.AsyncTask.UserPresentBroadcastReceiver">
+        <receiver
+            android:name=".youtube_files.floating.AsyncTask.UserPresentBroadcastReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.SCREEN_ON" />
                 <action android:name="android.intent.action.SCREEN_OFF" />

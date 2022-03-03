@@ -16,33 +16,29 @@ import java.util.List;
 public class PlaylistDetailsViewPagerAdapter extends FragmentPagerAdapter {
 
     private List<String> titleName;
-    private String playlistId;
-    private PlaylistDetailsViewModel viewModel;
+    private List<Fragment> fragmentList;
 
-    public PlaylistDetailsViewPagerAdapter(FragmentManager fm, List<String> titleName, String playlistId, PlaylistDetailsViewModel viewModel) {
+    public PlaylistDetailsViewPagerAdapter(FragmentManager fm, List<String> titleName, List<Fragment> fragmentList) {
         super(fm);
         this.titleName = titleName;
-        this.playlistId = playlistId;
-        this.viewModel = viewModel;
+        this.fragmentList = fragmentList;
     }
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment;
-        if (position == 0)
-            fragment = PlaylistSongslistFragment.getInstance(playlistId, viewModel);
-        else
-            fragment = PlaylistCollaboratosFragment.getInstance(playlistId, viewModel);
-        return fragment;
+        return fragmentList.get(position);
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return fragmentList.size();
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return titleName.get(position);
+        if (position < titleName.size())
+            return titleName.get(position);
+        else
+            return "";
     }
 }

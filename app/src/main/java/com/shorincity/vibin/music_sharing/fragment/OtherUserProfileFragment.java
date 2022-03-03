@@ -287,7 +287,7 @@ public class OtherUserProfileFragment extends MyBaseFragment implements View.OnC
             @Override
             public void onItemClick(View v, int position) {
                 PlaylistDetailFragmentNew fragment = PlaylistDetailFragmentNew.getInstance(myPlaylists.get(position).getId(),
-                        myPlaylists.get(position).getAdmin_id(), myPlaylists.get(position));
+                        myPlaylists.get(position).getAdmin_id(), myPlaylists.get(position), searchedUserId);
                 ((youtube) getActivity()).onLoadFragment(fragment);
                 /*Intent intent = new Intent(mContext, PlaylistDetailActivity.class);
                 int id = myPlaylists.get(position).getId();
@@ -359,7 +359,7 @@ public class OtherUserProfileFragment extends MyBaseFragment implements View.OnC
             public void onResponse(Call<ArrayList<MyPlaylistModel>> call, Response<ArrayList<MyPlaylistModel>> response) {
                 //((ProgressBar) view.findViewById(R.id.progressbar)).setVisibility(View.GONE);
                 myPlaylists.clear();
-                if (response != null && response.body() != null && response.body().size() > 0) {
+                if (response.body() != null && response.body().size() > 0) {
                     view.findViewById(R.id.tv_playlist_placeholder).setVisibility(View.GONE);
                     playlistRv.setVisibility(View.VISIBLE);
                     myPlaylists.addAll(response.body());
@@ -721,6 +721,8 @@ public class OtherUserProfileFragment extends MyBaseFragment implements View.OnC
         giphyGridView.setDirection(GiphyGridView.HORIZONTAL);
         giphyGridView.setSpanCount(2);
         giphyGridView.setCellPadding(0);
+        giphyGridView.setContent(GPHContent.Companion.getTrendingGifs());
+
         giphyGridView.setCallback(new GPHGridCallback() {
             @Override
             public void contentDidUpdate(int i) {

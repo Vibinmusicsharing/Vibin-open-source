@@ -196,7 +196,8 @@ public class SignUpUserNameActivity extends AppCompatActivity implements View.On
                 .putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle));*/
 
         startActivity(new Intent(this, SelectMusicLanguageActivity.class)
-                .putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle));
+                .putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle)
+                .putExtra(AppConstants.PLAYLIST_UID, getIntent().getStringExtra(AppConstants.PLAYLIST_UID)));
 
     }
 

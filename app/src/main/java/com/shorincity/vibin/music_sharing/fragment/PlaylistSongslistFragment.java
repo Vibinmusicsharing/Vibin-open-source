@@ -1,5 +1,6 @@
 package com.shorincity.vibin.music_sharing.fragment;
 
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -79,39 +80,41 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
                 // Type=0:Like,1:DeleteSong, 2:AddSong, 3:Share
                 switch (type) {
                     case 0: {
-                        PlaylistDetailModel mSongLike = playlist.get(position);
-                        boolean isLike=mBean.isLikedByViewer();
-                        mSongLike.setLikedByViewer(!isLike);
-                        playlist.set(position, mSongLike);
-                        if (binding.rvSongs.getAdapter() != null)
-                            binding.rvSongs.getAdapter().notifyItemChanged(position);
-                        DataAPI dataAPI = RetrofitAPI.getData();
-                        String token = AppConstants.TOKEN + SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-                        Call<PlaylistDetailModel> callback = dataAPI.callPlaylistLike(token,
-                                SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
-                                Integer.parseInt(playlistId), mBean.getId(), isLike ? "" : "True");
-                        callback.enqueue(new Callback<PlaylistDetailModel>() {
-                            @Override
-                            public void onResponse(Call<PlaylistDetailModel> call, Response<PlaylistDetailModel> response) {
-                                if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
-                                    playlist.set(position, response.body());
-                                    Collections.sort(playlist, Collections.reverseOrder());
-                                    if (binding.rvSongs.getAdapter() != null)
-                                        binding.rvSongs.getAdapter().notifyDataSetChanged();
-                                } else {
+                        if (viewModel.isCollaborator()) {
+                            PlaylistDetailModel mSongLike = playlist.get(position);
+                            boolean isLike = mBean.isLikedByViewer();
+                            mSongLike.setLikedByViewer(!isLike);
+                            playlist.set(position, mSongLike);
+                            if (binding.rvSongs.getAdapter() != null)
+                                binding.rvSongs.getAdapter().notifyItemChanged(position);
+                            DataAPI dataAPI = RetrofitAPI.getData();
+                            String token = AppConstants.TOKEN + SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+                            Call<PlaylistDetailModel> callback = dataAPI.callPlaylistLike(token,
+                                    SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
+                                    Integer.parseInt(playlistId), mBean.getId(), isLike ? "" : "True");
+                            callback.enqueue(new Callback<PlaylistDetailModel>() {
+                                @Override
+                                public void onResponse(Call<PlaylistDetailModel> call, Response<PlaylistDetailModel> response) {
+                                    if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
+                                        playlist.set(position, response.body());
+                                        Collections.sort(playlist, Collections.reverseOrder());
+                                        if (binding.rvSongs.getAdapter() != null)
+                                            binding.rvSongs.getAdapter().notifyDataSetChanged();
+                                    } else {
+                                        Toast.makeText(mContext,
+                                                (response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<PlaylistDetailModel> call, Throwable t) {
                                     Toast.makeText(mContext,
-                                            (response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!",
+                                            t.getLocalizedMessage(),
                                             Toast.LENGTH_LONG).show();
                                 }
-                            }
-
-                            @Override
-                            public void onFailure(Call<PlaylistDetailModel> call, Throwable t) {
-                                Toast.makeText(mContext,
-                                        t.getLocalizedMessage(),
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        });
+                            });
+                        }
                         break;
                     }
                     case 1: {
@@ -158,17 +161,21 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
     }
 
     private void callPlaylistApi() {
-        viewModel.getPublicPlaylistDetail(mContext, playlistId, new PlaylistDetailCallback() {
+        viewModel.getPublicPlaylistDetail(mContext, new PlaylistDetailCallback() {
             @Override
             public void onResponse() {
 //                binding.setIsProgress(false);
+                Fragment parentFrg = getParentFragment();
+                if (parentFrg instanceof PlaylistDetailFragmentNew) {
+                    ((PlaylistDetailFragmentNew) parentFrg).setIsCollab(viewModel.isCollaborator());
+                }
                 binding.swipelayout.setRefreshing(false);
                 if (binding.rvSongs.getAdapter() != null)
                     binding.rvSongs.getAdapter().notifyDataSetChanged();
             }
 
             @Override
-            public void onError() {
+            public void onError(String msg) {
 //                binding.setIsProgress(false);
                 binding.swipelayout.setRefreshing(false);
             }
@@ -225,5 +232,37 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
                         Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    public void callAddCollabFromQrApi(String playlistId) {
+        if (viewModel != null) {
+            viewModel.callAddCollabFromQR(mContext, playlistId, new PlaylistDetailCallback() {
+                @Override
+                public void onResponse() {
+//                binding.setIsProgress(false);
+                    Fragment parentFrg = getParentFragment();
+                    if (parentFrg instanceof PlaylistDetailFragmentNew) {
+                        ((PlaylistDetailFragmentNew) parentFrg).setIsCollab(viewModel.isCollaborator());
+                        ((PlaylistDetailFragmentNew) parentFrg).callCollabApi();
+                    }
+                    binding.swipelayout.setRefreshing(false);
+                    if (binding.rvSongs.getAdapter() != null)
+                        binding.rvSongs.getAdapter().notifyDataSetChanged();
+                }
+
+                @Override
+                public void onError(String msg) {
+//                binding.setIsProgress(false);
+                    binding.swipelayout.setRefreshing(false);
+                }
+            });
+        }
+    }
+
+    public boolean isBackPress() {
+        if (binding.rvSongs.getAdapter() != null)
+            return ((PlaylistSongsAdapter) binding.rvSongs.getAdapter()).isBackPress();
+        else
+            return true;
     }
 }

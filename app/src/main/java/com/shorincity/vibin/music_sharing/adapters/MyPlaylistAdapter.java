@@ -16,6 +16,7 @@ import com.giphy.sdk.ui.views.GifView;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.Utility;
 
 import java.util.ArrayList;
 
@@ -26,7 +27,7 @@ public class MyPlaylistAdapter extends RecyclerView.Adapter<MyPlaylistAdapter.Ex
     private ArrayList<MyPlaylistModel> list;
 
     public MyPlaylistAdapter(Context context, ArrayList<MyPlaylistModel> exampleList){
-        Giphy.INSTANCE.configure(context, AppConstants.GIPHY_API_KEY, true);
+        Utility.configGiphy(context);
         mContext = context;
         list = exampleList;
     }
@@ -55,7 +56,7 @@ public class MyPlaylistAdapter extends RecyclerView.Adapter<MyPlaylistAdapter.Ex
 
         String gifArraySplit[] = currentItem.getGifLink().split("/");
         String mediaId = gifArraySplit[gifArraySplit.length-1];
-        holder.gifView.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(mContext, R.color.light_gray));
+        holder.gifView.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(mContext, R.color.light_gray),null);
     }
 
     @Override

@@ -212,6 +212,7 @@ public class SelectMusicGenreActivity extends AppCompatActivity {
                 SignUpResponse data = ((Resource.Success<SignUpResponse>) signUpResponseResource).getData();
                 viewModel.setPrefData(SharedPrefManager.getInstance(SelectMusicGenreActivity.this), data);
                 Intent k = new Intent(SelectMusicGenreActivity.this, youtube.class);
+                k.putExtra(AppConstants.PLAYLIST_UID, getIntent().getStringExtra(AppConstants.PLAYLIST_UID));
                 k.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(k);
                 finishAffinity();

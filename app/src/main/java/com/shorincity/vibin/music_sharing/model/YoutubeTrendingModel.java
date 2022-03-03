@@ -359,6 +359,9 @@ public class YoutubeTrendingModel implements Serializable {
         @SerializedName("defaultLanguage")
         @Expose
         private String defaultLanguage;
+        @SerializedName("song_duration")
+        @Expose
+        private String songDuration;
 
         public String getPublishedAt() {
             return publishedAt;
@@ -456,6 +459,9 @@ public class YoutubeTrendingModel implements Serializable {
             this.defaultLanguage = defaultLanguage;
         }
 
+        public String getSongDuration() {
+            return songDuration;
+        }
     }
 
     public class Standard implements Serializable{

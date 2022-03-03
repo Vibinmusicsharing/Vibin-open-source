@@ -7,6 +7,7 @@ import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.callbackclick.PlaylistDetailCallback;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.realtime.RTListner;
+import com.shorincity.vibin.music_sharing.model.shareplaylist.PlaylistDetailResponse;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
@@ -40,26 +41,26 @@ public class RTPlayerViewModel {
         DataAPI dataAPI = RetrofitAPI.getData();
 
         String token = AppConstants.TOKEN + SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-        Call<ArrayList<PlaylistDetailModel>> callback = dataAPI.getPublicPlaylistDetail(token,
+        Call<PlaylistDetailResponse> callback = dataAPI.getPublicPlaylistDetail(token,
                 SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
-                playlistID);
-        callback.enqueue(new Callback<ArrayList<PlaylistDetailModel>>() {
+                playlistID,AppConstants.SOURCE_TYPE_IN_APP);
+        callback.enqueue(new Callback<PlaylistDetailResponse>() {
             @Override
-            public void onResponse(Call<ArrayList<PlaylistDetailModel>> call, retrofit2.Response<ArrayList<PlaylistDetailModel>> response) {
+            public void onResponse(Call<PlaylistDetailResponse> call, retrofit2.Response<PlaylistDetailResponse> response) {
                 playlist.clear();
-                if (response != null && response.body() != null && response.body().size() > 0) {
-                    playlist.addAll(response.body());
+                if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
+                    playlist.addAll(response.body().getTracks());
                     detailCallback.onResponse();
                 } else {
-                    detailCallback.onError();
+                    detailCallback.onError((response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!");
                 }
             }
 
             @Override
-            public void onFailure(Call<ArrayList<PlaylistDetailModel>> call, Throwable t) {
+            public void onFailure(Call<PlaylistDetailResponse> call, Throwable t) {
 //                more_image.setVisibility(View.GONE);
                 Log.d(TAG, "onFailure: " + t.getMessage());
-                detailCallback.onError();
+                detailCallback.onError("Something went wrong!");
             }
         });
     }

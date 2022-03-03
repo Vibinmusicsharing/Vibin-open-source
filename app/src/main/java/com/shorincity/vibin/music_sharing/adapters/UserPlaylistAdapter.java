@@ -30,6 +30,7 @@ import com.shorincity.vibin.music_sharing.model.PlayListDeleteModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.Utility;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -44,7 +45,7 @@ public class UserPlaylistAdapter extends RecyclerView.Adapter<UserPlaylistAdapte
     private CustomItemClickListener customItemClickListener;
 
     public UserPlaylistAdapter(Context context, ArrayList<MyPlaylistModel> exampleList) {
-        Giphy.INSTANCE.configure(context, AppConstants.GIPHY_API_KEY, true);
+        Utility.configGiphy(context);
         mContext = context;
         list = exampleList;
     }
@@ -88,7 +89,7 @@ public class UserPlaylistAdapter extends RecyclerView.Adapter<UserPlaylistAdapte
         String[] gifArraySplit = currentItem.getGifLink().split("/");
         String mediaId = gifArraySplit[gifArraySplit.length - 1];
 
-        holder.gifView.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(mContext, R.color.light_gray));
+        holder.gifView.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(mContext, R.color.light_gray),null);
         String finalFirstname = firstname;
         holder.ivDelete.setOnClickListener(view -> {
             AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();

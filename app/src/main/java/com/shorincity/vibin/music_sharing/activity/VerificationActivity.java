@@ -225,7 +225,8 @@ public class VerificationActivity extends AppCompatActivity {
                 .putExtra(AppConstants.INTENT_FULL_NAME, viewModel.getFullName())
                 .putExtra(AppConstants.INTENT_SIGN_UP_METHOD, viewModel.getSignUpMethodStr())
                 .putExtra(AppConstants.INTENT_EMAIL, viewModel.getEmailStr())
-                .putExtra(AppConstants.INTENT_PASSWORD, viewModel.getPassStr()));
+                .putExtra(AppConstants.INTENT_PASSWORD, viewModel.getPassStr())
+                .putExtra(AppConstants.PLAYLIST_UID, getIntent().getStringExtra(AppConstants.PLAYLIST_UID)));
     }
 
     @Override

@@ -9,8 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.giphy.sdk.core.models.enums.RenditionType;
+import com.giphy.sdk.ui.views.GifView;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 
@@ -23,7 +26,7 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
     private Context mContext;
     private ArrayList<MyPlaylistModel> mExampleList;
 
-    public AddToPlaylistAdapter(Context context, ArrayList<MyPlaylistModel> exampleList){
+    public AddToPlaylistAdapter(Context context, ArrayList<MyPlaylistModel> exampleList) {
         mContext = context;
         mExampleList = exampleList;
     }
@@ -32,7 +35,7 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.item_playlist_dialod_vertical,parent,false);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.item_playlist_dialod_vertical, parent, false);
         final ExampleViewHolder mViewHolder = new ExampleViewHolder(v);
         v.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,12 +51,17 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
         MyPlaylistModel currentItem = mExampleList.get(position);
 //        String imageUrl = currentItem.getImageUrl();
         String name = currentItem.getName();
+        String[] gifArraySplit = currentItem.getGifLink().split("/");
+        String mediaId = gifArraySplit[gifArraySplit.length - 1];
+        holder.gifView.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(mContext,R.color.light_gray),null);
 
-        holder.mImageView.setVisibility(View.INVISIBLE);
+        holder.mImageView.setVisibility(View.GONE);
+        holder.imagebtn.setVisibility(View.GONE);
         holder.imagebtn.setText(String.valueOf(name.charAt(0)).toUpperCase());
         holder.imagebtn.setBackgroundColor(getRandom());
 
         holder.mTextViewTitle.setText(name);
+        holder.tvAdminName.setText(currentItem.getAdminName());
 //        Glide.with(mContext).load(imageUrl).into(holder.mImageView);
 
 
@@ -65,16 +73,20 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
     }
 
 
-    public class ExampleViewHolder extends RecyclerView.ViewHolder{
+    public class ExampleViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView mImageView;
-        public TextView mTextViewTitle;
+        public GifView gifView;
+        public TextView mTextViewTitle, tvAdminName;
         public View view;
         public Button imagebtn;
+
         public ExampleViewHolder(@NonNull View itemView) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.imageViewaddtoplaylist);
+            gifView = itemView.findViewById(R.id.gif_iv);
             mTextViewTitle = itemView.findViewById(R.id.textViewtitle);
+            tvAdminName = itemView.findViewById(R.id.tvAdminName);
             imagebtn = itemView.findViewById(R.id.imagebtn);
             view = itemView.findViewById(R.id.view);
 
@@ -90,6 +102,7 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
     }
 
     CustomItemClickListener customItemClickListener;
+
     public interface CustomItemClickListener {
         public void onItemClick(View v, int position);
     }

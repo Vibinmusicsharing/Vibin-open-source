@@ -127,6 +127,7 @@ public class SignUpEmailPassActivity extends AppCompatActivity {
             @Override
             public void onClick(@NonNull View widget) {
                 Intent intent = new Intent(SignUpEmailPassActivity.this, LoginAct.class);
+                intent.putExtra(AppConstants.PLAYLIST_UID, getIntent().getStringExtra(AppConstants.PLAYLIST_UID));
                 startActivity(intent);
                 finish();
             }
@@ -223,6 +224,7 @@ public class SignUpEmailPassActivity extends AppCompatActivity {
                             SharedPrefManager.getInstance(SignUpEmailPassActivity.this).setSharedPrefString(AppConstants.INTENT_FULL_NAME, signUpResponse.getFullname());
 
                             Intent k = new Intent(SignUpEmailPassActivity.this, SelectMusicLanguageActivity.class);
+                            k.putExtra(AppConstants.PLAYLIST_UID, getIntent().getStringExtra(AppConstants.PLAYLIST_UID));
                             Bundle bundle = new Bundle();
                             bundle.putBoolean(AppConstants.INTENT_IS_FROM_GOOGLE, true);
                             k.putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle);
@@ -249,6 +251,7 @@ public class SignUpEmailPassActivity extends AppCompatActivity {
                                 k.putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle);
                                 k.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             }
+                            k.putExtra(AppConstants.PLAYLIST_UID, getIntent().getStringExtra(AppConstants.PLAYLIST_UID));
                             startActivity(k);
                         }
                         finishAffinity();
@@ -278,7 +281,8 @@ public class SignUpEmailPassActivity extends AppCompatActivity {
                 .putExtra(AppConstants.INTENT_FULL_NAME, "")
                 .putExtra(AppConstants.INTENT_SIGN_UP_METHOD, AppConstants.SIGNUP_BY_APP)
                 .putExtra(AppConstants.INTENT_EMAIL, mSignViewModel.email.getValue())
-                .putExtra(AppConstants.INTENT_PASSWORD, mSignViewModel.password.getValue()));
+                .putExtra(AppConstants.INTENT_PASSWORD, mSignViewModel.password.getValue())
+                .putExtra(AppConstants.PLAYLIST_UID, getIntent().getStringExtra(AppConstants.PLAYLIST_UID)));
     }
 
     private void callEmailCheckerAPI() {

@@ -37,6 +37,8 @@ import com.shorincity.vibin.music_sharing.model.avatar.AvatarDetails;
 import com.shorincity.vibin.music_sharing.model.coverart.CoverArtImageResponse;
 import com.shorincity.vibin.music_sharing.model.lastfm.LastFMSearchResponse;
 import com.shorincity.vibin.music_sharing.model.lastfm.trackinfo.TrackInfoResponse;
+import com.shorincity.vibin.music_sharing.model.shareplaylist.PlaylistDetailResponse;
+import com.shorincity.vibin.music_sharing.model.shareplaylist.SharePlaylistResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -242,8 +244,17 @@ public interface DataAPI {
     Call<ArrayList<MyPlaylistModel>> getPublicPlaylist(@Header("Authorization") String token, @Field("customer_id") int userId);
 
     @FormUrlEncoded
-    @POST("/playlist/v1/playlist_detail/")
-    Call<ArrayList<PlaylistDetailModel>> getPublicPlaylistDetail(@Header("Authorization") String token, @Field("token") String token1, @Field("playlist") String id);
+    @POST("/playlist/v2/playlist_detail/")
+    Call<PlaylistDetailResponse> getPublicPlaylistDetail(@Header("Authorization") String token,
+                                                         @Field("token") String token1,
+                                                         @Field("playlist") String id,
+                                                         @Field("source") String sourceType);
+
+    @FormUrlEncoded
+    @POST("/playlist/v1/add_collab_qr/")
+    Call<PlaylistDetailResponse> callAddCollabFromQR(@Header("Authorization") String token,
+                                                     @Field("token") String token1,
+                                                     @Field("qr_code_id") String qrCodeId);
 
     @FormUrlEncoded
     @POST("/playlist/v1/put_playlist_likes/")
@@ -305,10 +316,11 @@ public interface DataAPI {
 
     // Notification API....................................................
     @FormUrlEncoded
-    @POST("/user/v1/add_notification_token/")
+    @POST("/user/v2/add_notification_token/")
     Call<APIResponse> addNotificationToken(@Header("Authorization") String token,
                                            @Field("login_token") String loginToken,
-                                           @Field("notify_token") String notifyToken);
+                                           @Field("notify_token") String notifyToken,
+                                           @Field("app_curr_version") String appVersion);
 
     /*@FormUrlEncoded
     @POST("/user/v1/send_notification/")
@@ -489,6 +501,13 @@ public interface DataAPI {
             @Field("artist_name") String artistName,
             @Field("song_duration") String songDuration
     );
+
+    @FormUrlEncoded
+    @POST("/playlist/v1/share_playlist/")
+    Call<SharePlaylistResponse> callSharePlaylistApi(@Header("Authorization") String token,
+                                                     @Field("token") String usertoken,
+                                                     @Field("playlist_id") Integer playListId,
+                                                     @Field("regenerate") Boolean regenerate);
 
 
     @GET("2.0?method=track.search")

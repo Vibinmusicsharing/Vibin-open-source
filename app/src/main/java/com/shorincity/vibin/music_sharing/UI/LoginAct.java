@@ -96,6 +96,7 @@ public class LoginAct extends AppCompatActivity {
             public void onClick(@NonNull View widget) {
                 Intent intent = new Intent(LoginAct.this, SignUpEmailPassActivity.class);
                 intent.putExtra(AppConstants.INTENT_SIGN_UP_METHOD, AppConstants.SIGNUP_BY_APP);
+                intent.putExtra(AppConstants.PLAYLIST_UID, getIntent().getStringExtra(AppConstants.PLAYLIST_UID));
                 startActivity(intent);
                 finish();
             }
@@ -181,6 +182,7 @@ public class LoginAct extends AppCompatActivity {
                             k.putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle);
                             k.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         }
+                        k.putExtra(AppConstants.PLAYLIST_UID, getIntent().getStringExtra(AppConstants.PLAYLIST_UID));
                         startActivity(k);
                         finishAffinity();
 
@@ -257,6 +259,7 @@ public class LoginAct extends AppCompatActivity {
                             Bundle bundle = new Bundle();
                             bundle.putBoolean(AppConstants.INTENT_IS_FROM_GOOGLE, true);
                             k.putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle);
+                            k.putExtra(AppConstants.PLAYLIST_UID, getIntent().getStringExtra(AppConstants.PLAYLIST_UID));
                             k.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(k);
 
@@ -280,6 +283,7 @@ public class LoginAct extends AppCompatActivity {
                                 k.putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle);
                                 k.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             }
+                            k.putExtra(AppConstants.PLAYLIST_UID, getIntent().getStringExtra(AppConstants.PLAYLIST_UID));
                             startActivity(k);
                         }
                         finishAffinity();

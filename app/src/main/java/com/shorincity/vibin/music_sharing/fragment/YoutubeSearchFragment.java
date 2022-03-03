@@ -139,7 +139,7 @@ public class YoutubeSearchFragment extends MyBaseFragment {
                 Track currentItem = trackList.get(position);
                 Bundle bundle = new Bundle();
                 bundle.putInt("position", position);
-                bundle.putString("title", currentItem.getName() + " - " + currentItem.getArtist());
+                bundle.putString("title", currentItem.getName());
                 bundle.putString("description", "");
                 bundle.putString("thumbnail", currentItem.getModelData() != null && currentItem.getModelData().getItems().size() > 0 ? currentItem.getModelData().getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl() : (currentItem.getImage().size() > 0 ? currentItem.getImage().get(0).getText() : ""));
                 bundle.putString("videoId", currentItem.getModelData() != null && currentItem.getModelData().getItems().size() > 0 ? currentItem.getModelData().getItems().get(0).getId().getVideoId() : "");

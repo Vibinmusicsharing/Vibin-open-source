@@ -58,6 +58,7 @@ import com.shorincity.vibin.music_sharing.adapters.UserPlaylistAdapter;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistLikeModel;
+import com.shorincity.vibin.music_sharing.model.shareplaylist.PlaylistDetailResponse;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
@@ -80,19 +81,17 @@ import retrofit2.Callback;
 
 public class PublicPlaylistFragment extends MyBaseFragment {
 
-    RequestQueue requestQueue;
-    String url = AppConstants.BASE_URL + "playlist/v1/create_new_playlist/";
-    View view;
-    Context context;
-    ProgressBar progressBar;
-    TextView textView;
-    UserPlaylistAdapter myPlaylistAdapter;
-    ArrayList<MyPlaylistModel> myPlaylists;
-    RecyclerView playlistRv;
-    EditText edittext;
+    private View view;
+    private Context context;
+    private ProgressBar progressBar;
+    private TextView textView;
+    private UserPlaylistAdapter myPlaylistAdapter;
+    private ArrayList<MyPlaylistModel> myPlaylists;
+    private RecyclerView playlistRv;
+    private EditText edittext;
     private ArrayList<String> genreList;
 
-    ArrayList<PlaylistDetailModel> Songplaylist = new ArrayList<>();
+    private ArrayList<PlaylistDetailModel> Songplaylist = new ArrayList<>();
 
     public PublicPlaylistFragment() {
     }
@@ -117,11 +116,10 @@ public class PublicPlaylistFragment extends MyBaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         genreList = CommonUtils.getGenre();
-        Giphy.INSTANCE.configure(getActivity(), AppConstants.GIPHY_API_KEY, true);
+        Utility.configGiphy(getActivity());
         edittext = view.findViewById(R.id.edittextSearch);
         edittext.setOnEditorActionListener(editorActionListener);
         progressBar = view.findViewById(R.id.progressbar);
-        requestQueue = Volley.newRequestQueue(context);
         textView = view.findViewById(R.id.textviewplaylistfragment);
 
         FloatingActionButton floatingActionButton = view.findViewById(R.id.fab);
@@ -171,6 +169,7 @@ public class PublicPlaylistFragment extends MyBaseFragment {
                 openCreatePlaylistDialog();
             }
         });
+
 
         search.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -328,64 +327,6 @@ public class PublicPlaylistFragment extends MyBaseFragment {
         openCreatePlaylistBottomsheet();
     }
 
-    //  add text to server
-    public void addTexts(final String playlistname, final String gifLink, final String description, final String password, final Boolean[] checking) {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-
-                    Boolean PlaylistCreated = jsonObject.getBoolean("Playlist Created");
-                    if (PlaylistCreated) {
-                        Logging.d("TEST", "addTexts PlaylistCreated Called");
-                        Toast.makeText(context, "playlist created", Toast.LENGTH_SHORT).show();
-                        callMyPlaylistAPI(SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_TOKEN));
-                    }
-
-                } catch (JSONException e) {
-                    Logging.d("TEST", "addTexts onErrorResponse JSONException Called");
-                    e.printStackTrace();
-                    Toast.makeText(context, "you cannot create playlist of same name", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Logging.d("TEST", "addTexts onErrorResponse else Called");
-                Toast.makeText(context, "this playlist already exists", Toast.LENGTH_SHORT).show();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                String token = SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
-                params.put("token", token);
-                params.put("name", playlistname);
-                params.put("description", description);
-                params.put("gif_link", gifLink);
-                if (checking[0]) {
-                    params.put("private", "true");
-                    params.put("password", password);
-                } else {
-                    params.put("password", "");
-                    params.put("private", "false");
-                }
-                return params;
-            }
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                String token = AppConstants.TOKEN + SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-                params.put("Authorization", token);
-                return params;
-            }
-        };
-        requestQueue.add(stringRequest);
-        callMyPlaylistAPI(SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_TOKEN));
-    }
-
     private final TextView.OnEditorActionListener editorActionListener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -468,7 +409,7 @@ public class PublicPlaylistFragment extends MyBaseFragment {
     }
 
     private void putPublicPLaylistLike(int playlistId, int position) {
-        MyPlaylistModel playlistModel=myPlaylists.get(position);
+        MyPlaylistModel playlistModel = myPlaylists.get(position);
         playlistModel.setLikedByUser(!playlistModel.isLikedByUser());
         myPlaylists.set(position, playlistModel);
         myPlaylistAdapter.notifyItemChanged(position);
@@ -512,15 +453,17 @@ public class PublicPlaylistFragment extends MyBaseFragment {
         DataAPI dataAPI = RetrofitAPI.getData();
 
         String token = AppConstants.TOKEN + SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
-        Call<ArrayList<PlaylistDetailModel>> callback = dataAPI.getPublicPlaylistDetail(token, SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_TOKEN), playlistId);
-        callback.enqueue(new Callback<ArrayList<PlaylistDetailModel>>() {
+        Call<PlaylistDetailResponse> callback = dataAPI.getPublicPlaylistDetail(token,
+                SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
+                playlistId, AppConstants.SOURCE_TYPE_IN_APP);
+        callback.enqueue(new Callback<PlaylistDetailResponse>() {
             @Override
-            public void onResponse(Call<ArrayList<PlaylistDetailModel>> call, retrofit2.Response<ArrayList<PlaylistDetailModel>> response) {
+            public void onResponse(Call<PlaylistDetailResponse> call, retrofit2.Response<PlaylistDetailResponse> response) {
                 showMe.dismiss();
                 Songplaylist.clear();
-                if (response != null && response.body() != null && response.body().size() > 0) {
+                if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
 
-                    Songplaylist.addAll(response.body());
+                    Songplaylist.addAll(response.body().getTracks());
                     Collections.reverse(Songplaylist);
                     int pos = 0;
 
@@ -546,7 +489,7 @@ public class PublicPlaylistFragment extends MyBaseFragment {
             }
 
             @Override
-            public void onFailure(Call<ArrayList<PlaylistDetailModel>> call, Throwable t) {
+            public void onFailure(Call<PlaylistDetailResponse> call, Throwable t) {
                 showMe.dismiss();
                 Log.d(TAG, "onFailure: " + t.getMessage());
             }
@@ -582,6 +525,7 @@ public class PublicPlaylistFragment extends MyBaseFragment {
         giphyGridView.setDirection(GiphyGridView.HORIZONTAL);
         giphyGridView.setSpanCount(2);
         giphyGridView.setCellPadding(0);
+        giphyGridView.setContent(GPHContent.Companion.getTrendingGifs());
         giphyGridView.setCallback(new GPHGridCallback() {
             @Override
             public void contentDidUpdate(int i) {

@@ -142,7 +142,8 @@ public class ChannelsPlaylistFragment extends MyBaseFragment {
                             playlist.add(new PlaylistDetailModel(
                                     youtubeChannelPLayList.get(i).getSnippet().getTitle(),
                                     youtubeChannelPLayList.get(i).getSnippet().getThumbnails().getHigh().getUrl(),
-                                    idvideo
+                                    idvideo,
+                                    youtubeChannelPLayList.get(i).getSnippet().getSongDuration(), ""
                             ));
                         } else {
                             String splitrl[] = defaultThumbnail.split("/");
@@ -150,7 +151,8 @@ public class ChannelsPlaylistFragment extends MyBaseFragment {
                             playlist.add(new PlaylistDetailModel(
                                     youtubeChannelPLayList.get(i).getSnippet().getTitle(),
                                     defaultThumbnail,
-                                    idvideo
+                                    idvideo,
+                                    youtubeChannelPLayList.get(i).getSnippet().getSongDuration(), ""
                             ));
                         }
                     }
@@ -190,7 +192,7 @@ public class ChannelsPlaylistFragment extends MyBaseFragment {
         progressBar.setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getYoutubeData();
 
-        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeChannelsPlayList("snippet", channelId, AppConstants.YOUTUBE_KEY, "50");
+        Call<YoutubeTrendingModel> callback = dataAPI.getYoutubeChannelsPlayList("snippet,contentDetails", channelId, AppConstants.YOUTUBE_KEY, "50");
         callback.enqueue(new Callback<YoutubeTrendingModel>() {
             @Override
             public void onResponse(Call<YoutubeTrendingModel> call, Response<YoutubeTrendingModel> response) {
@@ -213,7 +215,7 @@ public class ChannelsPlaylistFragment extends MyBaseFragment {
             @Override
             public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(mContext,  getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
 

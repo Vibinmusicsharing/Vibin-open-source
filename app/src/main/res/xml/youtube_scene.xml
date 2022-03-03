@@ -116,7 +116,7 @@
             android:visibility="gone"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toBottomOf="@id/linear_desc" />
+            motion:layout_constraintTop_toBottomOf="@id/linear_extra_controll" />
 
         <Constraint
             android:id="@id/linear_controll"
@@ -134,7 +134,7 @@
             android:visibility="gone"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toBottomOf="@id/linear_controll" />
+            motion:layout_constraintTop_toBottomOf="@id/linear_desc" />
 
         <Constraint
             android:id="@id/arrow_up"
@@ -231,7 +231,7 @@
             android:visibility="gone"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toBottomOf="@id/linear_desc" />
+            motion:layout_constraintTop_toBottomOf="@id/linear_extra_controll" />
 
         <Constraint
             android:id="@id/linear_controll"
@@ -249,7 +249,7 @@
             android:visibility="gone"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toBottomOf="@id/linear_controll" />
+            motion:layout_constraintTop_toBottomOf="@id/linear_desc" />
 
         <Constraint
             android:id="@id/arrow_up"
@@ -272,7 +272,6 @@
             motion:layout_constraintRight_toRightOf="parent"
             motion:layout_constraintTop_toBottomOf="parent" />
 
-
         <Constraint
             android:id="@+id/youtube_frame"
             android:layout_width="0dp"
@@ -284,23 +283,24 @@
 
         <Constraint
             android:id="@id/linear_header"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="20dp"
             android:layout_marginEnd="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
             android:alpha="1"
             android:visibility="visible"
+            motion:layout_constraintBottom_toBottomOf="@id/imgMinimize"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toBottomOf="@id/imgMinimize" />
+            motion:layout_constraintTop_toTopOf="@id/imgMinimize" />
 
         <Constraint
             android:id="@id/imgMinimize"
             android:layout_width="@dimen/dimen_40dp"
             android:layout_height="0dp"
-            android:layout_marginTop="@dimen/dimen_10dp"
+            android:layout_marginStart="@dimen/dimen_10dp"
+            android:layout_marginTop="@dimen/dimen_20dp"
+            android:layout_marginEnd="0dp"
             android:alpha="1"
             android:visibility="visible"
             motion:layout_constraintStart_toStartOf="parent"
@@ -309,8 +309,10 @@
         <Constraint
             android:id="@id/miniPlayer"
             android:layout_width="0dp"
-            android:layout_height="200dp"
-            android:layout_marginTop="@dimen/_50sdp"
+            android:layout_height="220dp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_40sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
             android:visibility="visible"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
@@ -338,6 +340,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="visible"
+            android:layout_marginTop="@dimen/dimen_24dp"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toBottomOf="@id/myYoutube" />
@@ -346,17 +349,21 @@
             android:id="@id/linear_seekbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dimen_5dp"
+            android:layout_marginTop="@dimen/dimen_30dp"
+            android:layout_marginEnd="@dimen/dimen_5dp"
+            android:layout_marginBottom="@dimen/dimen_5dp"
             android:alpha="1"
             android:visibility="visible"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toBottomOf="@id/linear_desc" />
+            motion:layout_constraintTop_toBottomOf="@id/linear_extra_controll" />
 
         <Constraint
             android:id="@id/linear_controll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/dimen_15dp"
             android:visibility="visible"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
@@ -367,11 +374,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:visibility="visible"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toBottomOf="@id/linear_controll" />
+            motion:layout_constraintTop_toBottomOf="@id/linear_desc" />
 
         <Constraint
             android:id="@id/arrow_up"

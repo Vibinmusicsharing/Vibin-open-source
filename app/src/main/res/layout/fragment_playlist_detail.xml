@@ -5,6 +5,11 @@
 
     <data>
 
+        <import type="android.view.View" />
+
+        <variable
+            name="isCollab"
+            type="Boolean" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -52,6 +57,7 @@
                             android:layout_width="@dimen/_25sdp"
                             android:layout_height="@dimen/_25sdp"
                             android:layout_gravity="end"
+                            android:clickable="@{isCollab ? true : false}"
                             app:srcCompat="@drawable/heart_round_selector" />
                     </androidx.cardview.widget.CardView>
 
@@ -71,10 +77,9 @@
                             android:ellipsize="end"
                             android:fontFamily="@font/font_regular"
                             android:maxLines="3"
-                            android:text="@string/dummy_text"
                             android:textColor="@color/textColor"
                             android:textSize="@dimen/_10sdp"
-                            tools:text="test " />
+                            tools:text="@string/dummy_text" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/tv_tags"
@@ -84,7 +89,7 @@
                             android:ellipsize="end"
                             android:fontFamily="@font/font_bold"
                             android:maxLines="3"
-                            android:text="#tag1, #tag2, more"
+                            tools:text="#tag1, #tag2, more"
                             android:textColor="@color/textColor"
                             android:textSize="@dimen/_10sdp" />
 
@@ -96,7 +101,7 @@
                             android:ellipsize="end"
                             android:fontFamily="@font/font_medium"
                             android:maxLines="3"
-                            android:text="50 songs, 1 hour 25 min"
+                            tools:text="50 songs, 1 hour 25 min"
                             android:textColor="@color/textColor"
                             android:textSize="@dimen/_10sdp" />
 
@@ -112,6 +117,7 @@
                                 android:id="@+id/llPlay"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:clickable="@{isCollab ? true : false}"
                                 android:gravity="center"
                                 android:orientation="vertical">
 
@@ -144,6 +150,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
+                                android:clickable="@{isCollab ? true : false}"
                                 android:gravity="center"
                                 android:orientation="vertical">
 
@@ -231,6 +238,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_gravity="end"
+                            android:clickable="@{isCollab ? true : false}"
                             android:paddingStart="@dimen/_8sdp"
                             android:paddingEnd="@dimen/_8sdp"
                             app:srcCompat="@drawable/ic_menu" />
@@ -256,13 +264,41 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.viewpager.widget.ViewPager
+        <com.shorincity.vibin.music_sharing.widgets.CustomViewPager
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:overScrollMode="never"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:visibility="@{isCollab ? View.GONE : View.VISIBLE}">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_playlist_blur" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCollab"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:minHeight="@dimen/_48sdp"
+                android:text="Collaborate"
+                android:textAllCaps="false"
+                app:backgroundTint="@color/counterColor"
+                app:cornerRadius="@dimen/_30sdp"
+                app:strokeColor="@color/counterColor" />
+        </FrameLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

@@ -144,5 +144,13 @@ public class AppConstants {
     public static String PRIVACY_POLICY_TYPE = "privacypolicy";
     public static String USER_SEND_NOTIFICATION = "user_send_notification";
 
+    public static String PREF_YOUTUBE_KEY = "pref_youtube_key";
+    public static String PREF_LAST_FM_KEY = "pref_last_fm_key";
+    public static String PREF_GIPHY_KEY = "pref_giphy_key";
+//    public static String PREF_SHARE_PLAYLIST_RESPONSE = "share_playlist_response";
+    public static String SOURCE_TYPE_IN_APP = "IN_APP";
+    public static String SOURCE_TYPE_DYNAMIC_LINK = "DYNAMIC_LINK";
+    public static String PLAYLIST_UID = "playlist_uid";
+
 
 }

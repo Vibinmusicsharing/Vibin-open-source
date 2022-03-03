@@ -17,12 +17,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.VibinApplication;
 import com.shorincity.vibin.music_sharing.adapters.RecentPlayedAdapter;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.RecentSongModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.youtube_files.PlayYoutubeVideoActivity;
 
 import java.util.ArrayList;
@@ -78,7 +80,6 @@ public class AllRecntSongsActivity extends AppCompatActivity {
 
                 try {
                     if (recentSongList.get(position).getSongType().equalsIgnoreCase(AppConstants.YOUTUBE)) {
-                        Intent intent = new Intent(AllRecntSongsActivity.this, PlayYoutubeVideoActivity.class);
                         ArrayList<PlaylistDetailModel> playlist;
                         playlist = new ArrayList<>();
                         for (int i = 0; i < recentSongList.size(); i++) {
@@ -95,8 +96,9 @@ public class AllRecntSongsActivity extends AppCompatActivity {
                         bundle.putString("thumbnail", recentSongList.get(position).getSongThumbnail());
                         bundle.putString("videoId", recentSongList.get(position).getSongId());
                         bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
-                        intent.putExtra("data", bundle);
                         bundle.putString("from", "channel");
+                        Intent intent = new Intent(AllRecntSongsActivity.this, PlayYoutubeVideoActivity.class);
+                        intent.putExtra("data", bundle);
                         startActivity(intent);
                     }
                 } catch (Exception e) {
@@ -145,5 +147,16 @@ public class AllRecntSongsActivity extends AppCompatActivity {
         super.onBackPressed();
         // Top to Bottom animation whenever user tap on back button
         overridePendingTransition(R.anim.slide_out_bottom, R.anim.slide_in_bottom);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Logging.d("==>onStop youtube");
+        if (((VibinApplication) getApplication()).isPipEnable) {
+            Intent killPlayer = new Intent(this, PlayYoutubeVideoActivity.class);
+            killPlayer.putExtra(PlayYoutubeVideoActivity.INTENT_KILL_PLAYER, true);
+            startActivity(killPlayer);
+        }
     }
 }

@@ -142,6 +142,10 @@ public class YoutubePlaylistItemModel {
         @SerializedName("snippet")
         @Expose
         private Snippet snippet;
+        @SerializedName("contentDetails")
+        @Expose
+        private ContentDetails contentDetails;
+
 
         public String getKind() {
             return kind;
@@ -169,6 +173,10 @@ public class YoutubePlaylistItemModel {
 
         public Snippet getSnippet() {
             return snippet;
+        }
+
+        public ContentDetails getContentDetails() {
+            return contentDetails;
         }
 
         public void setSnippet(Snippet snippet) {
@@ -418,6 +426,16 @@ public class YoutubePlaylistItemModel {
 
         public void setSongDuration(String songDuration) {
             this.songDuration = songDuration;
+        }
+    }
+
+    public class ContentDetails{
+        @SerializedName("endAt")
+        @Expose
+        private String endTime;
+
+        public String getEndTime() {
+            return endTime;
         }
     }
 

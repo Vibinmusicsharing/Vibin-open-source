@@ -112,7 +112,7 @@ public class PlaylistCollaboratosFragment extends MyBaseFragment {
         callCollabApi();
     }
 
-    private void callCollabApi() {
+    public void callCollabApi() {
         viewModel.getCollaboratorsList(mContext, playlistId, new PlaylistDetailCallback() {
             @Override
             public void onResponse() {
@@ -122,7 +122,7 @@ public class PlaylistCollaboratosFragment extends MyBaseFragment {
             }
 
             @Override
-            public void onError() {
+            public void onError(String msg) {
                 binding.swipelayout.setRefreshing(false);
             }
         });

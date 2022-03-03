@@ -5,9 +5,11 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -130,11 +132,13 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
     }
 
     static class RightChatViewHolder extends ChatViewHolder {
+        LinearLayout llBackground;
         TextView contents, tvSenderName;
         AppCompatImageView ivProfile;
 
         public RightChatViewHolder(View itemView) {
             super(itemView);
+            llBackground = itemView.findViewById(R.id.llBackground);
             contents = itemView.findViewById(R.id.chatItem_right_text);
             tvSenderName = itemView.findViewById(R.id.tvSenderName);
             ivProfile = itemView.findViewById(R.id.ivProfile);

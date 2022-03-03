@@ -11,6 +11,9 @@ public class Snippet {
     @SerializedName("thumbnails")
     @Expose
     private Thumbnails thumbnails;
+    @SerializedName("song_duration")
+    @Expose
+    private String songDuration;
 
 
     public String getTitle() {
@@ -30,5 +33,7 @@ public class Snippet {
         this.thumbnails = thumbnails;
     }
 
-
+    public String getSongDuration() {
+        return songDuration;
+    }
 }

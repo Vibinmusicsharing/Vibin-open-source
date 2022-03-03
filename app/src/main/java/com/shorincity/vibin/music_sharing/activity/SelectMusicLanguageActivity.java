@@ -104,6 +104,7 @@ public class SelectMusicLanguageActivity extends AppCompatActivity {
         bundle.putString(AppConstants.INTENT_LANGUAGE, selectedLangs);
 
         startActivity(new Intent(this, SelectMusicGenreActivity.class)
-                .putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle));
+                .putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle)
+                .putExtra(AppConstants.PLAYLIST_UID, getIntent().getStringExtra(AppConstants.PLAYLIST_UID)));
     }
 }

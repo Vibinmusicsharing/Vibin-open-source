@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
 android {
     signingConfigs {
         release {
@@ -8,13 +10,13 @@ android {
             keyPassword 'Harsh@123'
         }
     }
-    compileSdkVersion 29
+    compileSdkVersion 31
     buildToolsVersion '29.0.2'
     defaultConfig {
         applicationId "com.shorincity.vibin.music_sharing"
-        minSdkVersion 19
-        targetSdkVersion 29
-        versionCode 3
+        minSdkVersion 21
+        targetSdkVersion 31
+        versionCode 6
         versionName "1.0.1"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         vectorDrawables.useSupportLibrary = true
@@ -54,6 +56,7 @@ repositories {
 
 dependencies {
 
+    implementation 'com.google.firebase:firebase-dynamic-links:21.0.0'
     def lifecycle_version = "2.3.1"
     def arch_version = "2.1.0"
 
@@ -61,6 +64,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     // LiveData
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.6.0"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     //noinspection GradleCompatible
@@ -130,7 +134,7 @@ dependencies {
     implementation 'com.jackandphantom.android:androidlikebutton:1.2.0'
 
     // Giphy
-    implementation 'com.giphy.sdk:ui:1.2.8'
+    implementation 'com.giphy.sdk:ui:2.1.17'
 
     implementation 'androidx.multidex:multidex:2.0.1'
 
@@ -143,7 +147,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:20.2.0'
     implementation 'androidx.work:work-runtime:2.0.1'
 
-    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.google.android.material:material:1.5.0'
     //implementation 'com.google.android.material:material:1.0.0'
     // Swipe Layout
     implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
@@ -168,7 +172,9 @@ dependencies {
 
     implementation 'com.google.android:flexbox:1.0.0'
     implementation "com.daimajia.swipelayout:library:1.2.0@aar"
-//    implementation 'com.github.mahimrocky:TagView:1.0.3'
+    implementation "com.vanniktech:emoji-ios:0.8.0"
+    implementation 'com.tbuonomo:dotsindicator:4.2'
+    implementation 'me.dm7.barcodescanner:zxing:1.9.13'
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'

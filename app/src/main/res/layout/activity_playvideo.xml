@@ -1,90 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <RelativeLayout
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".music_sharing.UI.youtube">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivBg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="H,1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/bg_music_player" />
+
 
         <LinearLayout
             android:id="@+id/layout1"
-            android:layout_margin="@dimen/dimen_10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_margin="@dimen/_12sdp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-<!--            <ImageView-->
-<!--                android:visibility="gone"-->
-<!--                android:tint="@color/black"-->
-<!--                android:id="@+id/back"-->
-<!--                android:layout_width="27dp"-->
-<!--                android:layout_height="@dimen/dimen_27dp"-->
-<!--                app:srcCompat="@drawable/ic_baseline_arrow_back_24"-->
-<!--                tools:ignore="VectorDrawableCompat" />-->
-
-            <TextView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/back"
-                android:textStyle="bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="3"
-                android:drawableLeft="@drawable/ic_baseline_arrow_back_24"
-                android:drawableTint="@color/black"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_15sdp" />
+                android:padding="@dimen/_8sdp"
+                app:srcCompat="@drawable/ic_back_white" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_marginTop="20dp"
-            android:layout_below="@+id/layout1"
             android:id="@+id/linear_header"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@+id/layout1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/layout1">
 
             <TextView
-                android:textStyle="bold"
                 android:id="@+id/now_play_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="3"
-                android:text="Now playing"
+                android:fontFamily="@font/font_extra_bold"
+                android:text="Playing now"
                 android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_15sdp" />
+                android:textColor="@color/white"
+                android:textSize="18sp" />
 
         </LinearLayout>
 
-        <LinearLayout
+        <com.google.android.youtube.player.YouTubePlayerView
+            android:id="@+id/myYoutube"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginStart="@dimen/dimen_20dp"
+            android:layout_marginTop="@dimen/_35sdp"
+            android:layout_marginEnd="@dimen/dimen_20dp"
+            android:background="@color/black"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linear_header"
+            tools:visibility="visible" />
 
-            android:id="@+id/linear_videoplayer"
+        <com.shorincity.vibin.music_sharing.widgets.player.views.YouTubePlayerView
+            android:id="@+id/youtube_player_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/linear_header"
-            android:layout_marginTop="@dimen/_50sdp">
-
-            <com.google.android.youtube.player.YouTubePlayerView
-                android:id="@+id/myYoutube"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_180sdp"
-                android:layout_margin="@dimen/_10sdp"
-                android:background="@color/white" />
-
-
-        </LinearLayout>
+            android:layout_marginLeft="@dimen/dimen_20dp"
+            android:layout_marginTop="@dimen/_35sdp"
+            android:layout_marginRight="@dimen/dimen_20dp"
+            android:background="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linear_header" />
 
         <LinearLayout
             android:id="@+id/linear_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/linear_videoplayer"
-            android:orientation="vertical">
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/myYoutube">
 
             <TextView
                 android:id="@+id/youtube_title"
@@ -92,25 +106,106 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_3sdp"
                 android:ellipsize="marquee"
+                android:fontFamily="@font/font_extra_bold"
                 android:layoutDirection="rtl"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:maxLines="2"
                 android:singleLine="true"
                 android:textAlignment="center"
-                android:textColor="#000000"
+                android:textColor="@color/textColor"
                 android:textSize="@dimen/_18sdp"
-                android:textStyle="bold" />
+                tools:text="COLD" />
 
-            <TextView
-                android:id="@+id/youtube_desc"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:id="@+id/llArtistName"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_3sdp"
-                android:ellipsize="end"
-                android:maxLines="3"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12sdp" />
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:visibility="invisible">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="4dp"
+                    android:fontFamily="@font/font_regular"
+                    android:text="by"
+                    android:textColor="@color/textColor"
+                    android:textSize="@dimen/_10sdp"
+                    tools:text="by" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvArtist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/font_bold"
+                    android:textColor="@color/textColor"
+                    android:textSize="@dimen/_10sdp"
+                    tools:text="by NEFFEX" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linear_extra_controll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_15dp"
+            android:gravity="center_horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linear_desc">
+
+            <LinearLayout
+                android:id="@+id/llAddPlayList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/addToPlayList"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:gravity="center"
+                    android:padding="@dimen/_5sdp"
+                    app:srcCompat="@drawable/ic_add_playlist_grey" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_semi_bold"
+                    android:text="Add to playlist"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llLike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/_100sdp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/heart_iv"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_gravity="center"
+                    android:padding="@dimen/_5sdp"
+                    app:srcCompat="@drawable/ic_unlike_grey" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_semi_bold"
+                    android:text="@string/like"
+                    android:textSize="12sp" />
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -118,36 +213,50 @@
             android:id="@+id/linear_seekbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/linear_desc"
-            android:layout_margin="5dp"
+            android:layout_marginStart="@dimen/dimen_5dp"
+            android:layout_marginTop="@dimen/dimen_25dp"
+            android:layout_marginEnd="@dimen/dimen_5dp"
+            android:layout_marginBottom="@dimen/dimen_5dp"
             android:gravity="center"
             android:orientation="horizontal"
-            android:padding="5dp"
-            android:weightSum="12">
+            android:paddingStart="@dimen/_20sdp"
+            android:paddingTop="@dimen/dimen_5dp"
+            android:paddingEnd="@dimen/_20sdp"
+            android:paddingBottom="@dimen/dimen_5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linear_extra_controll">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/playerCurrentTimeText"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:gravity="center"
+                android:layout_gravity="center"
+                android:fontFamily="@font/font_medium"
                 android:text="00:00"
-                android:textColor="@color/colorPrimaryDark" />
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/_10sdp" />
 
-            <SeekBar
+            <androidx.appcompat.widget.AppCompatSeekBar
                 android:id="@+id/seekBar"
                 android:layout_width="0dp"
-                android:layout_height="19dp"
-                android:layout_weight="9" />
-
-            <TextView
-                android:id="@+id/playerTotalTimeText"
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:gravity="center"
+                android:layout_margin="@dimen/_1sdp"
+                android:layout_weight="1"
+                android:progress="0"
+                android:progressTint="@color/counterColor"
+                android:thumbTint="@color/counterColor" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/playerTotalTimeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/font_medium"
                 android:text="00:00"
-                android:textColor="@color/colorPrimaryDark" />
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/_10sdp"
+                tools:text="03:50" />
 
         </LinearLayout>
 
@@ -155,120 +264,223 @@
             android:id="@+id/linear_controll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/linear_seekbar"
-            android:layout_marginTop="@dimen/dimen_10dp"
+            android:layout_marginTop="@dimen/dimen_15dp"
             android:gravity="center"
             android:padding="@dimen/dimen_5dp"
-            android:weightSum="12">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linear_seekbar">
 
-            <Button
-                android:id="@+id/addToPlayList"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_weight="1.2"
-                android:background="@drawable/playlist_for_music_player"
-                android:backgroundTint="@color/colorPrimaryDark"
+            <LinearLayout
+                android:id="@+id/llRepeat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/dimen_29dp"
                 android:gravity="center"
-                android:visibility="visible" />
+                android:orientation="vertical">
 
-            <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/repeatonce"
+                    android:layout_width="@dimen/dimen_30dp"
+                    android:layout_height="@dimen/dimen_30dp"
+                    app:srcCompat="@drawable/btn_repeat_selector" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvRepeat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/font_semi_bold"
+                    android:text="Repeat"
+                    android:textColor="@color/text_primary_selector"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/fastrewind"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_35sdp"
+                android:layout_width="@dimen/dimen_40dp"
+                android:layout_height="@dimen/dimen_40dp"
                 android:layout_gravity="center"
-                android:layout_weight="2.5"
-                app:srcCompat="@drawable/ic_baseline_skip_previous_24" />
+                android:padding="8dp"
+                app:srcCompat="@drawable/ic_player_prev" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/button2"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_45sdp"
-                android:layout_weight="2.5"
-                android:background="@drawable/ic_baseline_play_arrow_24"
-                android:gravity="center" />
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_marginStart="@dimen/dimen_20dp"
+                android:layout_marginEnd="@dimen/dimen_20dp"
+                android:gravity="center"
+                app:srcCompat="@drawable/ic_player_play" />
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/fastforward"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_30sdp"
+                android:layout_width="@dimen/dimen_40dp"
+                android:layout_height="@dimen/dimen_40dp"
                 android:layout_gravity="center"
-                android:layout_weight="2.5"
-                app:srcCompat="@drawable/ic_baseline_skip_next_24" />
+                android:padding="8dp"
+                app:srcCompat="@drawable/ic_player_next" />
 
+            <LinearLayout
+                android:id="@+id/llShuffle"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/dimen_29dp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/heart_iv"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_gravity="center"
-                android:layout_weight="1.2"
-                app:srcCompat="@drawable/ic_favorite_border_black_24dp" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/shuffle"
+                    android:layout_width="@dimen/dimen_30dp"
+                    android:layout_height="@dimen/dimen_30dp"
+                    app:srcCompat="@drawable/btn_shuffle_selector" />
 
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvShuffle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/font_semi_bold"
+                    android:text="Shuffle"
+                    android:textColor="@color/text_primary_selector"
+                    android:textSize="12sp" />
+            </LinearLayout>
 
         </LinearLayout>
 
-        <RelativeLayout
-            android:id="@+id/linear_extra_controll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/linear_controll"
-            android:layout_marginLeft="@dimen/_10sdp"
-            android:layout_marginRight="@dimen/_10sdp"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/shuffle"
-                android:layout_width="@dimen/_25sdp"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_alignParentStart="true"
-                android:src="@drawable/suffle"
-                android:visibility="visible"
-                app:tint="@color/toolbarColor" />
-
-            <ImageView
-                android:id="@+id/repeatonce"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_alignParentEnd="true"
-                android:visibility="visible"
-                app:srcCompat="@drawable/repeatonce"
-                app:tint="@color/toolbarColor" />
-
-        </RelativeLayout>
-        <TextView
-            android:layout_centerHorizontal="true"
-            android:tint="@color/black"
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/arrow_up"
-            android:layout_margin="12dp"
-            android:layout_alignParentBottom="true"
             android:layout_width="@dimen/_40sdp"
             android:layout_height="@dimen/_40sdp"
-            android:visibility="visible"
-            app:drawableStartCompat="@drawable/ic_baseline_keyboard_arrow_up_24" />
-    </RelativeLayout>
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="12dp"
+            android:text="test text"
+            android:tint="@color/black"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_baseline_keyboard_arrow_up_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
-        android:id="@+id/bottom_sheet_detail"
+    <FrameLayout
+        android:id="@+id/flBottomSheet"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_marginLeft="@dimen/dimen_5dp"
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:layout_marginRight="@dimen/dimen_5dp"
-        android:background="@drawable/background_bottomsheet"
-        android:elevation="@dimen/_10sdp"
-        app:behavior_peekHeight="0dp"
-        android:orientation="vertical"
-        app:behavior_hideable="true"
+        android:layout_height="480dp"
+        android:layoutDirection="ltr"
+        app:behavior_hideable="false"
+        android:animateLayoutChanges="true"
+        app:behavior_peekHeight="@dimen/_118sdp"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView_bottom"
+        <LinearLayout
+            android:id="@+id/bottom_sheet_detail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/dimen_5dp" />
+            android:layout_marginTop="@dimen/_16sdp"
+            android:background="@drawable/background_cornerradius"
+            android:elevation="@dimen/_14sdp"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <View
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="4dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/dimen_10dp"
+                android:background="#E7E7E7" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/font_bold"
+                android:paddingStart="@dimen/_20sdp"
+                android:paddingTop="4dp"
+                android:paddingEnd="@dimen/_20sdp"
+                android:paddingBottom="4dp"
+                android:text="Queue song"
+                android:textColor="@color/textColor"
+                android:textSize="16sp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/llSelectedSong"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/_20sdp"
+                    android:paddingTop="@dimen/_13sdp"
+                    android:paddingEnd="@dimen/_20sdp"
+                    android:paddingBottom="@dimen/_13sdp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/ivSong"
+                        android:layout_width="@dimen/_60sdp"
+                        android:layout_height="@dimen/_46sdp"
+                        android:scaleType="centerCrop"
+                        tools:background="@drawable/background_fill" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingStart="@dimen/dimen_10dp"
+                        android:paddingEnd="@dimen/dimen_10dp">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tvSongName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/font_semi_bold"
+                            android:maxLines="2"
+                            android:text="Kiss somebodytesl  askdf aksdfj klajsdlkfj lkajsdfk "
+                            android:textColor="@color/counterColor"
+                            android:textSize="16sp" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tvArtistName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/font_regular"
+                            android:singleLine="true"
+                            android:text="Julie Bergan"
+                            android:visibility="gone"
+                            android:textColor="@color/counterColor"
+                            android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvDuration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_medium"
+                        android:text="03:30"
+                        android:textColor="@color/textColor"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/item_playlist_song" />
+
+            </FrameLayout>
+        </LinearLayout>
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

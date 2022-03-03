@@ -1,36 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="@dimen/_300sdp"
     android:layout_gravity="bottom"
+    android:orientation="vertical"
     android:background="@drawable/bkgnd_bottom_sheet"
     app:behavior_hideable="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
+    <View
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="4dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dimen_10dp"
+        android:background="#E7E7E7" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvCreateNewPlaylist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:drawablePadding="@dimen/dimen_10dp"
         android:layout_marginTop="10dp"
-        android:background="@color/colorPrimaryDark"
-        android:gravity="center"
+        android:drawableStart="@drawable/ic_create_playlist"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/font_bold"
         android:padding="@dimen/dimen_10dp"
         android:text="Create new playlist"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:layout_centerHorizontal="true"/>
+        android:textColor="@color/textColor"
+        android:textSize="22sp" />
 
     <ProgressBar
         android:id="@+id/progressbarPlayList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         app:layout_constraintBottom_toBottomOf="@+id/playlists"
         app:layout_constraintEnd_toEndOf="@+id/playlists"
         app:layout_constraintStart_toStartOf="@+id/playlists"
@@ -40,8 +47,7 @@
         android:id="@+id/playlists"
         android:layout_width="350dp"
         android:layout_height="350dp"
-        android:layout_below="@+id/tvCreateNewPlaylist"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="8dp" />
@@ -50,11 +56,13 @@
         android:id="@+id/textviewplaylistplayer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:layout_gravity="center"
         android:text="No Playlist Created Yet"
         android:textColor="#000000"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
 
-</RelativeLayout>
+</LinearLayout>
 

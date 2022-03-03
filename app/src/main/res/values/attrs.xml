@@ -82,4 +82,18 @@
             <enum name="HASH_SEPARATOR" value="6" />
         </attr>
     </declare-styleable>
+
+
+    <declare-styleable name="YouTubePlayerSeekBar">
+        <attr name="fontSize" format="dimension" />
+        <attr name="color" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="YouTubePlayerView">
+        <attr name="enableAutomaticInitialization" format="boolean" />
+        <attr name="videoId" format="string" />
+        <attr name="autoPlay" format="boolean" />
+        <attr name="handleNetworkEvents" format="boolean" />
+    </declare-styleable>
+
 </resources>
