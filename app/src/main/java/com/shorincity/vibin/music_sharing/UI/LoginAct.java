@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
@@ -68,7 +70,12 @@ public class LoginAct extends AppCompatActivity {
 
             @Override
             public void onForgotClick() {
-                startActivity(new Intent(LoginAct.this, WebviewActivity.class).putExtra(AppConstants.INTENT_WEBVIEW_URL, AppConstants.FORGOT_PASS_URL));
+//                startActivity(new Intent(LoginAct.this, WebviewActivity.class).putExtra(AppConstants.INTENT_WEBVIEW_URL, AppConstants.FORGOT_PASS_URL));
+                String packageName = "com.android.chrome";
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                CustomTabsIntent customTabsIntent = builder.build();
+                customTabsIntent.intent.setPackage(packageName);
+                customTabsIntent.launchUrl(LoginAct.this, Uri.parse(AppConstants.FORGOT_PASS_URL));
             }
 
             @Override
