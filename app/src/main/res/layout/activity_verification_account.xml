@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="isResendEnable"
+            type="Boolean" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_50sdp"
+            android:fontFamily="@font/font_bold"
+            android:gravity="center_horizontal"
+            android:text="@string/lbl_verification"
+            android:textColor="@color/textColor"
+            android:textSize="@dimen/_25sdp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:fontFamily="@font/font_medium"
+            android:gravity="center_horizontal"
+            android:text="@string/msg_verification"
+            android:textColor="@color/textColor"
+            android:textSize="@dimen/_16sdp" />
+
+
+        <com.mukesh.OtpView
+            android:id="@+id/otp_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="72dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:itemBackground="@color/bgColor"
+            android:textColor="@color/textColor"
+            app:OtpCursorColor="@color/colorPrimary"
+            app:OtpItemCount="6"
+            app:OtpItemRadius="@dimen/_4sdp"
+            app:OtpItemSpacing="@dimen/_12sdp"
+            app:OtpLineColor="@color/bgColor"
+            app:OtpViewType="rectangle" />
+
+        <requestFocus />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvTimer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|center"
+                android:fontFamily="@font/font_semi_bold"
+                android:paddingStart="@dimen/_20sdp"
+                android:paddingEnd="@dimen/_20sdp"
+                android:text="00 : 50"
+                android:textColor="@color/counterColor"
+                android:textSize="@dimen/_20sdp"
+                android:visibility="@{isResendEnable ? View.GONE : View.VISIBLE}"
+                tools:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/llResend"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="@{isResendEnable ? 1.0f : 0.5f}"
+                android:orientation="vertical"
+                android:visibility="@{isResendEnable ? View.VISIBLE : View.GONE}">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_semi_bold"
+                    android:gravity="center"
+                    android:text="If you don't receive a code?"
+                    android:textColor="@color/textColor"
+                    android:textSize="@dimen/_12sdp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvResend"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_bold"
+                    android:gravity="center"
+                    android:enabled="@{isResendEnable}"
+                    android:clickable="@{isResendEnable}"
+                    android:paddingStart="@dimen/_20sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingEnd="@dimen/_20sdp"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:text="Resend"
+                    android:textColor="@color/counterColor"
+                    android:textSize="@dimen/_12sdp" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/_20sdp"
+            android:paddingEnd="@dimen/_20sdp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:alpha="0.5"
+                android:fontFamily="@font/font_bold"
+                android:text="Verify"
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/_20sdp" />
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/flNext"
+                android:layout_width="@dimen/btn_round_size_60"
+                android:layout_height="@dimen/btn_round_size_60"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_round_btn" />
+
+        </LinearLayout>
+    </LinearLayout>
+</layout>

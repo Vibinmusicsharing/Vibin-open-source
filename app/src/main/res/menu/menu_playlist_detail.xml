@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menuEditPlaylist"
+        android:icon="@drawable/ic_edit_playlist"
+        android:title="Edit playlist" />
+
+    <item
+        android:id="@+id/menuDeletePlaylist"
+        android:icon="@drawable/ic_delete_playlist"
+        android:title="Delete playlist" />
+
+    <item
+        android:id="@+id/menuSharePlaylist"
+        android:icon="@drawable/ic_share_playlist"
+        android:title="Share" />
+</menu>

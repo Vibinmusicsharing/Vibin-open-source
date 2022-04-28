@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#8C5AF7</color>
+    <color name="colorPrimaryDark">#5D14F8</color>
+    <color name="colorAccent">#C0A5F8</color><!--Vibin Color-->
+
+    <color name="black_overlay">#66000000</color>
+    <color name="black_dark_overlay">#90000000</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+    <color name="appHintClr">#a0a0a0</color>
+
+
+    <!-- navigation Drawer Colors -->
+    <color name="nav_white">#ffffff</color>
+    <color name="nav_colorAccent">#761EF3</color>
+    <color name="purple_track_clr">#D9761EF3</color>
+    <color name="nav_black">#030303</color>
+    <color name="nav_iron">#161416</color>
+
+    <color name="yt_red">#E20A0A</color>
+    <color name="spot_green">#70D61A</color>
+
+    <color name="playlist_display_color">#201A27</color>
+    <color name="clr_google_sign_in_btn">#346DF2</color>
+    <color name="clr_google_bg_in_btn">#4698FF</color>
+    <color name="clr_yellow">#ffff66</color>
+
+    <!-- Random Color -->
+    <color name="color1">#21E8CD</color>
+    <color name="color2">#EE584E</color>
+    <color name="color3">#F59780</color>
+    <color name="color4">#3ECC39</color>
+    <color name="color5">#D3D31D</color>
+    <color name="color6">#1FBBE5</color>
+    <color name="color7">#7478F2</color>
+    <color name="color8">#BA82E1</color>
+    <color name="color9">#F75FC0</color>
+    <color name="color10">#A29EA1</color>
+    <color name="color11">#E73D47</color>
+    <color name="color12">#21E8CD</color>
+    <color name="color13">#ccff99</color>
+    <color name="color14">#a3c2c2</color>
+    <color name="color15">#80ffff</color>
+    <color name="color16">#df9f9f</color>
+    <color name="color17">#ffcc80</color>
+    <color name="color18">#99ccff</color>
+    <color name="color19">#4675d2</color>
+    <color name="color20">#cc99ff</color>
+    <color name="color21">#b2b266</color>
+    <color name="color22">#ffcccc</color>
+    <color name="color23">#cccc00</color>
+    <color name="color24">#00cc99</color>
+
+    <color name="clr_tungsten">#333333</color>
+    <color name="gray">#272727</color>
+    <color name="search_bg_clr">#0d0d0d</color>
+    <color name="light_gray">#D3D3D3</color>
+    <color name="navi_blue">#00002C</color>
+    <color name="gray_bg_color">#7D7D7D</color>
+    <color name="orange">#ED7507</color>
+
+    <color name="splash_screen">#A0A0A0</color>
+    <color name="constant_black">#000000</color>
+    <color name="constant_white">#FFFFFF</color>
+
+    <color name="btn_bkgnd">#FFD96D</color>
+
+    <color name="rippelColor">#ffffff</color>
+    <color name="pressColor">#ffffff</color>
+
+    <!-- Vibin Colors Code -->
+    <color name="toolbarColor">#5D14F8</color>
+    <color name="btnBackground">#8C5AF7</color>
+    <color name="cardBackground">#E5DCFA</color>
+    <color name="appBackground">#F2F0F7</color>
+    <color name="semi_tran">#66000000</color>
+    <color name="textColor">#4C4C4C</color>
+    <color name="bgColor">#E7DCFF</color>
+    <color name="counterColor">#5213D3</color>
+    <color name="btnRoundColor">#805213D3</color>
+    <color name="bgSearchColor">#ededed</color>
+    <color name="btnSearchColor">#9d9d9d</color>
+    <color name="colorCollab">#37D200</color>
+    <color name="colorF3">#F3F3F3</color>
+    <color name="colorEmojiBg">#E9EDEF</color>
+    <color name="colorUnselectedTab">#c4c4c4</color>
+    <color name="ayp_red">#F44336</color>
+    <color name="ayp_item_selected">#90FFFFFF</color>
+    <color name="ayp_drop_shadow">#66000000</color>
+
+    <color name="ayp_menu_icons">#757575</color>
+    <color name="ayp_menu_text">#222222</color>
+
+</resources>

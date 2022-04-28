@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="isNextButtonEnable"
+            type="Boolean" />
+
+        <variable
+            name="viewModel"
+            type="com.shorincity.vibin.music_sharing.viewmodel.SelectMusicLangViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_32sdp"
+            android:fontFamily="@font/font_bold"
+            android:gravity="center"
+            android:text="I like to hear"
+            android:textColor="@color/textColor"
+            android:textSize="@dimen/_24sdp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:alpha="0.5"
+            android:fontFamily="@font/font_medium"
+            android:gravity="center"
+            android:text="Select music language(minimum 3)"
+            android:textColor="@color/textColor"
+            android:textSize="@dimen/_14sdp" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/etSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:drawableEnd="@drawable/ic_search"
+            android:hint="Search"
+            android:imeOptions="actionDone"
+            android:paddingTop="@dimen/_16sdp"
+            android:paddingBottom="16dp"
+            android:singleLine="true"
+            android:text="@={viewModel.search}"
+            android:textColor="@color/black" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvLanguages"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="@dimen/_8sdp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="3"
+            tools:itemCount="8"
+            tools:listitem="@layout/layout_select_music_language" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="@dimen/_20sdp"
+            android:paddingEnd="@dimen/_20sdp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:alpha="0.5"
+                android:fontFamily="@font/font_bold"
+                android:text="Next"
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/_20sdp" />
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/flNext"
+                android:layout_width="@dimen/btn_round_size_60"
+                android:layout_height="@dimen/btn_round_size_60"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_round_btn"
+                android:clickable="@{isNextButtonEnable}"
+                android:enabled="@{isNextButtonEnable}" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</layout>

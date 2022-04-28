@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottomsheet_bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:padding="8dp"
+            app:srcCompat="@drawable/ic_close_dark" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/_20sdp"
+            android:paddingEnd="@dimen/_20sdp"
+            android:paddingBottom="@dimen/_16sdp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/font_extra_bold"
+                android:text="Create playlist"
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/_18sdp" />
+
+            <EditText
+                android:id="@+id/dialog_playlistname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_24sdp"
+                android:fontFamily="@font/font_regular"
+                android:hint="playlist name"
+                android:inputType="textPersonName|textCapWords"
+                android:textSize="@dimen/_14sdp" />
+
+            <EditText
+                android:id="@+id/dialog_playlist_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:fontFamily="@font/font_regular"
+                android:gravity="top"
+                android:hint="Description"
+                android:inputType="text|textCapWords"
+                android:lines="2"
+                android:maxLines="5"
+                android:singleLine="false"
+                android:textSize="@dimen/_14sdp" />
+
+            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                android:id="@+id/actTags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:drawableEnd="@drawable/ic_search"
+                android:fontFamily="@font/font_regular"
+                android:hint="Give it a personality(Theme)"
+                android:imeOptions="actionSearch"
+                android:inputType="textAutoComplete|textAutoCorrect"
+                android:textColorHint="@color/appHintClr" />
+
+            <com.shorincity.vibin.music_sharing.widgets.TagView
+                android:id="@+id/tag_view_test"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:close_icon="@drawable/ic_close_24"
+                app:tag_background_color="@color/counterColor"
+                app:tag_separator="HASH_SEPARATOR"
+                app:tag_text_color="@color/white" />
+
+            <RelativeLayout
+                android:id="@+id/giphy_search_hldr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp">
+
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/dialog_playlist_gif"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_35sdp"
+                    android:drawableStart="@drawable/ic_search"
+                    android:inputType="textPersonName"
+                    android:theme="@style/SearchViewTheme"
+                    app:queryHint="Search GIPHY" />
+
+                <com.giphy.sdk.ui.views.GifView
+                    android:id="@+id/selected_gif_iv"
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_alignParentEnd="true"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <com.giphy.sdk.ui.views.GiphyGridView
+                android:id="@+id/gifsGridView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_180sdp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_5sdp"
+                app:gphCellPadding="12dp"
+                app:gphDirection="horizontal"
+                app:gphShowCheckeredBackground="false"
+                app:gphSpanCount="2" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCreate"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_10dp"
+                android:layout_weight="1"
+                android:minHeight="@dimen/_48sdp"
+                android:text="Create"
+                app:backgroundTint="@color/counterColor"
+                app:cornerRadius="@dimen/_30sdp"
+                app:strokeColor="@color/counterColor" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

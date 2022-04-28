@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:textStyle="italic"
+    android:fontFamily="@font/tinos_regular"
+    android:textSize="@dimen/_15sdp"
+    android:textColor="@color/black"
+    android:background="@color/white"
+    android:text="@string/app_name"/>

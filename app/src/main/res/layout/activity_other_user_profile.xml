@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="top"
+    android:background="@color/white"
+    android:clipToPadding="false"
+    android:gravity="top"
+    app:umanoOverlay="false"
+    app:umanoPanelHeight="268dp"
+    app:umanoParallaxOffset="100dp"
+    app:umanoShadowHeight="4dp">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/user_profile_appbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_150sdp"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/main.collapsing"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleMarginEnd="@dimen/_60sdp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_90sdp" />
+
+            <RelativeLayout
+                android:id="@+id/rl_profile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary"><!--
+                    android:background="@color/nav_colorAccent" -->
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/_25sdp"
+                    android:background="@color/colorPrimaryDark" />
+                <!-- android:background="@drawable/btm_rounded_corner_user_profile" />  -->
+
+                <TextView
+                    android:id="@+id/tv_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/tv_fullname"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:textColor="@color/nav_white"
+                    android:textSize="@dimen/_18sdp" />
+
+                <TextView
+                    android:id="@+id/tv_fullname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/follower_following_ll"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="@dimen/_20sdp"
+                    android:gravity="center"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="@dimen/_11sdp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/follower_following_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="@dimen/_30sdp"
+                    android:gravity="bottom"
+                    android:orientation="horizontal">
+
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/like_head_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:text="@string/likes"
+                            android:textColor="@color/nav_white"
+                            android:textSize="@dimen/_12sdp" />
+
+                        <TextView
+                            android:id="@+id/tv_like_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/like_head_tv"
+                            android:layout_centerHorizontal="true"
+                            android:textColor="@color/nav_white"
+                            android:textSize="@dimen/_18sdp" />
+
+
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="@dimen/_100sdp"
+                        android:layout_height="@dimen/_10sdp" />
+
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/tv_collaborator_head"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:text="@string/collaborator"
+                            android:textColor="@color/nav_white"
+                            android:textSize="@dimen/_12sdp" />
+
+                        <TextView
+                            android:id="@+id/tv_collaborator_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tv_collaborator_head"
+                            android:layout_centerHorizontal="true"
+                            android:textColor="@color/nav_white"
+                            android:textSize="@dimen/_18sdp" />
+
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="bottom">
+
+                    <com.shorincity.vibin.music_sharing.UI.custom.RoundedImageView
+                        android:id="@+id/user_dp_iv"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_70sdp"
+                        android:layout_centerHorizontal="true"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/default_img"
+
+                        app:riv_corner_radius="@dimen/_35sdp" />
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_70sdp"
+                android:background="@color/colorAccent"
+                app:elevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_70sdp"
+                    android:background="@drawable/btm_rounded_corner_my_saved"
+                    android:orientation="horizontal"
+                    android:paddingBottom="@dimen/_5sdp"
+                    app:elevation="0dp">
+
+                    <RelativeLayout
+                        android:id="@+id/like_rl"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <!-- <androidx.cardview.widget.CardView
+                             android:layout_width="wrap_content"
+                             android:layout_height="wrap_content"
+                             android:background="@color/black"
+                             app:cardCornerRadius="@dimen/_5sdp">-->
+
+                        <com.like.LikeButton
+                            android:id="@+id/like"
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            app:anim_scale_factor="3"
+                            app:icon_size="25dp"
+                            app:like_drawable="@drawable/heart_on_icon"
+                            app:unlike_drawable="@drawable/heart_off_icon" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/like_img"
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:layout_centerHorizontal="true"
+                            android:background="@drawable/heart_off_icon"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/like_txt"
+                            android:layout_width="@dimen/_90sdp"
+                            android:layout_height="@dimen/_35sdp"
+                            android:layout_below="@+id/like_img"
+                            android:layout_centerHorizontal="true"
+                            android:gravity="center"
+                            android:paddingLeft="@dimen/_7sdp"
+                            android:paddingRight="@dimen/_7sdp"
+                            android:text="@string/like"
+                            android:textColor="@drawable/selector_like_status_clr"
+                            android:textIsSelectable="false"
+                            android:textSize="18sp"
+                            android:visibility="gone" />
+
+                        <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
+                            android:id="@+id/like_btn"
+                            android:layout_width="@dimen/_90sdp"
+                            android:layout_height="@dimen/_35sdp"
+                            android:layout_below="@+id/like_img"
+                            android:layout_centerHorizontal="true"
+                            android:background="@android:color/transparent"
+                            android:gravity="center"
+                            android:paddingLeft="@dimen/_7sdp"
+                            android:paddingRight="@dimen/_7sdp"
+                            android:text="like"
+                            android:textAllCaps="false"
+                            android:textColor="@drawable/selector_like_status_clr"
+                            android:textSize="18sp"
+                            android:visibility="gone"
+                            app:spinning_bar_color="@color/nav_white"
+                            app:spinning_bar_padding="@dimen/_5sdp"
+                            app:spinning_bar_width="@dimen/_2sdp" />
+                        <!--
+                                                </androidx.cardview.widget.CardView>
+                        -->
+
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="1dp"
+                        android:background="@android:color/transparent" />
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/black"
+                            app:cardCornerRadius="@dimen/_5sdp">
+
+
+                            <com.shorincity.vibin.music_sharing.ripples.RippleButton
+                                android:id="@+id/collaborate_btn"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bkgnd_rounded_corner_transparent"
+                                android:fontFamily="@font/tinos_regular"
+                                android:paddingLeft="@dimen/_7sdp"
+                                android:paddingRight="@dimen/_7sdp"
+                                android:text="@string/collaborate"
+                                android:textAllCaps="false"
+                                android:textColor="@color/black"
+                                android:textSize="18sp"
+                                app:rv_centered="true"
+                                app:rv_holdBgInPressing="true"
+                                app:rv_pressBgType="circleFitMax"
+                                app:rv_rippleColor="@color/colorPrimaryDark" />
+
+                        </androidx.cardview.widget.CardView>
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_70sdp"
+                android:background="@color/white"> <!-- color10 -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_minus20sdp"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/_minus10sdp">
+
+                    <RelativeLayout
+                        android:id="@+id/rl_my_saved"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_130sdp"
+                        android:background="@drawable/btm_rounded_corner_recently_played">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tv_like_head"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="left"
+                                android:layout_marginLeft="@dimen/_10sdp"
+                                android:layout_marginTop="@dimen/_25sdp"
+                                android:gravity="left"
+                                android:text="@string/playlist"
+                                android:textColor="@color/nav_white"
+                                android:textSize="@dimen/_14sdp"
+                                android:textStyle="bold" />
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rv_playlist"
+                                android:layout_width="wrap_content"
+                                android:layout_height="@dimen/_80sdp"
+                                android:layout_marginTop="@dimen/_5sdp"
+                                android:layout_marginBottom="@dimen/_5sdp"
+                                android:clipToPadding="true"
+                                android:paddingLeft="@dimen/_10sdp"
+                                android:paddingRight="@dimen/_10sdp" />
+
+                            <TextView
+                                android:id="@+id/tv_playlist_placeholder"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_70sdp"
+                                android:layout_gravity="left"
+                                android:layout_marginLeft="@dimen/_10sdp"
+                                android:gravity="center"
+                                android:text="@string/no_playlist_found"
+                                android:textColor="@color/light_gray"
+                                android:textSize="@dimen/_14sdp"
+                                android:textStyle="bold"
+                                android:visibility="gone" />
+
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_recently_played"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/white"
+                        android:paddingTop="@dimen/_10sdp"> <!-- btm_rounded_corner_recently_played -->
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/tv_recently_played"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentLeft="true"
+                                    android:layout_marginLeft="@dimen/_10sdp"
+                                    android:text="@string/recently_played"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/_15sdp" />
+
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/rv_fav"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginTop="@dimen/_5sdp" />
+
+                                <TextView
+                                    android:id="@+id/tv_recent_played_placeholder"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/_70sdp"
+                                    android:layout_centerVertical="true"
+                                    android:layout_gravity="left"
+                                    android:layout_marginLeft="@dimen/_10sdp"
+                                    android:gravity="center"
+                                    android:text="@string/no_recent_found"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/_14sdp"
+                                    android:textStyle="bold" />
+
+                            </RelativeLayout>
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

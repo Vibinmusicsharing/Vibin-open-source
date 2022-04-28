@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--Set application-wide security config using base-config tag.-->
+    <base-config>
+        <trust-anchors>
+            <certificates src="@raw/my_ca"/>
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">harshkant882.pythonanywhere.com</domain>
+        <domain includeSubdomains="true">api.vibin.in</domain>
+        <domain includeSubdomains="true">staging.vibin.in</domain>
+        <domain includeSubdomains="true">ws.audioscrobbler.com</domain>
+        <trust-anchors>
+            <certificates src="@raw/my_ca" />
+        </trust-anchors>
+    </domain-config>
+</network-security-config>

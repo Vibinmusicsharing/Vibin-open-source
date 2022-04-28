@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="isCollab"
+            type="Boolean" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_285sdp"
+            android:background="@android:color/transparent">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/collapsing_toolbar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_240sdp"
+                android:background="@android:color/transparent"
+                app:contentScrim="?attr/colorPrimary"
+                app:layout_scrollFlags="exitUntilCollapsed|scroll">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_45sdp"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_16sdp">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cvImage"
+                        android:layout_width="146dp"
+                        android:layout_height="204dp"
+                        android:background="@color/white"
+                        app:cardCornerRadius="@dimen/_10sdp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <com.giphy.sdk.ui.views.GifView
+                            android:id="@+id/gif_iv"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/ivLike"
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:layout_gravity="end"
+                            android:clickable="@{isCollab ? true : false}"
+                            app:srcCompat="@drawable/heart_round_selector" />
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingStart="@dimen/_16sdp"
+                        android:paddingEnd="@dimen/_4sdp">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_desc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/font_regular"
+                            android:maxLines="3"
+                            android:textColor="@color/textColor"
+                            android:textSize="@dimen/_10sdp"
+                            tools:text="@string/dummy_text" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_tags"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/font_bold"
+                            android:maxLines="3"
+                            tools:text="#tag1, #tag2, more"
+                            android:textColor="@color/textColor"
+                            android:textSize="@dimen/_10sdp" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_song_time"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/font_medium"
+                            android:maxLines="3"
+                            tools:text="50 songs, 1 hour 25 min"
+                            android:textColor="@color/textColor"
+                            android:textSize="@dimen/_10sdp" />
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:paddingTop="@dimen/_12sdp">
+
+                            <LinearLayout
+                                android:id="@+id/llPlay"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="@{isCollab ? true : false}"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:id="@+id/play_btn"
+                                    android:layout_width="@dimen/btn_round_size"
+                                    android:layout_height="@dimen/btn_round_size"
+                                    android:elevation="@dimen/_4sdp"
+                                    android:src="@drawable/ic_playlist_play"
+                                    app:elevation="@dimen/_4sdp" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/_4sdp"
+                                    android:fontFamily="@font/font_regular"
+                                    android:gravity="center"
+                                    android:text="Play"
+                                    android:textColor="@color/textColor"
+                                    android:textSize="@dimen/_12sdp" />
+                            </LinearLayout>
+
+                            <androidx.legacy.widget.Space
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1" />
+
+                            <LinearLayout
+                                android:id="@+id/llLiveShare"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:clickable="@{isCollab ? true : false}"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <androidx.appcompat.widget.AppCompatImageView
+                                    android:layout_width="@dimen/btn_round_size"
+                                    android:layout_height="@dimen/btn_round_size"
+                                    android:elevation="@dimen/_4sdp"
+                                    android:src="@drawable/btn_live_sharing"
+                                    app:elevation="@dimen/_4sdp" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/_4sdp"
+                                    android:fontFamily="@font/font_regular"
+                                    android:gravity="center"
+                                    android:text="Live sharing"
+                                    android:textColor="@color/textColor"
+                                    android:textSize="@dimen/_12sdp" />
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_above="@+id/button"
+                    android:background="@color/white"
+                    android:gravity="top"
+                    android:minHeight="?android:attr/actionBarSize"
+                    app:contentInsetEnd="8dp"
+                    app:contentInsetStart="8dp"
+                    app:layout_collapseMode="pin">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/ivBack"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:paddingStart="@dimen/_8sdp"
+                            android:paddingEnd="@dimen/_8sdp"
+                            android:visibility="gone"
+                            app:srcCompat="@drawable/ic_back_button" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tv_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/font_extra_bold"
+                                android:maxEms="10"
+                                android:singleLine="true"
+                                android:text="My Vibes"
+                                android:textColor="@color/textColor"
+                                android:textSize="@dimen/_18sdp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/tv_admin_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/font_regular"
+                                android:maxEms="10"
+                                android:singleLine="true"
+                                android:text="by Kenzi"
+                                android:textColor="@color/textColor"
+                                android:textSize="@dimen/_12sdp" />
+                        </LinearLayout>
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/ivMenu"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="end"
+                            android:clickable="@{isCollab ? true : false}"
+                            android:paddingStart="@dimen/_8sdp"
+                            android:paddingEnd="@dimen/_8sdp"
+                            app:srcCompat="@drawable/ic_menu" />
+
+                    </FrameLayout>
+                </androidx.appcompat.widget.Toolbar>
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_gravity="bottom"
+                android:background="@color/white"
+                app:layout_collapseMode="pin"
+                app:tabBackground="@color/white"
+                app:tabIndicatorColor="@color/counterColor"
+                app:tabIndicatorFullWidth="false"
+                app:tabIndicatorHeight="@dimen/_2sdp"
+                app:tabSelectedTextColor="@color/counterColor"
+                app:tabTextColor="@color/textColor" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <com.shorincity.vibin.music_sharing.widgets.CustomViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:visibility="@{isCollab ? View.GONE : View.VISIBLE}">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_playlist_blur" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCollab"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/_35sdp"
+                android:layout_marginEnd="@dimen/_35sdp"
+                android:minHeight="@dimen/_48sdp"
+                android:text="Collaborate"
+                android:textAllCaps="false"
+                app:backgroundTint="@color/counterColor"
+                app:cornerRadius="@dimen/_30sdp"
+                app:strokeColor="@color/counterColor" />
+        </FrameLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

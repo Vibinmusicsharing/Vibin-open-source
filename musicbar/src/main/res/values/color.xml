@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="BackgroundBarPrimeColor">#dfd6d6</color>
+    <color name="BackgroundBarSecondaryColor">#c4bbbb</color>
+    <color name="LoadedBarPrimeColor">#fb4c01</color>
+    <color name="LoadedBarSecondaryColor">#eca277</color>
+</resources>

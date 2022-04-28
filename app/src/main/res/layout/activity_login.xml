@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="loginViewmodel"
+            type="com.shorincity.vibin.music_sharing.viewmodel.LoginViewModel" />
+
+        <variable
+            name="loginCallback"
+            type="com.shorincity.vibin.music_sharing.callbackclick.LoginCallback" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
+
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivBg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="H,1:0.7"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_bg_login" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_100sdp"
+            app:layout_constraintBottom_toBottomOf="@id/ivBg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ivBg"
+            app:srcCompat="@drawable/ic_vibin_login" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/font_bold"
+            android:gravity="center"
+            android:text="Welcome back!"
+            android:textColor="@color/textColor"
+            android:textSize="@dimen/dimen_30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivBg" />
+
+        <EditText
+            android:id="@+id/email_login"
+            android:layout_width="310dp"
+            android:layout_height="58dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="5dp"
+            android:drawableEnd="@drawable/ic_mail"
+            android:drawableTint="@color/appHintClr"
+            android:fontFamily="@font/tinos_regular"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:paddingStart="5dp"
+            android:text="@={loginViewmodel.email}"
+            android:textColor="@android:color/black"
+            android:textColorHint="@color/appHintClr"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+        <EditText
+            android:id="@+id/password_login"
+            android:layout_width="310dp"
+            android:layout_height="58dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:drawableEnd="@drawable/ic_pass"
+            android:drawableTint="@color/appHintClr"
+            android:fontFamily="@font/tinos_regular"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:paddingStart="5dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="10dp"
+            android:text="@={loginViewmodel.password}"
+            android:textColor="@android:color/black"
+            android:textColorHint="@color/appHintClr"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/email_login" />
+
+        <TextView
+            android:id="@+id/tv_forgot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="11dp"
+            android:fontFamily="@font/tinos_regular"
+            android:onClick="@{(view) -> loginCallback.onForgotClick()}"
+            android:text="@string/forgot_pass"
+            android:textAllCaps="false"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toEndOf="@+id/password_login"
+            app:layout_constraintTop_toBottomOf="@id/password_login" />
+
+        <ProgressBar
+            android:id="@+id/loading_login"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="308dp"
+            android:layout_height="@dimen/_5sdp"
+            android:indeterminateBehavior="repeat"
+            android:indeterminateDuration="10"
+            android:indeterminateOnly="true"
+            android:indeterminateTint="#208afa"
+            android:progressBackgroundTint="#208afa"
+            android:progressBackgroundTintMode="multiply"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_forgot" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/google_sign_up_btn"
+            android:layout_width="@dimen/btn_round_size_70"
+            android:layout_height="@dimen/btn_round_size_70"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/_30sdp"
+            android:background="@drawable/btn_google"
+            android:onClick="@{(view) -> loginCallback.onGoogleClick()}"
+            app:layout_constraintBottom_toBottomOf="@id/btnlogin_login"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnlogin_login" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/font_regular"
+            android:gravity="center"
+            android:text="Google login"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@id/google_sign_up_btn"
+            app:layout_constraintStart_toStartOf="@id/google_sign_up_btn"
+            app:layout_constraintTop_toBottomOf="@id/google_sign_up_btn" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/font_medium"
+            android:gravity="center"
+            android:text="or"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@id/btnlogin_login"
+            app:layout_constraintEnd_toEndOf="@id/btnlogin_login"
+            app:layout_constraintStart_toStartOf="@id/google_sign_up_btn"
+            app:layout_constraintTop_toTopOf="@id/btnlogin_login" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnlogin_login"
+            android:layout_width="@dimen/btn_round_size_60"
+            android:layout_height="@dimen/btn_round_size_60"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_30sdp"
+            android:background="@drawable/ic_round_btn"
+            android:onClick="@{(view) -> loginCallback.onLoginClick()}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_forgot" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_10dp"
+            android:fontFamily="@font/font_regular"
+            android:gravity="center"
+            android:text="Login"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@id/btnlogin_login"
+            app:layout_constraintStart_toStartOf="@id/btnlogin_login"
+            app:layout_constraintTop_toBottomOf="@id/btnlogin_login" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textviewtext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:fontFamily="@font/font_medium"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_8sdp"
+            android:text="Already have an account? Click Below !"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!--<LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/dimen_10dp"
+                android:layout_marginTop="80dp"
+                android:layout_marginEnd="@dimen/dimen_10dp"
+                android:layout_marginBottom="@dimen/dimen_10dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+
+                <com.shorincity.vibin.music_sharing.ripples.RippleButton
+                    android:id="@+id/btnjoin_login"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="@dimen/dimen_10dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/common_btn_bg_no_border"
+                    android:fontFamily="@font/tinos_regular"
+                    android:text="@string/sign_in"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_5dp"
+                    android:layout_marginBottom="@dimen/dimen_5dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="50dp"
+                        android:layout_height="1dp"
+                        android:background="@color/appHintClr" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/dimen_5dp"
+                        android:layout_marginEnd="@dimen/dimen_5dp"
+                        android:gravity="center"
+                        android:text="or"
+                        android:textColor="@color/appHintClr" />
+
+                    <View
+                        android:layout_width="50dp"
+                        android:layout_height="1dp"
+                        android:background="@color/appHintClr" />
+
+                </LinearLayout>
+
+                <com.shorincity.vibin.music_sharing.ripples.RippleButton
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/dimen_5dp"
+                    android:background="@drawable/common_btn_bg_no_border"
+                    android:drawableLeft="@drawable/google_icon"
+                    android:drawablePadding="@dimen/dimen_5dp"
+                    android:elevation="@dimen/_5sdp"
+                    android:padding="5dp"
+                    android:text="@string/signin_with_google"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+        </LinearLayout>-->
+
+        <!--        <com.shorincity.vibin.music_sharing.ripples.RippleButton
+                    android:id="@+id/btnlogin_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginBottom="40dp"
+                    android:background="@drawable/common_btn_rounded_purple"
+                    android:fontFamily="@font/tinos_regular"
+                    android:gravity="center"
+                    android:text="@string/sign_up"
+                    android:textAllCaps="false"
+                    android:textColor="#fff"
+                    android:textSize="18sp" />-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

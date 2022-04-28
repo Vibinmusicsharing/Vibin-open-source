@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/choose_plat_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="16dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp">
+
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+                android:id="@+id/my_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:background="#3F0394"
+                android:fitsSystemWindows="true"
+                app:popupTheme="@style/AppTheme.PopupOverlay"/>
+        <Button
+                android:id="@+id/onclicknavigator"
+                android:layout_width="248dp"
+                android:layout_height="90sp"
+                android:layout_marginStart="90sp"
+                android:layout_marginTop="70sp"
+                android:layout_marginEnd="100sp"
+                android:layout_marginBottom="320dp"
+                android:background="@drawable/spotify_button"
+                android:text="SELECT MUSIC STREAMING"
+                android:textSize="30dp"
+                android:textColor="#1D1111"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.513"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/youtube"
+                app:layout_constraintVertical_bias="0.077"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view_layout"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:background="#7AFAF7F7"
+        android:maxWidth="280dp"
+        app:elevation="4dp"
+        app:headerLayout="@layout/header"
+        app:itemHorizontalPadding="16dp"
+        app:itemIconPadding="16dp"
+        app:itemIconTint="@color/nav_black"
+        app:itemTextColor="@color/nav_black"
+        app:menu="@menu/drawermenu"
+       android:layout_gravity="start" />
+
+
+
+</androidx.drawerlayout.widget.DrawerLayout>
