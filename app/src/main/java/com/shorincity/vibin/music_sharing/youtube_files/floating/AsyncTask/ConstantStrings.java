@@ -7,7 +7,7 @@ import com.shorincity.vibin.music_sharing.youtube_files.floating.PlayerService;
  */
 public class ConstantStrings {
 
-    public  static String VID = "";
+    public static String VID = "";
     public static String PLIST = "";
 
     public static void setVid(String vid) {
@@ -15,7 +15,7 @@ public class ConstantStrings {
     }
 
     public static String getVideoHTML() {
-        return  "<!DOCTYPE HTML>\n" +
+        return "<!DOCTYPE HTML>\n" +
                 "<html>\n" +
                 "  <head>\n" +
                 "    <script src=\"https://www.youtube.com/iframe_api\"></script>\n" +
@@ -33,7 +33,7 @@ public class ConstantStrings {
                 "  <body>\n" +
                 "    <iframe style=\"display: block;\" id=\"player\" frameborder=\"0\"  width=\"100%\" height=\"100%\" " +
                 "       src=\"https://www.youtube.com/embed/" + VID +
-                       "?enablejsapi=1&autoplay=1&iv_load_policy=3&fs=0&rel=0\">" +
+                "?enablejsapi=1&autoplay=1&iv_load_policy=3&fs=0&rel=0\">" +
                 "    </iframe>\n" +
                 "    <script type=\"text/javascript\">\n" +
                 "      var tag = document.createElement('script');\n" +
@@ -50,7 +50,7 @@ public class ConstantStrings {
                 "      }\n" +
                 "      function onPlayerReady(event) {\n" +
                 "          player.setPlaybackQuality(\"" + Constants.getPlaybackQuality() + "\");" +
-                "\n" +"player.seekTo("+ PlayerService.SONG_DURATION +")"+"\n"+
+                "\n" + "player.seekTo(" + PlayerService.SONG_DURATION + ")" + "\n" +
                 "      }\n" +
                 "    </script>\n" +
                 "\n" +
@@ -81,8 +81,8 @@ public class ConstantStrings {
                 "  <body>\n" +
                 "    <iframe style=\"display: block;\" id=\"player\" frameborder=\"0\" width=\"100%\" height=\"100%\" " +
                 "       src=\"https://www.youtube.com/embed/" +
-                        "?list=" + PLIST +
-                        "&enablejsapi=1&autoplay=1&iv_load_policy=3&fs=0&rel=0\">" +
+                "?list=" + PLIST +
+                "&enablejsapi=1&autoplay=1&iv_load_policy=3&fs=0&rel=0\">" +
                 "    </iframe>\n" +
                 "    <script type=\"text/javascript\">\n" +
                 "      var tag = document.createElement('script');\n" +
@@ -99,7 +99,7 @@ public class ConstantStrings {
                 "          });\n" +
                 "      }\n" +
                 "      function onPlayerReady(event) {\n" +
-                "          player.setPlaybackQuality(\""+ Constants.getPlaybackQuality() +"\");\n" +
+                "          player.setPlaybackQuality(\"" + Constants.getPlaybackQuality() + "\");\n" +
                 "      }\n" +
                 "    </script>\n" +
                 "\n" +

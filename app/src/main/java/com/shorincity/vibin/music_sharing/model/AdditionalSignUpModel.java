@@ -50,6 +50,18 @@ public class AdditionalSignUpModel {
     @SerializedName("added_preferences")
     @Expose
     private boolean addedPreferences;
+    @SerializedName("cover_image")
+    @Expose
+    private String coverImage;
+    @SerializedName("avatar_link")
+    @Expose
+    String avatar_link;
+    @SerializedName("is_verified_profile")
+    @Expose
+    private Boolean isVerifiedProfile;
+    @SerializedName("show_recently_played_songs")
+    @Expose
+    private Boolean isShowRecentlySongs;
 
 
     public String getStatus() {
@@ -166,5 +178,37 @@ public class AdditionalSignUpModel {
 
     public boolean isAddedPreferences() {
         return addedPreferences;
+    }
+
+    public String getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
+    }
+
+    public String getAvatar_link() {
+        return avatar_link;
+    }
+
+    public void setAvatar_link(String avatar_link) {
+        this.avatar_link = avatar_link;
+    }
+
+    public Boolean getVerifiedProfile() {
+        return isVerifiedProfile;
+    }
+
+    public void setVerifiedProfile(Boolean verifiedProfile) {
+        isVerifiedProfile = verifiedProfile;
+    }
+
+    public Boolean getShowRecentlySongs() {
+        return isShowRecentlySongs;
+    }
+
+    public void setShowRecentlySongs(Boolean showRecentlySongs) {
+        isShowRecentlySongs = showRecentlySongs;
     }
 }

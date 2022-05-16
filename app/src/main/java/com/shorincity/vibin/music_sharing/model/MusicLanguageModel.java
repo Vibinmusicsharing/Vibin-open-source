@@ -34,4 +34,12 @@ public class MusicLanguageModel {
     public void setSelected(boolean selected) {
         isSelected = selected;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MusicLanguageModel that = (MusicLanguageModel) o;
+        return name.equalsIgnoreCase(that.name);
+    }
 }

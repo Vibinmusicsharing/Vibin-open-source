@@ -95,12 +95,40 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/llPin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:visibility="gone"
+            android:orientation="horizontal"
+            android:padding="@dimen/_12sdp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_share_playlist" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/font_semi_bold"
+                android:paddingStart="@dimen/_16sdp"
+                android:paddingEnd="0dp"
+                android:text="Pin"
+                android:textColor="@color/textColor"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
         <View
             android:layout_width="@dimen/_50sdp"
             android:layout_height="1dp"
+            android:layout_gravity="center"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:layout_gravity="center"
             android:background="@color/btnSearchColor" />
 
         <LinearLayout

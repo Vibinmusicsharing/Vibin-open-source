@@ -71,7 +71,7 @@ public class SignUpGenderActivity extends AppCompatActivity implements View.OnCl
         callApi();
     }
 
-    private void statusBarColorChange(){
+    private void statusBarColorChange() {
         Window window = this.getWindow();
 
         // clear FLAG_TRANSLUCENT_STATUS flag:
@@ -82,7 +82,7 @@ public class SignUpGenderActivity extends AppCompatActivity implements View.OnCl
 
         // finally change the color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(ContextCompat.getColor(this,R.color.white));
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.white));
         }
     }
 
@@ -116,7 +116,7 @@ public class SignUpGenderActivity extends AppCompatActivity implements View.OnCl
                 @Override
                 public void onItemClick(Avatar item, int position) {
                     mAvatarLink = item.getLink();
-                    Logging.dLong("AvatarLink SL:"+mAvatarLink);
+                    Logging.dLong("AvatarLink SL:" + mAvatarLink);
                 }
             });
         }
@@ -237,8 +237,8 @@ public class SignUpGenderActivity extends AppCompatActivity implements View.OnCl
             bundle.putString(AppConstants.INTENT_GENDER, gender);
             bundle.putString(AppConstants.INTENT_GENDER_AVATAR_LINK, mAvatarLink);
 
-            Logging.dLong("mAvatarLink Gen:"+mAvatarLink);
-            Logging.dLong("mAvatarLink bundle:"+bundle.toString());
+            Logging.dLong("mAvatarLink Gen:" + mAvatarLink);
+            Logging.dLong("mAvatarLink bundle:" + bundle.toString());
 
             startActivity(new Intent(this, SignUpDobActivity.class).putExtra(AppConstants.INTENT_USER_DATA_BUNDLE, bundle));
         }
@@ -266,7 +266,7 @@ public class SignUpGenderActivity extends AppCompatActivity implements View.OnCl
             public void onResponse(Call<AvatarDetails> call, Response<AvatarDetails> response) {
                 if (response != null && response.body() != null) {
                     progress_view.setVisibility(View.GONE);
-                   // Logging.dLong("Avatar:" + new Gson().toJson(response.body()));
+                    // Logging.dLong("Avatar:" + new Gson().toJson(response.body()));
                     if (gender.equalsIgnoreCase(AppConstants.MALE)) {
                         mMaleList.addAll(response.body().getAvatars());
                     } else if (gender.equalsIgnoreCase(AppConstants.FEMALE)) {

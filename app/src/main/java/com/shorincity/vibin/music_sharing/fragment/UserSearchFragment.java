@@ -80,9 +80,8 @@ public class UserSearchFragment extends MyBaseFragment {
                     if (userId == usersList.get(position).getId()) {
                         ((youtube) getActivity()).onLoadProfile();
                     } else {
-                        OtherUserProfileFragment fragment = OtherUserProfileFragment.getInstance(usersList.get(position).getId(),
+                        ((youtube) getActivity()).onLoadUserProfile(usersList.get(position).getId(),
                                 0, usersList.get(position).getUsername(), usersList.get(position).getFullname());
-                        ((youtube) getActivity()).onLoadFragment(fragment);
                     }
                 }
                 //startActivity(new Intent(getActivity(), OtherUserProfileActivity.class).putExtra(AppConstants.INTENT_SEARCHED_USER_ID, usersList.get(position).getId()).putExtra(AppConstants.INTENT_SEARCHED_USER_NAME, usersList.get(position).getUsername()).putExtra(AppConstants.INTENT_SEARCHED_FULL_NAME, usersList.get(position).getFullname()));

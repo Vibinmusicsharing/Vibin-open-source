@@ -11,9 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.model.HomeYoutubeModel;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.util.ArrayList;
 
@@ -81,13 +81,14 @@ public class YoutubeArtistPerticulerAdapter extends RecyclerView.Adapter<Recycle
             });
             if (!currentItem.getThumbnail().equalsIgnoreCase("THUMBNAIL_URI")) {
 
-                Glide.with(mContext).load(currentItem.getThumbnail())
+                GlideApp.with(mContext).load(currentItem.getThumbnail())
                         .into(mImageView);
             } else
                 mImageView.setImageResource(R.drawable.music_placeholder);
         }
 
     }
+
     private AritstPerticulerCallback aritstPerticulerCallback;
 
     public void setAritstPerticulerCallback(AritstPerticulerCallback aritstPerticulerCallback) {

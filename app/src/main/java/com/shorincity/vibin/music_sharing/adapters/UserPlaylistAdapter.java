@@ -3,7 +3,6 @@ package com.shorincity.vibin.music_sharing.adapters;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -20,7 +19,6 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.giphy.sdk.core.models.enums.RenditionType;
-import com.giphy.sdk.ui.Giphy;
 import com.giphy.sdk.ui.views.GifView;
 import com.google.android.material.button.MaterialButton;
 import com.shorincity.vibin.music_sharing.R;
@@ -89,7 +87,7 @@ public class UserPlaylistAdapter extends RecyclerView.Adapter<UserPlaylistAdapte
         String[] gifArraySplit = currentItem.getGifLink().split("/");
         String mediaId = gifArraySplit[gifArraySplit.length - 1];
 
-        holder.gifView.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(mContext, R.color.light_gray),null);
+        holder.gifView.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(mContext, R.color.light_gray), null);
         String finalFirstname = firstname;
         holder.ivDelete.setOnClickListener(view -> {
             AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();

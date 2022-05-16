@@ -1,9 +1,7 @@
 package com.shorincity.vibin.music_sharing.activity;
 
-import android.content.Context;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;

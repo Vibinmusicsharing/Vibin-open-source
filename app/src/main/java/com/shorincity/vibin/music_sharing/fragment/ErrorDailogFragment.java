@@ -31,7 +31,7 @@ public class ErrorDailogFragment extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_fragment_spotify_premium_error,container,false);
+        View view = inflater.inflate(R.layout.dialog_fragment_spotify_premium_error, container, false);
 
         getIntentData();
 
@@ -39,25 +39,25 @@ public class ErrorDailogFragment extends DialogFragment {
         messageTv = view.findViewById(R.id.message);
         continueBtn = view.findViewById(R.id.continue_btn);
 
-        if(TextUtils.isEmpty(errorTitleStr))
+        if (TextUtils.isEmpty(errorTitleStr))
             titleTv.setVisibility(View.GONE);
         else {
             titleTv.setText(errorTitleStr);
         }
 
-        if(TextUtils.isEmpty(errorMsgStr))
+        if (TextUtils.isEmpty(errorMsgStr))
             messageTv.setVisibility(View.GONE);
         else {
             messageTv.setText(errorMsgStr);
         }
 
-        if(TextUtils.isEmpty(errorBtnNameStr))
+        if (TextUtils.isEmpty(errorBtnNameStr))
             continueBtn.setText(getResources().getString(R.string.continu));
         else {
             continueBtn.setText(errorBtnNameStr);
         }
 
-        if(isCancelable)
+        if (isCancelable)
             view.findViewById(R.id.cancel_iv).setVisibility(View.VISIBLE);
         else
             view.findViewById(R.id.cancel_iv).setVisibility(View.GONE);
@@ -100,7 +100,7 @@ public class ErrorDailogFragment extends DialogFragment {
 
     ButtonListener buttonListener;
 
-    public interface ButtonListener{
+    public interface ButtonListener {
         public void onErrorDialogButtonClick(View view);
     }
 

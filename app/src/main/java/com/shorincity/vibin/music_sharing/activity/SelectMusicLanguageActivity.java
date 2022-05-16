@@ -3,21 +3,13 @@ package com.shorincity.vibin.music_sharing.activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,10 +20,7 @@ import com.shorincity.vibin.music_sharing.databinding.ActivitySelectMusicLanguag
 import com.shorincity.vibin.music_sharing.model.MusicLanguageModel;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
-import com.shorincity.vibin.music_sharing.viewmodel.LoginViewModel;
 import com.shorincity.vibin.music_sharing.viewmodel.SelectMusicLangViewModel;
-
-import java.util.ArrayList;
 
 public class SelectMusicLanguageActivity extends AppCompatActivity {
     private ActivitySelectMusicLanguageBinding binding;

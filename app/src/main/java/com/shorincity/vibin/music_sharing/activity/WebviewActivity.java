@@ -47,12 +47,12 @@ public class WebviewActivity extends AppCompatActivity {
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         webSettings.setAllowFileAccess(true);
         webSettings.setLoadsImagesAutomatically(true);
-        if(Build.VERSION.SDK_INT >= 21){
+        if (Build.VERSION.SDK_INT >= 21) {
             webSettings.setMixedContentMode(0);
             webview.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        }else if(Build.VERSION.SDK_INT >= 19){
+        } else if (Build.VERSION.SDK_INT >= 19) {
             webview.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        }else if(Build.VERSION.SDK_INT < 19){
+        } else if (Build.VERSION.SDK_INT < 19) {
             webview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
         webview.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);

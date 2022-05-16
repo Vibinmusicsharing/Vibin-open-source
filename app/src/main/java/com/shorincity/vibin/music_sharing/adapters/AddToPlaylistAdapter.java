@@ -53,7 +53,7 @@ public class AddToPlaylistAdapter extends RecyclerView.Adapter<AddToPlaylistAdap
         String name = currentItem.getName();
         String[] gifArraySplit = currentItem.getGifLink().split("/");
         String mediaId = gifArraySplit[gifArraySplit.length - 1];
-        holder.gifView.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(mContext,R.color.light_gray),null);
+        holder.gifView.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(mContext, R.color.light_gray), null);
 
         holder.mImageView.setVisibility(View.GONE);
         holder.imagebtn.setVisibility(View.GONE);

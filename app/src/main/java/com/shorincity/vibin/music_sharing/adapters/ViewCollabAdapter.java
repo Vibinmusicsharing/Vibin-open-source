@@ -11,9 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.custom.RoundedImageView;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.util.ArrayList;
 
@@ -77,7 +77,7 @@ public class ViewCollabAdapter extends RecyclerView.Adapter<ViewCollabAdapter.Ex
 
         if (avatarUrl != null) {
             try {
-                Glide.with(mContext).load(avatarUrl).into(holder.user_dp_iv);
+                GlideApp.with(mContext).load(avatarUrl).into(holder.user_dp_iv);
             } catch (Exception e) {
                 e.printStackTrace();
             }

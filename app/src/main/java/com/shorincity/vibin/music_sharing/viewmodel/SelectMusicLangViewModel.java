@@ -11,8 +11,8 @@ import com.shorincity.vibin.music_sharing.model.MusicLanguageModel;
 import java.util.ArrayList;
 
 public class SelectMusicLangViewModel extends ViewModel {
-    private ArrayList<MusicLanguageModel> list = new ArrayList<>();
-    private ArrayList<MusicLanguageModel> copyList = new ArrayList<>();
+    private final ArrayList<MusicLanguageModel> list = new ArrayList<>();
+    private final ArrayList<MusicLanguageModel> copyList = new ArrayList<>();
     private int selectedCounter = 0;
     public MutableLiveData<String> search = new MutableLiveData<>();
 

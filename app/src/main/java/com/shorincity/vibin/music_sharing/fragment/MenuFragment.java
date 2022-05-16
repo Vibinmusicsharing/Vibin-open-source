@@ -23,7 +23,6 @@ import com.shorincity.vibin.music_sharing.UI.LoginAct;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.activity.AboutUsActivity;
-import com.shorincity.vibin.music_sharing.activity.LoginSignUpActivity;
 import com.shorincity.vibin.music_sharing.activity.PrivacyPolicyActivity;
 import com.shorincity.vibin.music_sharing.adapters.MenuListAdapter;
 import com.shorincity.vibin.music_sharing.model.LogoutModel;
@@ -86,8 +85,8 @@ public class MenuFragment extends ListFragment implements MenuListAdapter.Switch
         // Report Us
         ((Button) view.findViewById(R.id.btn_flag)).setOnClickListener(this);
 
-          youtubeAppCompatRadioButton=view.findViewById(R.id.rb_youtube);
-          spotifyAppCompatRadioButton=view.findViewById(R.id.rb_spotify);
+        youtubeAppCompatRadioButton = view.findViewById(R.id.rb_youtube);
+        spotifyAppCompatRadioButton = view.findViewById(R.id.rb_spotify);
 
         // Logout
         Button logoutBtn = (Button) view.findViewById(R.id.btn_logout);
@@ -202,7 +201,7 @@ public class MenuFragment extends ListFragment implements MenuListAdapter.Switch
 
             @Override
             public void onFailure(Call<UpdatePreferPlatformModel> call, Throwable t) {
-                Toast.makeText(getActivity(),  getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
                 ((AppCompatRadioButton) view.findViewById(R.id.rb_youtube)).setEnabled(true);
                 ((AppCompatRadioButton) view.findViewById(R.id.rb_spotify)).setEnabled(true);
 
@@ -221,7 +220,6 @@ public class MenuFragment extends ListFragment implements MenuListAdapter.Switch
         startActivity(k.putExtra(AppConstants.INTENT_UPDATE_PLATFORM, AppConstants.YOUTUBE));
         getActivity().finish();
     }
-
 
 
     public void postLogout() {

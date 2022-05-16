@@ -10,6 +10,7 @@ import androidx.slidingpanelayout.widget.SlidingPaneLayout;
 
 public class CustomSlidePanLayout extends SlidingPaneLayout {
     boolean slidingEnable = false;
+
     public CustomSlidePanLayout(@NonNull Context context) {
         super(context);
     }
@@ -30,8 +31,7 @@ public class CustomSlidePanLayout extends SlidingPaneLayout {
         return super.onInterceptTouchEvent(event);
     }
 
-    public void setSlidingEnable(boolean slidingEnable)
-    {
+    public void setSlidingEnable(boolean slidingEnable) {
         this.slidingEnable = slidingEnable;
     }
 

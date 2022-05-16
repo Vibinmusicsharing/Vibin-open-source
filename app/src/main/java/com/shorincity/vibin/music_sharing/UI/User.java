@@ -1,7 +1,7 @@
 package com.shorincity.vibin.music_sharing.UI;
 
 public class User {
-    private String name, email,password,token;
+    private String name, email, password, token;
 
     public User(String token, String name, String email, String password) {
         this.email = email;

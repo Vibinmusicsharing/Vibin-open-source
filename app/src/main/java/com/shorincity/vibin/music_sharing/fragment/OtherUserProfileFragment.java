@@ -12,11 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +33,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
 import com.giphy.sdk.core.models.Media;
 import com.giphy.sdk.core.models.enums.MediaType;
 import com.giphy.sdk.core.models.enums.RatingType;
@@ -56,7 +53,6 @@ import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.adapters.AddToPlaylistAdapter;
 import com.shorincity.vibin.music_sharing.adapters.AutoCompleteAdapter;
 import com.shorincity.vibin.music_sharing.adapters.MyPlaylistAdapter;
-import com.shorincity.vibin.music_sharing.adapters.Playlist;
 import com.shorincity.vibin.music_sharing.adapters.RecentPlayedAdapter;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
@@ -70,6 +66,7 @@ import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.CommonUtils;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
 import com.shorincity.vibin.music_sharing.widgets.TagView;
@@ -332,7 +329,7 @@ public class OtherUserProfileFragment extends MyBaseFragment implements View.OnC
 
                     if (avatarUrl != null) {
                         try {
-                            Glide.with(mContext).load(avatarUrl).into(userDpIv);
+                            GlideApp.with(mContext).load(avatarUrl).into(userDpIv);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -566,129 +563,6 @@ public class OtherUserProfileFragment extends MyBaseFragment implements View.OnC
 
     // dialog to add playlist
     private void openCreatePLaylistDialog() {
-        /*final AlertDialog.Builder mb = new AlertDialog.Builder(mContext);
-
-        final View dialog = LayoutInflater.from(mContext).inflate(R.layout.layout_dialog, null, false);
-        final EditText playlistName = dialog.findViewById(R.id.dialog_playlistname);
-        final SearchView playlistGif = dialog.findViewById(R.id.dialog_playlist_gif);
-        final GifView selectedGifIv = dialog.findViewById(R.id.selected_gif_iv);
-        final EditText playlistDesc = dialog.findViewById(R.id.dialog_playlist_desc);
-        final EditText PlaylistPassword = dialog.findViewById(R.id.dialog_password);
-        final GiphyGridView giphyGridView = dialog.findViewById(R.id.gifsGridView);
-        final String[] selectedGifLink = {""};
-        // setting Giphy GridView
-        giphyGridView.setDirection(GiphyGridView.HORIZONTAL);
-        giphyGridView.setSpanCount(2);
-        giphyGridView.setCellPadding(0);
-        giphyGridView.setCallback(new GPHGridCallback() {
-            @Override
-            public void contentDidUpdate(int i) {
-                Log.i("GifURL", "Position " + i);
-            }
-
-            @Override
-            public void didSelectMedia(@NotNull Media media) {
-                Log.i("GifURL", "BitlyGifURL " + media.getBitlyGifUrl());
-                Log.i("GifURL", "BitlyURL " + media.getBitlyUrl());
-                Log.i("GifURL", "Content " + media.getContentUrl());
-                Log.i("GifURL", "EmbededUrl " + media.getEmbedUrl());
-                Log.i("GifURL", "SourceUrl " + media.getSourcePostUrl());
-
-                selectedGifLink[0] = media.getEmbedUrl();
-                selectedGifIv.setVisibility(View.VISIBLE);
-                selectedGifIv.setMedia(media, RenditionType.preview, ContextCompat.getDrawable(mContext.getApplicationContext(), R.color.light_gray));
-            }
-        });
-        playlistGif.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                GPHContent gphContent = new GPHContent();
-                gphContent.setMediaType(MediaType.gif);
-                gphContent.setRating(RatingType.pg13);
-                gphContent.setRequestType(GPHRequestType.search);
-                gphContent.setSearchQuery(query);
-                giphyGridView.setContent(gphContent);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-
-        //PlaylistPassword.setVisibility(View.GONE);
-        PlaylistPassword.setAlpha(0.5f);
-        final Switch toggle = dialog.findViewById(R.id.toggle);
-        final TextView publicprivate = dialog.findViewById(R.id.privatepublic);
-        final Boolean[] checking = new Boolean[1];
-        checking[0] = false;
-        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Boolean b;
-                if (isChecked) {
-                    publicprivate.setText("Private");
-                    PlaylistPassword.setEnabled(true);
-                    PlaylistPassword.setAlpha(1.0f);
-                    //PlaylistPassword.setVisibility(View.VISIBLE);
-                    b = true;
-                } else {
-                    b = false;
-                    PlaylistPassword.setText("");
-                    PlaylistPassword.setEnabled(false);
-                    PlaylistPassword.setAlpha(0.5f);
-                    //PlaylistPassword.setVisibility(View.GONE);
-                    publicprivate.setText("Public");
-                }
-                checking[0] = b;
-            }
-        });
-
-        mb.setView(dialog)
-                .setTitle("Create New Playlist")
-                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
-                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String playlistname = playlistName.getText().toString();
-                        String password = PlaylistPassword.getText().toString();
-                        if (checking[0]) {
-                            if (TextUtils.isEmpty(playlistname)) {
-                                Toast.makeText(mContext, "please give playlist some name", Toast.LENGTH_SHORT).show();
-                            } else if (TextUtils.isEmpty(selectedGifLink[0])) {
-                                Toast.makeText(mContext, "please choose a GIF", Toast.LENGTH_SHORT).show();
-                            } else if (!Utility.isWebUrl(selectedGifLink[0])) {
-                                Toast.makeText(mContext, "please choose a valid GIF", Toast.LENGTH_SHORT).show();
-                            } else if (TextUtils.isEmpty(playlistDesc.getText())) {
-                                Toast.makeText(mContext, "please enter playlist's description", Toast.LENGTH_SHORT).show();
-                            } else if (TextUtils.isEmpty(password)) {
-                                Toast.makeText(mContext, "please enter playlist a password", Toast.LENGTH_SHORT).show();
-                            } else {
-                                callCreatePlaylist(playlistname, selectedGifLink[0], playlistDesc.getText().toString(), password, checking);
-                            }
-                        } else {
-                            if (TextUtils.isEmpty(playlistname)) {
-                                Toast.makeText(mContext, "please give playlist some name", Toast.LENGTH_SHORT).show();
-                            } else if (TextUtils.isEmpty(selectedGifLink[0])) {
-                                Toast.makeText(mContext, "please choose a GIF", Toast.LENGTH_SHORT).show();
-                            } else if (!Utility.isWebUrl(selectedGifLink[0])) {
-                                Toast.makeText(mContext, "please choose a valid GIF", Toast.LENGTH_SHORT).show();
-                            } else if (TextUtils.isEmpty(playlistDesc.getText())) {
-                                Toast.makeText(mContext, "please enter playlist's description", Toast.LENGTH_SHORT).show();
-                            } else {
-                                callCreatePlaylist(playlistname, selectedGifLink[0], playlistDesc.getText().toString(), "", checking);
-                            }
-                        }
-                    }
-                });
-        mb.setView(dialog);
-        final AlertDialog ass = mb.create();
-        ass.show();*/
         openCreatePlaylistBottomsheet();
     }
 

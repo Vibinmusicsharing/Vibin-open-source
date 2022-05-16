@@ -10,7 +10,10 @@ public class RealTimeUser {
 
     private String joined_status;
 
-    public RealTimeUser() {};
+    public RealTimeUser() {
+    }
+
+    ;
 
     public RealTimeUser(String session_id, String session_token, int user_id, String joined_status) {
         this.session_id = session_id;

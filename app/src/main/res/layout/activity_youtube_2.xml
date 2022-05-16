@@ -135,11 +135,11 @@
                         android:id="@+id/now_play_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/font_extra_bold"
                         android:text="Playing now"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:fontFamily="@font/font_extra_bold"
-                        android:textSize="18sp"/>
+                        android:textSize="18sp" />
 
                 </LinearLayout>
 
@@ -188,12 +188,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
+                            android:layout_marginStart="0dp"
+                            android:layout_marginEnd="4dp"
                             android:fontFamily="@font/font_regular"
+                            android:text="by"
                             android:textColor="@color/textColor"
                             android:textSize="@dimen/_10sdp"
-                            android:layout_marginEnd="4dp"
-                            android:layout_marginStart="0dp"
-                            android:text="by"
                             tools:text="by" />
 
                         <androidx.appcompat.widget.AppCompatTextView

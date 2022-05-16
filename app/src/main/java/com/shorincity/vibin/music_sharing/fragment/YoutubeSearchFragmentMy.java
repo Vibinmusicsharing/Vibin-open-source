@@ -115,7 +115,7 @@ public class YoutubeSearchFragmentMy extends MyBaseFragment {
                                 mangitem.get(i).getSnippet().getTitle(),
                                 mangitem.get(i).getSnippet().getThumbnails().getMedium().getUrl(),
                                 mangitem.get(i).getId().getVideoId(),
-                                mangitem.get(i).getSnippet().getSongDuration(),""
+                                mangitem.get(i).getSnippet().getSongDuration(), ""
                         ));
                     }
                     Item currentItem = mangitem.get(position);
@@ -159,7 +159,7 @@ public class YoutubeSearchFragmentMy extends MyBaseFragment {
                                 youtubeSearchList.get(i).getSnippet().getTitle(),
                                 youtubeSearchList.get(i).getSnippet().getThumbnails().getMedium().getUrl(),
                                 youtubeSearchList.get(i).getId().getVideoId(),
-                                youtubeSearchList.get(i).getSnippet().getSongDuration(),""
+                                youtubeSearchList.get(i).getSnippet().getSongDuration(), ""
                         ));
                     }
                     Item currentItem = mangitem.get(position);
@@ -224,7 +224,7 @@ public class YoutubeSearchFragmentMy extends MyBaseFragment {
             @Override
             public void onFailure(Call<ModelData> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getActivity(),  getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
 

@@ -14,13 +14,14 @@ import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.listerner.ItemClickLister;
 
 import java.util.ArrayList;
+
 // playlist recycler view adapter
 public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerView.ExampleViewHolder> {
 
     private Context mContext;
     private ArrayList<Playlist> mExampleList;
 
-    public PlaylistRecyclerView(Context context, ArrayList<Playlist> exampleList){
+    public PlaylistRecyclerView(Context context, ArrayList<Playlist> exampleList) {
         mContext = context;
         mExampleList = exampleList;
     }
@@ -29,7 +30,7 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.item_product_vertical,parent,false);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.item_product_vertical, parent, false);
 
         final ExampleViewHolder mViewHolder = new ExampleViewHolder(v);
         v.setOnClickListener(new View.OnClickListener() {
@@ -60,11 +61,12 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
     }
 
 
-    public class ExampleViewHolder extends RecyclerView.ViewHolder{
+    public class ExampleViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView mImageView;
         public TextView mTextViewTitle;
         public View view;
+
         public ExampleViewHolder(@NonNull View itemView) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.imageView);

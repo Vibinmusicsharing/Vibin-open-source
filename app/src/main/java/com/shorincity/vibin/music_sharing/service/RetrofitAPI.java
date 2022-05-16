@@ -29,6 +29,7 @@ public class RetrofitAPI {
     }
 
     public static String BASE_URL = "https://staging.vibin.in/";
+
     public static DataAPI getData() {
         return Retrofitlnit.getclient(BASE_URL).create(DataAPI.class);
     }

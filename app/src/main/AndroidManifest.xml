@@ -127,7 +127,6 @@
             android:launchMode="singleTask"
             android:noHistory="true"
             android:resizeableActivity="true"
-            android:screenOrientation="portrait"
             android:supportsPictureInPicture="true" />
 
         <activity
@@ -160,6 +159,12 @@
         <activity
             android:name=".activity.SharePlaylistActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activity.EditProfileActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/AppTheme.TranslucentStatus" />
 
         <service
             android:name=".service.MyFirebaseMessagingService"

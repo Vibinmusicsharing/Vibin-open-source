@@ -18,7 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.adapters.YoutubArtistPlayListAdapter;
 import com.shorincity.vibin.music_sharing.model.HomeYoutubeModel;
@@ -27,6 +26,7 @@ import com.shorincity.vibin.music_sharing.model.YoutubePlaylistItemModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 
 import java.util.ArrayList;
@@ -119,7 +119,7 @@ public class ChannelsPlaylistItemFragment extends MyBaseFragment {
 
         if (!TextUtils.isEmpty(mThumbnail) && !mThumbnail.equalsIgnoreCase("THUMBNAIL_URI")) {
 
-            Glide.with(mContext).load(mThumbnail).into(channelBannerIv);
+            GlideApp.with(mContext).load(mThumbnail).into(channelBannerIv);
             //.onLoadFailed(new ColorDrawable(mContext.getResources().getColor(R.color.light_gray)));
         } else
             channelBannerIv.setImageResource(R.drawable.music_placeholder);
@@ -198,7 +198,7 @@ public class ChannelsPlaylistItemFragment extends MyBaseFragment {
             @Override
             public void onFailure(Call<YoutubePlaylistItemModel> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(mContext,  getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -236,14 +236,14 @@ public class ChannelsPlaylistItemFragment extends MyBaseFragment {
                                         playlistItemModel.getItems().get(i).getSnippet().getTitle(),
                                         playlistItemModel.getItems().get(i).getSnippet().getThumbnails().getHigh().getUrl(),
                                         playlistItemModel.getItems().get(i).getSnippet().getResourceId().getVideoId(),
-                                        playlistItemModel.getItems().get(i).getContentDetails().getEndTime(),""
+                                        playlistItemModel.getItems().get(i).getContentDetails().getEndTime(), ""
                                 ));
                             } else {
                                 playlist.add(new PlaylistDetailModel(
                                         playlistItemModel.getItems().get(i).getSnippet().getTitle(),
                                         defaultThumbnail,
                                         playlistItemModel.getItems().get(i).getSnippet().getResourceId().getVideoId(),
-                                        playlistItemModel.getItems().get(i).getContentDetails().getEndTime(),""
+                                        playlistItemModel.getItems().get(i).getContentDetails().getEndTime(), ""
                                 ));
                             }
                         }

@@ -454,12 +454,10 @@ public class PlaylistDetailFragment extends MyBaseFragment {
         ViewCollabAdapter.setCustomItemClickListener(new com.shorincity.vibin.music_sharing.adapters.ViewCollabAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
-                OtherUserProfileFragment fragment =
-                        OtherUserProfileFragment.getInstance(viewcollabList.get(position).getId(),
-                                0,
-                                viewcollabList.get(position).getUsername(),
-                                viewcollabList.get(position).getFullname());
-                ((youtube) getActivity()).onLoadFragment(fragment);
+                ((youtube) getActivity()).onLoadUserProfile(viewcollabList.get(position).getId(),
+                        0,
+                        viewcollabList.get(position).getUsername(),
+                        viewcollabList.get(position).getFullname());
             }
 
             @Override
@@ -827,7 +825,7 @@ public class PlaylistDetailFragment extends MyBaseFragment {
             String gifArraySplit[] = currentItem.getGifLink().split("/");
             String mediaId = gifArraySplit[gifArraySplit.length - 1];
 
-            gifView.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(mContext, R.color.light_gray),null);
+            gifView.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(mContext, R.color.light_gray), null);
 
             likeBtn.setLiked(currentItem.isLikedByUser());
             String fullName = SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_FULL_NAME);
@@ -1092,12 +1090,10 @@ public class PlaylistDetailFragment extends MyBaseFragment {
 //                    sendCollabRequestNotification(id, usersList.get(position).getId(), AppConstants.COLLAB_REQUEST);
                 } else {
                     bottomSheet.dismiss();
-                    OtherUserProfileFragment fragment = OtherUserProfileFragment.getInstance(
-                            usersList.get(position).getId(),
+                    ((youtube) getActivity()).onLoadUserProfile(usersList.get(position).getId(),
                             id,
                             usersList.get(position).getUsername(),
                             usersList.get(position).getFullname());
-                    ((youtube) getActivity()).onLoadFragment(fragment);
 
                     /*startActivity(new Intent(mContext, OtherUserProfileActivity.class)
                             .putExtra(AppConstants.INTENT_SEARCHED_USER_ID, usersList.get(position).getId())

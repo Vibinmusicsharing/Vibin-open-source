@@ -12,9 +12,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.model.YoutubeChannelModel;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -26,7 +26,7 @@ public class YoutubeArtistChannelAdapter extends RecyclerView.Adapter<YoutubeArt
     private Context mContext;
     private ArrayList<YoutubeChannelModel.Item> list;
 
-    public YoutubeArtistChannelAdapter(Context context, ArrayList<YoutubeChannelModel.Item> exampleList){
+    public YoutubeArtistChannelAdapter(Context context, ArrayList<YoutubeChannelModel.Item> exampleList) {
         mContext = context;
         list = exampleList;
     }
@@ -34,7 +34,7 @@ public class YoutubeArtistChannelAdapter extends RecyclerView.Adapter<YoutubeArt
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.adapter_youtube_channel,parent,false);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.adapter_youtube_channel, parent, false);
 
         final ExampleViewHolder mViewHolder = new ExampleViewHolder(v);
         v.setOnClickListener(new View.OnClickListener() {
@@ -45,7 +45,7 @@ public class YoutubeArtistChannelAdapter extends RecyclerView.Adapter<YoutubeArt
         });
 
         try {
-            if(mViewHolder.mainRl.getTag() == null ) {
+            if (mViewHolder.mainRl.getTag() == null) {
                 mViewHolder.mainRl.setBackgroundResource(R.color.clr_tungsten);
                 mViewHolder.mainRl.setTag(i);
             } else {
@@ -69,14 +69,14 @@ public class YoutubeArtistChannelAdapter extends RecyclerView.Adapter<YoutubeArt
         StringTokenizer st = new StringTokenizer(currentItem.getSnippet().getTitle(), "|");
         String subTitle = st.nextToken();
 
-        if(TextUtils.isEmpty(subTitle)) {
+        if (TextUtils.isEmpty(subTitle)) {
             holder.mTextViewSubTitle.setVisibility(View.GONE);
         } else {
             holder.mTextViewSubTitle.setVisibility(View.VISIBLE);
             holder.mTextViewSubTitle.setText(subTitle);
         }
 
-        Glide.with(mContext).load(imageUrl).into(holder.mImageView);
+        GlideApp.with(mContext).load(imageUrl).into(holder.mImageView);
 
     }
 
@@ -86,11 +86,12 @@ public class YoutubeArtistChannelAdapter extends RecyclerView.Adapter<YoutubeArt
     }
 
 
-    public class ExampleViewHolder extends RecyclerView.ViewHolder{
+    public class ExampleViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView mImageView;
         public TextView mTextViewTitle, mTextViewSubTitle;
         public RelativeLayout mainRl;
+
         public ExampleViewHolder(@NonNull View itemView) {
             super(itemView);
             mainRl = itemView.findViewById(R.id.main_layout);
@@ -109,6 +110,7 @@ public class YoutubeArtistChannelAdapter extends RecyclerView.Adapter<YoutubeArt
     }
 
     CustomItemClickListener customItemClickListener;
+
     public interface CustomItemClickListener {
         public void onItemClick(View v, int position);
     }

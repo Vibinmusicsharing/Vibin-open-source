@@ -14,7 +14,6 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
@@ -74,7 +73,7 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
         binding.swipelayout.setRefreshing(true);
         binding.rvSongs.setLayoutManager(new LinearLayoutManager(binding.rvSongs.getContext()));
         binding.rvSongs.setAdapter(new PlaylistSongsAdapter(mContext, viewModel.getPlaylist(), false, (type, position) -> {
-            if (position != RecyclerView.NO_POSITION) {
+            if (position != RecyclerView.NO_POSITION && position < viewModel.getPlaylist().size()) {
                 ArrayList<PlaylistDetailModel> playlist = viewModel.getPlaylist();
                 PlaylistDetailModel mBean = playlist.get(position);
                 // Type=0:Like,1:DeleteSong, 2:AddSong, 3:Share
@@ -148,6 +147,9 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
                         break;
                     }
                 }
+            } else {
+                if (binding.rvSongs.getAdapter() != null)
+                    binding.rvSongs.getAdapter().notifyDataSetChanged();
             }
         }));
         playlistId = getArguments().getString(PLAYLIST_ID);
@@ -260,7 +262,7 @@ public class PlaylistSongslistFragment extends MyBaseFragment {
     }
 
     public boolean isBackPress() {
-        if (binding.rvSongs.getAdapter() != null)
+        if (binding != null && binding.rvSongs.getAdapter() != null)
             return ((PlaylistSongsAdapter) binding.rvSongs.getAdapter()).isBackPress();
         else
             return true;

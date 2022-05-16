@@ -7,7 +7,7 @@ import com.vanniktech.emoji.ios.IosEmojiProvider;
 
 // You can define the Global Variables here.
 public class VibinApplication extends MultiDexApplication {
-    public boolean isPipEnable=false;
+    public boolean isPipEnable = false;
 
     @Override
     public void onCreate() {

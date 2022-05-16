@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.adapters.YoutubeTrendingAdapter;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
@@ -25,6 +24,7 @@ import com.shorincity.vibin.music_sharing.model.YoutubeTrendingModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.util.ArrayList;
 
@@ -105,7 +105,7 @@ public class ChannelsPlaylistFragment extends MyBaseFragment {
             // channelDetailTv.setText(youtubeChannelData.getSnippet().getDescription());
 
             try {
-                Glide.with(mContext).load(channelBannerUrl).into(channelBannerIv);
+                GlideApp.with(mContext).load(channelBannerUrl).into(channelBannerIv);
             } catch (Exception e) {
 
             }

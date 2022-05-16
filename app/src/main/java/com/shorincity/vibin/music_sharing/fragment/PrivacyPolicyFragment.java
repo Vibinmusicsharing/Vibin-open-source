@@ -38,17 +38,17 @@ import retrofit2.Callback;
  * Created by Aditya S.Gangasagar
  * On 08-August-2020
  **/
-public class PrivacyPolicyFragment extends Fragment{
+public class PrivacyPolicyFragment extends Fragment {
 
     private Activity mActivity;
     private Context mContext;
     private View mView;
     private TextView tvPrivacyPolicy;
     private ProgressBar progressBar_cyclic;
-    TextView txt_google,txt_youtube;
-    String Google="https://policies.google.com/privacy";
-    String Youtube="https://www.youtube.com/t/terms";
-    Button btn_google,btn_youtube;
+    TextView txt_google, txt_youtube;
+    String Google = "https://policies.google.com/privacy";
+    String Youtube = "https://www.youtube.com/t/terms";
+    Button btn_google, btn_youtube;
     LinearLayout btn_links;
 
     public PrivacyPolicyFragment() {
@@ -64,7 +64,7 @@ public class PrivacyPolicyFragment extends Fragment{
         super.onAttach(context);
         if (context instanceof SplashActivity) {
             mActivity = (SplashActivity) context;
-        }else  if (context instanceof PrivacyPolicyActivity) {
+        } else if (context instanceof PrivacyPolicyActivity) {
             mActivity = (PrivacyPolicyActivity) context;
         }
     }
@@ -128,9 +128,9 @@ public class PrivacyPolicyFragment extends Fragment{
 
         //For Toolbar
         if (mActivity instanceof SplashActivity) {
-            ((SplashActivity)mActivity ).toolbarInitialization(true,getString(R.string.privacy_policy),
+            ((SplashActivity) mActivity).toolbarInitialization(true, getString(R.string.privacy_policy),
                     "", true);
-        }else  if (mActivity instanceof PrivacyPolicyActivity) {
+        } else if (mActivity instanceof PrivacyPolicyActivity) {
         }
 
     }
@@ -138,14 +138,14 @@ public class PrivacyPolicyFragment extends Fragment{
     public void sendType(String type) {
         progressBar_cyclic.setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getData();
-        Call<TermsAndConditionsModel> callback = dataAPI.getTermsAndConditions(AppConstants.LOGIN_SIGNUP_HEADER,type);
+        Call<TermsAndConditionsModel> callback = dataAPI.getTermsAndConditions(AppConstants.LOGIN_SIGNUP_HEADER, type);
         callback.enqueue(new Callback<TermsAndConditionsModel>() {
             @Override
             public void onResponse(Call<TermsAndConditionsModel> call, retrofit2.Response<TermsAndConditionsModel> response) {
-                if(response != null && response.body() != null) {
+                if (response != null && response.body() != null) {
 
-                    Log.d("body",response.body().toString());
-                    if((response.body().getStatus().equalsIgnoreCase("success"))
+                    Log.d("body", response.body().toString());
+                    if ((response.body().getStatus().equalsIgnoreCase("success"))
                             && !TextUtils.isEmpty(response.body().getStatus())) {
 
                         StringBuilder displayResponse = new StringBuilder();
@@ -167,6 +167,7 @@ public class PrivacyPolicyFragment extends Fragment{
                     //Log.d("TEST","Something went wrong!");
                 }
             }
+
             @Override
             public void onFailure(Call<TermsAndConditionsModel> call, Throwable t) {
                 progressBar_cyclic.setVisibility(View.GONE);
@@ -175,6 +176,7 @@ public class PrivacyPolicyFragment extends Fragment{
             }
         });
     }
+
     public static void openCustomTab(Activity activity, CustomTabsIntent customTabsIntent, Uri uri) {
         // package name is the default package
         // for our custom chrome tab

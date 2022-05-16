@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -12,12 +11,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
@@ -27,18 +24,12 @@ import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.MusicLanguageModel;
 import com.shorincity.vibin.music_sharing.model.Resource;
 import com.shorincity.vibin.music_sharing.model.SignUpResponse;
-import com.shorincity.vibin.music_sharing.service.DataAPI;
-import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.viewmodel.SelectMusicGenreViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class SelectMusicGenreActivity extends AppCompatActivity {
     private ActivitySelectMusicGenreBinding binding;
@@ -234,38 +225,9 @@ public class SelectMusicGenreActivity extends AppCompatActivity {
         showMe.setCanceledOnTouchOutside(false);
         showMe.show();
 
-        DataAPI dataAPI = RetrofitAPI.getData();
         String token = SharedPrefManager.getInstance(this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
         Bundle bundle = getIntent().getBundleExtra(AppConstants.INTENT_USER_DATA_BUNDLE);
         String languages = bundle.getString(AppConstants.INTENT_LANGUAGE);
-        /*dataAPI.postUpdateProfile(AppConstants.LOGIN_SIGNUP_HEADER, token,
-                languages, selectedGenre).enqueue(new Callback<APIResponse>() {
-            @Override
-            public void onResponse(Call<APIResponse> call, Response<APIResponse> response) {
-                if (response != null && response.body() != null &&
-                        response.body().getStatus().equalsIgnoreCase("success")) {
-                    Logging.dLong("SignUp res:" + new Gson().toJson(response.body()));
-
-                    Intent k = new Intent(SelectMusicGenreActivity.this, youtube.class);
-                    k.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(k);
-                    finishAffinity();
-//                    postAdditionalFields(userIdStr, genderStr, preferredPlatform, dobStr);
-                } else {
-                    showMe.dismiss();
-                    //resetButtonState();
-                    Toast.makeText(SelectMusicGenreActivity.this, response.message(), Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<APIResponse> call, Throwable t) {
-                Logging.dLong("SignUp res:" + Log.getStackTraceString(t));
-                showMe.dismiss();
-                // resetButtonState();
-                Toast.makeText(SelectMusicGenreActivity.this, "Something went wrong!", Toast.LENGTH_LONG).show();
-            }
-        });*/
 
         viewModel.postUpdateProfile(token, languages, selectedGenre).observe(this, apiResponseResource -> {
             if (apiResponseResource instanceof Resource.Loading) {

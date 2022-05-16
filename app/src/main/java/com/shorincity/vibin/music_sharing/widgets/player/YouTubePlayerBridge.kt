@@ -171,11 +171,17 @@ class YouTubePlayerBridge(private val youTubePlayerOwner: YouTubePlayerBridgeCal
 
     private fun parsePlayerState(state: String): PlayerConstants.PlayerState {
         return when {
-            state.equals(STATE_UNSTARTED, ignoreCase = true) -> PlayerConstants.PlayerState.UNSTARTED
+            state.equals(
+                STATE_UNSTARTED,
+                ignoreCase = true
+            ) -> PlayerConstants.PlayerState.UNSTARTED
             state.equals(STATE_ENDED, ignoreCase = true) -> PlayerConstants.PlayerState.ENDED
             state.equals(STATE_PLAYING, ignoreCase = true) -> PlayerConstants.PlayerState.PLAYING
             state.equals(STATE_PAUSED, ignoreCase = true) -> PlayerConstants.PlayerState.PAUSED
-            state.equals(STATE_BUFFERING, ignoreCase = true) -> PlayerConstants.PlayerState.BUFFERING
+            state.equals(
+                STATE_BUFFERING,
+                ignoreCase = true
+            ) -> PlayerConstants.PlayerState.BUFFERING
             state.equals(STATE_CUED, ignoreCase = true) -> PlayerConstants.PlayerState.VIDEO_CUED
             else -> PlayerConstants.PlayerState.UNKNOWN
         }
@@ -184,13 +190,34 @@ class YouTubePlayerBridge(private val youTubePlayerOwner: YouTubePlayerBridgeCal
 
     private fun parsePlaybackQuality(quality: String): PlayerConstants.PlaybackQuality {
         return when {
-            quality.equals(QUALITY_SMALL, ignoreCase = true) -> PlayerConstants.PlaybackQuality.SMALL
-            quality.equals(QUALITY_MEDIUM, ignoreCase = true) -> PlayerConstants.PlaybackQuality.MEDIUM
-            quality.equals(QUALITY_LARGE, ignoreCase = true) -> PlayerConstants.PlaybackQuality.LARGE
-            quality.equals(QUALITY_HD720, ignoreCase = true) -> PlayerConstants.PlaybackQuality.HD720
-            quality.equals(QUALITY_HD1080, ignoreCase = true) -> PlayerConstants.PlaybackQuality.HD1080
-            quality.equals(QUALITY_HIGH_RES, ignoreCase = true) -> PlayerConstants.PlaybackQuality.HIGH_RES
-            quality.equals(QUALITY_DEFAULT, ignoreCase = true) -> PlayerConstants.PlaybackQuality.DEFAULT
+            quality.equals(
+                QUALITY_SMALL,
+                ignoreCase = true
+            ) -> PlayerConstants.PlaybackQuality.SMALL
+            quality.equals(
+                QUALITY_MEDIUM,
+                ignoreCase = true
+            ) -> PlayerConstants.PlaybackQuality.MEDIUM
+            quality.equals(
+                QUALITY_LARGE,
+                ignoreCase = true
+            ) -> PlayerConstants.PlaybackQuality.LARGE
+            quality.equals(
+                QUALITY_HD720,
+                ignoreCase = true
+            ) -> PlayerConstants.PlaybackQuality.HD720
+            quality.equals(
+                QUALITY_HD1080,
+                ignoreCase = true
+            ) -> PlayerConstants.PlaybackQuality.HD1080
+            quality.equals(
+                QUALITY_HIGH_RES,
+                ignoreCase = true
+            ) -> PlayerConstants.PlaybackQuality.HIGH_RES
+            quality.equals(
+                QUALITY_DEFAULT,
+                ignoreCase = true
+            ) -> PlayerConstants.PlaybackQuality.DEFAULT
             else -> PlayerConstants.PlaybackQuality.UNKNOWN
         }
     }
@@ -208,11 +235,26 @@ class YouTubePlayerBridge(private val youTubePlayerOwner: YouTubePlayerBridgeCal
 
     private fun parsePlayerError(error: String): PlayerConstants.PlayerError {
         return when {
-            error.equals(ERROR_INVALID_PARAMETER_IN_REQUEST, ignoreCase = true) -> PlayerConstants.PlayerError.INVALID_PARAMETER_IN_REQUEST
-            error.equals(ERROR_HTML_5_PLAYER, ignoreCase = true) -> PlayerConstants.PlayerError.HTML_5_PLAYER
-            error.equals(ERROR_VIDEO_NOT_FOUND, ignoreCase = true) -> PlayerConstants.PlayerError.VIDEO_NOT_FOUND
-            error.equals(ERROR_VIDEO_NOT_PLAYABLE_IN_EMBEDDED_PLAYER1, ignoreCase = true) -> PlayerConstants.PlayerError.VIDEO_NOT_PLAYABLE_IN_EMBEDDED_PLAYER
-            error.equals(ERROR_VIDEO_NOT_PLAYABLE_IN_EMBEDDED_PLAYER2, ignoreCase = true) -> PlayerConstants.PlayerError.VIDEO_NOT_PLAYABLE_IN_EMBEDDED_PLAYER
+            error.equals(
+                ERROR_INVALID_PARAMETER_IN_REQUEST,
+                ignoreCase = true
+            ) -> PlayerConstants.PlayerError.INVALID_PARAMETER_IN_REQUEST
+            error.equals(
+                ERROR_HTML_5_PLAYER,
+                ignoreCase = true
+            ) -> PlayerConstants.PlayerError.HTML_5_PLAYER
+            error.equals(
+                ERROR_VIDEO_NOT_FOUND,
+                ignoreCase = true
+            ) -> PlayerConstants.PlayerError.VIDEO_NOT_FOUND
+            error.equals(
+                ERROR_VIDEO_NOT_PLAYABLE_IN_EMBEDDED_PLAYER1,
+                ignoreCase = true
+            ) -> PlayerConstants.PlayerError.VIDEO_NOT_PLAYABLE_IN_EMBEDDED_PLAYER
+            error.equals(
+                ERROR_VIDEO_NOT_PLAYABLE_IN_EMBEDDED_PLAYER2,
+                ignoreCase = true
+            ) -> PlayerConstants.PlayerError.VIDEO_NOT_PLAYABLE_IN_EMBEDDED_PLAYER
             else -> PlayerConstants.PlayerError.UNKNOWN
         }
     }

@@ -5,14 +5,11 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -168,7 +165,7 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
 
                 @Override
                 public void onError(String msg) {
-                    ((youtube)getActivity()).showFailerDialog(msg);
+                    ((youtube) getActivity()).showFailerDialog(msg);
                 }
             });
         }
@@ -229,6 +226,11 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
                         Intent intent = new Intent(context, SharePlaylistActivity.class);
                         intent.putExtra(AppConstants.INTENT_PLAYLIST, myPlaylistModel);
                         startActivityForResult(intent, REQUEST_SHARE_PLAYLIST);
+                    });
+
+                    popupView.llPin.setOnClickListener(view -> {
+                        popupWindow.dismiss();
+                        callPinPlayList();
                     });
                     popupView.llPrivate.setOnClickListener(v12 -> {
                         popupWindow.dismiss();
@@ -774,6 +776,21 @@ public class PlaylistDetailFragmentNew extends MyBaseFragment {
         } else {
             return true;
         }
+    }
+
+    private void callPinPlayList() {
+        viewModel.callPinPlayList(binding.getRoot().getContext(), myPlaylistModel.getId(),
+                myPlaylistModel.isPinnedPlaylist() ? "unpin" : "pin", new PlaylistDetailCallback() {
+                    @Override
+                    public void onResponse() {
+
+                    }
+
+                    @Override
+                    public void onError(String msg) {
+
+                    }
+                });
     }
 
     @Override

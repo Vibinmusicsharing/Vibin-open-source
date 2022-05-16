@@ -3,14 +3,9 @@ package com.shorincity.vibin.music_sharing.adapters;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.PopupMenu;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -19,12 +14,10 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.custom.RoundedImageView;
 import com.shorincity.vibin.music_sharing.databinding.PlaylistCollabMenuBinding;
-import com.shorincity.vibin.music_sharing.databinding.PlaylistDetailsMenuBinding;
 import com.shorincity.vibin.music_sharing.utils.CommonUtils;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.util.ArrayList;
 
@@ -64,14 +57,14 @@ public class PlaylistCollaboratosAdapter extends RecyclerView.Adapter<PlaylistCo
 
             if (avatarUrl != null) {
                 try {
-                    Glide.with(mContext).load(avatarUrl).circleCrop().into(holder.ivProfile);
+                    GlideApp.with(mContext).load(avatarUrl).circleCrop().into(holder.ivProfile);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
             holder.ivAdminBorder.setVisibility(currentItem.isAdmin() ? View.VISIBLE : View.INVISIBLE);
         } else {
-            Glide.with(mContext)
+            GlideApp.with(mContext)
                     .load(ContextCompat.getDrawable(holder.ivProfile.getContext(), R.drawable.ic_add_collab))
                     .circleCrop()
                     .into(holder.ivProfile);

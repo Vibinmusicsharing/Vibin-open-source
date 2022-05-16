@@ -1,6 +1,6 @@
 package com.shorincity.vibin.music_sharing.model;
 
-public enum  MenuActionItem {
+public enum MenuActionItem {
 
     ITEM1,
     ITEM2,

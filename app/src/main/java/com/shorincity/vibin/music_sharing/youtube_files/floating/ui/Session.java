@@ -3,7 +3,7 @@ package com.shorincity.vibin.music_sharing.youtube_files.floating.ui;
 /**
  * Created by shyam on 2/2/16.
  */
-public class Session{
+public class Session {
 
 //    private static YouTubePlayerView youTubePlayerView;
 

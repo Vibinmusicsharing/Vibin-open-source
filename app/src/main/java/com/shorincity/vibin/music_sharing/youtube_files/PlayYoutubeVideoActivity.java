@@ -3,10 +3,12 @@ package com.shorincity.vibin.music_sharing.youtube_files;
 import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.PictureInPictureParams;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
@@ -25,20 +27,20 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.CompoundButton;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SearchView;
@@ -53,7 +55,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
 import com.giphy.sdk.core.models.Media;
 import com.giphy.sdk.core.models.enums.MediaType;
 import com.giphy.sdk.core.models.enums.RatingType;
@@ -75,6 +76,7 @@ import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.VibinApplication;
 import com.shorincity.vibin.music_sharing.adapters.AddToPlaylistAdapter;
+import com.shorincity.vibin.music_sharing.adapters.AutoCompleteAdapter;
 import com.shorincity.vibin.music_sharing.adapters.PlayListDetailsAdapter;
 import com.shorincity.vibin.music_sharing.adapters.PlaylistRecyclerView;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
@@ -85,10 +87,15 @@ import com.shorincity.vibin.music_sharing.model.SongLikeModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.CommonUtils;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
+import com.shorincity.vibin.music_sharing.widgets.TagView;
 import com.shorincity.vibin.music_sharing.widgets.player.PlayerConstants;
 import com.shorincity.vibin.music_sharing.widgets.player.listeners.AbstractYouTubePlayerListener;
+import com.shorincity.vibin.music_sharing.widgets.player.listeners.YouTubePlayerFullScreenListener;
+import com.shorincity.vibin.music_sharing.widgets.player.ui.DefaultPlayerUiController;
 import com.shorincity.vibin.music_sharing.youtube_files.floating.PlayerService;
 
 import org.jetbrains.annotations.NotNull;
@@ -172,6 +179,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
     private LinearLayout llSelectedSong;
     private AppCompatImageView ivSong;
     private AppCompatTextView tvSongName, tvArtistName, tvDuration;
+    private ArrayList<String> genreList;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -182,6 +190,9 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
         mContext = PlayYoutubeVideoActivity.this;
         Logging.d("PlayYoutubeVideoActivity");
         playlist = new ArrayList<>();
+        genreList = CommonUtils.getGenre();
+
+
         getIntentData(getIntent());
         statusBarColorChange();
         // finding views
@@ -355,14 +366,10 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
         llAddPlayList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mYouTubePlayer.pause();
-                Play_Pause.setImageResource(R.drawable.ic_player_play);
-                String duration = mYouTubePlayer.getDurationMillis() > 0 ? String.valueOf(mYouTubePlayer.getDurationMillis()) : "";
-                if (duration.equalsIgnoreCase("")) {
-                    dialog("0");
-                } else {
-                    dialog(duration);
-
+                if (youTubePlayer != null) {
+                    youTubePlayer.pause();
+                    Play_Pause.setImageResource(R.drawable.ic_player_play);
+                    dialog(totalDuration);
                 }
             }
         });
@@ -382,6 +389,10 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (youTubePlayerView1.isFullScreen()) {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    return;
+                }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     boolean supportsPIP = getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE);
                     if (supportsPIP) {
@@ -722,7 +733,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
             tvArtistName.setText(item.getArtistName());
 
             tvDuration.setText(item.getSongDuration() == null ? "00:00" : item.getSongDuration());
-            Glide.with(this).load(item.getImage()).into(ivSong);
+            GlideApp.with(this).load(item.getImage()).into(ivSong);
         } else {
             llSelectedSong.setVisibility(View.GONE);
         }
@@ -886,20 +897,19 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
         }
     }
 
-//    @Override
-//    public void onWindowFocusChanged(boolean hasFocus) {
-//        super.onWindowFocusChanged(hasFocus);
-//        if (mYouTubePlayer != null) {
-//            if (mYouTubePlayer.isPlaying()) {
-//                mYouTubePlayer.pause();
-//                Play_Pause.setImageResource(R.drawable.ic_player_play);
-//            } else {
-//                mYouTubePlayer.play();
-//                Play_Pause.setImageResource(R.drawable.ic_player_pause);
-//            }
-//
-//        }
-//    }
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Checks the orientation of the screen
+        if (!((VibinApplication) getApplication()).isPipEnable) {
+            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                youTubePlayerView1.enterFullScreen();
+            } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                youTubePlayerView1.exitFullScreen();
+            }
+        }
+    }
 
 
     //YouTubePlayerTracker mTracker = null;
@@ -995,7 +1005,21 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
 
         youTubePlayerView1.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
             @Override
-            public void onReady(@NonNull com.shorincity.vibin.music_sharing.widgets.player.YouTubePlayer youTubePlayer) {
+            public void onReady(com.shorincity.vibin.music_sharing.widgets.player.YouTubePlayer youTubePlayer) {
+                // using pre-made custom ui
+                DefaultPlayerUiController defaultPlayerUiController = new DefaultPlayerUiController(youTubePlayerView1, youTubePlayer);
+                defaultPlayerUiController.setFullScreenButtonClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d(TAG, "==> onFull screen click");
+                        if (youTubePlayerView1.isFullScreen())
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                        else
+                            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    }
+                });
+                youTubePlayerView1.setCustomPlayerUi(defaultPlayerUiController.getRootView());
+
                 PlayYoutubeVideoActivity.this.youTubePlayer = youTubePlayer;
 //                PlayYoutubeVideoActivity.this.youTubePlayer.setQuality(PlayerConstants.PlaybackQuality.SMALL);
                 PlayYoutubeVideoActivity.this.youTubePlayer.loadVideo(videoId, 0f);
@@ -1021,7 +1045,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
             public void onStateChange(@NonNull com.shorincity.vibin.music_sharing.widgets.player.YouTubePlayer youTubePlayer, @NonNull PlayerConstants.PlayerState state) {
                 super.onStateChange(youTubePlayer, state);
                 PlayYoutubeVideoActivity.this.state = state;
-                Logging.d("currentState==>" + state.toString());
+                Logging.d("currentState==>" + state);
                 if (!seekusedbyuser) {
                     if (state == PlayerConstants.PlayerState.PLAYING) {
                         Play_Pause.setImageResource(R.drawable.ic_player_pause);
@@ -1055,11 +1079,23 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
                 }
             }
         });
+        youTubePlayerView1.addFullScreenListener(new YouTubePlayerFullScreenListener() {
+            @Override
+            public void onYouTubePlayerEnterFullScreen() {
+                if (!((VibinApplication) getApplication()).isPipEnable)
+                    flBottomSheet.setVisibility(View.GONE);
+            }
 
+            @Override
+            public void onYouTubePlayerExitFullScreen() {
+                if (!((VibinApplication) getApplication()).isPipEnable)
+                    flBottomSheet.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     // add video to playlist
-    private void dialog(String duration) {
+    private void dialog(float duration) {
         /*final AlertDialog.Builder mb = new AlertDialog.Builder(this);
         final View dialog = LayoutInflater.from(this).inflate(R.layout.dialog_add_to_playlist, null, false);
 */
@@ -1121,7 +1157,7 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
 
     // dialog to add playlist
     private void openDialog() {
-        final AlertDialog.Builder mb = new AlertDialog.Builder(PlayYoutubeVideoActivity.this);
+        /*final AlertDialog.Builder mb = new AlertDialog.Builder(PlayYoutubeVideoActivity.this);
         final View dialog = LayoutInflater.from(mContext).inflate(R.layout.layout_dialog, null, false);
         final EditText playlistName = dialog.findViewById(R.id.dialog_playlistname);
         final SearchView playlistGif = dialog.findViewById(R.id.dialog_playlist_gif);
@@ -1244,7 +1280,130 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
                 });
         mb.setView(dialog);
         final AlertDialog ass = mb.create();
-        ass.show();
+        ass.show();*/
+        openCreatePlaylistBottomsheet();
+    }
+
+    private void openCreatePlaylistBottomsheet() {
+        BottomSheetDialog bottomSheet = new BottomSheetDialog(this);
+        View bottom_sheet = LayoutInflater.from(this).inflate(R.layout.bottomsheet_create_playlist, null);
+        bottomSheet.setContentView(bottom_sheet);
+
+        EditText playlistName = bottom_sheet.findViewById(R.id.dialog_playlistname);
+        SearchView playlistGif = bottom_sheet.findViewById(R.id.dialog_playlist_gif);
+        GifView selectedGifIv = bottom_sheet.findViewById(R.id.selected_gif_iv);
+        EditText playlistDesc = bottom_sheet.findViewById(R.id.dialog_playlist_desc);
+        GiphyGridView giphyGridView = bottom_sheet.findViewById(R.id.gifsGridView);
+        TagView tagView = bottom_sheet.findViewById(R.id.tag_view_test);
+        AppCompatImageView ivClose = bottom_sheet.findViewById(R.id.ivClose);
+        Button btnCreate = bottom_sheet.findViewById(R.id.btnCreate);
+
+        AppCompatAutoCompleteTextView autoCompleteTextView = bottom_sheet.findViewById(R.id.actTags);
+        AutoCompleteAdapter adapter = new AutoCompleteAdapter(this, android.R.layout.simple_dropdown_item_1line, android.R.id.text1, genreList);
+        autoCompleteTextView.setAdapter(adapter);
+
+        autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
+            String tag = parent.getItemAtPosition(position).toString();
+            tagView.addTag(tag);
+            autoCompleteTextView.setText("");
+        });
+
+        final String[] selectedGifLink = {""};
+        // setting Giphy GridView
+        giphyGridView.setDirection(GiphyGridView.HORIZONTAL);
+        giphyGridView.setSpanCount(2);
+        giphyGridView.setCellPadding(0);
+        giphyGridView.setContent(GPHContent.Companion.getTrendingGifs());
+        giphyGridView.setCallback(new GPHGridCallback() {
+            @Override
+            public void contentDidUpdate(int i) {
+                Log.i("GifURL", "Position " + i);
+            }
+
+            @Override
+            public void didSelectMedia(@NotNull Media media) {
+                Log.i("GifURL", "BitlyGifURL " + media.getBitlyGifUrl());
+                Log.i("GifURL", "BitlyURL " + media.getBitlyUrl());
+                Log.i("GifURL", "Content " + media.getContentUrl());
+                Log.i("GifURL", "EmbededUrl " + media.getEmbedUrl());
+                Log.i("GifURL", "SourceUrl " + media.getSourcePostUrl());
+
+                selectedGifLink[0] = media.getEmbedUrl();
+                selectedGifIv.setVisibility(View.VISIBLE);
+                selectedGifIv.setMedia(media, RenditionType.preview, ContextCompat.getDrawable(PlayYoutubeVideoActivity.this, R.color.light_gray));
+            }
+        });
+        playlistGif.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                GPHContent gphContent = new GPHContent();
+                gphContent.setMediaType(MediaType.gif);
+                gphContent.setRating(RatingType.pg13);
+                gphContent.setRequestType(GPHRequestType.search);
+                gphContent.setSearchQuery(query);
+                giphyGridView.setContent(gphContent);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        ivClose.setOnClickListener(v -> bottomSheet.dismiss());
+
+        btnCreate.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(playlistName.getText().toString().trim())) {
+                Toast.makeText(this, "please give playlist some name", Toast.LENGTH_SHORT).show();
+            } else if (TextUtils.isEmpty(selectedGifLink[0])) {
+                Toast.makeText(this, "please choose a GIF", Toast.LENGTH_SHORT).show();
+            } else if (!Utility.isWebUrl(selectedGifLink[0])) {
+                Toast.makeText(this, "please choose a valid GIF", Toast.LENGTH_SHORT).show();
+            } else if (TextUtils.isEmpty(playlistDesc.getText().toString().trim())) {
+                Toast.makeText(this, "please enter playlist's description", Toast.LENGTH_SHORT).show();
+            } else {
+
+                ProgressDialog showMe = new ProgressDialog(this);
+                showMe.setMessage("Please wait");
+                showMe.setCancelable(true);
+                showMe.setCanceledOnTouchOutside(false);
+                showMe.show();
+
+                DataAPI dataAPI = RetrofitAPI.getData();
+                String token = AppConstants.TOKEN + SharedPrefManager.getInstance(this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+                Call<MyPlaylistModel> callback = dataAPI.callCreatePlayList(token,
+                        SharedPrefManager.getInstance(this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
+                        playlistName.getText().toString().trim(), playlistDesc.getText().toString().trim(),
+                        selectedGifLink[0], "false", "",
+                        tagView.getSelectedTags().size() > 0 ? TextUtils.join("|", tagView.getSelectedTags()) : "All");
+                callback.enqueue(new Callback<MyPlaylistModel>() {
+                    @Override
+                    public void onResponse(Call<MyPlaylistModel> call, retrofit2.Response<MyPlaylistModel> response) {
+                        showMe.dismiss();
+                        if (response.body() != null && response.body().getStatus().equalsIgnoreCase("success")) {
+                            bottomSheet.dismiss();
+                            playlistList.add(response.body());
+                            addToPlaylistAdapter.notifyItemInserted(playlistList.size());
+                        } else {
+                            Toast.makeText(PlayYoutubeVideoActivity.this,
+                                    (response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<MyPlaylistModel> call, Throwable t) {
+                        showMe.dismiss();
+                        Toast.makeText(PlayYoutubeVideoActivity.this,
+                                t.getLocalizedMessage(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+
+        bottomSheet.show();
+
     }
 
     //  add text to server
@@ -1305,11 +1464,12 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
 
     // add video to server
     private void callAddTrackApi(final String videoId, final int id, final String title,
-                                 final String thumbnail, String duration) {
+                                 final String thumbnail, float duration) {
         DataAPI dataAPI = RetrofitAPI.getData();
         String token = AppConstants.TOKEN + SharedPrefManager.getInstance(this).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
         String userToken = SharedPrefManager.getInstance(this).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
-        String timeDuration = "T" + Utility.millisIntoHHMMSS(Long.valueOf(duration));
+
+        String timeDuration = "T" + Utility.millisIntoHHMMSS((long) duration);
         Call<ResponseBody> callback = dataAPI.callAddTrackApi(token, userToken,
                 String.valueOf(id), "youtube", videoId, title, thumbnail, artistName, timeDuration);
         callback.enqueue(new Callback<ResponseBody>() {
@@ -1421,22 +1581,6 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_VIDEO) {
             youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
-
-        } else if (requestCode == OVERLAY_PERMISSION_REQ) {
-            int duration = mYouTubePlayer.getCurrentTimeMillis();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (!Settings.canDrawOverlays(this)) {
-                    needPermissionDialog(requestCode);
-                } else {
-                    Intent i = new Intent(this, PlayerService.class);
-                    i.putExtra("VID_ID", videoId);
-                    i.putExtra("PLAYLIST_ID", playId);
-                    i.setAction(STARTFOREGROUND_WEB_ACTION);
-                    i.putExtra("SONG_DURATION", duration);
-                    startService(i);
-                    homeClicked();
-                }
-            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -1459,47 +1603,10 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onResume() {
-        super.onResume();
-        stopFloatingService();
-        //        if(mYouTubePlayer!=null && playerTotalDurationTv!=null){
-        //            playerTotalDurationTv.setText(Utility.convertDuration(Long.valueOf(mYouTubePlayer.getDurationMillis())));
-        //            int progress = seekBar.getProgress();
-        //            lengthms = mYouTubePlayer.getDurationMillis();
-        //            float current = mYouTubePlayer.getCurrentTimeMillis();
-        //            int to = (int) (lengthms * progress / 100);
-        //
-        //            mYouTubePlayer.seekToMillis(to);
-        //        }
-
-       /* if (mYouTubePlayer != null && playerTotalDurationTv != null) {
-            lengthms = mYouTubePlayer.getDurationMillis();
-            float current = mYouTubePlayer.getCurrentTimeMillis();
-            float wowInt = ((current / lengthms) * 100);
-            mSeekBar.setProgress((int) wowInt);
-            processSeekBar();
-            Logging.d("wowInt-->" + wowInt);
-            // displaying current duration when song starts to play
-            *//*if (mYouTubePlayer.isPlaying() && (int) wowInt > 0) {
-                playerCurrentDurationTv.setText(Utility.convertDuration(Long.valueOf(mYouTubePlayer.getCurrentTimeMillis())));
-            }*//*
-            if (mYouTubePlayer.isPlaying()) {
-                mYouTubePlayer.pause();
-                Play_Pause.setImageResource(R.drawable.ic_player_play);
-            } else {
-                mYouTubePlayer.play();
-                Play_Pause.setImageResource(R.drawable.ic_player_pause);
-            }
-        }*/
-    }
-
-    private void stopFloatingService() {
         try {
-            if (isServiceRunning(PlayerService.class)) {
-                Intent i = new Intent(PlayYoutubeVideoActivity.this, PlayerService.class);
-                stopService(i);
-            }
+            super.onResume();
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
     }
 
@@ -1568,8 +1675,10 @@ public class PlayYoutubeVideoActivity extends YouTubeBaseActivity implements Pla
         @Override
         public void onLoaded(String s) {
             // Called when a video is done loading.
-            mYouTubePlayer.play();
-            Play_Pause.setImageResource(R.drawable.ic_player_pause);
+            if (mYouTubePlayer != null) {
+                mYouTubePlayer.play();
+                Play_Pause.setImageResource(R.drawable.ic_player_pause);
+            }
             // Playback methods such as play(), pause() or seekToMillis(int) may be called after this callback.
         }
 

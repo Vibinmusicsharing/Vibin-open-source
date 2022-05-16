@@ -1,7 +1,6 @@
 package com.shorincity.vibin.music_sharing.adapters;
 
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +11,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.shorincity.vibin.music_sharing.model.HomeYoutubeModel;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.model.HomeYoutubeModel;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.util.ArrayList;
 
@@ -54,7 +51,7 @@ public class YoutubeGenerAdapter extends RecyclerView.Adapter<YoutubeGenerAdapte
         holder.mTextViewTitle.setText(name);
 
         if (!currentItem.getThumbnail().equalsIgnoreCase("THUMBNAIL_URI"))
-            Glide.with(mContext).load(currentItem.getThumbnail()).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(holder.mImageView);
+            GlideApp.with(mContext).load(currentItem.getThumbnail()).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(holder.mImageView);
         else
             holder.mImageView.setImageResource(R.drawable.music_placeholder);
     }

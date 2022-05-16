@@ -2,17 +2,12 @@ package com.shorincity.vibin.music_sharing.activity;
 
 import android.Manifest;
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -22,27 +17,15 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
-import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.adapters.SharePlaylistViewPagerAdapter;
 import com.shorincity.vibin.music_sharing.databinding.ActivitySharePlaylistBinding;
-import com.shorincity.vibin.music_sharing.fragment.SharePlaylistQrCodeFragment;
 import com.shorincity.vibin.music_sharing.fragment.SimpleScannerFragment;
-import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
-import com.shorincity.vibin.music_sharing.model.shareplaylist.SharePlaylistResponse;
-import com.shorincity.vibin.music_sharing.service.DataAPI;
-import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 
 import java.util.ArrayList;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
 
 public class SharePlaylistActivity extends AppCompatActivity {
     private ActivitySharePlaylistBinding binding;

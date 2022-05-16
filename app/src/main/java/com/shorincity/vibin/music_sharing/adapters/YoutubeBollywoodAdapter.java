@@ -11,9 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.model.HomeYoutubeModel;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -23,7 +23,7 @@ public class YoutubeBollywoodAdapter extends RecyclerView.Adapter<YoutubeBollywo
     private Context mContext;
     private ArrayList<HomeYoutubeModel.YoutubeCustomModel> list;
 
-    public YoutubeBollywoodAdapter(Context context, ArrayList<HomeYoutubeModel.YoutubeCustomModel> exampleList){
+    public YoutubeBollywoodAdapter(Context context, ArrayList<HomeYoutubeModel.YoutubeCustomModel> exampleList) {
         mContext = context;
         list = exampleList;
     }
@@ -31,7 +31,7 @@ public class YoutubeBollywoodAdapter extends RecyclerView.Adapter<YoutubeBollywo
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.adapter_youtube_home_bollywood,parent,false);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.adapter_youtube_home_bollywood, parent, false);
 
         final ExampleViewHolder mViewHolder = new ExampleViewHolder(v);
         v.setOnClickListener(new View.OnClickListener() {
@@ -50,8 +50,8 @@ public class YoutubeBollywoodAdapter extends RecyclerView.Adapter<YoutubeBollywo
 
         holder.mTextViewTitle.setText(name);
 
-        if(!currentItem.getThumbnail().equalsIgnoreCase("THUMBNAIL_URI"))
-            Glide.with(mContext).load(currentItem.getThumbnail()).into(holder.mImageView);
+        if (!currentItem.getThumbnail().equalsIgnoreCase("THUMBNAIL_URI"))
+            GlideApp.with(mContext).load(currentItem.getThumbnail()).into(holder.mImageView);
         else
             holder.mImageView.setImageResource(R.drawable.music_placeholder);
     }
@@ -62,11 +62,12 @@ public class YoutubeBollywoodAdapter extends RecyclerView.Adapter<YoutubeBollywo
     }
 
 
-    public class ExampleViewHolder extends RecyclerView.ViewHolder{
+    public class ExampleViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView mImageView;
         public TextView mTextViewTitle;
         public RelativeLayout mainRl;
+
         public ExampleViewHolder(@NonNull View itemView) {
             super(itemView);
             mainRl = itemView.findViewById(R.id.main_layout);
@@ -84,6 +85,7 @@ public class YoutubeBollywoodAdapter extends RecyclerView.Adapter<YoutubeBollywo
     }
 
     CustomItemClickListener customItemClickListener;
+
     public interface CustomItemClickListener {
         public void onItemClick(View v, int position);
     }

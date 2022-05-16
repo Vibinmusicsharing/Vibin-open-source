@@ -11,27 +11,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.model.Item;
 import com.shorincity.vibin.music_sharing.model.ModelData;
-import com.shorincity.vibin.music_sharing.model.coverart.CoverArtImageResponse;
 import com.shorincity.vibin.music_sharing.model.lastfm.Track;
-import com.shorincity.vibin.music_sharing.model.lastfm.trackinfo.Album;
-import com.shorincity.vibin.music_sharing.model.lastfm.trackinfo.TrackInfo;
-import com.shorincity.vibin.music_sharing.model.lastfm.trackinfo.TrackInfoResponse;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
-import com.shorincity.vibin.music_sharing.utils.Logging;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;

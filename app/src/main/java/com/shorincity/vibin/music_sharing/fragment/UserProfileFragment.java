@@ -14,8 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.giphy.sdk.ui.Giphy;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
@@ -36,9 +34,9 @@ import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.CustomSlidePanLayout;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.Utility;
-import com.shorincity.vibin.music_sharing.youtube_files.PlayYoutubeVideoActivity;
 
 import java.util.ArrayList;
 
@@ -56,6 +54,10 @@ public class UserProfileFragment extends MyBaseFragment {
     private TextView viewMoreRecentTv;
     CustomSlidePanLayout slidePanLayout;
     RelativeLayout relative_collaborator_count, relative_likes_count;
+
+    public static UserProfileFragment getInstance() {
+        return new UserProfileFragment();
+    }
 
     public UserProfileFragment() {
         // Required empty public constructor
@@ -347,7 +349,7 @@ public class UserProfileFragment extends MyBaseFragment {
                     String avatarUrl = response.body().getAvatarLink();
 
                     if (isVisible() && userDpIv != null) {
-                        Glide.with(getActivity()).load(avatarUrl).into(userDpIv);
+                        GlideApp.with(getActivity()).load(avatarUrl).into(userDpIv);
                     }
                 }
             }

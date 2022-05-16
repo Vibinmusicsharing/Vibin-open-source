@@ -19,7 +19,6 @@ import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.activity.RealTimePlayerActivity;
 import com.shorincity.vibin.music_sharing.adapters.ChatRecyclerViewAdapter;
 import com.shorincity.vibin.music_sharing.databinding.FragmentRealtimeChatBinding;
-import com.shorincity.vibin.music_sharing.model.ChatMessage;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.vanniktech.emoji.EmojiPopup;
 

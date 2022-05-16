@@ -1,4 +1,5 @@
 @file:JvmName("YouTubePlayerUtils")
+
 package com.shorincity.vibin.music_sharing.widgets.player.utils
 
 import androidx.lifecycle.Lifecycle
@@ -19,7 +20,8 @@ fun YouTubePlayer.loadOrCueVideo(lifecycle: Lifecycle, videoId: String, startSec
 }
 
 
-@JvmSynthetic internal fun YouTubePlayer.loadOrCueVideo(canLoad: Boolean, videoId: String, startSeconds: Float) {
+@JvmSynthetic
+internal fun YouTubePlayer.loadOrCueVideo(canLoad: Boolean, videoId: String, startSeconds: Float) {
     if (canLoad)
         loadVideo(videoId, startSeconds)
     else

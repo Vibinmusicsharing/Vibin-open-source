@@ -11,21 +11,23 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.shorincity.vibin.music_sharing.R;
+
 // first page
 public class MainActivity extends AppCompatActivity {
 
     TextView app_title;
-    Button login_btn,signup_btn;
+    Button login_btn, signup_btn;
     Animation smallToBig;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if(SharedPrefManager.getInstance(this).isLoggedIn()) {
-            startActivity(new Intent(this,Platform_choose_activity.class));
+        if (SharedPrefManager.getInstance(this).isLoggedIn()) {
+            startActivity(new Intent(this, Platform_choose_activity.class));
             finish();
-        }else {
+        } else {
             app_title = findViewById(R.id.app_title);
             smallToBig = AnimationUtils.loadAnimation(this, R.anim.smalltobig);
             app_title.setAnimation(smallToBig);

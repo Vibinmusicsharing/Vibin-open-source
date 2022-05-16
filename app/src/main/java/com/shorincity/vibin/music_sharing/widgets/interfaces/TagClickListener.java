@@ -14,5 +14,5 @@ package com.shorincity.vibin.music_sharing.widgets.interfaces;
  */
 
 public interface TagClickListener {
-    void onGetSelectTag(int position,String tagText);
+    void onGetSelectTag(int position, String tagText);
 }

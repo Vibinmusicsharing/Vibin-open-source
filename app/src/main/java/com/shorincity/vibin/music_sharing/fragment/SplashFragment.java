@@ -4,12 +4,10 @@ import static com.shorincity.vibin.music_sharing.utils.AppConstants.KEY_CODE;
 import static com.shorincity.vibin.music_sharing.utils.AppConstants.PREF_GIPHY_KEY;
 import static com.shorincity.vibin.music_sharing.utils.AppConstants.PREF_LAST_FM_KEY;
 import static com.shorincity.vibin.music_sharing.utils.AppConstants.PREF_YOUTUBE_KEY;
-import static com.shorincity.vibin.music_sharing.utils.AppConstants.YOUTUBE_KEY;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
@@ -31,7 +29,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
@@ -45,18 +42,16 @@ import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
-import com.shorincity.vibin.music_sharing.activity.LoginSignUpActivity;
-import com.shorincity.vibin.music_sharing.activity.SelectMusicGenreActivity;
 import com.shorincity.vibin.music_sharing.activity.SelectMusicLanguageActivity;
 import com.shorincity.vibin.music_sharing.activity.SignUpEmailPassActivity;
 import com.shorincity.vibin.music_sharing.activity.SplashActivity;
 import com.shorincity.vibin.music_sharing.activity.TermsAndConditionsActivity;
 import com.shorincity.vibin.music_sharing.model.SignUpResponse;
 import com.shorincity.vibin.music_sharing.model.VersionResponse;
-import com.shorincity.vibin.music_sharing.model.YoutubeTrendingModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 
 import retrofit2.Call;
@@ -86,7 +81,7 @@ public class SplashFragment extends Fragment {
             popupSnackbarForCompleteUpdate();
         } else if (state.installStatus() == InstallStatus.FAILED) {
             callUserApi();
-        }else if (state.installStatus() == InstallStatus.DOWNLOADING){
+        } else if (state.installStatus() == InstallStatus.DOWNLOADING) {
             ProgressBar prg = mView.findViewById(R.id.progressBar);
             TextView tvInstall = mView.findViewById(R.id.tvInstall);
 
@@ -121,7 +116,7 @@ public class SplashFragment extends Fragment {
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_splash, container, false);
         ImageView imageView = mView.findViewById(R.id.imageView1);
-        Glide.with(this).load(R.drawable.vibin_gif).into(imageView);
+        GlideApp.with(this).load(R.drawable.vibin_gif).into(imageView);
 
         init();
         return mView;

@@ -10,9 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.model.YoutubePlaylistItemModel;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.util.ArrayList;
 
@@ -22,17 +22,16 @@ public class YoutubArtistPlayListAdapter extends RecyclerView.Adapter<YoutubArti
     private Context mContext;
     private ArrayList<YoutubePlaylistItemModel.Item> list;
 
-    public YoutubArtistPlayListAdapter(Context context, ArrayList<YoutubePlaylistItemModel.Item> exampleList){
+    public YoutubArtistPlayListAdapter(Context context, ArrayList<YoutubePlaylistItemModel.Item> exampleList) {
         mContext = context;
         list = exampleList;
     }
 
 
-
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.item_trending_list_adapter,parent,false);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.item_trending_list_adapter, parent, false);
 
         final ExampleViewHolder mViewHolder = new ExampleViewHolder(v);
         v.setOnClickListener(new View.OnClickListener() {
@@ -46,25 +45,27 @@ public class YoutubArtistPlayListAdapter extends RecyclerView.Adapter<YoutubArti
 
     @Override
     public void onBindViewHolder(@NonNull ExampleViewHolder holder, int position) {
-       YoutubePlaylistItemModel.Snippet currentItem = list.get(position).getSnippet();
-        int serial = holder.getAdapterPosition()+1;
-       if(currentItem!=null) {
-           try {
-               String imageUrl = currentItem.getThumbnails().getMedium().getUrl();
-               Glide.with(mContext).load(imageUrl).into(holder.mImageView);
-           } catch (Exception e) {
-               e.printStackTrace();
-           }
+        YoutubePlaylistItemModel.Snippet currentItem = list.get(position).getSnippet();
+        int serial = holder.getAdapterPosition() + 1;
+        if (currentItem != null &&
+                currentItem.getThumbnails() != null &&
+                currentItem.getThumbnails().getMedium() != null) {
+            try {
+                String imageUrl = currentItem.getThumbnails().getMedium().getUrl();
+                GlideApp.with(mContext).load(imageUrl).into(holder.mImageView);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
 
-           String name = currentItem.getTitle();
-           holder.mTextViewTitle.setText(name);
+            String name = currentItem.getTitle();
+            holder.mTextViewTitle.setText(name);
 
-           holder.txtSerial.setText(String.valueOf(serial));
-           String duration = currentItem.getSongDuration();
-           holder.txtduration.setText(duration);
+            holder.txtSerial.setText(String.valueOf(serial));
+            String duration = currentItem.getSongDuration();
+            holder.txtduration.setText(duration);
 
-       }
+        }
     }
 
     @Override
@@ -73,11 +74,12 @@ public class YoutubArtistPlayListAdapter extends RecyclerView.Adapter<YoutubArti
     }
 
 
-    public class ExampleViewHolder extends RecyclerView.ViewHolder{
+    public class ExampleViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView mImageView;
-        public TextView mTextViewTitle,txtSerial,txtduration;
+        public TextView mTextViewTitle, txtSerial, txtduration;
         public View view;
+
         public ExampleViewHolder(@NonNull View itemView) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.imageViewaddtoplaylist);
@@ -98,6 +100,7 @@ public class YoutubArtistPlayListAdapter extends RecyclerView.Adapter<YoutubArti
     }
 
     CustomItemClickListener customItemClickListener;
+
     public interface CustomItemClickListener {
         public void onItemClick(View v, int position);
     }

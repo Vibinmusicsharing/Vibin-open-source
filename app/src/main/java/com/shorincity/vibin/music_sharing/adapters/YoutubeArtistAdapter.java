@@ -12,9 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.model.HomeYoutubeModel;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.util.ArrayList;
 
@@ -126,7 +126,7 @@ public class YoutubeArtistAdapter extends RecyclerView.Adapter<RecyclerView.View
             mTextViewTitle.setText(name);
             if (!currentItem.getThumbnail().equalsIgnoreCase("THUMBNAIL_URI")) {
 
-                Glide.with(mContext).load(currentItem.getThumbnail())
+                GlideApp.with(mContext).load(currentItem.getThumbnail())
                         .into(mImageView);
             } else
                 mImageView.setImageResource(R.drawable.music_placeholder);
@@ -146,6 +146,7 @@ public class YoutubeArtistAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public interface CustomItemClickListener {
         public void onItemClick(View v, int position);
+
         void onMoreClick(String title, ArrayList<HomeYoutubeModel.YoutubeCustomModel> list);
     }
 }

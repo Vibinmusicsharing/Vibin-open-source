@@ -1,47 +1,63 @@
 package com.shorincity.vibin.music_sharing.model.shareplaylist;
 
-import java.util.List;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 
-public class PlaylistDetailResponse{
+import java.util.List;
 
-	@SerializedName("is_collaborator")
-	private boolean isCollaborator;
+public class PlaylistDetailResponse {
 
-	@SerializedName("tracks")
-	private List<PlaylistDetailModel> tracks;
+    @SerializedName("is_collaborator")
+    @Expose
+    private boolean isCollaborator;
 
-	@SerializedName("status")
-	private String status;
+    @SerializedName("tracks")
+    @Expose
+    private List<PlaylistDetailModel> tracks;
 
-	@SerializedName("playlist_details")
-	private MyPlaylistModel myPlaylistModel;
+    @SerializedName("status")
+    @Expose
+    private String status;
 
-	@SerializedName("message")
-	@Expose
-	private String message;
+    @SerializedName("playlist_details")
+    @Expose
+    private MyPlaylistModel myPlaylistModel;
 
-	public boolean isIsCollaborator(){
-		return isCollaborator;
-	}
+    @SerializedName("message")
+    @Expose
+    private String message;
 
-	public List<PlaylistDetailModel> getTracks(){
-		return tracks;
-	}
+    @SerializedName("admin_profile_verified")
+    @Expose
+    private boolean adminProfileVerified;
 
-	public String getStatus(){
-		return status;
-	}
+    public boolean isIsCollaborator() {
+        return isCollaborator;
+    }
 
-	public MyPlaylistModel getMyPlaylistModel() {
-		return myPlaylistModel;
-	}
+    public List<PlaylistDetailModel> getTracks() {
+        return tracks;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getStatus() {
+        return status;
+    }
+
+    public MyPlaylistModel getMyPlaylistModel() {
+        return myPlaylistModel;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public boolean isAdminProfileVerified() {
+        return adminProfileVerified;
+    }
+
+    public void setAdminProfileVerified(boolean adminProfileVerified) {
+        this.adminProfileVerified = adminProfileVerified;
+    }
 }

@@ -5,13 +5,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -19,14 +15,12 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.daimajia.swipe.SwipeLayout;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.databinding.PlaylistCollabMenuBinding;
 import com.shorincity.vibin.music_sharing.databinding.PlaylistSongMenuBinding;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
-import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.CommonUtils;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.util.ArrayList;
 
@@ -61,9 +55,9 @@ public class PlaylistSongsAdapter extends RecyclerView.Adapter<PlaylistSongsAdap
         holder.tvArtist.setText(currentItem.getArtistName());
 
         holder.tvDuration.setText(currentItem.getSongDuration());
-        Glide.with(mContext).load(currentItem.getImage()).into(holder.ivSong);
+        GlideApp.with(mContext).load(currentItem.getImage()).into(holder.ivSong);
 
-        Glide.with(mContext)
+        GlideApp.with(mContext)
                 .load(currentItem.getCollabProfile())
                 .circleCrop()
                 .into(holder.ivCollabProfile);
@@ -145,7 +139,7 @@ public class PlaylistSongsAdapter extends RecyclerView.Adapter<PlaylistSongsAdap
         this.trackId = trackId;
     }
 
-    public boolean isBackPress(){
+    public boolean isBackPress() {
         if (popupWindow != null && popupWindow.isShowing()) {
             popupWindow.dismiss();
             return false;

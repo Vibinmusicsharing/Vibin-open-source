@@ -1,8 +1,9 @@
 package com.shorincity.vibin.music_sharing.adapters;
+
 // playlist class
 public class Playlist {
     String name;
-  int id;
+    int id;
 
     public Playlist(String name, int id) {
         this.name = name;

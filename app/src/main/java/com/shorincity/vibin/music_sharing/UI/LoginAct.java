@@ -28,13 +28,10 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.activity.SelectMusicLanguageActivity;
 import com.shorincity.vibin.music_sharing.activity.SignUpEmailPassActivity;
 import com.shorincity.vibin.music_sharing.activity.TermsAndConditionsActivity;
-import com.shorincity.vibin.music_sharing.activity.WebviewActivity;
 import com.shorincity.vibin.music_sharing.callbackclick.LoginCallback;
 import com.shorincity.vibin.music_sharing.databinding.ActivityLoginBinding;
 import com.shorincity.vibin.music_sharing.fragment.ErrorDailogFragment;
@@ -42,7 +39,6 @@ import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
 import com.shorincity.vibin.music_sharing.model.Resource;
 import com.shorincity.vibin.music_sharing.model.SignUpResponse;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
-import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.utils.OneTapLoginHelper;
 import com.shorincity.vibin.music_sharing.viewmodel.LoginViewModel;
 

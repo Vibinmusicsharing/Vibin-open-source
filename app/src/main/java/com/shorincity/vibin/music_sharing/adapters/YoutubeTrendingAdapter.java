@@ -10,9 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.model.YoutubeTrendingModel;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.util.ArrayList;
 
@@ -22,7 +22,7 @@ public class YoutubeTrendingAdapter extends RecyclerView.Adapter<YoutubeTrending
     private Context mContext;
     private ArrayList<YoutubeTrendingModel.Item> list;
 
-    public YoutubeTrendingAdapter(Context context, ArrayList<YoutubeTrendingModel.Item> exampleList){
+    public YoutubeTrendingAdapter(Context context, ArrayList<YoutubeTrendingModel.Item> exampleList) {
         mContext = context;
         list = exampleList;
     }
@@ -30,7 +30,7 @@ public class YoutubeTrendingAdapter extends RecyclerView.Adapter<YoutubeTrending
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.item_trending_list_adapter,parent,false);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.item_trending_list_adapter, parent, false);
 
         final ExampleViewHolder mViewHolder = new ExampleViewHolder(v);
         v.setOnClickListener(new View.OnClickListener() {
@@ -50,7 +50,7 @@ public class YoutubeTrendingAdapter extends RecyclerView.Adapter<YoutubeTrending
 
 
         holder.mTextViewTitle.setText(name);
-        Glide.with(mContext).load(imageUrl).into(holder.mImageView);
+        GlideApp.with(mContext).load(imageUrl).into(holder.mImageView);
 
     }
 
@@ -60,11 +60,12 @@ public class YoutubeTrendingAdapter extends RecyclerView.Adapter<YoutubeTrending
     }
 
 
-    public class ExampleViewHolder extends RecyclerView.ViewHolder{
+    public class ExampleViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView mImageView;
         public TextView mTextViewTitle;
         public View view;
+
         public ExampleViewHolder(@NonNull View itemView) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.imageViewaddtoplaylist);
@@ -83,6 +84,7 @@ public class YoutubeTrendingAdapter extends RecyclerView.Adapter<YoutubeTrending
     }
 
     CustomItemClickListener customItemClickListener;
+
     public interface CustomItemClickListener {
         public void onItemClick(View v, int position);
     }

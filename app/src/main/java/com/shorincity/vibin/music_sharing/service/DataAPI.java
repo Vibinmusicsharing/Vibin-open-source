@@ -4,9 +4,9 @@ package com.shorincity.vibin.music_sharing.service;
 import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.AddSongLogModel;
-import com.shorincity.vibin.music_sharing.model.AddTrackResponse;
 import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
 import com.shorincity.vibin.music_sharing.model.CollabsList;
+import com.shorincity.vibin.music_sharing.model.CoverAvatarResponse;
 import com.shorincity.vibin.music_sharing.model.CreateSessionModel;
 import com.shorincity.vibin.music_sharing.model.GetNotifications;
 import com.shorincity.vibin.music_sharing.model.HomeYoutubeModel;
@@ -17,6 +17,7 @@ import com.shorincity.vibin.music_sharing.model.PlayListDeleteModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistLikeModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistSongCollabDeleteModel;
+import com.shorincity.vibin.music_sharing.model.PreferredLangGenresModel;
 import com.shorincity.vibin.music_sharing.model.RecentSongModel;
 import com.shorincity.vibin.music_sharing.model.SignUpResponse;
 import com.shorincity.vibin.music_sharing.model.SignUpUserNameCheckModel;
@@ -37,19 +38,24 @@ import com.shorincity.vibin.music_sharing.model.avatar.AvatarDetails;
 import com.shorincity.vibin.music_sharing.model.coverart.CoverArtImageResponse;
 import com.shorincity.vibin.music_sharing.model.lastfm.LastFMSearchResponse;
 import com.shorincity.vibin.music_sharing.model.lastfm.trackinfo.TrackInfoResponse;
+import com.shorincity.vibin.music_sharing.model.profile.UserProfileResponse;
 import com.shorincity.vibin.music_sharing.model.shareplaylist.PlaylistDetailResponse;
 import com.shorincity.vibin.music_sharing.model.shareplaylist.SharePlaylistResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -537,4 +543,51 @@ public interface DataAPI {
             @Field("token") String usertoken,
             @Field("playlist") String playlist
     );
+
+    @FormUrlEncoded
+    @POST("/user/v1/get_preferred_lang_genres/")
+    Call<PreferredLangGenresModel> callPreferredLangGenres(
+            @Header("Authorization") String token,
+            @Field("token") String usertoken
+    );
+
+    @FormUrlEncoded
+    @POST("/user/v1/update_user_info/")
+    Call<AdditionalSignUpModel> callEditProfileDetails(
+            @Header("Authorization") String token,
+            @Field("token") String usertoken,
+            @Field("updated_dob") String dobUser,
+            @Field("updated_gender") String gender,
+            @Field("updated_username") String username,
+            @Field("updated_name") String fullname,
+            @Field("updated_show_recent_songs") Boolean isRecentSongs
+    );
+
+    @Multipart
+    @POST("/user/v1/update_user_images/")
+    Call<CoverAvatarResponse> callUpdateProfileOrCover(
+            @Header("Authorization") String token,
+            @Part("token") RequestBody usertoken,
+            @Part("image_type") RequestBody imageType,
+            @Part MultipartBody.Part imageFile,
+            @Part("avatar_link") RequestBody avatarLink
+    );
+
+    @FormUrlEncoded
+    @POST("/user/v1/load_user_profile/")
+    Call<UserProfileResponse> callUserProfile(
+            @Header("Authorization") String token,
+            @Field("token") String usertoken,
+            @Field("profile_viewing_id") int id
+    );
+
+    @FormUrlEncoded
+    @POST("/playlist/v1/pin_playlist/")
+    Call<APIResponse> callPinPlayList(
+            @Header("Authorization") String token,
+            @Field("token") String usertoken,
+            @Field("playlist_id") Integer playListId,
+            @Field("pin_type") String pinType
+    );
+
 }

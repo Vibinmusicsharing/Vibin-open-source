@@ -13,13 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.shorincity.vibin.music_sharing.R;
 
 import java.util.ArrayList;
+
 // search adapter for spotify
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ExampleViewHolder> {
 
     private Context mContext;
     private ArrayList<searchItem> mExampleList;
 
-    public SearchAdapter(Context context, ArrayList<searchItem> exampleList){
+    public SearchAdapter(Context context, ArrayList<searchItem> exampleList) {
         mContext = context;
         mExampleList = exampleList;
     }
@@ -28,7 +29,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ExampleVie
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.item_searchproduct_vertical,parent,false);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.item_searchproduct_vertical, parent, false);
         return new ExampleViewHolder(v);
     }
 
@@ -39,9 +40,9 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ExampleVie
         String id = currentItem.getPlaylistID();
         String priv = currentItem.getPrivatepublic();
         holder.mTextViewTitle.setText(title);
-        if(priv.equals("true")) {
+        if (priv.equals("true")) {
             holder.lockunlock.setImageResource(R.drawable.ic_lock_outline_black_24dp);
-        }else{
+        } else {
             holder.lockunlock.setVisibility(View.GONE);
         }
 
@@ -53,10 +54,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ExampleVie
     }
 
 
-    public class ExampleViewHolder extends RecyclerView.ViewHolder{
+    public class ExampleViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView mImageView,lockunlock;
+        public ImageView mImageView, lockunlock;
         public TextView mTextViewTitle;
+
         public ExampleViewHolder(@NonNull View itemView) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.imageView);

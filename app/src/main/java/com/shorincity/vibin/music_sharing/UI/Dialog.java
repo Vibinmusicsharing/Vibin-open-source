@@ -17,15 +17,16 @@ import com.shorincity.vibin.music_sharing.R;
 // dialog  activity_youtube_2
 public class Dialog extends AppCompatDialogFragment {
 
-    private EditText playlistName,PlaylistPassword;
+    private EditText playlistName, PlaylistPassword;
     private ExampleDialogListener listener;
+
     @NonNull
     @Override
     public android.app.Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.layout_dialog,null);
+        View view = inflater.inflate(R.layout.layout_dialog, null);
 
         playlistName = view.findViewById(R.id.dialog_playlistname);
         PlaylistPassword = view.findViewById(R.id.dialog_password);
@@ -41,15 +42,14 @@ public class Dialog extends AppCompatDialogFragment {
                 .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                    String playlistname = playlistName.getText().toString();
-                    String password = PlaylistPassword.getText().toString();
-                    listener.addTexts(playlistname,password);
+                        String playlistname = playlistName.getText().toString();
+                        String password = PlaylistPassword.getText().toString();
+                        listener.addTexts(playlistname, password);
                     }
                 });
 
 
-
-          return builder.create();
+        return builder.create();
     }
 
     @Override
@@ -63,7 +63,7 @@ public class Dialog extends AppCompatDialogFragment {
         }
     }
 
-    public interface ExampleDialogListener{
-      void addTexts(String playlistname, String password);
+    public interface ExampleDialogListener {
+        void addTexts(String playlistname, String password);
     }
 }

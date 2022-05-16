@@ -81,5 +81,10 @@
     <dimen name="btn_round_size_60">60dp</dimen>
     <dimen name="btn_round_size_70">70dp</dimen>
 
+    <dimen name="ayp_8dp">8dp</dimen>
+    <dimen name="ayp_12sp">12sp</dimen>
+    <dimen name="ayp_menu_dialog_container_margin">8dp</dimen>
+    <dimen name="ayp_menu_item_padding">12dp</dimen>
+    <dimen name="ayp_menu_item_text_size">16sp</dimen>
 
 </resources>

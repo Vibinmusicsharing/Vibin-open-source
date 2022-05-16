@@ -328,16 +328,16 @@
                                     android:id="@+id/tv_view_more_recently_played"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:paddingLeft="@dimen/_4sdp"
-                                    android:paddingRight="@dimen/_4sdp"
-                                    android:paddingTop="@dimen/_2sdp"
-                                    android:paddingBottom="@dimen/_2sdp"
                                     android:layout_alignParentRight="true"
                                     android:layout_marginRight="@dimen/_10sdp"
+                                    android:paddingLeft="@dimen/_4sdp"
+                                    android:paddingTop="@dimen/_2sdp"
+                                    android:paddingRight="@dimen/_4sdp"
+                                    android:paddingBottom="@dimen/_2sdp"
                                     android:text="@string/view_more"
                                     android:textColor="@android:color/holo_blue_light"
                                     android:textSize="@dimen/_13sdp"
-                                    android:textStyle="bold"/>
+                                    android:textStyle="bold" />
 
 
                             </RelativeLayout>

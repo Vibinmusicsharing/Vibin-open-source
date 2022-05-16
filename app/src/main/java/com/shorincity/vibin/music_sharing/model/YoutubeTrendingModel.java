@@ -66,7 +66,7 @@ public class YoutubeTrendingModel implements Serializable {
     }
 
 
-    public class Default implements Serializable{
+    public class Default implements Serializable {
 
         @SerializedName("url")
         @Expose
@@ -104,7 +104,7 @@ public class YoutubeTrendingModel implements Serializable {
 
     }
 
-    public class High implements Serializable{
+    public class High implements Serializable {
 
         @SerializedName("url")
         @Expose
@@ -191,7 +191,7 @@ public class YoutubeTrendingModel implements Serializable {
 
     }
 
-    public class Localized implements Serializable{
+    public class Localized implements Serializable {
 
         @SerializedName("title")
         @Expose
@@ -218,7 +218,7 @@ public class YoutubeTrendingModel implements Serializable {
 
     }
 
-    public class Maxres implements Serializable{
+    public class Maxres implements Serializable {
 
         @SerializedName("url")
         @Expose
@@ -256,7 +256,7 @@ public class YoutubeTrendingModel implements Serializable {
 
     }
 
-    public class Medium implements Serializable{
+    public class Medium implements Serializable {
 
         @SerializedName("url")
         @Expose
@@ -294,7 +294,7 @@ public class YoutubeTrendingModel implements Serializable {
 
     }
 
-    public class PageInfo implements Serializable{
+    public class PageInfo implements Serializable {
 
         @SerializedName("totalResults")
         @Expose
@@ -321,7 +321,7 @@ public class YoutubeTrendingModel implements Serializable {
 
     }
 
-    public class Snippet implements Serializable{
+    public class Snippet implements Serializable {
 
         @SerializedName("publishedAt")
         @Expose
@@ -464,7 +464,7 @@ public class YoutubeTrendingModel implements Serializable {
         }
     }
 
-    public class Standard implements Serializable{
+    public class Standard implements Serializable {
 
         @SerializedName("url")
         @Expose
@@ -502,7 +502,7 @@ public class YoutubeTrendingModel implements Serializable {
 
     }
 
-    public class Thumbnails implements Serializable{
+    public class Thumbnails implements Serializable {
 
         @SerializedName("default")
         @Expose

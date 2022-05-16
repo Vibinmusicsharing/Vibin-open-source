@@ -33,7 +33,7 @@ public class Platform_choose_activity extends AppCompatActivity implements Navig
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_platform_choose_activity);
-         Toolbar toolbar = findViewById(R.id.my_toolbar);
+        Toolbar toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
 
         drawerLayout = findViewById(R.id.choose_plat_main);
@@ -48,7 +48,7 @@ public class Platform_choose_activity extends AppCompatActivity implements Navig
         SharedPrefManager sharedPrefManager = new SharedPrefManager(Platform_choose_activity.this);
         String email = sharedPrefManager.loadEmail();
         TextView mEmail = mHeaderView.findViewById(R.id.nav_email);
-        Button button= (Button) findViewById(R.id.onclicknavigator);
+        Button button = (Button) findViewById(R.id.onclicknavigator);
         button.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("WrongConstant")
             @Override
@@ -65,26 +65,26 @@ public class Platform_choose_activity extends AppCompatActivity implements Navig
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.drawermenu, menu);
         return true;
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         DrawerLayout drawerLayout = findViewById(R.id.choose_plat_main);
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
     }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         int id = menuItem.getItemId();
 
-        switch(id)
-        {
+        switch (id) {
             case R.id.youtube_platform:
                 Intent h = new Intent(Platform_choose_activity.this, youtube.class);
                 startActivity(h);
@@ -93,7 +93,7 @@ public class Platform_choose_activity extends AppCompatActivity implements Navig
             case R.id.settings_nav:
                 Toast.makeText(this, "You clicked on Settings", Toast.LENGTH_SHORT).show();
                 break;
-                /** Only case left to add is the fragment R.id.settings_nav which will have setting fragment Navigation**/
+            /** Only case left to add is the fragment R.id.settings_nav which will have setting fragment Navigation**/
         }
         drawerLayout = findViewById(R.id.choose_plat_main);
         drawerLayout.closeDrawer(GravityCompat.START);

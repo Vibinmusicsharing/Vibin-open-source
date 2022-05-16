@@ -17,7 +17,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -37,13 +36,11 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,24 +60,16 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.giphy.sdk.core.models.Media;
 import com.giphy.sdk.core.models.enums.MediaType;
 import com.giphy.sdk.core.models.enums.RatingType;
 import com.giphy.sdk.core.models.enums.RenditionType;
 import com.giphy.sdk.ui.GPHRequestType;
-import com.giphy.sdk.ui.Giphy;
 import com.giphy.sdk.ui.pagination.GPHContent;
 import com.giphy.sdk.ui.views.GPHGridCallback;
 import com.giphy.sdk.ui.views.GifView;
 import com.giphy.sdk.ui.views.GiphyGridView;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
@@ -92,8 +81,6 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
-import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.jackandphantom.androidlikebutton.AndroidLikeButton;
@@ -103,14 +90,12 @@ import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.VibinApplication;
-import com.shorincity.vibin.music_sharing.activity.AllRecntSongsActivity;
-import com.shorincity.vibin.music_sharing.activity.SplashActivity;
 import com.shorincity.vibin.music_sharing.adapters.AddToPlaylistAdapter;
 import com.shorincity.vibin.music_sharing.adapters.AutoCompleteAdapter;
 import com.shorincity.vibin.music_sharing.adapters.PlayListDetailsAdapter;
-import com.shorincity.vibin.music_sharing.adapters.Playlist;
 import com.shorincity.vibin.music_sharing.adapters.PlaylistRecyclerView;
 import com.shorincity.vibin.music_sharing.fragment.MyBaseFragment;
+import com.shorincity.vibin.music_sharing.fragment.OtherUserProfileFragment;
 import com.shorincity.vibin.music_sharing.fragment.PlaylistDetailFragmentNew;
 import com.shorincity.vibin.music_sharing.fragment.PublicPlaylistFragment;
 import com.shorincity.vibin.music_sharing.fragment.UserNotificationFragment;
@@ -139,12 +124,7 @@ import com.shorincity.vibin.music_sharing.youtube_files.PlayYoutubeVideoActivity
 import com.shorincity.vibin.music_sharing.youtube_files.YoutubeHomeFragment;
 import com.shorincity.vibin.music_sharing.youtube_files.floating.AsyncTask.Constants;
 import com.shorincity.vibin.music_sharing.youtube_files.floating.PlayerService;
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.player.Config;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Error;
-import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
@@ -156,10 +136,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
-import java.util.logging.Logger;
 
 import javax.net.ssl.SSLContext;
 
@@ -170,23 +147,16 @@ import retrofit2.Response;
 
 // Youtube Main Screen
 public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.NotificationCallback,
-        ConnectionStateCallback, PlayListDetailsAdapter.ItemListener, YouTubePlayer.OnInitializedListener,
+        PlayListDetailsAdapter.ItemListener, YouTubePlayer.OnInitializedListener,
         View.OnClickListener, MotionLayout.TransitionListener {
-    FrameLayout mMainFrame;
+    private FrameLayout mMainFrame;
 
-    PublicPlaylistFragment publicPlaylistFragment;
+    private PublicPlaylistFragment publicPlaylistFragment;
     //youtube_user youtube_User;
-    UserSearchFragment userSearchFragment;
-    UserNotificationFragment userNotificationFragment;
-    UserProfileFragment userProfileFragment;
-    YoutubeHomeFragment youtubeHomeFragment;
-
-    private static final String CLIENT_ID = "d97e6af9d329405d997632c60fe79a16";
-
-
-    private static final String REDIRECT_URI = "http://vibin.in/callback/";
-    private static final int REQUEST_CODE = 1337;
-    private Player mPlayer;
+    private UserSearchFragment userSearchFragment;
+    private UserNotificationFragment userNotificationFragment;
+    private YoutubeHomeFragment youtubeHomeFragment;
+    private UserProfileFragment userProfileFragment;
 
     String preferPlatformIntent;
     public CustomSlidePanLayout mSlidingLayout;
@@ -203,7 +173,6 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     private int lengthms = 270000;
     private int position = 0;
 
-    private String createnewplaylist = AppConstants.BASE_URL + "playlist/v1/create_new_playlist/";
     private MyPlayerStateChangeListener playerStateChangeListener;
     private MyPlaybackEventListener playbackEventListener;
     private TextView titlemain;
@@ -296,7 +265,8 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         youtubeHomeFragment = new YoutubeHomeFragment();
         userSearchFragment = new UserSearchFragment();
         userNotificationFragment = new UserNotificationFragment();
-        userProfileFragment = new UserProfileFragment();
+//        userProfileFragment = NewUserProfileFragment.getInstance();
+        userProfileFragment = UserProfileFragment.getInstance();
         crashAnlyticslogUser();
         String comingFrom = getIntent() == null ? "" : getIntent().getStringExtra(AppConstants.INTENT_COMING_FROM);
 
@@ -396,6 +366,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                     bottomNavigationView.getMenu().getItem(2).setChecked(true);
                 else if (f instanceof UserNotificationFragment)
                     bottomNavigationView.getMenu().getItem(3).setChecked(true);
+//                else if (f instanceof NewUserProfileFragment && ((NewUserProfileFragment) f).isUserProfile())
                 else if (f instanceof UserProfileFragment)
                     bottomNavigationView.getMenu().getItem(4).setChecked(true);
                 else if (f instanceof PlaylistDetailFragmentNew) {
@@ -425,11 +396,17 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     public void onBackPressed() {
         Logging.d("onBackPressed");
         Fragment f = fragmentManager.findFragmentById(R.id.youtube_frame);
+        boolean isPlaying = false;
+        try {
+            isPlaying = (mYouTubePlayer != null && mYouTubePlayer.isPlaying());
+        } catch (Exception e) {
+        }
+
         if (mSlidingLayout != null && mSlidingLayout.isOpen()) {
             mSlidingLayout.closePane();
         } else if (playerMode == 2) {
             motionLayout.transitionToStart();
-        } else if ((playerMode > 0 || (mYouTubePlayer != null && mYouTubePlayer.isPlaying())) && f instanceof YoutubeHomeFragment) {
+        } else if ((playerMode > 0 || isPlaying) && f instanceof YoutubeHomeFragment) {
             imgPlayerClose.performClick();
         } else if (f instanceof PlaylistDetailFragmentNew) {
             if (((PlaylistDetailFragmentNew) f).isBackPress())
@@ -753,36 +730,6 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         if (requestCode == REQUEST_VIDEO) {
             youTubePlayerView.initialize(AppConstants.YOUTUBE_KEY, this);
 
-        } else if (requestCode == OVERLAY_PERMISSION_REQ) {
-            int duration = mYouTubePlayer.getCurrentTimeMillis();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (!Settings.canDrawOverlays(this)) {
-                    needPermissionDialog(requestCode);
-                } else {
-                    Intent i = new Intent(this, PlayerService.class);
-                    i.putExtra("VID_ID", videoId);
-                    i.putExtra("PLAYLIST_ID", playId);
-                    i.setAction(STARTFOREGROUND_WEB_ACTION);
-                    i.putExtra("SONG_DURATION", duration);
-                    startService(i);
-                    homeClicked();
-                }
-            }
-        } else if (requestCode == REQUEST_CODE) {
-            final AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-            if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-                Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
-                Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
-                    @Override
-                    public void onInitialized(SpotifyPlayer spotifyPlayer) {
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        Log.e("this", "Could not initialize player: " + throwable.getMessage());
-                    }
-                });
-            }
         }
     }
 
@@ -827,35 +774,6 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 break;
         }
     }
-
-    @Override
-    public void onLoggedIn() {
-        Log.d("this", "User logged in");
-
-        // This is the line that plays a song.
-        mPlayer.playUri(null, "spotify:track:7hH4dSp71EOv3XS57e8CYu", 0, 0);
-    }
-
-    @Override
-    public void onLoggedOut() {
-        Log.d("this", "User logged out");
-    }
-
-    @Override
-    public void onLoginFailed(Error var1) {
-        Log.d("this", "Login failed");
-    }
-
-    @Override
-    public void onTemporaryError() {
-        Log.d("this", "Temporary error occurred");
-    }
-
-    @Override
-    public void onConnectionMessage(String message) {
-        Log.d("this", "Received connection message: " + message);
-    }
-
 
     // API to update preferred platform whenever user comes in youtube by switching the platform
     public void callUpdatePlatformAPI() {
@@ -1152,20 +1070,12 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
     @Override
     protected void onResume() {
-        super.onResume();
-        initWebSocket();
-//        callGetNotificationUnreadCountAPI();
+        try {
+            super.onResume();
+        } catch (Exception e) {
 
-        stopFloatingService();
-        //        if(mYouTubePlayer!=null && playerTotalDurationTv!=null){
-        //            playerTotalDurationTv.setText(Utility.convertDuration(Long.valueOf(mYouTubePlayer.getDurationMillis())));
-        //            int progress = seekBar.getProgress();
-        //            lengthms = mYouTubePlayer.getDurationMillis();
-        //            float current = mYouTubePlayer.getCurrentTimeMillis();
-        //            int to = (int) (lengthms * progress / 100);
-        //
-        //            mYouTubePlayer.seekToMillis(to);
-        //        }
+        }
+        initWebSocket();
 
         if (mYouTubePlayer != null && playerTotalDurationTv != null && playerMode > 0) {
             Logging.d("==> Resume method call playerMode" + playerMode);
@@ -1205,17 +1115,6 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         super.onPause();
         if (webSocketClient != null)
             webSocketClient.disconnect();
-    }
-
-    private void stopFloatingService() {
-        try {
-            if (isServiceRunning(PlayerService.class)) {
-                Intent i = new Intent(youtube.this, PlayerService.class);
-                stopService(i);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void showBadge(Context context, BottomNavigationView
@@ -1622,20 +1521,24 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
                 handler.postDelayed(this, 1000);
 
-                if (mYouTubePlayer != null) {
+                try {
+                    if (mYouTubePlayer != null) {
 
-                    lengthms = mYouTubePlayer.getDurationMillis();
-                    float current = mYouTubePlayer.getCurrentTimeMillis();
-                    float wowInt = ((current / lengthms) * 100);
-                    if (seekusedbyuser == false) {
-                        mSeekBar.setProgress((int) wowInt);
+                        lengthms = mYouTubePlayer.getDurationMillis();
+                        float current = mYouTubePlayer.getCurrentTimeMillis();
+                        float wowInt = ((current / lengthms) * 100);
+                        if (seekusedbyuser == false) {
+                            mSeekBar.setProgress((int) wowInt);
 
-                        // displaying current duration when song starts to play
-                        if ((mYouTubePlayer != null && mYouTubePlayer.isPlaying()) && (int) wowInt > 0) {
-                            playerCurrentDurationTv.setText(Utility.convertDuration(Long.valueOf(mYouTubePlayer.getCurrentTimeMillis())));
+                            // displaying current duration when song starts to play
+                            if ((mYouTubePlayer != null && mYouTubePlayer.isPlaying()) && (int) wowInt > 0) {
+                                playerCurrentDurationTv.setText(Utility.convertDuration(Long.valueOf(mYouTubePlayer.getCurrentTimeMillis())));
+                            }
+
                         }
-
                     }
+                } catch (Exception e) {
+
                 }
             }
         };
@@ -1780,7 +1683,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     }
 
     private void automaticNextSong() {
-        if (position > -1 && (position + 1) < playlist.size()) {
+        if (position > -1 && ((position + 1) < playlist.size())) {
             if (handler != null) {
                 handler.removeCallbacksAndMessages(my);
             }
@@ -2408,6 +2311,16 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                 Log.i("Error: ", "ADD NOTIFICATION " + t.getMessage());
             }
         });
+    }
+
+    public void onLoadUserProfile(int customerId, int playlistId,
+                                  String userName, String fullName) {
+        OtherUserProfileFragment fragment =
+                OtherUserProfileFragment.getInstance(customerId,
+                        playlistId,
+                        userName,
+                        fullName);
+        onLoadFragment(fragment);
     }
 
     public void onLoadFragment(MyBaseFragment fragment) {

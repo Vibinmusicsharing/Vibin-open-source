@@ -25,25 +25,26 @@ public class YoutubeSearchAdapter extends ArrayAdapter<Item> {
 
     }
 
-    class ViewHolder{
+    class ViewHolder {
         TextView txtTen;
         ImageView imghinh;
 
     }
+
     @SuppressLint("InflateParams")
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         ViewHolder viewHolder = null;
-        if (convertView == null){
+        if (convertView == null) {
             LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-            convertView = layoutInflater.inflate(R.layout.dong_video,null);
+            convertView = layoutInflater.inflate(R.layout.dong_video, null);
             viewHolder = new ViewHolder();
             viewHolder.imghinh = convertView.findViewById(R.id.imageviewThumbnail);
             viewHolder.txtTen = convertView.findViewById(R.id.textviewTitle);
 
             convertView.setTag(viewHolder);
-        }else {
+        } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         Item item = getItem(position);

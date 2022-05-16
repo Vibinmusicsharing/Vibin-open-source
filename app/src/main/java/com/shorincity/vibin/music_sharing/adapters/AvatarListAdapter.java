@@ -10,10 +10,10 @@ import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.custom.RoundedImageView;
 import com.shorincity.vibin.music_sharing.model.avatar.Avatar;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ public class AvatarListAdapter extends RecyclerView.Adapter<AvatarListAdapter.Vi
         if (currentItem != null) {
             try {
                 String imageUrl = currentItem.getLink();
-                Glide.with(mContext).load(imageUrl).into(holder.mImageView);
+                GlideApp.with(mContext).load(imageUrl).into(holder.mImageView);
             } catch (Exception e) {
                 e.printStackTrace();
             }

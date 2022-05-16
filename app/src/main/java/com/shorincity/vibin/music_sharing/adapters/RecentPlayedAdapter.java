@@ -10,10 +10,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.model.RecentSongModel;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.util.ArrayList;
 
@@ -23,7 +23,7 @@ public class RecentPlayedAdapter extends RecyclerView.Adapter<RecentPlayedAdapte
     private Context mContext;
     private ArrayList<RecentSongModel> list;
 
-    public RecentPlayedAdapter(Context context, ArrayList<RecentSongModel> exampleList){
+    public RecentPlayedAdapter(Context context, ArrayList<RecentSongModel> exampleList) {
         mContext = context;
         list = exampleList;
     }
@@ -31,7 +31,7 @@ public class RecentPlayedAdapter extends RecyclerView.Adapter<RecentPlayedAdapte
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.adapter_recent_played,parent,false);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.adapter_recent_played, parent, false);
 
         final ExampleViewHolder mViewHolder = new ExampleViewHolder(v);
         v.setOnClickListener(new View.OnClickListener() {
@@ -52,15 +52,15 @@ public class RecentPlayedAdapter extends RecyclerView.Adapter<RecentPlayedAdapte
 
         holder.mTextViewTitle.setText(name);
 
-        if(currentItem.getSongType().equalsIgnoreCase(AppConstants.YOUTUBE)) {
+        if (currentItem.getSongType().equalsIgnoreCase(AppConstants.YOUTUBE)) {
             holder.songTypeIv.setImageResource(R.drawable.youtube);
             //holder.songTypeIv.setBackgroundColor(ContextCompat.getColor(mContext, R.color.yt_red));
-        } else if(currentItem.getSongType().equalsIgnoreCase(AppConstants.SPOTIFY)) {
+        } else if (currentItem.getSongType().equalsIgnoreCase(AppConstants.SPOTIFY)) {
             holder.songTypeIv.setImageResource(R.drawable.spotify4);
             //holder.songTypeIv.setBackgroundColor(ContextCompat.getColor(mContext, R.color.spot_green));
         }
 
-        Glide.with(mContext).load(imageUrl).into(holder.mImageView);
+        GlideApp.with(mContext).load(imageUrl).into(holder.mImageView);
 
     }
 
@@ -70,11 +70,12 @@ public class RecentPlayedAdapter extends RecyclerView.Adapter<RecentPlayedAdapte
     }
 
 
-    public class ExampleViewHolder extends RecyclerView.ViewHolder{
+    public class ExampleViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView mImageView, songTypeIv;
         public TextView mTextViewTitle;
         public View view;
+
         public ExampleViewHolder(@NonNull View itemView) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.imageViewaddtoplaylist);
@@ -94,6 +95,7 @@ public class RecentPlayedAdapter extends RecyclerView.Adapter<RecentPlayedAdapte
     }
 
     CustomItemClickListener customItemClickListener;
+
     public interface CustomItemClickListener {
         public void onItemClick(View v, int position);
     }

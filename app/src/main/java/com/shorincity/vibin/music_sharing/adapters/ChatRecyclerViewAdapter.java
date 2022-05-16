@@ -1,7 +1,6 @@
 package com.shorincity.vibin.music_sharing.adapters;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,20 +8,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatImageView;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.model.ChatMessage;
 import com.shorincity.vibin.music_sharing.model.realtime.ChatResponse;
 import com.shorincity.vibin.music_sharing.model.realtime.RTJoinUpdate;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerViewAdapter.ChatViewHolder> {
@@ -83,7 +79,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
                 ChatResponse chatResponse = (ChatResponse) obj;
                 ((RightChatViewHolder) holder).contents.setText(chatResponse.getMessageData().getSenderMessage());
                 ((RightChatViewHolder) holder).tvSenderName.setText(chatResponse.getMessageData().getSenderName());
-                Glide.with(mContext).load(chatResponse.getMessageData().getSenderAvatar()).circleCrop().into(((RightChatViewHolder) holder).ivProfile);
+                GlideApp.with(mContext).load(chatResponse.getMessageData().getSenderAvatar()).circleCrop().into(((RightChatViewHolder) holder).ivProfile);
                 if (lastObj instanceof ChatResponse &&
                         ((ChatResponse) lastObj).getMessageData().getSenderId().equals(((ChatResponse) obj).getMessageData().getSenderId())) {
                     ((RightChatViewHolder) holder).ivProfile.setVisibility(View.INVISIBLE);
@@ -94,7 +90,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
                 ChatResponse chatResponse = (ChatResponse) obj;
                 ((LeftChatViewHolder) holder).contents.setText(chatResponse.getMessageData().getSenderMessage());
                 ((LeftChatViewHolder) holder).tvSenderName.setText(chatResponse.getMessageData().getSenderName());
-                Glide.with(mContext).load(chatResponse.getMessageData().getSenderAvatar()).circleCrop().into(((LeftChatViewHolder) holder).ivProfile);
+                GlideApp.with(mContext).load(chatResponse.getMessageData().getSenderAvatar()).circleCrop().into(((LeftChatViewHolder) holder).ivProfile);
                 if (lastObj instanceof ChatResponse &&
                         ((ChatResponse) lastObj).getMessageData().getSenderId().equals(((ChatResponse) obj).getMessageData().getSenderId())) {
                     ((LeftChatViewHolder) holder).ivProfile.setVisibility(View.INVISIBLE);

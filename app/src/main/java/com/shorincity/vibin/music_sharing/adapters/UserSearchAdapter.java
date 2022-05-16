@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
@@ -23,6 +22,7 @@ import com.shorincity.vibin.music_sharing.model.UserSearchModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Ex
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.adapter_user_search, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_user_search, parent, false);
         return new ExampleViewHolder(v);
     }
 
@@ -118,7 +118,7 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Ex
 
             if (!TextUtils.isEmpty(avatarUrl)) {
                 try {
-                    Glide.with(mContext).load(avatarUrl).into(mImageView);
+                    GlideApp.with(mContext).load(avatarUrl).into(mImageView);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

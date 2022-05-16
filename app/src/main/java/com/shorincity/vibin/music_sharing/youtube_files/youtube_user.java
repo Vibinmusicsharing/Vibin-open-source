@@ -20,6 +20,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 public class youtube_user extends Fragment {
     View view;
     Context context;
+
     public youtube_user() {
         // Required empty public constructor
     }
@@ -28,7 +29,7 @@ public class youtube_user extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-         view = inflater.inflate(R.layout.fragment_youtube_user_old, container, false);
+        view = inflater.inflate(R.layout.fragment_youtube_user_old, container, false);
         context = view.getContext();
         SharedPrefManager sharedPrefManager = new SharedPrefManager(context);
         String email = sharedPrefManager.loadEmail();
@@ -49,8 +50,9 @@ public class youtube_user extends Fragment {
         });
 
 
-        return  view;
+        return view;
     }
+
     @Override
     public void onStart() {
         super.onStart();

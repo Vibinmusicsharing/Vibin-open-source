@@ -26,13 +26,11 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.chauthai.swipereveallayout.SwipeRevealLayout;
 import com.chauthai.swipereveallayout.ViewBinderHelper;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.custom.RoundedImageView;
-import com.shorincity.vibin.music_sharing.activity.RealTimePlayer;
 import com.shorincity.vibin.music_sharing.activity.RealTimePlayerActivity;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.GetNotifications;
@@ -40,6 +38,7 @@ import com.shorincity.vibin.music_sharing.model.UpdateNotificationModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 
 import java.util.ArrayList;
@@ -174,7 +173,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
                 if (!TextUtils.isEmpty(avatarUrl)) {
                     try {
-                        Glide.with(mContext).load(avatarUrl).into(mImageView);
+                        GlideApp.with(mContext).load(avatarUrl).into(mImageView);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -202,7 +201,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
                 if (!TextUtils.isEmpty(avatarUrl)) {
                     try {
-                        Glide.with(mContext).load(avatarUrl).into(mImageView);
+                        GlideApp.with(mContext).load(avatarUrl).into(mImageView);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -292,6 +291,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                             callAddCollaborateAPI(list.get(position), AppConstants.ACCEPTED,
                                     AppConstants.UPDATE, position);
 
+                            sendCollabAcceptedNotification(senderID, receiverID, playlistId);
                         } else if (list.get(position).getType().equals(AppConstants.REAL_TIME_INVITE) ||
                                 list.get(position).getType().equals(AppConstants.COLLAB_ACCEPTED)) {
 
@@ -299,7 +299,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                         }
 
 
-                        sendCollabAcceptedNotification(senderID, receiverID, playlistId);
 
                       /*  new Handler().postDelayed(new Runnable() {
                             @Override

@@ -86,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/profile_spotify_logo2"
                 android:layout_marginStart="@dimen/_5sdp"
-                 />
+                />
 
         </RadioGroup>
     </LinearLayout>

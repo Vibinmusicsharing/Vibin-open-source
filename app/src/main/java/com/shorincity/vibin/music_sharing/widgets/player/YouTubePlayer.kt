@@ -39,7 +39,7 @@ interface YouTubePlayer {
 
     fun setPlaybackRate(playbackRate: PlayerConstants.PlaybackRate)
 
-    fun setQuality(videoQuality:PlayerConstants.PlaybackQuality)
+    fun setQuality(videoQuality: PlayerConstants.PlaybackQuality)
 
     fun addListener(listener: YouTubePlayerListener): Boolean
     fun removeListener(listener: YouTubePlayerListener): Boolean

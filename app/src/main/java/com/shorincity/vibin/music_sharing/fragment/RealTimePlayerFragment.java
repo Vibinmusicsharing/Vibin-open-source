@@ -1,29 +1,21 @@
 package com.shorincity.vibin.music_sharing.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.activity.RealTimePlayerActivity;
-import com.shorincity.vibin.music_sharing.adapters.PlaylistCollaboratosAdapter;
 import com.shorincity.vibin.music_sharing.adapters.PlaylistSongsAdapter;
-import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
-import com.shorincity.vibin.music_sharing.callbackclick.PlaylistDetailCallback;
-import com.shorincity.vibin.music_sharing.databinding.FragmentPlayerListnerBinding;
 import com.shorincity.vibin.music_sharing.databinding.FragmentRealtimePlayerBinding;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
-import com.shorincity.vibin.music_sharing.model.firebase.RealTimeSession;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Utility;
 import com.shorincity.vibin.music_sharing.viewmodel.PlaylistDetailsViewModel;

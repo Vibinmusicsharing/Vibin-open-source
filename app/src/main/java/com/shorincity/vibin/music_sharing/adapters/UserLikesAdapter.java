@@ -12,10 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.custom.RoundedImageView;
 import com.shorincity.vibin.music_sharing.model.UserLikeList;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.util.ArrayList;
 
@@ -87,7 +87,7 @@ public class UserLikesAdapter extends RecyclerView.Adapter<UserLikesAdapter.Exam
 
             if (!TextUtils.isEmpty(avatarUrl)) {
                 try {
-                    Glide.with(mContext).load(avatarUrl).into(mImageView);
+                    GlideApp.with(mContext).load(avatarUrl).into(mImageView);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

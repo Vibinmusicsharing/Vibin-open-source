@@ -104,10 +104,8 @@ public class UserNotificationFragment extends MyBaseFragment {
 
                 @Override
                 public void onSpannableClick(int sender, String firstWord) {
-                    OtherUserProfileFragment fragment =
-                            OtherUserProfileFragment.getInstance(sender,
-                                    0, firstWord, "");
-                    ((youtube) getActivity()).onLoadFragment(fragment);
+                    ((youtube) getActivity()).onLoadUserProfile(sender,
+                            0, firstWord, "");
                 }
 
                 @Override
@@ -141,10 +139,8 @@ public class UserNotificationFragment extends MyBaseFragment {
 
                 @Override
                 public void onSpannableClick(int sender, String firstWord) {
-                    OtherUserProfileFragment fragment =
-                            OtherUserProfileFragment.getInstance(sender,
-                                    0, firstWord, "");
-                    ((youtube) getActivity()).onLoadFragment(fragment);
+                    ((youtube) getActivity()).onLoadUserProfile(sender,
+                            0, firstWord, "");
                 }
 
                 @Override

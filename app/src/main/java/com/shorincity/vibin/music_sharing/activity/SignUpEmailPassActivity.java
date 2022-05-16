@@ -8,11 +8,9 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
@@ -20,40 +18,26 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.LoginAct;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.callbackclick.SignUpCallback;
 import com.shorincity.vibin.music_sharing.databinding.ActivitySignupEmailPassBinding;
-import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
 import com.shorincity.vibin.music_sharing.model.Resource;
 import com.shorincity.vibin.music_sharing.model.SignUpResponse;
 import com.shorincity.vibin.music_sharing.model.SignUpUserNameCheckModel;
-import com.shorincity.vibin.music_sharing.service.DataAPI;
-import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.OneTapLoginHelper;
 import com.shorincity.vibin.music_sharing.viewmodel.SignupEmailPassViewModel;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 // SignUp First Screen
 public class SignUpEmailPassActivity extends AppCompatActivity {
@@ -212,7 +196,8 @@ public class SignUpEmailPassActivity extends AppCompatActivity {
             oneTapLoginHelper.handleResponse(data, new OneTapLoginHelper.GoogleSignupCallback() {
                 @Override
                 public void onResponse(SignUpResponse signUpResponse) {
-                    showMe.dismiss();
+                    if (!isFinishing())
+                        showMe.dismiss();
                     if (signUpResponse.getStatus().equalsIgnoreCase("success")) {
                         if (signUpResponse.getUserCreated().equalsIgnoreCase("true")) {
                             SharedPrefManager.getInstance(SignUpEmailPassActivity.this).setSharedPrefBoolean(AppConstants.INTENT_IS_USER_LOGGEDIN, true); // response.body().getUserLoggedIn()

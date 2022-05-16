@@ -10,11 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +20,6 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.adapters.YoutubeSearchAdapter;
 import com.shorincity.vibin.music_sharing.model.Item;
@@ -35,10 +32,8 @@ import com.shorincity.vibin.music_sharing.model.lastfm.Trackmatches;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
-import com.shorincity.vibin.music_sharing.utils.Logging;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -198,7 +193,7 @@ public class YoutubeSearchFragment extends MyBaseFragment {
             @Override
             public void onFailure(Call<ModelData> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(getActivity(),  getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });
 

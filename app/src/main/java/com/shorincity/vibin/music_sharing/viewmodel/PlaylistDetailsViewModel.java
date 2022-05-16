@@ -6,11 +6,9 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
 import com.shorincity.vibin.music_sharing.callbackclick.PlaylistDetailCallback;
-import com.shorincity.vibin.music_sharing.fragment.PlaylistDetailFragmentNew;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.shareplaylist.PlaylistDetailResponse;
@@ -24,6 +22,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PlaylistDetailsViewModel implements Parcelable {
     private static final String TAG = PlaylistDetailsViewModel.class.getName();
@@ -201,6 +200,32 @@ public class PlaylistDetailsViewModel implements Parcelable {
         });
     }
 
+    public void callPinPlayList(Context mContext, int playlistId, String pinType, PlaylistDetailCallback detailCallback) {
+        DataAPI dataAPI = RetrofitAPI.getData();
+        String token = AppConstants.TOKEN + SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+        dataAPI.callPinPlayList(token, SharedPrefManager.getInstance(mContext).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
+                playlistId, pinType).enqueue(new Callback<APIResponse>() {
+            @Override
+            public void onResponse(Call<APIResponse> call, Response<APIResponse> response) {
+                if (response.body() != null) {
+
+                    if (response.body().getStatus().equalsIgnoreCase("success")) {
+                        Toast.makeText(mContext, response.body().getMessage(), Toast.LENGTH_LONG).show();
+                    } else if (response.body().getStatus().equalsIgnoreCase("failed")) {
+                        Toast.makeText(mContext, response.body().getMessage(),
+                                Toast.LENGTH_LONG).show();
+
+                    }
+                } else {
+                }
+            }
+
+            @Override
+            public void onFailure(Call<APIResponse> call, Throwable t) {
+
+            }
+        });
+    }
 
     public ArrayList<PlaylistDetailModel> getPlaylist() {
         return playlist;

@@ -14,11 +14,11 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.databinding.PlaylistCollabMenuBinding;
 import com.shorincity.vibin.music_sharing.model.realtime.RTListner;
 import com.shorincity.vibin.music_sharing.utils.CommonUtils;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.util.ArrayList;
 
@@ -58,14 +58,14 @@ public class RTListnerCollaboratosAdapter extends RecyclerView.Adapter<RTListner
 
             if (avatarUrl != null) {
                 try {
-                    Glide.with(mContext).load(avatarUrl).circleCrop().into(holder.ivProfile);
+                    GlideApp.with(mContext).load(avatarUrl).circleCrop().into(holder.ivProfile);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
             holder.ivAdminBorder.setVisibility(currentItem.getIsAdmin() ? View.VISIBLE : View.INVISIBLE);
         } else {
-            Glide.with(mContext)
+            GlideApp.with(mContext)
                     .load(ContextCompat.getDrawable(holder.ivProfile.getContext(), R.drawable.ic_add_collab))
                     .circleCrop()
                     .into(holder.ivProfile);

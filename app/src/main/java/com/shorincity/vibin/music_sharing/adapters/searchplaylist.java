@@ -20,7 +20,7 @@ public class searchplaylist extends RecyclerView.Adapter<searchplaylist.ExampleV
     private Context mContext;
     private ArrayList<searchItem> mExampleList;
 
-    public searchplaylist(Context context, ArrayList<searchItem> exampleList){
+    public searchplaylist(Context context, ArrayList<searchItem> exampleList) {
         mContext = context;
         mExampleList = exampleList;
     }
@@ -29,7 +29,7 @@ public class searchplaylist extends RecyclerView.Adapter<searchplaylist.ExampleV
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.item_product_vertical,parent,false);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.item_product_vertical, parent, false);
         return new ExampleViewHolder(v);
     }
 
@@ -50,11 +50,12 @@ public class searchplaylist extends RecyclerView.Adapter<searchplaylist.ExampleV
     }
 
 
-    public class ExampleViewHolder extends RecyclerView.ViewHolder{
+    public class ExampleViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView mImageView;
         public TextView mTextViewTitle;
         public View view;
+
         public ExampleViewHolder(@NonNull View itemView) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.imageView);

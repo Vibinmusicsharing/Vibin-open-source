@@ -8,6 +8,7 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.shorincity.vibin.music_sharing.R;
+
 // Unused : Commented by Swati
 // platform choose page
 public class Platform_choose extends AppCompatActivity {
@@ -33,7 +34,7 @@ public class Platform_choose extends AppCompatActivity {
         offline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Platform_choose.this,account.class);
+                Intent intent = new Intent(Platform_choose.this, account.class);
                 startActivity(intent);
             }
         });

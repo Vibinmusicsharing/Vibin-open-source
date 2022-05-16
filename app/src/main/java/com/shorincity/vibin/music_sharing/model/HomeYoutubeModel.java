@@ -86,6 +86,7 @@ public class HomeYoutubeModel {
             this.url = url;
             this.thumbnail = thumbnail;
         }
+
         @SerializedName("genre")
         @Expose
         private String genre;

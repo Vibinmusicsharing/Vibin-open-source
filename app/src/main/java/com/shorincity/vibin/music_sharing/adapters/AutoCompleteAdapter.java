@@ -1,14 +1,14 @@
 package com.shorincity.vibin.music_sharing.adapters;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
 

@@ -106,7 +106,11 @@ public class SelectMusicGenreViewModel extends ViewModel {
         prefData.setSharedPrefString(AppConstants.INTENT_USER_PREFERRED_PLATFORM, data.getPreferredPlatform());
         prefData.setSharedPrefString(AppConstants.INTENT_USER_NAME, data.getUsername());
         prefData.setSharedPrefString(AppConstants.INTENT_FULL_NAME, data.getFullname());
-
+        prefData.setSharedPrefString(AppConstants.PREF_USER_COVER, data.getCoverImage());
+        prefData.setSharedPrefString(AppConstants.PREF_USER_DOB, data.getDob());
+        prefData.setSharedPrefString(AppConstants.PREF_USER_GENDER, data.getGender());
+        prefData.setSharedPrefString(AppConstants.PREF_USER_AVATAR_PROFILE, data.getAvatar_link());
+        prefData.setSharedPrefBoolean(AppConstants.PREF_SHOW_RECENTLY_SONGS, data.getShowRecentlySongs());
 
     }
 

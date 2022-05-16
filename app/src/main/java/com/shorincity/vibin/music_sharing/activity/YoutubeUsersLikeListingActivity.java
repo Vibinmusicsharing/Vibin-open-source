@@ -4,12 +4,10 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
@@ -78,7 +76,7 @@ public class YoutubeUsersLikeListingActivity extends AppCompatActivity {
     private void setupViewPager(ArrayList<UserLikeList.GotLikes> userLikeIGotLists, ArrayList<UserLikeList.GotLikes> userLikeILikedLists) {
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager_likes);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs_likes);
-        String[] titles = {"Likes Received", "Liked Profiles3d"};
+        String[] titles = {"Likes Received", "Liked Profiles"};
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), titles, "1", userLikeIGotLists, userLikeILikedLists);
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);

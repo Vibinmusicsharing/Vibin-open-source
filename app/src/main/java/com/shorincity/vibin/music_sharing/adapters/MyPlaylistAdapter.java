@@ -11,11 +11,9 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.giphy.sdk.core.models.enums.RenditionType;
-import com.giphy.sdk.ui.Giphy;
 import com.giphy.sdk.ui.views.GifView;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
-import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.Utility;
 
 import java.util.ArrayList;
@@ -26,7 +24,7 @@ public class MyPlaylistAdapter extends RecyclerView.Adapter<MyPlaylistAdapter.Ex
     private Context mContext;
     private ArrayList<MyPlaylistModel> list;
 
-    public MyPlaylistAdapter(Context context, ArrayList<MyPlaylistModel> exampleList){
+    public MyPlaylistAdapter(Context context, ArrayList<MyPlaylistModel> exampleList) {
         Utility.configGiphy(context);
         mContext = context;
         list = exampleList;
@@ -35,7 +33,7 @@ public class MyPlaylistAdapter extends RecyclerView.Adapter<MyPlaylistAdapter.Ex
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.adapter_my_playlist,parent,false);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.adapter_my_playlist, parent, false);
 
         final ExampleViewHolder mViewHolder = new ExampleViewHolder(v);
         v.setOnClickListener(new View.OnClickListener() {
@@ -55,8 +53,8 @@ public class MyPlaylistAdapter extends RecyclerView.Adapter<MyPlaylistAdapter.Ex
         holder.mTextViewTitle.setText(name);
 
         String gifArraySplit[] = currentItem.getGifLink().split("/");
-        String mediaId = gifArraySplit[gifArraySplit.length-1];
-        holder.gifView.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(mContext, R.color.light_gray),null);
+        String mediaId = gifArraySplit[gifArraySplit.length - 1];
+        holder.gifView.setMediaWithId(mediaId, RenditionType.preview, ContextCompat.getDrawable(mContext, R.color.light_gray), null);
     }
 
     @Override
@@ -65,11 +63,12 @@ public class MyPlaylistAdapter extends RecyclerView.Adapter<MyPlaylistAdapter.Ex
     }
 
 
-    public class ExampleViewHolder extends RecyclerView.ViewHolder{
+    public class ExampleViewHolder extends RecyclerView.ViewHolder {
 
         public GifView gifView;
         public TextView mTextViewTitle;
         public View view;
+
         public ExampleViewHolder(@NonNull View itemView) {
             super(itemView);
             gifView = itemView.findViewById(R.id.gif_iv);
@@ -86,6 +85,7 @@ public class MyPlaylistAdapter extends RecyclerView.Adapter<MyPlaylistAdapter.Ex
     }
 
     CustomItemClickListener customItemClickListener;
+
     public interface CustomItemClickListener {
         public void onItemClick(View v, int position);
     }

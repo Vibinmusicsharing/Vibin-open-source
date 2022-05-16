@@ -8,8 +8,7 @@
     android:paddingBottom="16dp"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
-    android:paddingTop="0dp"
-    tools:context=".music_sharing.UI.Platform_choose_activity">
+    android:paddingTop="0dp">
 
 
     <com.google.android.material.appbar.AppBarLayout

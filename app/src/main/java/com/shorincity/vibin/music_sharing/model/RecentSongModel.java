@@ -38,6 +38,12 @@ public class RecentSongModel {
     @SerializedName("is_liked")
     @Expose
     private Object isLiked;
+    @SerializedName("song_duration")
+    @Expose
+    private String songDuration;
+    @SerializedName("artist_name")
+    @Expose
+    private String artistName;
 
     public Integer getId() {
         return id;

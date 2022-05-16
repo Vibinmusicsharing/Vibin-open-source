@@ -42,7 +42,8 @@ internal class PlaybackResumer : AbstractYouTubePlayerListener() {
                 isPlaying = true
                 return
             }
-            else -> { }
+            else -> {
+            }
         }
     }
 

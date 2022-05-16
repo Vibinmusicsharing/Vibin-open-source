@@ -1,13 +1,15 @@
 package com.shorincity.vibin.music_sharing.adapters;
+
 // example item class
 public class ExampleItem {
     private String mImageUrl;
-    private String mTitle,mShortDescription;
-    private int mRating,mPrice;
-    String uri,id,type;
+    private String mTitle, mShortDescription;
+    private int mRating, mPrice;
+    String uri, id, type;
 
     String playlistID;
-    public ExampleItem(String imageUrl, String title, int rating, int price, String shortDescription){
+
+    public ExampleItem(String imageUrl, String title, int rating, int price, String shortDescription) {
         mImageUrl = imageUrl;
         mTitle = title;
         mRating = rating;
@@ -25,6 +27,7 @@ public class ExampleItem {
         this.mTitle = mTitle;
         this.uri = uri;
     }
+
     public ExampleItem(String mImageUrl, String mTitle, String id, String uri) {
         this.mImageUrl = mImageUrl;
         this.mTitle = mTitle;
@@ -78,24 +81,26 @@ public class ExampleItem {
     }
 
 
-
-    public String getImageUrl(){
-        return  mImageUrl;
-
-    }
-    public String getmShortDescription(){
-        return  mShortDescription;
-
-    }
-    public int getPrice(){
-        return  mPrice;
+    public String getImageUrl() {
+        return mImageUrl;
 
     }
 
-    public String getmTitle(){
+    public String getmShortDescription() {
+        return mShortDescription;
+
+    }
+
+    public int getPrice() {
+        return mPrice;
+
+    }
+
+    public String getmTitle() {
         return mTitle;
     }
-    public int getRating(){
+
+    public int getRating() {
         return mRating;
     }
 

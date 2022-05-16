@@ -51,7 +51,7 @@ internal class FullScreenHelper(private val targetView: View) {
     }
 
     private fun dpToPx(dps: Int): Int {
-        val scale: Float = targetView.context.resources.getDisplayMetrics().density
+        val scale: Float = targetView.context.resources.displayMetrics.density
         return (dps * scale + 0.5f).toInt()
     }
 

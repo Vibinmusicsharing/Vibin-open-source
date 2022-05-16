@@ -6,7 +6,6 @@ import static com.shorincity.vibin.music_sharing.utils.AppConstants.PREF_LAST_FM
 import static com.shorincity.vibin.music_sharing.utils.AppConstants.PREF_YOUTUBE_KEY;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -29,7 +28,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,8 +36,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
@@ -56,12 +52,12 @@ import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
-import com.shorincity.vibin.music_sharing.fragment.SplashFragment;
 import com.shorincity.vibin.music_sharing.model.SignUpResponse;
 import com.shorincity.vibin.music_sharing.model.VersionResponse;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 import com.shorincity.vibin.music_sharing.utils.Logging;
 
 import java.util.Objects;
@@ -82,7 +78,7 @@ public class SplashActivity extends AppCompatActivity {
     private static final int RESULT_CODE_TERMS = 100;
     private static final int APP_UPDATE_REQUEST_CODE = 101;
     private AppUpdateManager appUpdateManager;
-    private String uID="";
+    private String uID = "";
 
     private final InstallStateUpdatedListener listener = state -> {
         System.out.println("Version==>installStatus =" + state.installStatus());
@@ -107,11 +103,11 @@ public class SplashActivity extends AppCompatActivity {
 
         statusBarColorChange();
         ImageView imageView = findViewById(R.id.imageView1);
-        Glide.with(this).load(R.drawable.vibin_gif).into(imageView);
+        GlideApp.with(this).load(R.drawable.vibin_gif).into(imageView);
 
         FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent()).addOnSuccessListener(SplashActivity.this, new OnSuccessListener<PendingDynamicLinkData>() {
             @Override
-            public void onSuccess(@NonNull PendingDynamicLinkData pendingDynamicLinkData) {
+            public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
                 Uri deepLink = null;
                 if (pendingDynamicLinkData != null) {
                     deepLink = pendingDynamicLinkData.getLink();
@@ -304,8 +300,7 @@ public class SplashActivity extends AppCompatActivity {
                     if (signUpResponse != null && signUpResponse.isAddedPreferences()) {
                         intent = new Intent(SplashActivity.this, youtube.class);
                         intent.putExtra(AppConstants.PLAYLIST_UID, uID);
-                    }
-                    else {
+                    } else {
                         intent = new Intent(SplashActivity.this, SelectMusicLanguageActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putBoolean(AppConstants.INTENT_IS_FROM_GOOGLE, true);
@@ -345,6 +340,7 @@ public class SplashActivity extends AppCompatActivity {
                 Log.d("LOG_TAG", "==>Version " + new Gson().toJson(response.body()));
                 if (response.body() != null &&
                         !TextUtils.isEmpty(response.body().getStatus()) &&
+                        !TextUtils.isEmpty(response.body().getYoutube()) &&
                         response.body().getStatus().equalsIgnoreCase("success")) {
                     versionResponse = response.body();
 
@@ -414,8 +410,10 @@ public class SplashActivity extends AppCompatActivity {
                     finish();
                 });
 
-        android.app.AlertDialog alert = builder.create();
-        alert.show();
+        if (!isFinishing()) {
+            android.app.AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
 
     private void callUserApi() {

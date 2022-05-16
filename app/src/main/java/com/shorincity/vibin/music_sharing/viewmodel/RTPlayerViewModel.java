@@ -11,7 +11,6 @@ import com.shorincity.vibin.music_sharing.model.shareplaylist.PlaylistDetailResp
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
-import com.shorincity.vibin.music_sharing.utils.Logging;
 
 import java.util.ArrayList;
 
@@ -43,7 +42,7 @@ public class RTPlayerViewModel {
         String token = AppConstants.TOKEN + SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
         Call<PlaylistDetailResponse> callback = dataAPI.getPublicPlaylistDetail(token,
                 SharedPrefManager.getInstance(context).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
-                playlistID,AppConstants.SOURCE_TYPE_IN_APP);
+                playlistID, AppConstants.SOURCE_TYPE_IN_APP);
         callback.enqueue(new Callback<PlaylistDetailResponse>() {
             @Override
             public void onResponse(Call<PlaylistDetailResponse> call, retrofit2.Response<PlaylistDetailResponse> response) {

@@ -1,6 +1,5 @@
 package com.shorincity.vibin.music_sharing.fragment;
 
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -20,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
-import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.activity.SharePlaylistActivity;
@@ -30,7 +28,6 @@ import com.shorincity.vibin.music_sharing.model.shareplaylist.SharePlaylistRespo
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
-import com.shorincity.vibin.music_sharing.utils.Logging;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -80,11 +77,11 @@ public class SharePlaylistQrCodeFragment extends MyBaseFragment {
 
         binding.ivShare.setOnClickListener(v -> {
             if (sharePlaylistResponse != null) {
-                String msg = sharePlaylistResponse.getData().getFullUrl() + "\n\nHi, Tap on above link and join my playlist \""+myPlaylistModel.getName()+"\" to share your favorite track." ;
+                String msg = sharePlaylistResponse.getData().getFullUrl() + "\n\nHi, Tap on above link and join my playlist \"" + myPlaylistModel.getName() + "\" to share your favorite track.";
                 try {
                     Intent shareIntent = new Intent(Intent.ACTION_SEND);
                     shareIntent.setType("text/plain");
-                    shareIntent.putExtra(Intent.EXTRA_SUBJECT, "My application name");
+                    shareIntent.putExtra(Intent.EXTRA_SUBJECT, "");
                     shareIntent.putExtra(Intent.EXTRA_TEXT, msg);
                     startActivity(Intent.createChooser(shareIntent, "choose one"));
                 } catch (Exception e) {

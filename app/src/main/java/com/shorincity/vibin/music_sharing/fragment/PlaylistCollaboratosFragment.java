@@ -3,17 +3,12 @@ package com.shorincity.vibin.music_sharing.fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -29,23 +24,18 @@ import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.adapters.PlaylistCollaboratosAdapter;
-import com.shorincity.vibin.music_sharing.adapters.PlaylistSongsAdapter;
 import com.shorincity.vibin.music_sharing.adapters.UserSearchAdapter;
 import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
 import com.shorincity.vibin.music_sharing.callbackclick.PlaylistDetailCallback;
 import com.shorincity.vibin.music_sharing.databinding.FragmentCollaboratorsListBinding;
-import com.shorincity.vibin.music_sharing.databinding.FragmentPlaylistSongListBinding;
-import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistSongCollabDeleteModel;
 import com.shorincity.vibin.music_sharing.model.UserSearchModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
-import com.shorincity.vibin.music_sharing.utils.Logging;
 import com.shorincity.vibin.music_sharing.viewmodel.PlaylistDetailsViewModel;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -175,19 +165,10 @@ public class PlaylistCollaboratosFragment extends MyBaseFragment {
 //                    sendCollabRequestNotification(id, usersList.get(position).getId(), AppConstants.COLLAB_REQUEST);
             } else {
                 bottomSheet.dismiss();
-                OtherUserProfileFragment fragment = OtherUserProfileFragment.getInstance(
-                        usersList.get(position).getId(),
+                ((youtube) getActivity()).onLoadUserProfile(usersList.get(position).getId(),
                         playlistId,
                         usersList.get(position).getUsername(),
                         usersList.get(position).getFullname());
-                ((youtube) getActivity()).onLoadFragment(fragment);
-
-                /*startActivity(new Intent(mContext, OtherUserProfileActivity.class)
-                        .putExtra(AppConstants.INTENT_SEARCHED_USER_ID, usersList.get(position).getId())
-                        .putExtra(AppConstants.INTENT_SEARCHED_USER_NAME, usersList.get(position).getUsername())
-                        .putExtra(AppConstants.INTENT_SEARCHED_FULL_NAME, usersList.get(position).getFullname())
-                        .putExtra(AppConstants.INTENT_PLAYLIST_ID, id)
-                        .putExtra(AppConstants.INTENT_COMING_FROM, PlaylistDetailActivity.class.getName()));*/
             }
         });
         userSearchRv.setAdapter(userSearchAdapter);

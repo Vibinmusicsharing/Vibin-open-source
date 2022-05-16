@@ -5,10 +5,6 @@ import android.app.FragmentManager;
 
 import androidx.legacy.app.FragmentPagerAdapter;
 
-import com.shorincity.vibin.music_sharing.fragment.PlaylistCollaboratosFragment;
-import com.shorincity.vibin.music_sharing.fragment.PlaylistSongslistFragment;
-import com.shorincity.vibin.music_sharing.viewmodel.PlaylistDetailsViewModel;
-
 import java.util.List;
 
 

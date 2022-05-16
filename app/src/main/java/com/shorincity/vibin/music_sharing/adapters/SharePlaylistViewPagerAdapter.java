@@ -21,7 +21,7 @@ public class SharePlaylistViewPagerAdapter extends FragmentPagerAdapter {
     public SharePlaylistViewPagerAdapter(FragmentManager fm, List<String> titleName, MyPlaylistModel viewModel) {
         super(fm);
         this.titleName = titleName;
-        this.viewModel=viewModel;
+        this.viewModel = viewModel;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class SharePlaylistViewPagerAdapter extends FragmentPagerAdapter {
         return titleName.get(position);
     }
 
-    public Fragment getCurrentFragment(int position){
+    public Fragment getCurrentFragment(int position) {
         return getItem(position);
     }
 }

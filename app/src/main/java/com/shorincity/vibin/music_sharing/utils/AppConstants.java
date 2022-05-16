@@ -147,7 +147,13 @@ public class AppConstants {
     public static String PREF_YOUTUBE_KEY = "pref_youtube_key";
     public static String PREF_LAST_FM_KEY = "pref_last_fm_key";
     public static String PREF_GIPHY_KEY = "pref_giphy_key";
-//    public static String PREF_SHARE_PLAYLIST_RESPONSE = "share_playlist_response";
+    public static final String PREF_USER_COVER = "pref_user_cover";
+    public static final String PREF_USER_DOB = "pref_user_dob";
+    public static final String PREF_USER_GENDER = "pref_user_gender";
+    public static final String PREF_USER_AVATAR_PROFILE = "pref_user_avatar_profile";
+    public static final String PREF_SHOW_RECENTLY_SONGS = "pref_show_recently_songs";
+
+    //    public static String PREF_SHARE_PLAYLIST_RESPONSE = "share_playlist_response";
     public static String SOURCE_TYPE_IN_APP = "IN_APP";
     public static String SOURCE_TYPE_DYNAMIC_LINK = "DYNAMIC_LINK";
     public static String PLAYLIST_UID = "playlist_uid";

@@ -26,9 +26,9 @@ public class WebPlayer {
         player.getSettings().setJavaScriptEnabled(true);
 
 //         For debugging using chrome on PC
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                player.setWebContentsDebuggingEnabled(true);
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            player.setWebContentsDebuggingEnabled(true);
+        }
 
         player.setWebChromeClient(new WebChromeClient());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {

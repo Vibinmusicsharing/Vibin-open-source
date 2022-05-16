@@ -429,7 +429,7 @@ public class YoutubePlaylistItemModel {
         }
     }
 
-    public class ContentDetails{
+    public class ContentDetails {
         @SerializedName("endAt")
         @Expose
         private String endTime;

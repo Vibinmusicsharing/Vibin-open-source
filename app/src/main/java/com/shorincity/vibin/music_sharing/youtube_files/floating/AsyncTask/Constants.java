@@ -72,11 +72,6 @@ public class Constants {
         public static int FOREGROUND_SERVICE = 101;
     }
 
-
-    public static String SUGGESTIONS_BASE_URL = "https://suggestqueries.google.com/complete/";
-    public static String SUGGESTIONS_CLIENT = "youtube";
-    public static String SUGGESTIONS_CLIENT_RETURN_TYPE = "firefox";
-    public static String SUGGESTIONS_DS = "yt";
     public static String WEB_SOCKET_URL = "wss://staging.vibin.in:8001/websocket/customer/notification_count/";
     public static String REAL_TIME_WEB_SOCKET_URL = "wss://staging.vibin.in:8001/websocket/real_time_sharing/player_session/";
 

@@ -15,7 +15,6 @@ import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.activity.RealTimePlayerActivity;
 import com.shorincity.vibin.music_sharing.adapters.RTListnerCollaboratosAdapter;
 import com.shorincity.vibin.music_sharing.databinding.FragmentPlayerListnerBinding;
-import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.realtime.RTListner;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 

@@ -39,12 +39,12 @@ import com.shorincity.vibin.music_sharing.utils.AppConstants;
 /**
  * NOTE: There can only be one service in each app that receives FCM messages. If multiple
  * are declared in the Manifest then the first one will be chosen.
- *
+ * <p>
  * In order to make this Java sample functional, you must remove the following from the Kotlin messaging
  * service in the AndroidManifest.xml:
- *
+ * <p>
  * <intent-filter>
- *   <action android:name="com.google.firebase.MESSAGING_EVENT" />
+ * <action android:name="com.google.firebase.MESSAGING_EVENT" />
  * </intent-filter>
  */
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -138,7 +138,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     /**
      * Persist token to third-party servers.
-     *
+     * <p>
      * Modify this method to associate the user's FCM InstanceID token with any server-side account
      * maintained by your application.
      *
@@ -146,7 +146,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     private void sendRegistrationToServer(String token) {
         // TODO: Implement this method to send token to your app server.
-        Log.i("FCM","Token: "+token);
+        Log.i("FCM", "Token: " + token);
     }
 
     /**
@@ -166,10 +166,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String platform = SharedPrefManager.getInstance(this).getSharedPrefString(AppConstants.INTENT_USER_PREFERRED_PLATFORM);
         intent = new Intent(this, youtube.class);
 
-        intent.putExtra(AppConstants.INTENT_COMING_FROM,"NOTIFICATION");
+        intent.putExtra(AppConstants.INTENT_COMING_FROM, "NOTIFICATION");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         String channelId = getString(R.string.default_notification_channel_id);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -178,7 +178,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             notificationBuilder.setSmallIcon(R.drawable.app_logo_notify);
-            notificationBuilder.setColor(ContextCompat.getColor(this,R.color.black));
+            notificationBuilder.setColor(ContextCompat.getColor(this, R.color.black));
         } else {
             notificationBuilder.setSmallIcon(R.drawable.app_logo_notify);
         }
@@ -186,12 +186,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         notificationBuilder/*.setSmallIcon(R.drawable.app_logo_notify)
                         .setColor(ContextCompat.getColor(this,R.color.black))*/
-                        .setContentTitle(getString(R.string.app_name))
-                        .setSmallIcon(R.drawable.app_logo_notify)
-                        .setContentText(messageBody)
-                        .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
-                        .setContentIntent(pendingIntent);
+                .setContentTitle(getString(R.string.app_name))
+                .setSmallIcon(R.drawable.app_logo_notify)
+                .setContentText(messageBody)
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

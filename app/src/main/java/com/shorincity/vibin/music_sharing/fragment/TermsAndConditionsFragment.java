@@ -235,7 +235,8 @@ public class TermsAndConditionsFragment extends Fragment {
     }
 
     private void onDeny() {
-        getActivity().finish();
+        if (getActivity() != null)
+            getActivity().finish();
     }
 
     private void onAccept() {

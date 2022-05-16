@@ -23,7 +23,7 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ExampleV
     private Context mContext;
     private ArrayList<CountryModel> list;
 
-    public CountryAdapter(Context context, ArrayList<CountryModel> exampleList){
+    public CountryAdapter(Context context, ArrayList<CountryModel> exampleList) {
         mContext = context;
         list = exampleList;
     }
@@ -31,7 +31,7 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ExampleV
     @NonNull
     @Override
     public ExampleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-        View v = LayoutInflater.from(mContext).inflate(R.layout.adapter_country,parent,false);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.adapter_country, parent, false);
 
         final ExampleViewHolder mViewHolder = new ExampleViewHolder(v);
         v.setOnClickListener(new View.OnClickListener() {
@@ -67,11 +67,12 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ExampleV
     }
 
 
-    public class ExampleViewHolder extends RecyclerView.ViewHolder{
+    public class ExampleViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView mImageView;
         public TextView mTextViewTitle;
         public RelativeLayout mainRl;
+
         public ExampleViewHolder(@NonNull View itemView) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.item_img);
@@ -89,6 +90,7 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ExampleV
     }
 
     CustomItemClickListener customItemClickListener;
+
     public interface CustomItemClickListener {
         public void onItemClick(View v, int position);
     }

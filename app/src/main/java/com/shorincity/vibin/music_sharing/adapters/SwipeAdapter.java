@@ -64,8 +64,8 @@ public class SwipeAdapter extends RecyclerView.Adapter<SwipeAdapter.SwipeViewHol
         SwipeViewHolder(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.textView);
-           // txtEdit = itemView.findViewById(R.id.txtEdit);
-           // txtDelete = itemView.findViewById(R.id.txtDelete);
+            // txtEdit = itemView.findViewById(R.id.txtEdit);
+            // txtDelete = itemView.findViewById(R.id.txtDelete);
             swipelayout = itemView.findViewById(R.id.swipelayout);
 
             txtEdit.setOnClickListener(new View.OnClickListener() {

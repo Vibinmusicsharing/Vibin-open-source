@@ -60,7 +60,12 @@ public class MyPlaylistModel implements Serializable {
     @SerializedName("playlist_tags")
     @Expose
     private String playListTags;
-
+    @SerializedName("admin_profile_verified")
+    @Expose
+    private boolean adminProfileVerified;
+    @SerializedName("is_pinned_playlist")
+    @Expose
+    private boolean isPinnedPlaylist;
 
     public int getAdmin_id() {
         return admin_id;
@@ -207,4 +212,15 @@ public class MyPlaylistModel implements Serializable {
         this.status = status;
     }
 
+    public boolean isAdminProfileVerified() {
+        return adminProfileVerified;
+    }
+
+    public void setAdminProfileVerified(boolean adminProfileVerified) {
+        this.adminProfileVerified = adminProfileVerified;
+    }
+
+    public boolean isPinnedPlaylist() {
+        return isPinnedPlaylist;
+    }
 }

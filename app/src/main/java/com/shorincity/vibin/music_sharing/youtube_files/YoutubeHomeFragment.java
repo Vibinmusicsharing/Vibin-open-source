@@ -958,7 +958,7 @@ public class YoutubeHomeFragment extends MyBaseFragment {
             @Override
             public void onFailure(Call<YoutubeTrendingModel> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                if (mContext != null)
+                if (mContext != null && isVisible())
                     Toast.makeText(mContext, getString(R.string.msg_network_failed), Toast.LENGTH_LONG).show();
             }
         });

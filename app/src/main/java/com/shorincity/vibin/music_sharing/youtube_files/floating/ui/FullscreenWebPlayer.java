@@ -12,8 +12,8 @@ import com.shorincity.vibin.music_sharing.youtube_files.floating.PlayerService;
 
 public class FullscreenWebPlayer extends Activity {
 
-    public  static boolean active = false;
-    public  static Activity fullScreenAct;
+    public static boolean active = false;
+    public static Activity fullScreenAct;
 
     ViewGroup parent;
     WebView player;
@@ -41,9 +41,10 @@ public class FullscreenWebPlayer extends Activity {
         WebPlayer.loadScript(JavaScript.playVideoScript());
 
     }
+
     @Override
     public void onBackPressed() {
-        if(active){
+        if (active) {
             ((ViewGroup) player.getParent()).removeView(player);
             parent.addView(player);
             PlayerService.startAgain();
@@ -51,9 +52,10 @@ public class FullscreenWebPlayer extends Activity {
         active = false;
         super.onBackPressed();
     }
+
     @Override
     protected void onPause() {
-        if(active) {
+        if (active) {
             fullScreenAct.onBackPressed();
         }
         active = false;

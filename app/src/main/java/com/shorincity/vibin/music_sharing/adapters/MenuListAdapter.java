@@ -24,10 +24,10 @@ public class MenuListAdapter extends ArrayAdapter<MenuActionItem> {
         this.activity = activity;
     }
 
-    public View getView (int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
         View rowView = convertView;
 
-        if(rowView == null) {
+        if (rowView == null) {
             rowView = activity.getLayoutInflater().inflate(resource, null);
 
             MenuItemViewHolder viewHolder = new MenuItemViewHolder();
@@ -39,7 +39,7 @@ public class MenuListAdapter extends ArrayAdapter<MenuActionItem> {
             rowView.setTag(viewHolder);
         }
 
-        MenuItemViewHolder holder = (MenuItemViewHolder)rowView.getTag();
+        MenuItemViewHolder holder = (MenuItemViewHolder) rowView.getTag();
 
 //        if(position == MenuActionItem.ITEM1.ordinal()) {
 //            //holder.menuItemImageView.setImageDrawable(activity_youtube_2.getDrawable(R.drawable.ic_payment_white_24dp));
@@ -48,17 +48,15 @@ public class MenuListAdapter extends ArrayAdapter<MenuActionItem> {
 //
 //        }
 //        else
-        if(position == MenuActionItem.ITEM1.ordinal()) {
+        if (position == MenuActionItem.ITEM1.ordinal()) {
             //holder.menuItemImageView.setImageDrawable(activity_youtube_2.getDrawable(R.drawable.ic_pets_white_24dp));
             holder.menuItemTextView.setText(activity.getResources().getString(R.string.about_us));
             holder.menuItemSwitch.setVisibility(View.GONE);
-        }
-        else if(position == MenuActionItem.ITEM2.ordinal()) {
+        } else if (position == MenuActionItem.ITEM2.ordinal()) {
             //holder.menuItemImageView.setImageDrawable(activity_youtube_2.getDrawable(R.drawable.ic_receipt_white_24dp));
             holder.menuItemTextView.setText(activity.getResources().getString(R.string.share_app));
             holder.menuItemSwitch.setVisibility(View.GONE);
-        }
-        else if(position == MenuActionItem.ITEM3.ordinal()) {
+        } else if (position == MenuActionItem.ITEM3.ordinal()) {
             //holder.menuItemImageView.setImageDrawable(activity_youtube_2.getDrawable(R.drawable.ic_shopping_cart_white_24dp));
             holder.menuItemTextView.setText(activity.getResources().getString(R.string.privacy_policy));
             holder.menuItemSwitch.setVisibility(View.GONE);
@@ -107,8 +105,7 @@ public class MenuListAdapter extends ArrayAdapter<MenuActionItem> {
 
     SwitchChangeListener switchChangeListener;
 
-    public interface SwitchChangeListener
-    {
+    public interface SwitchChangeListener {
         void onSwitchChanged(CompoundButton compoundButton, boolean b);
     }
 }

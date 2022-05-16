@@ -5,7 +5,7 @@ package com.shorincity.vibin.music_sharing.youtube_files.floating.ui;
  */
 public class JavaScript {
 
-    public static String loadVideoScript(String vId){
+    public static String loadVideoScript(String vId) {
         return "javascript:player.loadVideoById(\"" + vId + "\");";
     }
 
@@ -19,7 +19,7 @@ public class JavaScript {
 
     public static String onPlayerStateChangeListener() {
         return "javascript:" +
-                "player.addEventListener(\"onStateChange\", \"onPlayerStateChange\");"+
+                "player.addEventListener(\"onStateChange\", \"onPlayerStateChange\");" +
                 "function onPlayerStateChange(event) {\n" +
                 "      window.Interface.showPlayerState(player.getPlayerState());\n" +
                 "  }";
@@ -44,8 +44,9 @@ public class JavaScript {
     public static String seekToZero() {
         return "javascript:player.seekTo(0)";
     }
+
     public static String seekToPosition(int seekPos) {
-       // return "javascript:player.seekTo("+seekPos+")";
+        // return "javascript:player.seekTo("+seekPos+")";
         return "javascript:player.seekTo(100000, true)";
     }
 

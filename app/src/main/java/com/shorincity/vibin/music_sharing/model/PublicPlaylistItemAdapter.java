@@ -12,9 +12,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
+import com.shorincity.vibin.music_sharing.utils.GlideApp;
 
 import java.util.ArrayList;
 
@@ -82,7 +82,7 @@ public class PublicPlaylistItemAdapter extends RecyclerView.Adapter<PublicPlayli
             //holder.songTypeIv.setBackgroundColor(ContextCompat.getColor(mContext, R.color.spot_green));
         }
         holder.txt_duration.setText(currentItem.getSongDuration());
-        Glide.with(mContext).load(imageUrl).into(holder.mImageView);
+        GlideApp.with(mContext).load(imageUrl).into(holder.mImageView);
 
     }
 

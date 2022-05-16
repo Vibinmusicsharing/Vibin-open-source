@@ -27,9 +27,9 @@ public class UserPresentBroadcastReceiver extends BroadcastReceiver {
         /*Device is shutting down. This is broadcast when the device
          * is being shut down (completely turned off, not sleeping)
          * */
-        else if (intent.getAction().equals(Intent.ACTION_SHUTDOWN) ||intent.getAction().equals(Intent.ACTION_SCREEN_OFF) ) {
-            Log.d("TEST : ", "Running-->" + isServiceRunning(context,PlayerService.class));
-            if (isServiceRunning(context,PlayerService.class)) {
+        else if (intent.getAction().equals(Intent.ACTION_SHUTDOWN) || intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+            Log.d("TEST : ", "Running-->" + isServiceRunning(context, PlayerService.class));
+            if (isServiceRunning(context, PlayerService.class)) {
                 Intent i = new Intent(context, PlayerService.class);
                 context.stopService(i);
             }

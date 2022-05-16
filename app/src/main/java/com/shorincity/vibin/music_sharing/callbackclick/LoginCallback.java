@@ -1,9 +1,9 @@
 package com.shorincity.vibin.music_sharing.callbackclick;
 
 public interface LoginCallback {
-        void onLoginClick();
+    void onLoginClick();
 
-        void onForgotClick();
+    void onForgotClick();
 
-        void onGoogleClick();
-    }
+    void onGoogleClick();
+}

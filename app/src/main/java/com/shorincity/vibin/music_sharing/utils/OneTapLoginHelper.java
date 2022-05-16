@@ -51,6 +51,7 @@ public class OneTapLoginHelper {
 
     public void signInClick(Activity activity) {
         if (isSignInClickable) {
+            isSignInClickable = false;
             oneTapClient.beginSignIn(signInRequest)
                     .addOnSuccessListener(activity, result -> {
                         isSignInClickable = true;
@@ -68,7 +69,8 @@ public class OneTapLoginHelper {
                         Logging.d(e.getLocalizedMessage());
                         isSignInClickable = true;
                     });
-            isSignInClickable = false;
+        } else {
+            return;
         }
     }
 

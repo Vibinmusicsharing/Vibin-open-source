@@ -2,7 +2,7 @@ package com.shorincity.vibin.music_sharing.adapters;
 
 public class searchItem {
 
-    String mTitle,playlistID,privatepublic;
+    String mTitle, playlistID, privatepublic;
 
     public searchItem(String mTitle, String playlistID, String privatepublic) {
         this.mTitle = mTitle;

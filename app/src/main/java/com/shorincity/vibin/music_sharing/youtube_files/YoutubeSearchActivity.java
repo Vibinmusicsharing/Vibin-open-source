@@ -94,7 +94,7 @@ public class YoutubeSearchActivity extends AppCompatActivity {
                                 mangitem.get(i).getSnippet().getTitle(),
                                 mangitem.get(i).getSnippet().getThumbnails().getMedium().getUrl(),
                                 mangitem.get(i).getId().getVideoId(),
-                                mangitem.get(i).getSnippet().getSongDuration(),""
+                                mangitem.get(i).getSnippet().getSongDuration(), ""
                         ));
                     }
                     Bundle bundle = new Bundle();
@@ -103,7 +103,7 @@ public class YoutubeSearchActivity extends AppCompatActivity {
                     bundle.putString("description", "");
                     bundle.putString("thumbnail", mangitem.get(position).getSnippet().getThumbnails().getMedium().getUrl());
                     bundle.putString("videoId", mangitem.get(position).getId().getVideoId());
-                    bundle.putString("from","channel");
+                    bundle.putString("from", "channel");
                     bundle.putParcelableArrayList("playlist", (ArrayList<? extends Parcelable>) playlist);
                     intent.putExtra("data", bundle);
                     startActivity(intent);
@@ -134,7 +134,7 @@ public class YoutubeSearchActivity extends AppCompatActivity {
     public void Docdulieu(String tukhoa) {
         progressBar.setVisibility(View.VISIBLE);
         DataAPI dataAPI = RetrofitAPI.getYoutubeData();
-        Call<ModelData> callback = dataAPI.getResurt("snippet", tukhoa, "50", "video","10","true", AppConstants.YOUTUBE_KEY);
+        Call<ModelData> callback = dataAPI.getResurt("snippet", tukhoa, "50", "video", "10", "true", AppConstants.YOUTUBE_KEY);
         callback.enqueue(new Callback<ModelData>() {
             @Override
             public void onResponse(Call<ModelData> call, Response<ModelData> response) {
