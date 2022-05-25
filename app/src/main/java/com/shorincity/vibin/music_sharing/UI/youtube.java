@@ -95,6 +95,7 @@ import com.shorincity.vibin.music_sharing.adapters.AutoCompleteAdapter;
 import com.shorincity.vibin.music_sharing.adapters.PlayListDetailsAdapter;
 import com.shorincity.vibin.music_sharing.adapters.PlaylistRecyclerView;
 import com.shorincity.vibin.music_sharing.fragment.MyBaseFragment;
+import com.shorincity.vibin.music_sharing.fragment.NewUserProfileFragment;
 import com.shorincity.vibin.music_sharing.fragment.OtherUserProfileFragment;
 import com.shorincity.vibin.music_sharing.fragment.PlaylistDetailFragmentNew;
 import com.shorincity.vibin.music_sharing.fragment.PublicPlaylistFragment;
@@ -156,7 +157,7 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     private UserSearchFragment userSearchFragment;
     private UserNotificationFragment userNotificationFragment;
     private YoutubeHomeFragment youtubeHomeFragment;
-    private UserProfileFragment userProfileFragment;
+    private NewUserProfileFragment userProfileFragment;
 
     String preferPlatformIntent;
     public CustomSlidePanLayout mSlidingLayout;
@@ -265,8 +266,8 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         youtubeHomeFragment = new YoutubeHomeFragment();
         userSearchFragment = new UserSearchFragment();
         userNotificationFragment = new UserNotificationFragment();
-//        userProfileFragment = NewUserProfileFragment.getInstance();
-        userProfileFragment = UserProfileFragment.getInstance();
+        userProfileFragment = NewUserProfileFragment.getInstance();
+//        userProfileFragment = UserProfileFragment.getInstance();
         crashAnlyticslogUser();
         String comingFrom = getIntent() == null ? "" : getIntent().getStringExtra(AppConstants.INTENT_COMING_FROM);
 
@@ -2315,8 +2316,8 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
 
     public void onLoadUserProfile(int customerId, int playlistId,
                                   String userName, String fullName) {
-        OtherUserProfileFragment fragment =
-                OtherUserProfileFragment.getInstance(customerId,
+        NewUserProfileFragment fragment =
+                NewUserProfileFragment.getInstance(customerId,
                         playlistId,
                         userName,
                         fullName);
