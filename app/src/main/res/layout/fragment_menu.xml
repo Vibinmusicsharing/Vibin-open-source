@@ -1,173 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:layoutDirection="ltr">
+    android:layoutDirection="ltr"
+    android:orientation="vertical">
 
     <!-- Title should be shown here -->
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical">
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivClose"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:padding="12dp"
+            app:srcCompat="@drawable/ic_close_side_panel" />
+
         <TextView
-            android:textStyle="bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_40sdp"
+            android:layout_marginTop="@dimen/_20sdp"
             android:gravity="center_horizontal"
             android:text="@string/nav_settings"
-            android:textSize="@dimen/_15sdp"
-            android:textColor="@android:color/black"/>
-
-        <ListView
-            android:id="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:divider="@null">
-        </ListView>
-
-        <TextView
-            android:visibility="gone"
-            android:id="@+id/menu_item_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_35sdp"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:textSize="@dimen/_12sdp"
-            android:text="@string/pref_platform"
             android:textColor="@android:color/black"
-            android:layoutDirection="ltr"
-            android:gravity="center_vertical"/>
+            android:textSize="@dimen/_15sdp"
+            android:textStyle="bold"
+            android:visibility="invisible" />
 
-        <RadioGroup
-            android:visibility="gone"
-            android:id="@+id/rg_platform"
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvMenu"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layoutDirection="ltr"
-            android:layout_marginLeft="@dimen/_10sdp"
-            android:layout_marginRight="@dimen/_10sdp">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            tools:itemCount="5"
+            tools:listitem="@layout/item_setting_menu" />
 
-            <androidx.appcompat.widget.AppCompatRadioButton
-                android:id="@+id/rb_youtube"
-                android:layout_width="match_parent"
-                android:textSize="@dimen/_13sdp"
-                android:layout_marginRight="@dimen/_10sdp"
-                android:layout_marginLeft="@dimen/_10sdp"
-                android:textColor="@color/black"
-                android:drawablePadding="@dimen/_3sdp"
-                android:layoutDirection="rtl"
-                android:drawableEnd="@drawable/profile_youtube_logo1"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_5sdp"
-                style="@style/Widget.AppCompat.CompoundButton.RadioButton"/>
-
-
-
-
-            <androidx.appcompat.widget.AppCompatRadioButton
-                android:id="@+id/rb_spotify"
-                android:layout_width="match_parent"
-                android:layoutDirection="rtl"
-                android:layout_marginLeft="@dimen/_10sdp"
-                android:layout_marginRight="@dimen/_10sdp"
-                android:textSize="@dimen/_13sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:drawablePadding="@dimen/_7sdp"
-                android:textColor="@color/black"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/profile_spotify_logo2"
-                android:layout_marginStart="@dimen/_5sdp"
-                />
-
-        </RadioGroup>
     </LinearLayout>
 
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:gravity="center_vertical"
-        android:layoutDirection="ltr">
+        android:layoutDirection="ltr"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/btn_flag"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_45sdp"
-            android:gravity="center"
             android:layout_marginStart="@dimen/_10sdp"
-            android:textSize="@dimen/_12sdp"
-            android:text="@string/flag_report"
             android:background="@null"
-            android:textColor="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:paddingLeft="0dp"
+            android:text="@string/flag_report"
             android:textAllCaps="true"
-            android:paddingLeft="0dp"/>
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="@dimen/_12sdp"
+            android:visibility="gone" />
 
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/btn_logout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <Button
-                android:id="@+id/btn_logout"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_45sdp"
-                android:gravity="center"
-                android:textSize="@dimen/_12sdp"
-                android:text="@string/logout"
-                android:textColor="@android:color/black"
-                android:textAllCaps="true"
-                android:background="@null"
-                />
-            <TextView
-                android:id="@+id/tv_version"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="@dimen/_10sdp"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_10sdp" />
-        </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_log_out" />
 
-
-        <!--
-            <LinearLayout
-                android:orientation="horizontal"
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_45sdp"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:fontFamily="@font/font_bold"
                 android:gravity="center_vertical"
-                android:layoutDirection="ltr"
-                android:background="@color/color11">
-
-                <ImageView
-                    android:id="@+id/iv_log_out"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginRight="16dp"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/tv_logout"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_45sdp"
-                    android:gravity="center"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:textSize="@dimen/_12sdp"
-                    android:text="@string/logout"
-                    android:textColor="@android:color/white"
-                    android:textAllCaps="true"/>
-            </LinearLayout>-->
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="@string/logout"
+                android:textAllCaps="true"
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/_12sdp" />
+        </LinearLayout>
 
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>
