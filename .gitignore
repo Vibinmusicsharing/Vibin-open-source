@@ -2,3 +2,4 @@
 /.gradle/
 /spotify-app-remote-release-0.7.0/build/
 /.idea
+/local.properties
