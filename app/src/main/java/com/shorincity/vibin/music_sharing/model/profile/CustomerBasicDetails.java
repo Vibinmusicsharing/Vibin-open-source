@@ -37,6 +37,14 @@ public class CustomerBasicDetails {
     @Expose
     private Boolean isShowRecentSong;
 
+    @SerializedName("is_user_cover_url_avail")
+    @Expose
+    private Boolean isCoverImageAvailable;
+
+    public Boolean getIsCoverImageAvailable() {
+        return isCoverImageAvailable;
+    }
+
     public String getUserUsername() {
         return userUsername;
     }

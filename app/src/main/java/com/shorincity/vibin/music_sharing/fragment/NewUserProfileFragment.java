@@ -185,6 +185,8 @@ public class NewUserProfileFragment extends MyBaseFragment {
         playlistList = new ArrayList<>();
         recentSongsList = new ArrayList<>();
 
+        binding.cvScroll.setBackgroundResource(R.drawable.bg_profile_top_left_urve);
+
         binding.llLike.setOnClickListener(view -> {
             if (!isOtherProfile) {
                 Intent intent = new Intent(binding.llLike.getContext(), YoutubeUsersLikeListingActivity.class);
@@ -218,7 +220,7 @@ public class NewUserProfileFragment extends MyBaseFragment {
         });
 
         binding.ivLike.setOnClickListener(view -> {
-            String likeStatus = !binding.ivLike.isSelected() ? "True" : "False";//likeBtn.getText().toString().equalsIgnoreCase(LIKE)?"True": "False";
+            String likeStatus = !binding.ivLike.isSelected() ? "True" : "False";
             callUpdateLikeStatusAPI(prefManager.getSharedPrefInt(AppConstants.INTENT_USER_ID), customerId, likeStatus);
             sendLikeNotification(prefManager.getSharedPrefInt(AppConstants.INTENT_USER_ID), customerId, likeStatus);
         });
@@ -273,6 +275,7 @@ public class NewUserProfileFragment extends MyBaseFragment {
     }
 
     private void setUserData(CustomerBasicDetails userData) {
+        setUserCover(userData);
         Glide.with(this)
                 .load(userData.getUserAvatarLink())
                 .circleCrop()
@@ -304,6 +307,15 @@ public class NewUserProfileFragment extends MyBaseFragment {
         }
     }
 
+    private void setUserCover(CustomerBasicDetails userData) {
+        if (userData.getIsCoverImageAvailable()) {
+            binding.groupCover.setVisibility(View.GONE);
+        } else {
+            binding.groupCover.setVisibility(View.VISIBLE);
+
+        }
+    }
+
     private void callUserProfile(int customerId) {
         DataAPI dataAPI = RetrofitAPI.getData();
         String token = SharedPrefManager.getInstance(binding.getRoot().getContext()).getSharedPrefString(AppConstants.INTENT_USER_TOKEN);
@@ -332,9 +344,7 @@ public class NewUserProfileFragment extends MyBaseFragment {
                     }
                 } else {
                     Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
-
                 }
-
             }
 
             @Override
