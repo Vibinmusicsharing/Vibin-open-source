@@ -171,6 +171,8 @@ public class NewUserProfileFragment extends MyBaseFragment {
                 e.printStackTrace();
             }
         }
+
+        binding.setIsUserVerified(false);
     }
 
     @Override
@@ -235,7 +237,7 @@ public class NewUserProfileFragment extends MyBaseFragment {
         }));
 
         binding.rvRecentlyPlayed.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext(),
-                LinearLayoutManager.HORIZONTAL, false));
+                LinearLayoutManager.VERTICAL, false));
         binding.rvRecentlyPlayed.setAdapter(new RecentPlayedSongsAdapter(binding.getRoot().getContext(),
                 recentSongsList, position -> {
             try {
@@ -287,7 +289,7 @@ public class NewUserProfileFragment extends MyBaseFragment {
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(binding.ivCoverImage);
 
-        binding.tvUserName.setText(userData.getUserUsername());
+        binding.tvUserName.setText("@" + userData.getUserUsername());
         binding.tvUserFullName.setText(userData.getUserFullname());
         if (userData.getLikeButtonStatus().equalsIgnoreCase("liked")) {
             binding.ivLike.setSelected(true);
@@ -299,6 +301,7 @@ public class NewUserProfileFragment extends MyBaseFragment {
         binding.tvCollabCount.setText(Utility.prettyCount(userData.getCollaboratorCount()));
 
         binding.setIsOtherProfile(isOtherProfile);
+        binding.setIsUserVerified(userData.getProfileVerified());
         if (isOtherProfile) {
             binding.setIsRecentSongShow(userData.getShowRecentSong());
         } else {

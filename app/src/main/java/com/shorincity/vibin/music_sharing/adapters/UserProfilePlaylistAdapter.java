@@ -40,7 +40,6 @@ public class UserProfilePlaylistAdapter extends RecyclerView.Adapter<UserProfile
         MyPlaylistModel mBean = list.get(position);
 
         holder.binding.tvPlaylistName.setText(mBean.getName());
-        holder.binding.tvPlaylistCreator.setText(String.format("by %s", mBean.getAdminName()));
         String gifArraySplit[] = mBean.getGifLink().split("/");
         String mediaId = gifArraySplit[gifArraySplit.length - 1];
         holder.binding.gifPlaylist.setMediaWithId(mediaId, RenditionType.preview,

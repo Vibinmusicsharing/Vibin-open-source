@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="android.view.View" />
 
         <variable
@@ -13,6 +12,9 @@
 
         <variable
             name="isOtherProfile"
+            type="Boolean" />
+        <variable
+            name="isUserVerified"
             type="Boolean" />
     </data>
 
@@ -27,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent=".7" />
+            app:layout_constraintGuide_percent=".73" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_cover_2"
@@ -55,15 +57,15 @@
             app:layout_constraintHeight_percent="0.43"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.7" />
+            app:layout_constraintWidth_percent="0.73" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="40dp"
             android:layout_height="50dp"
-            app:srcCompat="@drawable/ic_profile_corner"
             android:translationY="5dp"
+            app:layout_constraintBottom_toBottomOf="@id/guideline_cover_2"
             app:layout_constraintEnd_toEndOf="@id/guideline_cover_1"
-            app:layout_constraintBottom_toBottomOf="@id/guideline_cover_2"/>
+            app:srcCompat="@drawable/ic_profile_corner" />
 
         <View
             android:id="@+id/v_background3"
@@ -79,14 +81,14 @@
             android:id="@+id/ivSetting"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginTop="@dimen/dimen_20dp"
+            android:layout_marginTop="@dimen/dimen_28dp"
             android:layout_marginEnd="@dimen/dimen_20dp"
             android:elevation="3dp"
-            android:padding="6dp"
+            android:padding="@dimen/_2sdp"
             android:visibility="@{isOtherProfile ? View.GONE : View.VISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_setting" />
+            app:srcCompat="@drawable/ic_baseline_more_vert_24" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/cv_background2"
@@ -95,7 +97,7 @@
             app:layout_constraintBottom_toBottomOf="@id/guideline_cover_2"
             app:layout_constraintHeight_percent="0.25"
             app:layout_constraintStart_toEndOf="@id/guideline_cover_1"
-            app:layout_constraintWidth_percent="0.3"
+            app:layout_constraintWidth_percent="0.27"
             app:srcCompat="@drawable/bg_profile_top_start_end_curve" />
 
         <androidx.constraintlayout.widget.Group
@@ -106,45 +108,58 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/user_dp_iv"
-            android:layout_width="@dimen/_70sdp"
-            android:layout_height="@dimen/_70sdp"
-            android:layout_marginStart="@dimen/_30sdp"
+            android:layout_width="@dimen/_64sdp"
+            android:layout_height="@dimen/_64sdp"
+            android:layout_marginStart="@dimen/_40sdp"
+            android:layout_marginBottom="@dimen/_70sdp"
             android:scaleType="fitXY"
-            app:layout_constraintBottom_toTopOf="@id/tvUserName"
+            app:layout_constraintBottom_toTopOf="@id/guideline_cover_2"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvUserName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_30sdp"
-            android:fontFamily="@font/font_extra_bold"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@id/tvUserFullName"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:text="Marvin McKinney" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_verified"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_marginStart="@dimen/_40sdp"
+            android:scaleType="fitXY"
+            android:layout_marginEnd="@dimen/_4sdp"
+            app:srcCompat="@drawable/ic_verified"
+            android:visibility="@{isUserVerified ? View.VISIBLE : View.GONE}"
+            android:layout_marginTop="@dimen/_44sdp"
+            app:layout_constraintTop_toTopOf="@id/user_dp_iv"
+            app:layout_constraintEnd_toEndOf="@id/user_dp_iv" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvUserFullName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_30sdp"
-            android:layout_marginBottom="@dimen/_30sdp"
-            android:fontFamily="@font/font_semi_bold"
+            android:fontFamily="@font/font_extra_bold"
             android:gravity="center"
+            android:layout_marginTop="@dimen/_8sdp"
             android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@id/guideline_cover_2"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="@id/user_dp_iv"
+            app:layout_constraintStart_toStartOf="@id/user_dp_iv"
+            app:layout_constraintTop_toBottomOf="@id/user_dp_iv"
+            tools:text="Marvin McKinney" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/font_semi_bold"
+            android:paddingVertical="@dimen/_2sdp"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@id/tvUserFullName"
+            app:layout_constraintTop_toBottomOf="@id/tvUserFullName"
             tools:text="Marvin McKinney" />
 
         <LinearLayout
             android:id="@+id/llLike"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_36sdp"
             android:gravity="center"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -155,10 +170,10 @@
                 android:id="@+id/tvLikeCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/font_extra_bold"
+                android:fontFamily="@font/font_bold"
                 android:paddingHorizontal="@dimen/_4sdp"
                 android:textColor="@color/counterColor"
-                android:textSize="@dimen/dimen_22sp"
+                android:textSize="@dimen/dimen_24sp"
                 tools:text="30" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -166,10 +181,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:elevation="4dp"
-                android:fontFamily="@font/font_medium"
+                android:fontFamily="@font/font_regular"
                 android:text="@string/likes"
                 android:textColor="@color/textColor"
-                android:textSize="16sp"
+                android:textSize="12sp"
                 android:visibility="@{isOtherProfile ? View.GONE : View.VISIBLE}" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -202,7 +217,7 @@
                 android:fontFamily="@font/font_extra_bold"
                 android:paddingHorizontal="@dimen/_4sdp"
                 android:textColor="@color/counterColor"
-                android:textSize="@dimen/dimen_22sp"
+                android:textSize="@dimen/dimen_24sp"
                 tools:text="30" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -212,7 +227,7 @@
                 android:fontFamily="@font/font_medium"
                 android:text="@string/collaborators"
                 android:textColor="@color/textColor"
-                android:textSize="16sp"
+                android:textSize="12sp"
                 android:visibility="@{isOtherProfile ? View.GONE : View.VISIBLE}" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -230,17 +245,21 @@
             android:id="@+id/cv_scroll"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:clipChildren="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/guideline_cover_2">
 
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fillViewport="true">
+                android:fillViewport="true"
+                android:clipToPadding="true">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:paddingBottom="@dimen/_40sdp">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvPlaylist"
@@ -263,7 +282,7 @@
                         android:fontFamily="@font/font_extra_bold"
                         android:text="@string/see_all"
                         android:textColor="@color/counterColor"
-                        android:textSize="16sp"
+                        android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="@id/tvPlaylist"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@id/tvPlaylist" />
@@ -272,10 +291,10 @@
                         android:id="@+id/rvPlaylist"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_12sdp"
                         android:clipToPadding="false"
                         android:orientation="horizontal"
-                        android:padding="8dp"
-                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tvPlaylist"
@@ -311,7 +330,7 @@
                         android:fontFamily="@font/font_extra_bold"
                         android:text="@string/see_all"
                         android:textColor="@color/counterColor"
-                        android:textSize="16sp"
+                        android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="@id/tvRecentlyPlayed"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@id/tvRecentlyPlayed" />
@@ -354,7 +373,6 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/ivNoRecentSong"
                         tools:visibility="gone" />
-
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </ScrollView>

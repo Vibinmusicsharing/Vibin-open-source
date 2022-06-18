@@ -11,21 +11,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:paddingHorizontal="@dimen/_8sdp"
-        android:paddingTop="@dimen/_4sdp">
+        android:paddingHorizontal="@dimen/_4sdp"
+        android:paddingTop="@dimen/_2sdp">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/ivPlaylistBg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:cardCornerRadius="12dp"
-            app:cardElevation="@dimen/_4sdp"
+            app:cardElevation="@dimen/_2sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <com.giphy.sdk.ui.views.GifView
                 android:id="@+id/gifPlaylist"
-                android:layout_width="120dp"
-                android:layout_height="120dp" />
+                android:layout_width="150dp"
+                android:layout_height="200dp" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivPin"
@@ -37,44 +38,21 @@
 
         </androidx.cardview.widget.CardView>
 
-        <View
-            android:id="@+id/ivPlaylistBg"
-            android:layout_width="122dp"
-            android:layout_height="122dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/bg_cornerradius_playlist"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvPlaylistName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:fontFamily="@font/font_extra_bold"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:fontFamily="@font/font_medium"
             android:singleLine="true"
+            android:paddingStart="@dimen/_8sdp"
             android:textColor="@color/textColor"
-            android:textSize="14sp"
+            android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="@id/ivPlaylistBg"
             app:layout_constraintStart_toStartOf="@id/ivPlaylistBg"
             app:layout_constraintTop_toBottomOf="@id/ivPlaylistBg"
             tools:text="Pain" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvPlaylistCreator"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:fontFamily="@font/font_medium"
-            android:singleLine="true"
-            android:textColor="@color/textColor"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@id/ivPlaylistBg"
-            app:layout_constraintStart_toStartOf="@id/ivPlaylistBg"
-            app:layout_constraintTop_toBottomOf="@id/tvPlaylistName"
-            tools:text="by encode" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

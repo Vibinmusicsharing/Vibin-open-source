@@ -133,4 +133,11 @@ public class RecentSongModel {
         this.isLiked = isLiked;
     }
 
+    public String getArtistName() {
+        return artistName;
+    }
+
+    public String getSongDuration() {
+        return songDuration;
+    }
 }

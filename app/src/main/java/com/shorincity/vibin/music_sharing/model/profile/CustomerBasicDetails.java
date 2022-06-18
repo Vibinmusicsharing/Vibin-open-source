@@ -41,6 +41,10 @@ public class CustomerBasicDetails {
     @Expose
     private Boolean isCoverImageAvailable;
 
+    @SerializedName("is_profile_verified")
+    @Expose
+    private Boolean isProfileVerified;
+
     public Boolean getIsCoverImageAvailable() {
         return isCoverImageAvailable;
     }
@@ -75,5 +79,9 @@ public class CustomerBasicDetails {
 
     public Boolean getShowRecentSong() {
         return isShowRecentSong;
+    }
+
+    public Boolean getProfileVerified() {
+        return isProfileVerified;
     }
 }

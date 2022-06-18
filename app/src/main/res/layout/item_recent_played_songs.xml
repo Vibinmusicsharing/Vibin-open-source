@@ -1,71 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout>
 
-    <data>
-
-    </data>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:paddingStart="8dp"
-        android:paddingTop="4dp"
-        android:paddingEnd="8dp">
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/_6sdp">
+
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cv_thumbnail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
+            app:cardCornerRadius="@dimen/_4sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivPlaylist"
-                android:layout_width="120dp"
-                android:layout_height="120dp" />
+            <ImageView
+                android:id="@+id/iv_thumbnail"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:scaleType="fitXY"
+                android:src="@drawable/musicplayericon" />
         </androidx.cardview.widget.CardView>
 
-        <View
-            android:id="@+id/ivPlaylistBg"
-            android:layout_width="122dp"
-            android:layout_height="122dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_cornerradius_playlist"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvPlaylistName"
+        <TextView
+            android:id="@+id/tv_song_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:fontFamily="@font/font_extra_bold"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:ellipsize="marquee"
             android:singleLine="true"
-            android:text="Pain"
-            android:textColor="@color/textColor"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="@id/ivPlaylistBg"
-            app:layout_constraintStart_toStartOf="@id/ivPlaylistBg"
-            app:layout_constraintTop_toBottomOf="@id/ivPlaylistBg" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvPlaylistCreator"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:fontFamily="@font/font_medium"
-            android:singleLine="true"
-            android:text="by encode"
-            android:textColor="@color/textColor"
+            android:fontFamily="@font/font_bold"
+            android:scrollHorizontally="true"
+            android:textColor="@android:color/black"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@id/ivPlaylistBg"
-            app:layout_constraintStart_toStartOf="@id/ivPlaylistBg"
-            app:layout_constraintTop_toBottomOf="@id/tvPlaylistName" />
+            app:layout_constraintBottom_toTopOf="@id/tv_artist"
+            app:layout_constraintEnd_toStartOf="@id/tv_duration"
+            app:layout_constraintStart_toEndOf="@id/cv_thumbnail"
+            app:layout_constraintTop_toTopOf="@id/cv_thumbnail"
+            tools:text="Kiss someday" />
+
+        <TextView
+            android:id="@+id/tv_artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:fontFamily="@font/font_regular"
+            android:textColor="@android:color/black"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/cv_thumbnail"
+            app:layout_constraintStart_toEndOf="@id/cv_thumbnail"
+            app:layout_constraintTop_toBottomOf="@id/tv_song_name"
+            tools:text="Julie Bergan" />
+
+        <TextView
+            android:id="@+id/tv_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:fontFamily="@font/font_medium"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/cv_thumbnail"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/cv_thumbnail"
+            tools:text="03:30" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
