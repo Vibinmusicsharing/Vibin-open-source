@@ -205,6 +205,10 @@ public class NewUserProfileFragment extends MyBaseFragment {
             startActivity(new Intent(getActivity(), AllRecntSongsActivity.class));
             getActivity().overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
         });
+        binding.tvSeeAll.setOnClickListener(view -> {
+            startActivity(new Intent(getActivity(), AllRecntSongsActivity.class));
+            getActivity().overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+        });
         binding.ivSetting.setOnClickListener(view -> {
             if (slidePanLayout.isOpen()) {
                 slidePanLayout.closePane();
@@ -213,7 +217,7 @@ public class NewUserProfileFragment extends MyBaseFragment {
             }
         });
 
-        binding.ivCollab.setOnClickListener(view -> {
+        binding.llCollab.setOnClickListener(view -> {
             if (playlistId > 0)
                 sendCollabRequestNotification(playlistId, customerId);
                 //callAddCollaborateAPI(playlistId,searchedUserId);
@@ -221,7 +225,7 @@ public class NewUserProfileFragment extends MyBaseFragment {
                 Collabdialog();
         });
 
-        binding.ivLike.setOnClickListener(view -> {
+        binding.llLike.setOnClickListener(view -> {
             String likeStatus = !binding.ivLike.isSelected() ? "True" : "False";
             callUpdateLikeStatusAPI(prefManager.getSharedPrefInt(AppConstants.INTENT_USER_ID), customerId, likeStatus);
             sendLikeNotification(prefManager.getSharedPrefInt(AppConstants.INTENT_USER_ID), customerId, likeStatus);
