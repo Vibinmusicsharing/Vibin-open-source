@@ -22,7 +22,7 @@
         <fragment
             android:id="@+id/fragment_menu"
             android:name="com.shorincity.vibin.music_sharing.fragment.MenuFragment"
-            android:layout_width="@dimen/_180sdp"
+            android:layout_width="@dimen/_250sdp"
             android:layout_height="match_parent" />
 
     </LinearLayout>

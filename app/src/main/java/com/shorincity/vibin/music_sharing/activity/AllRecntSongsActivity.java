@@ -1,5 +1,7 @@
 package com.shorincity.vibin.music_sharing.activity;
 
+import static com.shorincity.vibin.music_sharing.utils.AppConstants.USER_ID;
+
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,7 +51,7 @@ public class AllRecntSongsActivity extends AppCompatActivity {
         statusBarColorChange();
         setListAdapter();
 
-        callGetRecentAllSongAPI(SharedPrefManager.getInstance(AllRecntSongsActivity.this).getSharedPrefInt(AppConstants.INTENT_USER_ID));
+        callGetRecentAllSongAPI(getIntent().getIntExtra(USER_ID, -1));
     }
 
     private void statusBarColorChange() {
@@ -145,7 +147,7 @@ public class AllRecntSongsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        // Top to Bottom animation whenever user tap on back button
+        // Top to Bottom animation whenever user  tap on back button
         overridePendingTransition(R.anim.slide_out_bottom, R.anim.slide_in_bottom);
     }
 

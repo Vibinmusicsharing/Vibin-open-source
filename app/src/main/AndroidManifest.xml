@@ -29,8 +29,8 @@
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
 
-        <activity android:name=".activity.YoutubeUsersCollaboratedListingActivity" />
-        <activity android:name=".activity.YoutubeUsersLikeListingActivity" />
+        <activity android:name=".user_profile.YoutubeUsersCollaboratedListingActivity" />
+        <activity android:name=".user_profile.YoutubeUsersLikeListingActivity" />
         <activity android:name=".activity.TermsAndConditionsActivity" />
 
         <activity
@@ -163,8 +163,14 @@
         <activity
             android:name=".activity.EditProfileActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/AppTheme.TranslucentStatus" />
+            android:theme="@style/AppTheme.TranslucentStatus"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".user_profile.ui.UserPlaylistsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.TranslucentStatus"
+            android:windowSoftInputMode="adjustResize" />
 
         <service
             android:name=".service.MyFirebaseMessagingService"

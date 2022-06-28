@@ -252,4 +252,10 @@
     <string name="collaborators">Collaborators</string>
     <string name="see_all">See all</string>
     <string name="private_account_text">Account is private. Collaborate with user to view.</string>
+    <string name="playlists">Playlists</string>
+    <string name="pinned">Pinned</string>
+    <string name="private_">Private</string>
+    <string name="collaborative">Collaborative</string>
+    <string name="no_playlist_to_listen_too">No Playlist to listen too :(</string>
+    <string name="collaborate_or_create_playlist_with_your_favourite_tracks">Collaborate or create playlist with your favourite tracks</string>
 </resources>
