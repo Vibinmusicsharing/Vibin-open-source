@@ -95,8 +95,7 @@ import com.shorincity.vibin.music_sharing.adapters.AutoCompleteAdapter;
 import com.shorincity.vibin.music_sharing.adapters.PlayListDetailsAdapter;
 import com.shorincity.vibin.music_sharing.adapters.PlaylistRecyclerView;
 import com.shorincity.vibin.music_sharing.fragment.MyBaseFragment;
-import com.shorincity.vibin.music_sharing.fragment.NewUserProfileFragment;
-import com.shorincity.vibin.music_sharing.fragment.OtherUserProfileFragment;
+import com.shorincity.vibin.music_sharing.user_profile.NewUserProfileFragment;
 import com.shorincity.vibin.music_sharing.fragment.PlaylistDetailFragmentNew;
 import com.shorincity.vibin.music_sharing.fragment.PublicPlaylistFragment;
 import com.shorincity.vibin.music_sharing.fragment.UserNotificationFragment;
@@ -227,7 +226,6 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_youtube_2);
-
         SharedPrefManager pref = SharedPrefManager.getInstance(this);
         AppConstants.YOUTUBE_KEY = pref.getVibinKey(PREF_YOUTUBE_KEY);
         AppConstants.GIPHY_API_KEY = pref.getVibinKey(PREF_GIPHY_KEY);
@@ -367,7 +365,8 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
                     bottomNavigationView.getMenu().getItem(2).setChecked(true);
                 else if (f instanceof UserNotificationFragment)
                     bottomNavigationView.getMenu().getItem(3).setChecked(true);
-//                else if (f instanceof NewUserProfileFragment && ((NewUserProfileFragment) f).isUserProfile())
+                else if( f instanceof NewUserProfileFragment)
+                    statusBarColorChange(ContextCompat.getColor(youtube.this, R.color.black));
                 else if (f instanceof UserProfileFragment)
                     bottomNavigationView.getMenu().getItem(4).setChecked(true);
                 else if (f instanceof PlaylistDetailFragmentNew) {
@@ -684,6 +683,8 @@ public class youtube extends YouTubeBaseActivity implements SpotifyPlayer.Notifi
         if (fragment instanceof PublicPlaylistFragment ||
                 fragment instanceof PlaylistDetailFragmentNew) {
             statusBarColorChange(ContextCompat.getColor(this, R.color.white));
+        } else if(fragment instanceof NewUserProfileFragment) {
+            statusBarColorChange(ContextCompat.getColor(this, R.color.black));
         } else {
             statusBarColorChange(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         }

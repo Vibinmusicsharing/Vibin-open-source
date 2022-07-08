@@ -6,6 +6,7 @@ import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.AddSongLogModel;
 import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
 import com.shorincity.vibin.music_sharing.model.CollabsList;
+import com.shorincity.vibin.music_sharing.model.CombinedUserPlaylist;
 import com.shorincity.vibin.music_sharing.model.CoverAvatarResponse;
 import com.shorincity.vibin.music_sharing.model.CreateSessionModel;
 import com.shorincity.vibin.music_sharing.model.GetNotifications;
@@ -590,4 +591,11 @@ public interface DataAPI {
             @Field("pin_type") String pinType
     );
 
+    @GET("/playlist/v1/list_playlists/")
+    Call<CombinedUserPlaylist> getUserPlaylists(
+            @Header("Authorization") String token,
+            @Header("x-api-login-token") String userToken,
+            @Query("view_profile") int userId,
+            @Query("filter") String filter
+    );
 }

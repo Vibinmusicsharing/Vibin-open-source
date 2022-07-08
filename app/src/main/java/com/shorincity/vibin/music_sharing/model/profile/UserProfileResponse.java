@@ -26,7 +26,7 @@ public class UserProfileResponse {
     private String message;
 
     @SerializedName("latest_liked_music_thumbnail")
-    private List<String> latestLikedMusicThumbnail;
+    private String latestLikedMusicThumbnail;
 
     public List<RecentSongModel> getRecentlyPlayedSongs() {
         return recentlyPlayedSongs;
@@ -44,7 +44,7 @@ public class UserProfileResponse {
         return status;
     }
 
-    public List<String> getLatestLikedMusicThumbnail() {
+    public String getLatestLikedMusicThumbnail() {
         return latestLikedMusicThumbnail;
     }
 

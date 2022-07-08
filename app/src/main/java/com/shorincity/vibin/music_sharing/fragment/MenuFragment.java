@@ -115,15 +115,15 @@ public class MenuFragment extends MyBaseFragment implements View.OnClickListener
         list.add(new MenuSettingModel(getString(R.string.lbl_block_user),
                 getString(R.string.lbl_block_user_sub),
                 R.drawable.ic_blocked_user, 2));
-        list.add(new MenuSettingModel(getString(R.string.lbl_privacy),
-                getString(R.string.lbl_privacy_sub),
-                R.drawable.ic_privacy_policy, 3));
-        list.add(new MenuSettingModel(getString(R.string.lbl_app_version),
-                Utility.getVersionName(getActivity()),
-                R.drawable.ic_app_version, 4));
-        list.add(new MenuSettingModel(getString(R.string.lbl_report_us),
-                getString(R.string.lbl_report_us_sub),
-                R.drawable.ic_report_us, 5));
+//        list.add(new MenuSettingModel(getString(R.string.lbl_privacy),
+//                getString(R.string.lbl_privacy_sub),
+//                R.drawable.ic_privacy_policy, 3));
+//        list.add(new MenuSettingModel(getString(R.string.lbl_app_version),
+//                Utility.getVersionName(getActivity()),
+//                R.drawable.ic_app_version, 4));
+//        list.add(new MenuSettingModel(getString(R.string.lbl_report_us),
+//                getString(R.string.lbl_report_us_sub),
+//                R.drawable.ic_report_us, 5));
     }
 
     @Override

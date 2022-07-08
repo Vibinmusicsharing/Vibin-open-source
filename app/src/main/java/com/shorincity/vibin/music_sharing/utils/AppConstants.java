@@ -157,6 +157,11 @@ public class AppConstants {
     public static String SOURCE_TYPE_IN_APP = "IN_APP";
     public static String SOURCE_TYPE_DYNAMIC_LINK = "DYNAMIC_LINK";
     public static String PLAYLIST_UID = "playlist_uid";
-
+    public static String USER_ID = "userId";
+    public static String FOR_TNC = "for_tnc";
+    public static String PIN_PLAYLIST = "pin";
+    public static String UNPIN_PLAYLIST = "unpin";
+    public static String SUCCESS_RESPONSE = "success";
+    public static String FAILED_RESPONSE = "failed";
 
 }

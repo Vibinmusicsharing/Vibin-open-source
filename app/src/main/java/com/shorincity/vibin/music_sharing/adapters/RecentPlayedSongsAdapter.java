@@ -38,17 +38,17 @@ public class RecentPlayedSongsAdapter extends RecyclerView.Adapter<RecentPlayedS
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         RecentSongModel mBean = list.get(position);
 
-        holder.binding.tvPlaylistName.setText(mBean.getSongName());
-        holder.binding.tvPlaylistCreator.setText(String.format("by %s", mBean.getSongName()));
+        holder.binding.tvSongName.setText(mBean.getSongName());
         GlideApp.with(holder.binding.getRoot().getContext())
                 .load(mBean.getSongThumbnail())
                 .centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .into(holder.binding.ivPlaylist);
+                .into(holder.binding.ivThumbnail);
 
         holder.itemView.setOnClickListener(view -> {
             callback.onItemClick(position);
         });
+        holder.binding.tvDuration.setText(mBean.getSongDuration().substring(3));
     }
 
     @Override

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingHorizontal="@dimen/_4sdp"
+        android:paddingVertical="@dimen/_4sdp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_thumbnail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_2sdp"
+            app:cardCornerRadius="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.giphy.sdk.ui.views.GifView
+                android:id="@+id/gifPlaylist"
+                android:layout_width="72dp"
+                android:layout_height="72dp" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvPlaylistName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/font_extra_bold"
+            android:singleLine="true"
+            android:textColor="@color/textColor"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@id/tvPlaylistCreator"
+            app:layout_constraintEnd_toStartOf="@id/tvSongCount"
+            app:layout_constraintStart_toEndOf="@id/cv_thumbnail"
+            app:layout_constraintTop_toTopOf="@id/cv_thumbnail"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="Pain" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvPlaylistCreator"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/font_medium"
+            android:singleLine="true"
+            android:textColor="@color/textColor"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/cv_thumbnail"
+            app:layout_constraintStart_toEndOf="@id/cv_thumbnail"
+            app:layout_constraintTop_toBottomOf="@id/tvPlaylistName"
+            tools:text="by encode" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSongCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:fontFamily="@font/font_medium"
+            android:singleLine="true"
+            android:textColor="@color/textColor"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/cv_thumbnail"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/cv_thumbnail"
+            tools:text="11 songs" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,4 +1,4 @@
-package com.shorincity.vibin.music_sharing.activity;
+package com.shorincity.vibin.music_sharing.user_profile;
 
 import android.os.Bundle;
 import android.view.MenuItem;

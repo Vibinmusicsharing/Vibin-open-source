@@ -1,13 +1,23 @@
-package com.shorincity.vibin.music_sharing.fragment;
+package com.shorincity.vibin.music_sharing.user_profile;
+
+import static com.shorincity.vibin.music_sharing.utils.AppConstants.FAILED_RESPONSE;
+import static com.shorincity.vibin.music_sharing.utils.AppConstants.PIN_PLAYLIST;
+import static com.shorincity.vibin.music_sharing.utils.AppConstants.SUCCESS_RESPONSE;
+import static com.shorincity.vibin.music_sharing.utils.AppConstants.UNPIN_PLAYLIST;
+import static com.shorincity.vibin.music_sharing.utils.AppConstants.USER_ID;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,19 +48,22 @@ import com.giphy.sdk.ui.pagination.GPHContent;
 import com.giphy.sdk.ui.views.GPHGridCallback;
 import com.giphy.sdk.ui.views.GifView;
 import com.giphy.sdk.ui.views.GiphyGridView;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
+import com.ovenbits.quickactionview.Action;
+import com.ovenbits.quickactionview.QuickActionView;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.activity.AllRecntSongsActivity;
-import com.shorincity.vibin.music_sharing.activity.YoutubeUsersCollaboratedListingActivity;
-import com.shorincity.vibin.music_sharing.activity.YoutubeUsersLikeListingActivity;
 import com.shorincity.vibin.music_sharing.adapters.AddToPlaylistAdapter;
 import com.shorincity.vibin.music_sharing.adapters.AutoCompleteAdapter;
 import com.shorincity.vibin.music_sharing.adapters.RecentPlayedSongsAdapter;
 import com.shorincity.vibin.music_sharing.adapters.UserProfilePlaylistAdapter;
 import com.shorincity.vibin.music_sharing.databinding.FragmentUserProfileNewBinding;
+import com.shorincity.vibin.music_sharing.fragment.MyBaseFragment;
+import com.shorincity.vibin.music_sharing.fragment.PlaylistDetailFragmentNew;
 import com.shorincity.vibin.music_sharing.model.APIResponse;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
@@ -58,8 +71,10 @@ import com.shorincity.vibin.music_sharing.model.RecentSongModel;
 import com.shorincity.vibin.music_sharing.model.UpdateLikeStatusModel;
 import com.shorincity.vibin.music_sharing.model.profile.CustomerBasicDetails;
 import com.shorincity.vibin.music_sharing.model.profile.UserProfileResponse;
+import com.shorincity.vibin.music_sharing.model.shareplaylist.SharePlaylistResponse;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
+import com.shorincity.vibin.music_sharing.user_profile.ui.UserPlaylistsActivity;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 import com.shorincity.vibin.music_sharing.utils.CommonUtils;
 import com.shorincity.vibin.music_sharing.utils.CustomSlidePanLayout;
@@ -76,10 +91,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class NewUserProfileFragment extends MyBaseFragment {
+public class NewUserProfileFragment extends MyBaseFragment implements UserProfilePlaylistAdapter.MenuItemCallback {
 
     private FragmentUserProfileNewBinding binding;
-    private ArrayList<MyPlaylistModel> playlistList;
+    private ArrayList<MyPlaylistModel> playlists;
     private ArrayList<RecentSongModel> recentSongsList;
     private CustomSlidePanLayout slidePanLayout;
     private int customerId = -1, playlistId;
@@ -100,8 +115,7 @@ public class NewUserProfileFragment extends MyBaseFragment {
         return new NewUserProfileFragment();
     }
 
-    public static NewUserProfileFragment getInstance(int customerId, int playlistId,
-                                                     String userName, String fullName) {
+    public static NewUserProfileFragment getInstance(int customerId, int playlistId, String userName, String fullName) {
         NewUserProfileFragment fragment = new NewUserProfileFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(BUNDLE_CUSTOMER_ID, customerId);
@@ -113,8 +127,7 @@ public class NewUserProfileFragment extends MyBaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_user_profile_new, container, false);
         return binding.getRoot();
     }
@@ -171,6 +184,8 @@ public class NewUserProfileFragment extends MyBaseFragment {
                 e.printStackTrace();
             }
         }
+
+        binding.setIsUserVerified(false);
     }
 
     @Override
@@ -182,8 +197,38 @@ public class NewUserProfileFragment extends MyBaseFragment {
 
     private void initControls() {
         SharedPrefManager prefManager = SharedPrefManager.getInstance(binding.getRoot().getContext());
-        playlistList = new ArrayList<>();
+        playlists = new ArrayList<>();
         recentSongsList = new ArrayList<>();
+        initRecyclerViews();
+
+        binding.ablToolbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = false;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    isShow = true;
+                    binding.tbProfile.setVisibility(View.VISIBLE);
+                    binding.llToolbar.setVisibility(View.VISIBLE);
+                } else if (isShow) {
+                    isShow = false;
+                    binding.tbProfile.setVisibility(View.GONE);
+                    binding.llToolbar.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        binding.ivSettingToolbar.setOnClickListener(view -> {
+            if (slidePanLayout.isOpen()) {
+                slidePanLayout.closePane();
+            } else {
+                slidePanLayout.openPane();
+            }
+        });
 
         binding.llLike.setOnClickListener(view -> {
             if (!isOtherProfile) {
@@ -191,16 +236,28 @@ public class NewUserProfileFragment extends MyBaseFragment {
                 startActivity(intent);
             }
         });
+
         binding.llCollab.setOnClickListener(view -> {
             if (!isOtherProfile) {
                 Intent intent = new Intent(binding.llCollab.getContext(), YoutubeUsersCollaboratedListingActivity.class);
                 startActivity(intent);
             }
         });
+
         binding.tvSeeAllRecently.setOnClickListener(view -> {
-            startActivity(new Intent(getActivity(), AllRecntSongsActivity.class));
+            Intent intent = new Intent(getActivity(), AllRecntSongsActivity.class);
+            intent.putExtra(USER_ID, customerId);
+            startActivity(intent);
             getActivity().overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
         });
+
+        binding.tvSeeAll.setOnClickListener(view -> {
+            Intent intent = new Intent(getActivity(), UserPlaylistsActivity.class);
+            intent.putExtra(USER_ID, customerId);
+            startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+        });
+
         binding.ivSetting.setOnClickListener(view -> {
             if (slidePanLayout.isOpen()) {
                 slidePanLayout.closePane();
@@ -209,36 +266,28 @@ public class NewUserProfileFragment extends MyBaseFragment {
             }
         });
 
-        binding.ivCollab.setOnClickListener(view -> {
-            if (playlistId > 0)
-                sendCollabRequestNotification(playlistId, customerId);
-                //callAddCollaborateAPI(playlistId,searchedUserId);
-            else
-                Collabdialog();
+        binding.ivCollabPlaylists.setOnClickListener(view -> {
+            if (playlistId > 0) sendCollabRequestNotification(playlistId, customerId);
+            else collabDialog();
         });
 
-        binding.ivLike.setOnClickListener(view -> {
-            String likeStatus = !binding.ivLike.isSelected() ? "True" : "False";//likeBtn.getText().toString().equalsIgnoreCase(LIKE)?"True": "False";
+        binding.ivLikeUser.setOnClickListener(view -> {
+            String likeStatus = !binding.ivLikeUser.isSelected() ? "True" : "False";
             callUpdateLikeStatusAPI(prefManager.getSharedPrefInt(AppConstants.INTENT_USER_ID), customerId, likeStatus);
             sendLikeNotification(prefManager.getSharedPrefInt(AppConstants.INTENT_USER_ID), customerId, likeStatus);
         });
+    }
 
-        binding.rvPlaylist.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext(),
-                LinearLayoutManager.HORIZONTAL, false));
-        binding.rvPlaylist.setAdapter(new UserProfilePlaylistAdapter(binding.getRoot().getContext(),
-                playlistList, position -> {
-            PlaylistDetailFragmentNew fragment = PlaylistDetailFragmentNew.getInstance(playlistList.get(position).getId(),
-                    playlistList.get(position).getAdmin_id(), playlistList.get(position));
-            ((youtube) getActivity()).onLoadFragment(fragment);
-        }));
+    private void initRecyclerViews() {
+        binding.rvPlaylist.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext(), LinearLayoutManager.HORIZONTAL, false));
+        binding.rvPlaylist.setAdapter(new UserProfilePlaylistAdapter(binding.getRoot().getContext(), playlists, this));
 
         binding.rvRecentlyPlayed.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext(),
-                LinearLayoutManager.HORIZONTAL, false));
+                LinearLayoutManager.VERTICAL, false));
         binding.rvRecentlyPlayed.setAdapter(new RecentPlayedSongsAdapter(binding.getRoot().getContext(),
                 recentSongsList, position -> {
             try {
                 if (recentSongsList.get(position).getSongType().equalsIgnoreCase(AppConstants.YOUTUBE)) {
-//                        Intent intent = new Intent(getActivity(), PlayYoutubeVideoActivity.class);
                     ArrayList<PlaylistDetailModel> playlist;
                     playlist = new ArrayList<>();
                     for (int i = 0; i < recentSongsList.size(); i++) {
@@ -261,46 +310,46 @@ public class NewUserProfileFragment extends MyBaseFragment {
                 e.printStackTrace();
             }
         }));
-
-        callUserProfile(customerId);
-        /*callGetUserProfileAPI(prefManager.getSharedPrefInt(AppConstants.INTENT_USER_ID), customerId);
-        if (isOtherProfile) {
-            callUserPlaylistAPI(customerId);
-        } else {
-            callGetRecentSongAPI(prefManager.getSharedPrefInt(AppConstants.INTENT_USER_ID));
-            callMyPlaylistAPI(prefManager.getSharedPrefString(AppConstants.INTENT_USER_TOKEN));
-        }*/
     }
 
     private void setUserData(CustomerBasicDetails userData) {
+        setUserCover(userData);
         Glide.with(this)
                 .load(userData.getUserAvatarLink())
                 .circleCrop()
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(binding.userDpIv);
 
-        GlideApp.with(this)
-                .load(userData.getUserCoverLink())
+        Glide.with(this)
+                .load(userData.getUserAvatarLink())
+                .circleCrop()
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .into(binding.ivCoverImage);
+                .into(binding.ivUserPic);
 
-        binding.tvUserName.setText(userData.getUserUsername());
+        binding.tvUserName.setText("@" + userData.getUserUsername());
         binding.tvUserFullName.setText(userData.getUserFullname());
-        if (userData.getLikeButtonStatus().equalsIgnoreCase("liked")) {
-            binding.ivLike.setSelected(true);
-        } else {
-            binding.ivLike.setSelected(false);
-        }
+        binding.tvUserNameToolbar.setText(userData.getUserFullname());
+        binding.ivLikeUser.setSelected(userData.getLikeButtonStatus().equalsIgnoreCase("liked"));
 
         binding.tvLikeCount.setText(Utility.prettyCount(userData.getLikesReceived()));
         binding.tvCollabCount.setText(Utility.prettyCount(userData.getCollaboratorCount()));
 
         binding.setIsOtherProfile(isOtherProfile);
-        if (isOtherProfile) {
-            binding.setIsRecentSongShow(userData.getShowRecentSong());
+        binding.setIsUserVerified(userData.getProfileVerified());
+        binding.setIsRecentSongShow(userData.getShowRecentSong());
+    }
+
+    private void setUserCover(CustomerBasicDetails userData) {
+        if (userData.getIsCoverImageAvailable()) {
+            binding.groupCover.setVisibility(View.GONE);
+            GlideApp.with(this)
+                    .load(userData.getUserCoverLink())
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .into(binding.ivCoverImage);
         } else {
-            SharedPrefManager prefManager = SharedPrefManager.getInstance(binding.getRoot().getContext());
-            binding.setIsRecentSongShow(prefManager.getSharedPrefBoolean(AppConstants.PREF_SHOW_RECENTLY_SONGS));
+            binding.groupCover.setVisibility(View.VISIBLE);
+            binding.cvBackground1.setBackgroundColor(Color.parseColor(userData.getUserCoverLink()));
+            binding.vBackground3.setBackgroundColor(Color.parseColor(userData.getUserCoverLink()));
         }
     }
 
@@ -314,16 +363,33 @@ public class NewUserProfileFragment extends MyBaseFragment {
                 if (response.body() != null) {
                     if (response.body().getStatus().equalsIgnoreCase("success")) {
                         setUserData(response.body().getCustomerBasicDetails());
-                        playlistList.clear();
-                        playlistList.addAll(response.body().getPlaylists());
-                        if (isVisible() && binding.rvPlaylist.getAdapter() != null)
-                            binding.rvPlaylist.getAdapter().notifyDataSetChanged();
+                        playlists.clear();
+                        if (response.body().getPlaylists().isEmpty()) {
+                            binding.groupNoPlaylist.setVisibility(View.VISIBLE);
+                            binding.rvPlaylist.setVisibility(View.GONE);
+                            binding.tvSeeAll.setVisibility(View.GONE);
+                        } else {
+                            binding.groupNoPlaylist.setVisibility(View.GONE);
+                            binding.rvPlaylist.setVisibility(View.VISIBLE);
+                            binding.tvSeeAll.setVisibility(View.VISIBLE);
+                            playlists.addAll(response.body().getPlaylists());
+                            if (isVisible() && binding.rvPlaylist.getAdapter() != null)
+                                binding.rvPlaylist.getAdapter().notifyDataSetChanged();
+                        }
 
                         recentSongsList.clear();
-                        recentSongsList.addAll(response.body().getRecentlyPlayedSongs());
-                        if (isVisible() && binding.rvRecentlyPlayed.getAdapter() != null)
-                            binding.rvRecentlyPlayed.getAdapter().notifyDataSetChanged();
-
+                        if (response.body().getRecentlyPlayedSongs().isEmpty()) {
+                            binding.groupNoRecentSongsFound.setVisibility(View.VISIBLE);
+                            binding.rvRecentlyPlayed.setVisibility(View.GONE);
+                            binding.tvSeeAllRecently.setVisibility(View.GONE);
+                        } else {
+                            binding.groupNoRecentSongsFound.setVisibility(View.GONE);
+                            binding.rvRecentlyPlayed.setVisibility(View.VISIBLE);
+                            binding.tvSeeAllRecently.setVisibility(View.VISIBLE);
+                            recentSongsList.addAll(response.body().getRecentlyPlayedSongs());
+                            if (isVisible() && binding.rvRecentlyPlayed.getAdapter() != null)
+                                binding.rvRecentlyPlayed.getAdapter().notifyDataSetChanged();
+                        }
                     } else if (response.body().getStatus().equalsIgnoreCase("failed")) {
                         Toast.makeText(getActivity(), response.body().getMessage(),
                                 Toast.LENGTH_LONG).show();
@@ -332,9 +398,7 @@ public class NewUserProfileFragment extends MyBaseFragment {
                     }
                 } else {
                     Toast.makeText(getActivity(), "Something went wrong!", Toast.LENGTH_SHORT).show();
-
                 }
-
             }
 
             @Override
@@ -359,17 +423,17 @@ public class NewUserProfileFragment extends MyBaseFragment {
 
                 if (response.body().getButtonStatus().equalsIgnoreCase("liked")) {
                     Logging.d("liked --->");
-                    binding.ivLike.setSelected(true);
+                    binding.ivLikeUser.setSelected(true);
 
                 } else {
-                    binding.ivLike.setSelected(false);
+                    binding.ivLikeUser.setSelected(false);
                 }
                 binding.tvLikeCount.setText(Utility.prettyCount(response.body().getHowManyLikesUser()));
             }
 
             @Override
             public void onFailure(Call<UpdateLikeStatusModel> call, Throwable t) {
-                binding.ivLike.setSelected(false);
+                binding.ivLikeUser.setSelected(false);
             }
         });
     }
@@ -391,12 +455,12 @@ public class NewUserProfileFragment extends MyBaseFragment {
                     if (response != null && response.body() != null) {
                         Logging.d("like success--->" + new Gson().toJson(response.body()));
                         if (response.body().getStatus().equalsIgnoreCase("success")) {
-                            binding.ivLike.setSelected(true);
+                            binding.ivLikeUser.setSelected(true);
                         } else {
-                            binding.ivLike.setSelected(false);
+                            binding.ivLikeUser.setSelected(false);
                         }
                     } else {
-                        binding.ivLike.setSelected(false);
+                        binding.ivLikeUser.setSelected(false);
                     }
                 }
 
@@ -405,7 +469,7 @@ public class NewUserProfileFragment extends MyBaseFragment {
                 public void onFailure(Call<APIResponse> call, Throwable t) {
                     Log.i("Error: ", "ADD NOTIFICATION " + t.getMessage());
                     Logging.d("unlike onFailure--->");
-                    binding.ivLike.setSelected(false);
+                    binding.ivLikeUser.setSelected(false);
                 }
             });
         }
@@ -413,7 +477,6 @@ public class NewUserProfileFragment extends MyBaseFragment {
     }
 
     private void sendCollabRequestNotification(int playlistId, int searchedUserId) {
-
         DataAPI dataAPI = RetrofitAPI.getData();
         String headerToken = AppConstants.TOKEN + SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
         int userId = SharedPrefManager.getInstance(getActivity()).getSharedPrefInt(AppConstants.INTENT_USER_ID);
@@ -422,18 +485,15 @@ public class NewUserProfileFragment extends MyBaseFragment {
         callback.enqueue(new Callback<APIResponse>() {
             @Override
             public void onResponse(Call<APIResponse> call, retrofit2.Response<APIResponse> response) {
-                //progressBar.setVisibility(View.GONE);
                 Logging.d("User Profile res-->" + new Gson().toJson(response.body()));
-                if (response != null && response.body() != null) {
-
+                if (response.body() != null) {
                     if (response.body().getStatus().equalsIgnoreCase("success")) {
                         Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_LONG).show();
-
+                        binding.ivCollabPlaylists.setSelected(true);
                     } else if (response.body().getStatus().equalsIgnoreCase("failed")) {
                         Toast.makeText(getActivity(), response.body().getMessage(),
                                 Toast.LENGTH_LONG).show();
                     }
-                } else {
                 }
             }
 
@@ -445,36 +505,35 @@ public class NewUserProfileFragment extends MyBaseFragment {
     }
 
     // add video to playlist
-    private void Collabdialog() {
+    private void collabDialog() {
         final AlertDialog.Builder mb = new AlertDialog.Builder(binding.getRoot().getContext());
         final View dialog = LayoutInflater.from(binding.getRoot().getContext()).inflate(R.layout.dialog_add_to_playlist, null, false);
 
         collabPlaylist = new ArrayList<>();
-        RecyclerView youtubePlayListRecyclerView = dialog.findViewById(R.id.playlists);
-        TextView collabTextVieww = dialog.findViewById(R.id.textviewplaylistplayer);
+        RecyclerView userPlaylistsView = dialog.findViewById(R.id.playlists);
+        TextView collabTextView = dialog.findViewById(R.id.textviewplaylistplayer);
         ProgressBar collabProgressBar = dialog.findViewById(R.id.progressbarPlayList);
         collabProgressBar.setVisibility(View.VISIBLE);
-        youtubePlayListRecyclerView.setHasFixedSize(true);
-        youtubePlayListRecyclerView.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext(), LinearLayoutManager.VERTICAL, false));
+        userPlaylistsView.setHasFixedSize(true);
+        userPlaylistsView.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext(), LinearLayoutManager.VERTICAL, false));
 
         // parse public playlist to collaborate with
-        parsePublicPlaylist(collabProgressBar, collabTextVieww);
+        parsePublicPlaylist(collabProgressBar, collabTextView);
         addToPlaylistAdapter = new AddToPlaylistAdapter(binding.getRoot().getContext(), collabPlaylist);
         addToPlaylistAdapter.setCustomItemClickListener(new AddToPlaylistAdapter.CustomItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
                 ass.dismiss();
-                //callAddCollaborateAPI(collabPlaylist.get(position).getId(),searchedUserId);
                 sendCollabRequestNotification(collabPlaylist.get(position).getId(), customerId);
             }
         });
-        youtubePlayListRecyclerView.setAdapter(addToPlaylistAdapter);
+        userPlaylistsView.setAdapter(addToPlaylistAdapter);
 
-        mb.setView(dialog).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+        mb.setView(dialog).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             }
-        }).setPositiveButton("create new playlist", new DialogInterface.OnClickListener() {
+        }).setPositiveButton("Create New Playlist", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 openCreatePLaylistDialog();
@@ -486,7 +545,7 @@ public class NewUserProfileFragment extends MyBaseFragment {
         ass.show();
     }
 
-    private void parsePublicPlaylist(ProgressBar collabProgressBar, TextView collabTextVieww) {
+    private void parsePublicPlaylist(ProgressBar collabProgressBar, TextView collabTextView) {
 
         DataAPI dataAPI = RetrofitAPI.getData();
 
@@ -499,11 +558,11 @@ public class NewUserProfileFragment extends MyBaseFragment {
                 collabProgressBar.setVisibility(View.GONE);
                 collabPlaylist.clear();
                 if (response != null && response.body() != null && response.body().size() > 0) {
-                    collabTextVieww.setVisibility(View.GONE);
+                    collabTextView.setVisibility(View.GONE);
                     collabPlaylist.addAll(response.body());
                     addToPlaylistAdapter.notifyDataSetChanged();
                 } else {
-                    collabTextVieww.setVisibility(View.VISIBLE);
+                    collabTextView.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -643,7 +702,96 @@ public class NewUserProfileFragment extends MyBaseFragment {
 
     }
 
-    public boolean isUserProfile() {
-        return isOtherProfile == false;
+    private void pinPlaylist(int playlistId, String pinType) {
+        DataAPI dataAPI = RetrofitAPI.getData();
+        String token = AppConstants.TOKEN + SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+        dataAPI.callPinPlayList(token, SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_TOKEN),
+                playlistId, pinType).enqueue(new Callback<APIResponse>() {
+            @Override
+            public void onResponse(Call<APIResponse> call, Response<APIResponse> response) {
+                if (response.body() != null) {
+                    if (response.body().getStatus().equalsIgnoreCase(SUCCESS_RESPONSE)) {
+                        Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        callUserProfile(customerId);
+                    } else if (response.body().getStatus().equalsIgnoreCase(FAILED_RESPONSE)) {
+                        Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<APIResponse> call, Throwable t) {
+                Toast.makeText(binding.getRoot().getContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void likePlaylist(int playlistId) {
+        DataAPI dataAPI = RetrofitAPI.getData();
+        String token = AppConstants.TOKEN + SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+        dataAPI.putPlaylistLikeNew(token, SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_TOKEN), playlistId).enqueue(new Callback<MyPlaylistModel>() {
+            @Override
+            public void onResponse(Call<MyPlaylistModel> call, Response<MyPlaylistModel> response) {
+                if (response.body().getStatus().equalsIgnoreCase(SUCCESS_RESPONSE)) {
+                    Toast.makeText(getActivity(), "Playlist liked", Toast.LENGTH_SHORT).show();
+                } else if (response.body().getStatus().equalsIgnoreCase(FAILED_RESPONSE)) {
+                    Toast.makeText(getActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MyPlaylistModel> call, Throwable t) {
+                Toast.makeText(binding.getRoot().getContext(), t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void showShareDialog(String url) {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, url);
+        startActivity(Intent.createChooser(shareIntent, "Choose application to share"));
+    }
+
+    private void sharePlaylist(int playlistId) {
+        DataAPI dataAPI = RetrofitAPI.getData();
+        String token = AppConstants.TOKEN + SharedPrefManager.getInstance(binding.getRoot().getContext()).getSharedPrefString(AppConstants.INTENT_USER_API_TOKEN);
+        dataAPI.callSharePlaylistApi(token, SharedPrefManager.getInstance(getActivity()).getSharedPrefString(AppConstants.INTENT_USER_TOKEN), playlistId, false).enqueue(new Callback<SharePlaylistResponse>() {
+            @Override
+            public void onResponse(Call<SharePlaylistResponse> call, Response<SharePlaylistResponse> response) {
+                if (response.body() != null && response.body().getStatus().equalsIgnoreCase(SUCCESS_RESPONSE)) {
+                    showShareDialog(response.body().getData().getFullUrl());
+                } else {
+                    Toast.makeText(getActivity(),
+                            (response.body() != null && response.body().getMessage() != null) ? response.body().getMessage() : "Something went wrong!",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SharePlaylistResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        PlaylistDetailFragmentNew fragment = PlaylistDetailFragmentNew.getInstance(playlists.get(position).getId(),
+                playlists.get(position).getAdmin_id(), playlists.get(position));
+        ((youtube) getActivity()).onLoadFragment(fragment);
+    }
+
+    @Override
+    public void onHoverActionSelected(Action action, MyPlaylistModel playlist) {
+        if (action.getId() == R.id.action_pin) {
+            pinPlaylist(playlist.getId(), playlist.isPinnedPlaylist() ? UNPIN_PLAYLIST : PIN_PLAYLIST);
+        } else if (action.getId() == R.id.action_like) {
+            likePlaylist(playlist.getId());
+        } else if (action.getId() == R.id.action_share) {
+            sharePlaylist(playlist.getId());
+        }
+
     }
 }

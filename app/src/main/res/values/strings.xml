@@ -249,4 +249,21 @@
     <string name="ayp_custom_action_right">YouTube player custom action right</string>
 
     <string name="dummy_text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting</string>
+    <string name="collaborators">Collaborators</string>
+    <string name="see_all">See all</string>
+    <string name="private_account_text">Account is private. Collaborate with user to view.</string>
+    <string name="playlists">Playlists</string>
+    <string name="pinned">Pinned</string>
+    <string name="private_">Private</string>
+    <string name="collaborative">Collaborative</string>
+    <string name="no_playlist_to_listen_too">No Playlist to listen too :(</string>
+    <string name="collaborate_or_create_playlist_with_your_favourite_tracks">Collaborate or create playlist with your favourite tracks</string>
+    <string name="highlight">Highlight</string>
+    <string name="long_press_and_hold_playlist_card_to_pin_it">Long Press and hold playlist card to pin it.</string>
+    <string name="shh_password_protected">Shh....Password Protected</string>
+    <string name="hide_your_guily_pleasures_no_one_will_know">Hide your guily pleasures No one will know!</string>
+    <string name="shor_in_city_pvt_ltd">Shor in city Pvt Ltd</string>
+    <string name="pin_playlist">Pin playlist</string>
+    <string name="share_playlist">Share Playlist</string>
+    <string name="like_playlist">Like Playlist</string>
 </resources>
