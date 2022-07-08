@@ -258,4 +258,12 @@
     <string name="collaborative">Collaborative</string>
     <string name="no_playlist_to_listen_too">No Playlist to listen too :(</string>
     <string name="collaborate_or_create_playlist_with_your_favourite_tracks">Collaborate or create playlist with your favourite tracks</string>
+    <string name="highlight">Highlight</string>
+    <string name="long_press_and_hold_playlist_card_to_pin_it">Long Press and hold playlist card to pin it.</string>
+    <string name="shh_password_protected">Shh....Password Protected</string>
+    <string name="hide_your_guily_pleasures_no_one_will_know">Hide your guily pleasures No one will know!</string>
+    <string name="shor_in_city_pvt_ltd">Shor in city Pvt Ltd</string>
+    <string name="pin_playlist">Pin playlist</string>
+    <string name="share_playlist">Share Playlist</string>
+    <string name="like_playlist">Like Playlist</string>
 </resources>

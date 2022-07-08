@@ -39,7 +39,6 @@ public class RecentPlayedSongsAdapter extends RecyclerView.Adapter<RecentPlayedS
         RecentSongModel mBean = list.get(position);
 
         holder.binding.tvSongName.setText(mBean.getSongName());
-        holder.binding.tvArtist.setText(mBean.getArtistName());
         GlideApp.with(holder.binding.getRoot().getContext())
                 .load(mBean.getSongThumbnail())
                 .centerCrop()

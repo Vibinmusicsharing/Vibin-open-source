@@ -145,7 +145,7 @@ public class LoginSignUpRepository {
         dataAPI.postSignUpFields(AppConstants.LOGIN_SIGNUP_HEADER, email, password,
                 username, fullname, typeOfRegistration,
                 timeOfRegistration, pushNotifications, "",
-                genderStr, AppConstants.YOUTUBE, dobStr, languages, genres)
+                genderStr, dobStr, AppConstants.YOUTUBE, languages, genres)
                 .enqueue(new Callback<SignUpResponse>() {
                     @Override
                     public void onResponse(Call<SignUpResponse> call, retrofit2.Response<SignUpResponse> response) {

@@ -1,5 +1,7 @@
 package com.shorincity.vibin.music_sharing.activity;
 
+import static com.shorincity.vibin.music_sharing.utils.AppConstants.FOR_TNC;
+
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,111 +11,57 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.databinding.ActivityAboutUsBinding;
 import com.shorincity.vibin.music_sharing.utils.Utility;
 
 public class AboutUsActivity extends AppCompatActivity {
 
+    ActivityAboutUsBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about_us);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_about_us);
+        getWindow().setStatusBarColor(getResources().getColor(R.color.white));
 
-        ImageView img_facebook = findViewById(R.id.img_facebook);
-        ImageView img_instagram = findViewById(R.id.img_instagram);
-        ImageView img_twitter = findViewById(R.id.img_twitter);
-        ImageView img_linkedin = findViewById(R.id.img_linkedin);
+        initListeners();
+        setVersionNumber();
 
+    }
 
-        TextView versionTv = (TextView) findViewById(R.id.tv_version);
+    private void setVersionNumber() {
         String versionName = "";
-
         try {
             versionName = getApplicationContext().getString(R.string.version) + Utility.getVersionName(getApplicationContext());
-
         } catch (Exception e) {
-
+            binding.tvVersion.setVisibility(View.GONE);
         } finally {
-            versionTv.setText(versionName);
+            binding.tvVersion.setText(versionName);
         }
+    }
 
-        img_instagram.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Uri uri = Uri.parse("https://instagram.com/vibin_sharing?igshid=npmvbss2mj86");
-                Intent i = new Intent(Intent.ACTION_VIEW, uri);
-
-                i.setPackage("com.instagram.android");
-
-                try {
-                    startActivity(i);
-                } catch (ActivityNotFoundException e) {
-
-                    startActivity(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("https://instagram.com/vibin_sharing?igshid=npmvbss2mj86")));
-                }
-            }
+    private void initListeners() {
+        binding.tvTerms.setOnClickListener(view -> {
+            Intent intent = new Intent(this, PrivacyPolicyActivity.class);
+            intent.putExtra(FOR_TNC, true);
+            startActivity(intent);
         });
 
-        img_facebook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Uri uri = Uri.parse("https://www.facebook.com/vibinmusicsharing/");
-                Intent i = new Intent(Intent.ACTION_VIEW, uri);
-
-                i.setPackage("com.facebook.katana");
-
-                try {
-                    startActivity(i);
-                } catch (ActivityNotFoundException e) {
-
-                    startActivity(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("https://www.facebook.com/vibinmusicsharing/")));
-                }
-            }
+        binding.tvPrivacy.setOnClickListener(view -> {
+            Intent intent = new Intent(this, PrivacyPolicyActivity.class);
+            intent.putExtra(FOR_TNC, false);
+            startActivity(intent);
         });
 
-        img_twitter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Uri uri = Uri.parse("https://twitter.com/vibin_music");
-                Intent i = new Intent(Intent.ACTION_VIEW, uri);
-
-                i.setPackage("com.twitter.android");
-
-                try {
-                    startActivity(i);
-                } catch (ActivityNotFoundException e) {
-
-                    startActivity(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("https://twitter.com/vibin_music")));
-                }
-            }
+        binding.tvReport.setOnClickListener(view -> {
+            Utility.emailUs(this);
         });
 
-        img_linkedin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Uri uri = Uri.parse("https://www.linkedin.com/company/35884186/admin/");
-                Intent i = new Intent(Intent.ACTION_VIEW, uri);
-
-                i.setPackage("com.linkedin.android");
-
-                try {
-                    startActivity(i);
-                } catch (ActivityNotFoundException e) {
-
-                    startActivity(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("https://www.linkedin.com/company/35884186/admin/")));
-                }
-            }
+        binding.back.setOnClickListener(view -> {
+            onBackPressed();
         });
-
-
     }
 }

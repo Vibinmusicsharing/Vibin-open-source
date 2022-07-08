@@ -83,7 +83,7 @@ public class UserPlaylistFragment extends MyBaseFragment {
             openPlaylist(pinnedPlaylists.get(position));
         });
 
-        privatePlaylistAdapter = new UserPlaylistAdapter(getActivity(), privatePlaylists , position -> {
+        privatePlaylistAdapter = new UserPlaylistAdapter(getActivity(), privatePlaylists, position -> {
             openPlaylist(privatePlaylists.get(position));
         });
 
@@ -140,12 +140,30 @@ public class UserPlaylistFragment extends MyBaseFragment {
                     privatePlaylists.clear();
                     collaborativePlaylists.clear();
 
-                    pinnedPlaylists.addAll(response.body().getPinnedPlaylists());
-                    privatePlaylists.addAll(response.body().getPrivatePlaylists());
-                    collaborativePlaylists.addAll(response.body().getPublicPlaylists());
+                    if (response.body().getPinnedPlaylists().isEmpty()) {
+                        binding.groupNoPinnedPlaylist.setVisibility(View.VISIBLE);
+                        binding.rvPinned.setVisibility(View.GONE);
+                        binding.ivPinnedArrow.setVisibility(View.GONE);
+                    } else {
+                        binding.groupNoPinnedPlaylist.setVisibility(View.GONE);
+                        binding.rvPinned.setVisibility(View.VISIBLE);
+                        binding.ivPinnedArrow.setVisibility(View.VISIBLE);
+                        pinnedPlaylists.addAll(response.body().getPinnedPlaylists());
+                        pinnedPlaylistAdapter.notifyDataSetChanged();
+                    }
+                    if (response.body().getPrivatePlaylists().isEmpty()) {
+                        binding.groupNoPrivatePlaylist.setVisibility(View.VISIBLE);
+                        binding.rvPrivate.setVisibility(View.GONE);
+                        binding.ivPrivateArrow.setVisibility(View.GONE);
+                    } else {
+                        binding.groupNoPrivatePlaylist.setVisibility(View.GONE);
+                        binding.rvPrivate.setVisibility(View.VISIBLE);
+                        binding.ivPrivateArrow.setVisibility(View.VISIBLE);
+                        privatePlaylists.addAll(response.body().getPrivatePlaylists());
+                        privatePlaylistAdapter.notifyDataSetChanged();
+                    }
 
-                    pinnedPlaylistAdapter.notifyDataSetChanged();
-                    privatePlaylistAdapter.notifyDataSetChanged();
+                    collaborativePlaylists.addAll(response.body().getPublicPlaylists());
                     collaborativePlaylistAdapter.notifyDataSetChanged();
                 } else {
                     Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_LONG).show();

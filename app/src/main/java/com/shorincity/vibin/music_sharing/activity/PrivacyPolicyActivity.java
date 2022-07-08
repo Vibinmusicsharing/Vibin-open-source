@@ -1,5 +1,7 @@
 package com.shorincity.vibin.music_sharing.activity;
 
+import static com.shorincity.vibin.music_sharing.utils.AppConstants.FOR_TNC;
+
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,10 +16,14 @@ import java.util.Objects;
 
 public class PrivacyPolicyActivity extends AppCompatActivity {
 
+    private Boolean forTnc = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_privacy_policy);
+
+        forTnc = getIntent().getBooleanExtra(FOR_TNC, false);
         init();
         setupViewPager();
     }
@@ -44,6 +50,7 @@ public class PrivacyPolicyActivity extends AppCompatActivity {
         viewPager.setAdapter(viewPagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+        if (forTnc) viewPager.setCurrentItem(1);
     }
 
     //navigate Up within your application's activity hierarchy from the action bar.

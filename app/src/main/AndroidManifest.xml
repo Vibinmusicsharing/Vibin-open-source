@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <queries>
         <intent>
@@ -169,7 +170,6 @@
         <activity
             android:name=".user_profile.ui.UserPlaylistsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.TranslucentStatus"
             android:windowSoftInputMode="adjustResize" />
 
         <service

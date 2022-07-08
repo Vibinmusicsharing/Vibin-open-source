@@ -5,6 +5,8 @@ import static com.shorincity.vibin.music_sharing.utils.AppConstants.USER_ID;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.view.View;
+import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,7 +23,7 @@ public class UserPlaylistsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_user_playlists);
-
+        getWindow().setStatusBarColor(getResources().getColor(R.color.white));
         UserPlaylistFragment fragment = UserPlaylistFragment.getNewInstance(getIntent().getIntExtra(USER_ID, -1));
         openFragment(fragment, false);
     }

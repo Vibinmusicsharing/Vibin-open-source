@@ -25,8 +25,8 @@
 
             <com.giphy.sdk.ui.views.GifView
                 android:id="@+id/gifPlaylist"
-                android:layout_width="150dp"
-                android:layout_height="200dp" />
+                android:layout_width="120dp"
+                android:layout_height="164dp" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivPin"

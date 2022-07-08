@@ -1,110 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_centerInParent="true"
-    tools:context=".activity.AboutUsActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:layout_marginTop="20dp"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ABOUT"
-        android:id="@+id/txt_about"
-        android:textColor="@color/black"
-        android:textSize="30dp"
-        android:textStyle="bold"/>
-
-    <com.shorincity.vibin.music_sharing.UI.custom.RoundedImageView
-        android:layout_centerVertical="true"
-        android:id="@+id/dp_iv"
-        android:layout_width="@dimen/_110sdp"
-        android:layout_height="@dimen/_110sdp"
-        android:layout_centerHorizontal="true"
-        android:scaleType="fitXY"
-        app:riv_mutate_background="true"
-        app:riv_corner_radius="@dimen/_35sdp"
-        android:src="@drawable/app_logo_notify"
-        />
-
-    <TextView
-        android:layout_centerVertical="true"
-        android:id="@+id/txt_title"
-        android:textColor="@color/black"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="VIBIN"
-        android:layout_below="@+id/dp_iv"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/dimen_15dp"
-        android:textStyle="bold"
-        android:textSize="@dimen/_26sdp"/>
-
-    <TextView
-        android:text="version"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/txt_title"
-        android:id="@+id/tv_version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/_10sdp"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_12sdp" />
-
-    <LinearLayout
-        android:layout_marginTop="30dp"
-        android:gravity="center_horizontal"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_version"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/img_facebook"
-            android:layout_width="@dimen/_40sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_margin="@dimen/_13sdp"
-            android:scaleType="fitXY"
-            android:src="@drawable/facebook"
-             />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/back"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="8dp"
+            android:padding="@dimen/_8sdp"
+            app:layout_constraintBottom_toBottomOf="@id/txt_about"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/txt_about"
+            app:srcCompat="@drawable/ic_back_grey" />
 
-        <ImageView
-            android:layout_margin="@dimen/_13sdp"
-            android:id="@+id/img_twitter"
-            android:layout_width="@dimen/_40sdp"
-            android:layout_height="@dimen/_40sdp"
+        <TextView
+            android:id="@+id/txt_about"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:fontFamily="@font/font_extra_bold"
+            android:text="@string/about_us"
+            android:textColor="@color/textColor"
+            android:textSize="22sp"
+            app:layout_constraintStart_toEndOf="@id/back"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_terms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:fontFamily="@font/font_medium"
+            android:padding="@dimen/_8sdp"
+            android:text="@string/terms_and_conditions"
+            android:textColor="@color/textColor"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txt_about" />
+
+        <TextView
+            android:id="@+id/tv_privacy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:fontFamily="@font/font_medium"
+            android:padding="@dimen/_8sdp"
+            android:text="@string/privacy_policy"
+            android:textColor="@color/textColor"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_terms" />
+
+        <TextView
+            android:id="@+id/tv_report"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:fontFamily="@font/font_medium"
+            android:padding="@dimen/_8sdp"
+            android:text="@string/lbl_report_us"
+            android:textColor="@color/textColor"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_privacy" />
+
+        <TextView
+            android:id="@+id/txt_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:scaleType="fitXY"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="@dimen/dimen_15dp"
+            android:fontFamily="@font/font_bold"
+            android:text="Vibin"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@id/tv_version"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-            android:src="@drawable/twitter"
-            />
-        <ImageView
-            android:layout_margin="@dimen/_13sdp"
-            android:id="@+id/img_instagram"
-            android:layout_width="@dimen/_40sdp"
-            android:layout_height="@dimen/_40sdp"
+        <TextView
+            android:id="@+id/txt_company_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:scaleType="fitXY"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="@dimen/dimen_15dp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:fontFamily="@font/font_medium"
+            android:text="@string/shor_in_city_pvt_ltd"
+            android:textSize="@dimen/_16sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-            android:src="@drawable/instagram"
-            />
+        <TextView
+            android:id="@+id/tv_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_30sdp"
+            android:text="Version"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@id/txt_company_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <ImageView
-            android:layout_margin="@dimen/_13sdp"
-            android:id="@+id/img_linkedin"
-            android:layout_width="@dimen/_40sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_centerHorizontal="true"
-            android:scaleType="fitXY"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_version"
+            android:layout_marginTop="30dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            android:src="@drawable/linkedin"
-            />
+            <ImageView
+                android:id="@+id/img_facebook"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_margin="@dimen/_13sdp"
+                android:scaleType="fitXY"
+                android:src="@drawable/facebook" />
 
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/img_twitter"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="@dimen/_13sdp"
+                android:scaleType="fitXY"
+
+                android:src="@drawable/twitter" />
+
+            <ImageView
+                android:id="@+id/img_instagram"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="@dimen/_13sdp"
+                android:scaleType="fitXY"
+                android:src="@drawable/instagram"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/img_linkedin"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="@dimen/_13sdp"
+                android:scaleType="fitXY"
+                android:src="@drawable/linkedin"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
 
-</RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
