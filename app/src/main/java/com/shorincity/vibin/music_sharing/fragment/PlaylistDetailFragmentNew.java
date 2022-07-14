@@ -46,7 +46,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.activity.RealTimePlayerActivity;
 import com.shorincity.vibin.music_sharing.activity.SharePlaylistActivity;

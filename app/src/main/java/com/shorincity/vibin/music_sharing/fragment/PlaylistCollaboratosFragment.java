@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.adapters.PlaylistCollaboratosAdapter;
 import com.shorincity.vibin.music_sharing.adapters.UserSearchAdapter;

@@ -13,7 +13,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.databinding.FragmentUserPlaylistsBinding;
 import com.shorincity.vibin.music_sharing.fragment.MyBaseFragment;
 import com.shorincity.vibin.music_sharing.fragment.PlaylistDetailFragmentNew;

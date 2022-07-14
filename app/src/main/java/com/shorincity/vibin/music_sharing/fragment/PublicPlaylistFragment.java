@@ -43,7 +43,7 @@ import com.giphy.sdk.ui.views.GiphyGridView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.adapters.AutoCompleteAdapter;
 import com.shorincity.vibin.music_sharing.adapters.UserPlaylistAdapter;

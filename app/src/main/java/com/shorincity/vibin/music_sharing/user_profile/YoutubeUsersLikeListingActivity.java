@@ -12,7 +12,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.adapters.ViewPagerAdapter;
 import com.shorincity.vibin.music_sharing.model.UserLikeList;
 import com.shorincity.vibin.music_sharing.service.DataAPI;

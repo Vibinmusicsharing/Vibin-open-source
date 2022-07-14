@@ -32,7 +32,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.LoginAct;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
 import com.shorincity.vibin.music_sharing.ripples.RippleButton;

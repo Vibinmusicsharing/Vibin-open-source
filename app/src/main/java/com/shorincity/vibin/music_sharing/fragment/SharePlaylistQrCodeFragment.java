@@ -20,7 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.activity.SharePlaylistActivity;
 import com.shorincity.vibin.music_sharing.databinding.FragmentSharePlaylistQrcodeBinding;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;

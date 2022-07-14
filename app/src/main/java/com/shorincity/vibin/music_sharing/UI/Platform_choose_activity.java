@@ -22,6 +22,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
 import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 
 public class Platform_choose_activity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 

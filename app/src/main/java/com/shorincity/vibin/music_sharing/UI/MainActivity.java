@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.shorincity.vibin.music_sharing.R;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 
 // first page
 public class MainActivity extends AppCompatActivity {

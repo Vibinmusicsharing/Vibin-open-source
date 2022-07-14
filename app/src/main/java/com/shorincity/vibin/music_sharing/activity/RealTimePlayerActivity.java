@@ -33,7 +33,7 @@ import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.callbackclick.PlaylistDetailCallback;
 import com.shorincity.vibin.music_sharing.databinding.ActivityRealTimePlayerBinding;
 import com.shorincity.vibin.music_sharing.fragment.RealTimeBaseFragment;

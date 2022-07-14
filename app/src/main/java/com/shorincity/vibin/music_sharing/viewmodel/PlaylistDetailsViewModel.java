@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
 import com.shorincity.vibin.music_sharing.callbackclick.PlaylistDetailCallback;
 import com.shorincity.vibin.music_sharing.model.APIResponse;

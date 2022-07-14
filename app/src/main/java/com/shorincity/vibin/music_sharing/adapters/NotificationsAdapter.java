@@ -29,7 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.chauthai.swipereveallayout.SwipeRevealLayout;
 import com.chauthai.swipereveallayout.ViewBinderHelper;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.custom.RoundedImageView;
 import com.shorincity.vibin.music_sharing.activity.RealTimePlayerActivity;
 import com.shorincity.vibin.music_sharing.model.APIResponse;

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'kotlin-android'
 
 android {
@@ -184,6 +185,8 @@ dependencies {
     implementation 'com.github.dhaval2404:imagepicker-support:1.7.1'
 
     implementation 'com.github.ovenbits:QuickActionView:1.0.3'
+    implementation 'com.google.dagger:hilt-android:2.35.1'
+    annotationProcessor 'com.google.dagger:hilt-android-compiler:2.35.1'
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'

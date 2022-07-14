@@ -44,7 +44,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.adapters.ViewCollab;
 import com.shorincity.vibin.music_sharing.adapters.ViewCollabAdapter;
 import com.shorincity.vibin.music_sharing.model.APIResponse;

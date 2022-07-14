@@ -22,7 +22,7 @@ import com.giphy.sdk.core.models.enums.RenditionType;
 import com.giphy.sdk.ui.views.GifView;
 import com.google.android.material.button.MaterialButton;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.model.MyPlaylistModel;
 import com.shorincity.vibin.music_sharing.model.PlayListDeleteModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;

@@ -15,7 +15,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.activity.RealTimePlayerActivity;
 import com.shorincity.vibin.music_sharing.adapters.ChatRecyclerViewAdapter;
 import com.shorincity.vibin.music_sharing.databinding.FragmentRealtimeChatBinding;

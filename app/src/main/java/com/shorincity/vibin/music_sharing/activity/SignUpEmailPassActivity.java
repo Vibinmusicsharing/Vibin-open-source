@@ -28,7 +28,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.LoginAct;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.callbackclick.SignUpCallback;
 import com.shorincity.vibin.music_sharing.databinding.ActivitySignupEmailPassBinding;

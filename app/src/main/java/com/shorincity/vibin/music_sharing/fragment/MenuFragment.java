@@ -1,41 +1,29 @@
 package com.shorincity.vibin.music_sharing.fragment;
 
 import android.app.AlertDialog;
-import android.app.ListFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RadioGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatImageView;
-import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.UI.LoginAct;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.activity.AboutUsActivity;
 import com.shorincity.vibin.music_sharing.activity.EditProfileActivity;
-import com.shorincity.vibin.music_sharing.activity.LoginSignUpActivity;
 import com.shorincity.vibin.music_sharing.activity.PrivacyPolicyActivity;
-import com.shorincity.vibin.music_sharing.adapters.MenuListAdapter;
 import com.shorincity.vibin.music_sharing.adapters.MenuSettingAdapter;
 import com.shorincity.vibin.music_sharing.model.LogoutModel;
-import com.shorincity.vibin.music_sharing.model.MenuActionItem;
 import com.shorincity.vibin.music_sharing.model.MenuSettingModel;
-import com.shorincity.vibin.music_sharing.model.UpdatePreferPlatformModel;
 import com.shorincity.vibin.music_sharing.service.DataAPI;
 import com.shorincity.vibin.music_sharing.service.RetrofitAPI;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;

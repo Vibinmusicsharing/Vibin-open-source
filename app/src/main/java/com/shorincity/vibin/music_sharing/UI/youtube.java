@@ -94,6 +94,7 @@ import com.shorincity.vibin.music_sharing.adapters.AddToPlaylistAdapter;
 import com.shorincity.vibin.music_sharing.adapters.AutoCompleteAdapter;
 import com.shorincity.vibin.music_sharing.adapters.PlayListDetailsAdapter;
 import com.shorincity.vibin.music_sharing.adapters.PlaylistRecyclerView;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.fragment.MyBaseFragment;
 import com.shorincity.vibin.music_sharing.user_profile.NewUserProfileFragment;
 import com.shorincity.vibin.music_sharing.fragment.PlaylistDetailFragmentNew;

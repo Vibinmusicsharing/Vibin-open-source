@@ -1,4 +1,4 @@
-package com.shorincity.vibin.music_sharing.UI;
+package com.shorincity.vibin.music_sharing.base.prefs;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.shorincity.vibin.music_sharing.UI.User;
 import com.shorincity.vibin.music_sharing.activity.LoginSignUpActivity;
 import com.shorincity.vibin.music_sharing.utils.AppConstants;
 

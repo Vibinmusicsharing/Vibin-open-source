@@ -73,7 +73,7 @@ import com.google.android.youtube.player.YouTubePlayerView;
 import com.jackandphantom.androidlikebutton.AndroidLikeButton;
 import com.shorincity.vibin.music_sharing.BuildConfig;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.VibinApplication;
 import com.shorincity.vibin.music_sharing.adapters.AddToPlaylistAdapter;
 import com.shorincity.vibin.music_sharing.adapters.AutoCompleteAdapter;

@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.adapters.RecentPlayedAdapter;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.RecentSongModel;

@@ -32,6 +32,7 @@ import com.shorincity.vibin.music_sharing.R;
 import com.shorincity.vibin.music_sharing.activity.SelectMusicLanguageActivity;
 import com.shorincity.vibin.music_sharing.activity.SignUpEmailPassActivity;
 import com.shorincity.vibin.music_sharing.activity.TermsAndConditionsActivity;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.callbackclick.LoginCallback;
 import com.shorincity.vibin.music_sharing.databinding.ActivityLoginBinding;
 import com.shorincity.vibin.music_sharing.fragment.ErrorDailogFragment;

@@ -3,7 +3,7 @@ package com.shorincity.vibin.music_sharing.viewmodel;
 import android.content.Context;
 import android.util.Log;
 
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.callbackclick.PlaylistDetailCallback;
 import com.shorincity.vibin.music_sharing.model.PlaylistDetailModel;
 import com.shorincity.vibin.music_sharing.model.realtime.RTListner;

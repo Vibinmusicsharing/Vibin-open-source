@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.model.AdditionalSignUpModel;
 import com.shorincity.vibin.music_sharing.model.Resource;
 import com.shorincity.vibin.music_sharing.repository.LoginSignUpRepository;

@@ -8,16 +8,13 @@ import static com.shorincity.vibin.music_sharing.utils.AppConstants.USER_ID;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +31,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -52,9 +50,8 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.ovenbits.quickactionview.Action;
-import com.ovenbits.quickactionview.QuickActionView;
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.shorincity.vibin.music_sharing.UI.youtube;
 import com.shorincity.vibin.music_sharing.activity.AllRecntSongsActivity;
 import com.shorincity.vibin.music_sharing.adapters.AddToPlaylistAdapter;
@@ -87,11 +84,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class NewUserProfileFragment extends MyBaseFragment implements UserProfilePlaylistAdapter.MenuItemCallback {
+@AndroidEntryPoint
+public class NewUserProfileFragment extends Fragment implements UserProfilePlaylistAdapter.MenuItemCallback {
 
     private FragmentUserProfileNewBinding binding;
     private ArrayList<MyPlaylistModel> playlists;
@@ -109,6 +110,9 @@ public class NewUserProfileFragment extends MyBaseFragment implements UserProfil
     private static final String BUNDLE_PLAYLIST_ID = "playlist_id";
     private static final String BUNDLE_USERNAME = "user_name";
     private static final String BUNDLE_FULLNAME = "full_name";
+
+    @Inject
+    UserProfileViewModel viewModel;
 
 
     public static NewUserProfileFragment getInstance() {
@@ -154,6 +158,7 @@ public class NewUserProfileFragment extends MyBaseFragment implements UserProfil
         genreList = CommonUtils.getGenre();
 
         initControls();
+        viewModel.checkVM();
     }
 
     @Override
@@ -161,9 +166,9 @@ public class NewUserProfileFragment extends MyBaseFragment implements UserProfil
         super.onStart();
 
         try {
-            if (slidePanLayout == null && getActivity() instanceof youtube) {
-                slidePanLayout = ((youtube) getActivity()).mSlidingLayout;
-            }
+//            if (slidePanLayout == null && getActivity() instanceof youtube) {
+////                slidePanLayout = ((youtube) getActivity()).mSlidingLayout;
+//            }
         } catch (NullPointerException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -304,7 +309,7 @@ public class NewUserProfileFragment extends MyBaseFragment implements UserProfil
                     bundle.putString("thumbnail", recentSongsList.get(position).getSongThumbnail());
                     bundle.putString("videoId", recentSongsList.get(position).getSongId());
                     bundle.putParcelableArrayList("playlist", playlist);
-                    onMusicPlay(bundle);
+//                    onMusicPlay(bundle);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -780,7 +785,7 @@ public class NewUserProfileFragment extends MyBaseFragment implements UserProfil
     public void onItemClick(int position) {
         PlaylistDetailFragmentNew fragment = PlaylistDetailFragmentNew.getInstance(playlists.get(position).getId(),
                 playlists.get(position).getAdmin_id(), playlists.get(position));
-        ((youtube) getActivity()).onLoadFragment(fragment);
+//        ((youtube) getActivity()).onLoadFragment(fragment);
     }
 
     @Override

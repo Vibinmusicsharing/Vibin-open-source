@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.shorincity.vibin.music_sharing.R;
-import com.shorincity.vibin.music_sharing.UI.SharedPrefManager;
+import com.shorincity.vibin.music_sharing.base.prefs.SharedPrefManager;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 
